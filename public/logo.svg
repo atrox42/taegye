@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 32" fill="none" role="img" aria-label="taegye">
+  <g fill="#111111">
+    <g transform="translate(0 2)">
+      <circle cx="14" cy="14" r="2.1"/>
+      <ellipse cx="14" cy="6.2" rx="2.7" ry="5"/>
+      <ellipse cx="14" cy="21.8" rx="2.7" ry="5"/>
+      <ellipse cx="6.2" cy="14" rx="5" ry="2.7"/>
+      <ellipse cx="21.8" cy="14" rx="5" ry="2.7"/>
+      <g transform="rotate(45 14 14)">
+        <ellipse cx="14" cy="6.8" rx="2.2" ry="4.2"/>
+        <ellipse cx="14" cy="21.2" rx="2.2" ry="4.2"/>
+        <ellipse cx="6.8" cy="14" rx="4.2" ry="2.2"/>
+        <ellipse cx="21.2" cy="14" rx="4.2" ry="2.2"/>
+      </g>
+    </g>
+    <text
+      x="36"
+      y="21"
+      font-size="13"
+      font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+      font-weight="400"
+      letter-spacing="0.2em"
+    >taegye</text>
+  </g>
+</svg>
