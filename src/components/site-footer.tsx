@@ -1,18 +1,12 @@
 import Link from "next/link";
 
-import { FOOTER, legalLine, SITE_NAME } from "@/lib/site";
+import { BrandLogo } from "@/components/brand-logo";
+import { FooterLegal } from "@/components/footer-legal";
+import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
-function FooterLink({
-  href,
-  label,
-  external,
-}: {
-  href: string;
-  label: string;
-  external?: boolean;
-}) {
+function FooterLink({ label, href, external }: FooterLinkItem) {
   const className =
-    "text-[11px] font-normal tracking-[0.06em] text-foreground/80 transition-opacity hover:opacity-50";
+    "text-[12px] font-normal tracking-[0.04em] text-foreground/80 transition-opacity hover:opacity-50";
 
   if (external) {
     return (
@@ -31,44 +25,34 @@ function FooterLink({
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-transparent bg-background">
-      <div className="grid grid-cols-3 items-start gap-x-6 gap-y-7 px-5 py-7 sm:grid-cols-4 sm:px-6 sm:py-8">
-        <Link href="/" className="col-span-3 inline-flex items-center sm:col-span-1">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt={SITE_NAME} className="h-[18px] w-auto" />
+    <footer className="bg-background">
+      <div className="flex flex-col gap-10 px-5 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:py-12 lg:px-10">
+        <Link href="/" className="inline-flex shrink-0 items-center" aria-label={SITE_NAME}>
+          <BrandLogo />
         </Link>
 
-        <div className="flex flex-col gap-2">
-          <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-foreground/40">
-            Brand
-          </p>
-          {FOOTER.brand.map((item) => (
-            <FooterLink key={item.href} {...item} />
+        <nav
+          aria-label="Footer"
+          className="flex flex-wrap gap-x-16 gap-y-8 sm:gap-x-20 lg:gap-x-24"
+        >
+          {FOOTER_COLUMNS.map((column) => (
+            <ul
+              key={column.map((item) => item.label).join("-")}
+              className="flex min-w-[7rem] flex-col leading-[2.2]"
+            >
+              {column.map((item) => (
+                <li key={`${item.label}-${item.href}`}>
+                  <FooterLink {...item} />
+                </li>
+              ))}
+            </ul>
           ))}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-foreground/40">
-            Store
-          </p>
-          {FOOTER.store.map((item) => (
-            <FooterLink key={item.href} {...item} />
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-foreground/40">
-            Follow
-          </p>
-          {FOOTER.follow.map((item) => (
-            <FooterLink key={item.href} {...item} />
-          ))}
-        </div>
+        </nav>
       </div>
 
-      <p className="px-5 pb-5 text-[10px] leading-relaxed tracking-[0.02em] text-foreground/45 sm:px-6">
-        {legalLine()}
-      </p>
+      <div className="px-5 pb-8 sm:px-8 lg:px-10">
+        <FooterLegal />
+      </div>
     </footer>
   );
 }

@@ -133,3 +133,24 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  .product-empty,
+  .product-moss {
+    transition: opacity 280ms ease;
+  }
+
+  .product-moss {
+    opacity: 0;
+  }
+
+  .product-card[data-moss="on"] .product-empty,
+  .product-card:hover .product-empty {
+    opacity: 0;
+  }
+
+  .product-card[data-moss="on"] .product-moss,
+  .product-card:hover .product-moss {
+    opacity: 1;
+  }
+}
