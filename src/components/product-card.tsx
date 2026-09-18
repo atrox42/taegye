@@ -11,16 +11,24 @@ type ProductCardProps = {
   priority?: boolean;
 };
 
+function hoverMedia() {
+  return window.matchMedia("(hover: hover)").matches;
+}
+
 export function ProductCard({ product, priority = false }: ProductCardProps) {
   const [moss, setMoss] = useState(false);
 
   return (
     <article
-      className={cn("product-card cursor-pointer", moss && "is-moss")}
+      className={cn("cursor-pointer")}
+      onPointerEnter={() => {
+        if (hoverMedia()) setMoss(true);
+      }}
+      onPointerLeave={() => {
+        if (hoverMedia()) setMoss(false);
+      }}
       onClick={() => {
-        if (window.matchMedia("(hover: none)").matches) {
-          setMoss((value) => !value);
-        }
+        if (!hoverMedia()) setMoss((value) => !value);
       }}
     >
       <div className="relative aspect-square overflow-hidden bg-white">
@@ -30,7 +38,8 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           fill
           priority={priority}
           sizes="(min-width: 768px) 25vw, 50vw"
-          className="product-img-empty object-contain object-center"
+          className="object-contain object-center transition-opacity duration-300"
+          style={{ opacity: moss ? 0 : 1 }}
         />
         <Image
           src={product.mossSrc}
@@ -38,7 +47,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           fill
           priority={priority}
           sizes="(min-width: 768px) 25vw, 50vw"
-          className="product-img-moss object-contain object-center"
+          className="object-contain object-center transition-opacity duration-300"
+          style={{ opacity: moss ? 1 : 0 }}
+          aria-hidden
         />
       </div>
       <p className="mt-3 text-left text-[11px] leading-5 tracking-[0.04em] text-foreground">
