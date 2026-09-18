@@ -8,7 +8,7 @@ export const SITE_DESCRIPTION =
 /** Naver Smart Store — update when the live store URL is confirmed. */
 export const STORE_URL = "https://smartstore.naver.com/taegye";
 
-export const INSTAGRAM_URL = "https://instagram.com/taegye";
+export const INSTAGRAM_URL = "https://www.instagram.com/taegye_/";
 
 export const CONTACT_EMAIL = "hello@taegye.kr";
 
@@ -19,19 +19,36 @@ export const NAV_ITEMS = [
   { label: "store", href: STORE_URL, external: true },
 ] as const;
 
-export const FOOTER = {
-  brand: [
-    { label: "About", href: "/about" },
-    { label: "Archive", href: "/archive" },
-    { label: "New", href: "/new" },
-  ],
-  store: [
-    { label: "Smart Store", href: STORE_URL, external: true },
-    { label: "FAQ", href: "/faq" },
-    { label: "Contact", href: "/contact" },
-  ],
-  follow: [{ label: "Instagram", href: INSTAGRAM_URL, external: true }],
+/** Logo display box — keep within the 135×48 px brand lockup. */
+export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
+
+export const LOGO_SRC = "/logo-taegye.png";
+
+export const COPYRIGHT = {
+  year: 2026,
+  owner: "LAB TAEGYE",
 } as const;
+
+export type FooterLinkItem = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+/** Amomento-style two columns. No Order Status / Stockists. */
+export const FOOTER_COLUMNS: FooterLinkItem[][] = [
+  [
+    { label: "Account", href: STORE_URL, external: true },
+    { label: "Legals", href: "/legal" },
+    { label: "FAQ", href: "/faq" },
+  ],
+  [
+    { label: "About", href: "/about" },
+    { label: "Store", href: STORE_URL, external: true },
+    { label: "Contact", href: "/contact" },
+    { label: "Instagram", href: INSTAGRAM_URL, external: true },
+  ],
+];
 
 /** Korean e-commerce legal line — placeholders until business details are confirmed. */
 export const LEGAL = {
@@ -74,11 +91,6 @@ export const ABOUT = {
       "우리는 이끼를 보듯 형태를 봅니다. 구조, 반복, 그리고 자라는 일의 인내.",
     ],
   },
-} as const;
-
-export const HOME_ABOUT_TEASER = {
-  en: "A modular moss landscape\nfor the quiet of a room.",
-  kr: "방의 고요를 위한\n모듈형 이끼 풍경.",
 } as const;
 
 export const FAQ_ITEMS = [

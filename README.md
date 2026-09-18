@@ -18,10 +18,12 @@ npm start
 
 ## Site notes
 
+- Home is a two-panel hero (silver acrylic stand / black stand) with the footer immediately below — no mid-page teaser.
 - Nav `store` opens Naver Smart Store in a new tab (`STORE_URL` in `src/lib/site.ts`).
 - `/store` redirects to the same URL.
-- Product photography is left as blank slots on purpose.
-- Footer legal line uses placeholders until business details are confirmed.
+- Instagram is `https://www.instagram.com/taegye_/`.
+- Footer copyright `© 2026 LAB TAEGYE +` expands business info (placeholders in `LEGAL`).
+- Product photography on `/new` and `/archive` is left as blank slots on purpose.
 
 ## Deploy on Vercel
 
