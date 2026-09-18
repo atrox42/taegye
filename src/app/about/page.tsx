@@ -8,26 +8,18 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <article className="px-5 pt-20 pb-24 sm:px-6 sm:pt-24 sm:pb-32">
-      <div className="max-w-xl space-y-16">
-        <section>
-          <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">
-            {ABOUT.en.kicker.toLowerCase()}
-          </h1>
-          <div className="mt-8 space-y-6 text-[13px] leading-7 tracking-[0.02em]">
-            {ABOUT.en.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+    <article className="px-5 pt-20 pb-24 sm:px-8 sm:pt-24 sm:pb-32">
+      <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">about</h1>
+      <div className="mt-12 max-w-xl space-y-16 sm:mt-16 sm:space-y-20">
+        <section lang="en" className="space-y-7 text-[13px] leading-[1.9] tracking-[0.02em]">
+          {ABOUT.en.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </section>
-
-        <section>
-          <h2 className="text-[11px] font-normal tracking-[0.18em]">{ABOUT.kr.kicker}</h2>
-          <div className="mt-8 space-y-6 text-[13px] leading-7 tracking-[0.04em]">
-            {ABOUT.kr.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+        <section lang="ko" className="space-y-7 text-[13px] leading-[2] tracking-[0.04em]">
+          {ABOUT.kr.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </section>
       </div>
     </article>

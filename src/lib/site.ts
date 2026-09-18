@@ -75,22 +75,14 @@ export function legalLine() {
 }
 
 export const ABOUT = {
-  en: {
-    kicker: "TAEGYE",
-    paragraphs: [
-      "A moss terrarium is not decoration. It is a small climate — held, edited, and kept close.",
-      "TAEGYE builds modular landscapes from moss, mineral, and glass. Each piece is assembled by hand, then left to settle into its own tempo.",
-      "We look at form the way we look at moss: structure, repetition, and the patience of growth.",
-    ],
-  },
-  kr: {
-    kicker: "태계",
-    paragraphs: [
-      "이끼 테라리움은 장식이 아닙니다. 가까이 두고 가꾸는, 작은 기후입니다.",
-      "태계는 이끼와 광물, 유리로 모듈형 풍경을 조립합니다. 모든 작업은 손으로 이루어지며, 그 이후의 시간은 풍경 스스로에게 맡깁니다.",
-      "우리는 이끼를 보듯 형태를 봅니다. 구조, 반복, 그리고 자라는 일의 인내.",
-    ],
-  },
+  en: [
+    "TAEGYE is an object brand working with terrariums. We consider each piece as a whole, from the combination of plants and materials to the vessel that holds them. We care as much about how these elements come together and sit within a space as we do about the beauty of an individual plant.",
+    "A terrarium continues to change after it is made. As plants grow, new shapes emerge and the arrangement takes on a different character. TAEGYE embraces these changes, creating objects that invite you to look closely and enjoy them over time.",
+  ],
+  kr: [
+    "태계는 테라리움을 만드는 오브제 브랜드입니다. 식물과 재료의 조합부터 이를 담는 그릇까지, 전체의 형태를 함께 생각합니다. 식물 하나의 아름다움만큼 여러 요소가 모였을 때의 모습과 공간에 놓였을 때의 어울림을 중요하게 봅니다.",
+    "테라리움은 완성된 이후에도 조금씩 달라집니다. 식물이 자라면서 처음에는 보이지 않던 모양이 생기고, 재료 사이의 관계도 바뀝니다. 태계는 이러한 변화를 담아, 두고 바라보는 즐거움이 있는 오브제를 만듭니다.",
+  ],
 } as const;
 
 export type NewProduct = {

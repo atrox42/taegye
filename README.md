@@ -24,6 +24,7 @@ npm start
 - Instagram is `https://www.instagram.com/taegye_/`.
 - Footer copyright `© 2026 LAB TAEGYE +` expands business info (placeholders in `LEGAL`).
 - `/new` is a 4-column catalog of five Modular Stand colors; hover reveals the moss-filled pair (no invented prices).
+- `/about` is bilingual (English, then Korean).
 - Product photography on `/archive` is left as blank slots on purpose.
 
 ## Deploy on Vercel
