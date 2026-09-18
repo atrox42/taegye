@@ -23,7 +23,8 @@ npm start
 - `/store` redirects to the same URL.
 - Instagram is `https://www.instagram.com/taegye_/`.
 - Footer copyright `© 2026 LAB TAEGYE +` expands business info (placeholders in `LEGAL`).
-- Product photography on `/new` and `/archive` is left as blank slots on purpose.
+- `/new` is a 4-column catalog of five Modular Stand colors; hover reveals the moss-filled pair (no invented prices).
+- Product photography on `/archive` is left as blank slots on purpose.
 
 ## Deploy on Vercel
 

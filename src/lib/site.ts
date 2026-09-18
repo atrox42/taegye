@@ -93,6 +93,59 @@ export const ABOUT = {
   },
 } as const;
 
+export type NewProduct = {
+  id: string;
+  name: string;
+  emptySrc: string;
+  mossSrc: string;
+  emptyAlt: string;
+  mossAlt: string;
+};
+
+/** /new catalog — empty default, moss on hover. Prices omitted until Smart Store is live. */
+export const NEW_PRODUCTS: NewProduct[] = [
+  {
+    id: "purple",
+    name: "Modular Stand, Purple",
+    emptySrc: "/products/stand-purple.webp",
+    mossSrc: "/products/stand-purple-moss.webp",
+    emptyAlt: "TAEGYE modular stand in purple",
+    mossAlt: "TAEGYE modular stand in purple with moss",
+  },
+  {
+    id: "white",
+    name: "Modular Stand, White",
+    emptySrc: "/products/stand-white.webp",
+    mossSrc: "/products/stand-white-moss.webp",
+    emptyAlt: "TAEGYE modular stand in white",
+    mossAlt: "TAEGYE modular stand in white with moss",
+  },
+  {
+    id: "black",
+    name: "Modular Stand, Black",
+    emptySrc: "/products/stand-black.webp",
+    mossSrc: "/products/stand-black-moss.webp",
+    emptyAlt: "TAEGYE modular stand in black",
+    mossAlt: "TAEGYE modular stand in black with moss",
+  },
+  {
+    id: "green",
+    name: "Modular Stand, Green",
+    emptySrc: "/products/stand-green.webp",
+    mossSrc: "/products/stand-green-moss.webp",
+    emptyAlt: "TAEGYE modular stand in green",
+    mossAlt: "TAEGYE modular stand in green with moss",
+  },
+  {
+    id: "silver",
+    name: "Modular Stand, Silver",
+    emptySrc: "/products/stand-silver.webp",
+    mossSrc: "/products/stand-silver-moss.webp",
+    emptyAlt: "TAEGYE modular stand in frosted silver",
+    mossAlt: "TAEGYE modular stand in frosted silver with moss",
+  },
+];
+
 export const FAQ_ITEMS = [
   {
     q: { en: "Where can I purchase TAEGYE?", kr: "태계는 어디에서 구매할 수 있나요?" },
