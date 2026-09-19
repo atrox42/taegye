@@ -1,14 +1,17 @@
 /**
- * Android Force Dark / Samsung Auto Dark inverts solid `background-color`.
- * It usually leaves `background-image` (gradients + image resources) alone.
- * Apply both, plus color-scheme, on every full-bleed surface.
+ * Android Force Dark inverts solid `background-color` (and often CSS gradients).
+ * Real raster files + <img> nodes are much harder for OEM auto-dark to invert.
  */
+export const WHITE_BITMAP_SRC = "/bg-white.jpg";
+
 export const FORCE_WHITE_IMAGE =
-  "linear-gradient(#ffffff,#ffffff), url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\"), url(\"/bg-white.png\")";
+  `url("${WHITE_BITMAP_SRC}"), url("/bg-white.png"), linear-gradient(#ffffff,#ffffff)`;
 
 export const forceWhiteStyle = {
   backgroundColor: "#ffffff",
   backgroundImage: FORCE_WHITE_IMAGE,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
   color: "#111111",
   colorScheme: "only light",
 } as const;
