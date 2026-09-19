@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Noto_Sans_KR } from "next/font/google";
 
 import { SiteShell } from "@/components/site-shell";
@@ -28,13 +28,19 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#ffffff",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${notoSansKr.variable} h-full antialiased`}
+      className={`light ${geistSans.variable} ${notoSansKr.variable} h-full bg-white antialiased`}
+      style={{ colorScheme: "only light", backgroundColor: "#ffffff" }}
     >
-      <body className="min-h-full bg-background font-sans text-foreground">
+      <body className="min-h-full bg-white font-sans text-neutral-900">
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

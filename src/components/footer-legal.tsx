@@ -28,7 +28,7 @@ export function FooterLegal() {
       {open ? (
         <p
           id={detailsId}
-          className="mt-2 overflow-x-auto whitespace-nowrap text-[10px] leading-none tracking-[0.02em] text-foreground/45"
+          className="mt-2 max-w-full break-words text-[10px] leading-5 tracking-[0.02em] text-foreground/45"
         >
           {legalLine()}
         </p>
