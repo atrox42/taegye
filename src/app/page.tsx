@@ -15,12 +15,12 @@ export default function HomePage() {
   return (
     <section
       aria-label="Featured products"
-      className="grid min-h-dvh grid-cols-1 md:grid-cols-2"
+      className="grid grid-cols-1 md:grid-cols-2"
     >
       {HERO_PANELS.map((panel) => (
         <div
           key={panel.src}
-          className="relative min-h-[50dvh] bg-[#f6f6f6] md:min-h-dvh"
+          className="relative aspect-square bg-[#f6f6f6] md:aspect-auto md:min-h-svh"
         >
           <Image
             src={panel.src}
