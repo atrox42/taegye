@@ -17,6 +17,7 @@ export function SiteHeader() {
         className="site-nav pointer-events-auto relative flex w-full items-center justify-between overflow-hidden rounded-lg px-2.5 py-2.5 shadow-[0_2px_16px_rgba(0,0,0,0.12)] md:justify-start md:gap-x-3.5 md:overflow-visible md:rounded-none md:px-6 md:py-5 md:shadow-none"
         style={forceWhiteStyle}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts next/image wrappers */}
         <img
           src={WHITE_BITMAP_SRC}
           alt=""

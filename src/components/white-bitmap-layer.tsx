@@ -4,6 +4,7 @@ import { WHITE_BITMAP_SRC } from "@/lib/force-white";
 export function WhiteBitmapLayer() {
   return (
     <div className="site-white-layer pointer-events-none fixed inset-0 z-0" aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts next/image wrappers */}
       <img
         src={WHITE_BITMAP_SRC}
         alt=""
