@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function NewPage() {
   return (
-    <div className="site-page new-page px-4 pt-4 pb-24 sm:px-6 sm:pt-20 sm:pb-28" style={forceWhiteStyle}>
+    <div className="site-page new-page site-gutter pt-4 pb-24 sm:pt-20 sm:pb-28" style={forceWhiteStyle}>
       <h1 className="mb-8 text-[11px] font-normal lowercase tracking-[0.14em] sm:mb-10">
         new
       </h1>

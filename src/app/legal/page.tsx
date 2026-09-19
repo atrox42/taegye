@@ -18,7 +18,7 @@ const ROWS = [
 
 export default function LegalPage() {
   return (
-    <article className="site-page px-5 pt-8 pb-24 sm:px-6 sm:pt-24 sm:pb-32">
+    <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
       <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">legals</h1>
       <p className="mt-8 max-w-xl text-[13px] leading-7 tracking-[0.02em] text-foreground/70">
         Business information for {SITE_NAME}. Details below are placeholders until

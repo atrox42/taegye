@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ArchivePage() {
   return (
     <div className="site-page pt-4 sm:pt-16">
-      <h1 className="px-5 py-4 text-[11px] font-normal lowercase tracking-[0.14em] sm:px-6">
+      <h1 className="site-gutter py-4 text-[11px] font-normal lowercase tracking-[0.14em]">
         archive
       </h1>
       <div className="grid grid-cols-2 gap-0">
