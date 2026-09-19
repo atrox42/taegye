@@ -7,7 +7,7 @@ import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const className =
-    "text-[11px] font-normal lowercase leading-none tracking-[0.06em] no-underline";
+    "text-[11px] font-normal leading-none tracking-[0.06em] no-underline";
   const style = { color: "#111111" };
 
   if (external) {
@@ -37,7 +37,7 @@ export function SiteFooter() {
           {FOOTER_COLUMNS.map((column) => (
             <ul
               key={column.map((item) => item.label).join("-")}
-              className="flex min-w-[6.5rem] flex-col"
+              className="flex min-w-0 flex-col"
               style={{ lineHeight: 2.42 }}
             >
               {column.map((item) => (

@@ -328,34 +328,29 @@ button {
 
 .site-footer-nav {
   display: grid;
-  width: max-content;
-  max-width: 100%;
-  grid-template-columns: repeat(2, minmax(6.5rem, max-content));
-  column-gap: 2.5rem;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.5rem;
+  row-gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .site-footer-row {
     flex-direction: row;
+    align-items: flex-start;
     justify-content: flex-start;
-    gap: 5rem;
+    gap: 3rem;
     padding-top: 3rem;
     padding-bottom: 1.75rem;
   }
 
   .site-footer-nav {
-    margin-left: 0;
-    column-gap: 4rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .site-footer-row {
-    gap: 7rem;
-  }
-
-  .site-footer-nav {
-    column-gap: 5rem;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: 0;
+    row-gap: 0;
   }
 }
 
