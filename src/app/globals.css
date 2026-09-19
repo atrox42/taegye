@@ -379,7 +379,7 @@ button {
     margin-left: auto;
     justify-content: flex-end;
     align-items: flex-start;
-    gap: 3.5rem;
+    gap: 0;
     flex-wrap: nowrap;
   }
 
@@ -389,6 +389,7 @@ button {
   }
 
   .site-footer-instagram {
+    margin-left: 5.5rem;
     text-align: right;
   }
 }
@@ -433,9 +434,14 @@ button {
   position: absolute;
   top: 50%;
   left: 50%;
+  display: block;
   width: 30px;
   height: auto;
   max-width: 30px;
+  max-height: none;
+  aspect-ratio: 598 / 384;
+  object-fit: contain;
+  object-position: center;
   transform: translate(-50%, -50%);
   pointer-events: none;
   filter: brightness(0) invert(1);
