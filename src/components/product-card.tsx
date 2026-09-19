@@ -25,7 +25,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         }
       }}
     >
-      <div className="relative aspect-square overflow-hidden bg-white">
+      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: "#ffffff" }}>
         <div className="product-empty absolute inset-0">
           <Image
             src={product.emptySrc}
@@ -48,7 +48,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           />
         </div>
       </div>
-      <p className="mt-3 text-left text-[11px] leading-5 tracking-[0.04em] text-foreground">
+      <p className="mt-3 text-left text-[11px] leading-5 tracking-[0.04em]" style={{ color: "#111111" }}>
         {product.name}
       </p>
     </article>

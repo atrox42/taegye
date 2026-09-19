@@ -2,7 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/* Dark utilities never apply — the brand site is always light. */
+@custom-variant dark (&:is(.never-dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -165,5 +166,52 @@ body,
   .product-card[data-moss="on"] .product-moss,
   .product-card:hover .product-moss {
     opacity: 1;
+  }
+}
+
+/* Unlayered so this wins over Tailwind/shadcn and Android forced-dark. */
+html,
+body {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  color-scheme: only light !important;
+  forced-color-adjust: none;
+}
+
+.site-shell,
+.site-main,
+.site-footer,
+.product-card {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  color-scheme: only light !important;
+}
+
+.site-nav {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+}
+
+.site-nav a {
+  color: #111111 !important;
+}
+
+@media (min-width: 768px) {
+  .site-nav {
+    background-color: transparent !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body,
+  .site-shell,
+  .site-main,
+  .site-footer {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #111111 !important;
+    color-scheme: only light !important;
   }
 }

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NewPage() {
   return (
-    <div className="bg-background px-4 pt-16 pb-24 sm:px-6 sm:pt-20 sm:pb-28">
+    <div className="px-4 pt-16 pb-24 sm:px-6 sm:pt-20 sm:pb-28" style={{ backgroundColor: "#ffffff" }}>
       <h1 className="mb-8 text-[11px] font-normal lowercase tracking-[0.14em] sm:mb-10">
         new
       </h1>
