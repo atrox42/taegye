@@ -97,17 +97,8 @@ export type NewProduct = {
 
 export const STAND_PRICE = "KRW 108,000";
 
-/** /new catalog — purple and silver first, then remaining colors. */
+/** /new catalog — silver, purple, black, green, white. */
 export const NEW_PRODUCTS: NewProduct[] = [
-  {
-    id: "purple",
-    name: "Modular Stand, Purple",
-    price: STAND_PRICE,
-    emptySrc: "/products/stand-purple.webp",
-    mossSrc: "/products/stand-purple-moss.webp",
-    emptyAlt: "TAEGYE modular stand in purple",
-    mossAlt: "TAEGYE modular stand in purple with moss",
-  },
   {
     id: "silver",
     name: "Modular Stand, Silver",
@@ -118,13 +109,13 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossAlt: "TAEGYE modular stand in frosted silver with moss",
   },
   {
-    id: "white",
-    name: "Modular Stand, White",
+    id: "purple",
+    name: "Modular Stand, Purple",
     price: STAND_PRICE,
-    emptySrc: "/products/stand-white.webp",
-    mossSrc: "/products/stand-white-moss.webp",
-    emptyAlt: "TAEGYE modular stand in white",
-    mossAlt: "TAEGYE modular stand in white with moss",
+    emptySrc: "/products/stand-purple.webp",
+    mossSrc: "/products/stand-purple-moss.webp",
+    emptyAlt: "TAEGYE modular stand in purple",
+    mossAlt: "TAEGYE modular stand in purple with moss",
   },
   {
     id: "black",
@@ -143,6 +134,15 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossSrc: "/products/stand-green-moss.webp",
     emptyAlt: "TAEGYE modular stand in green",
     mossAlt: "TAEGYE modular stand in green with moss",
+  },
+  {
+    id: "white",
+    name: "Modular Stand, White",
+    price: STAND_PRICE,
+    emptySrc: "/products/stand-white.webp",
+    mossSrc: "/products/stand-white-moss.webp",
+    emptyAlt: "TAEGYE modular stand in white",
+    mossAlt: "TAEGYE modular stand in white with moss",
   },
 ];
 
