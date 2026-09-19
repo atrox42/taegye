@@ -3,7 +3,12 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
 import { forceWhiteStyle } from "@/lib/force-white";
-import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
+import {
+  FOOTER_COLUMNS,
+  FOOTER_INSTAGRAM,
+  SITE_NAME,
+  type FooterLinkItem,
+} from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const className =
@@ -34,19 +39,26 @@ export function SiteFooter() {
         </Link>
 
         <nav aria-label="Footer" className="site-footer-nav">
-          {FOOTER_COLUMNS.map((column) => (
-            <ul
-              key={column.map((item) => item.label).join("-")}
-              className="flex min-w-0 flex-col"
-              style={{ lineHeight: 2.42 }}
-            >
-              {column.map((item) => (
-                <li key={`${item.label}-${item.href}`}>
-                  <FooterLink {...item} />
-                </li>
-              ))}
-            </ul>
-          ))}
+          <div className="site-footer-cols">
+            {FOOTER_COLUMNS.map((column) => (
+              <ul
+                key={column.map((item) => item.label).join("-")}
+                className="flex min-w-0 flex-col"
+                style={{ lineHeight: 2.42 }}
+              >
+                {column.map((item) => (
+                  <li key={`${item.label}-${item.href}`}>
+                    <FooterLink {...item} />
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+          <ul className="site-footer-instagram flex min-w-0 flex-col" style={{ lineHeight: 2.42 }}>
+            <li>
+              <FooterLink {...FOOTER_INSTAGRAM} />
+            </li>
+          </ul>
         </nav>
       </div>
 

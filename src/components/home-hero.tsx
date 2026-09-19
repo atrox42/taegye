@@ -1,4 +1,4 @@
-import { HERO_VIDEO_POSTER, HERO_VIDEO_SRC, LOGO_MARK_WHITE_SRC } from "@/lib/site";
+import { HERO_VIDEO_POSTER, HERO_VIDEO_SRC, LOGO_SRC, SITE_NAME } from "@/lib/site";
 
 export function HomeHero() {
   return (
@@ -19,13 +19,11 @@ export function HomeHero() {
         >
           <source src={HERO_VIDEO_SRC} type="video/mp4" />
         </video>
-        {/* eslint-disable-next-line @next/next/no-img-element -- static SVG mark, no optimization needed */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- same footer lockup PNG, CSS-whitened */}
         <img
-          src={LOGO_MARK_WHITE_SRC}
-          alt=""
-          aria-hidden
+          src={LOGO_SRC}
+          alt={SITE_NAME}
           width={30}
-          height={30}
           className="home-hero-mark"
         />
       </div>
