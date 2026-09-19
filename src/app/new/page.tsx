@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ProductCard } from "@/components/product-card";
+import { forceWhiteStyle } from "@/lib/force-white";
 import { NEW_PRODUCTS } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export default function NewPage() {
   return (
     <div
       className="site-page px-4 pt-4 pb-24 sm:px-6 sm:pt-20 sm:pb-28"
-      style={{ backgroundColor: "#ffffff" }}
+      style={forceWhiteStyle}
     >
       <h1 className="mb-8 text-[11px] font-normal lowercase tracking-[0.14em] sm:mb-10">
         new

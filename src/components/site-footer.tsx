@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
+import { forceWhiteStyle } from "@/lib/force-white";
 import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
@@ -25,7 +26,7 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer bg-white" style={{ backgroundColor: "#ffffff", color: "#111111" }}>
+    <footer className="site-footer" style={forceWhiteStyle}>
       <div className="flex flex-col gap-10 px-5 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:py-12 lg:px-10">
         <Link href="/" className="inline-flex shrink-0 items-center" aria-label={SITE_NAME}>
           <BrandLogo />
