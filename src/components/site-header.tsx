@@ -10,10 +10,11 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 bg-transparent">
+    <header className="pointer-events-none fixed top-3 left-3 z-50 w-max md:inset-x-0 md:top-0 md:left-0 md:w-full">
       <nav
         aria-label="Primary"
-        className="site-nav pointer-events-auto mx-3 mt-3 flex items-center gap-x-3.5 px-3.5 py-2.5 shadow-[0_1px_10px_rgba(0,0,0,0.08)] md:mx-0 md:mt-0 md:px-6 md:py-5 md:shadow-none"
+        className="site-nav pointer-events-auto inline-flex items-center gap-x-3.5 rounded-lg px-3.5 py-2.5 shadow-[0_2px_16px_rgba(0,0,0,0.12)] md:flex md:w-full md:rounded-none md:px-6 md:py-5 md:shadow-none"
+        style={{ colorScheme: "only light" }}
       >
         {NAV_ITEMS.map((item) => {
           const isExternal = "external" in item && item.external;

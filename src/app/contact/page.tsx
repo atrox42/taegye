@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <article className="px-5 pt-20 pb-24 sm:px-6 sm:pt-24 sm:pb-32">
+    <article className="site-page px-5 pt-8 pb-24 sm:px-6 sm:pt-24 sm:pb-32">
       <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">contact</h1>
       <div className="mt-12 max-w-xl space-y-8 text-[13px] leading-7 tracking-[0.02em]">
         <section className="space-y-2">
