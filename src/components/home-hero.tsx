@@ -9,7 +9,9 @@ export function HomeHero() {
         muted
         loop
         playsInline
-        preload="metadata"
+        controls={false}
+        disablePictureInPicture
+        preload="auto"
         poster={HERO_VIDEO_POSTER}
       >
         <source src={HERO_VIDEO_SRC} type="video/mp4" />
