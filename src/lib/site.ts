@@ -24,7 +24,7 @@ export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
 
-/** Home full-bleed grass loop (192×108, CSS object-cover). */
+/** Home grass loop — keep at intrinsic 192×108, never upscale. */
 export const HERO_VIDEO_SRC = "/hero-grass-loop.mp4";
 export const HERO_VIDEO_POSTER = "/hero-grass-poster.jpg";
 
