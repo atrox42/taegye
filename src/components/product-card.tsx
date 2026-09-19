@@ -18,7 +18,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       className="product-card block no-underline hover:no-underline"
       style={forceWhiteStyle}
     >
-      <div className="relative aspect-square overflow-hidden" style={forceWhiteStyle}>
+      <div className="product-stage relative aspect-square overflow-hidden" style={forceWhiteStyle}>
         <div className="product-empty absolute inset-0">
           <Image
             src={product.emptySrc}

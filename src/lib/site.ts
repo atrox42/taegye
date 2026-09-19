@@ -23,6 +23,7 @@ export const NAV_ITEMS = [
 export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
+export const LOGO_MARK_WHITE_SRC = "/logo-mark-white.svg";
 
 /** Home grass loop — keep at intrinsic 192×108, never upscale. */
 export const HERO_VIDEO_SRC = "/hero-grass-loop.mp4";
@@ -39,19 +40,19 @@ export type FooterLinkItem = {
   external?: boolean;
 };
 
-/** Amomento-style two columns. No Order Status / Stockists. */
+/** Logo sits left. These five stacks share the remaining width evenly. */
 export const FOOTER_COLUMNS: FooterLinkItem[][] = [
+  [{ label: "Account", href: STORE_URL, external: true }],
   [
-    { label: "Account", href: STORE_URL, external: true },
     { label: "Legals", href: "/legal" },
-    { label: "FAQ", href: "/faq" },
+    { label: "Faq", href: "/faq" },
   ],
   [
     { label: "About", href: "/about" },
     { label: "Store", href: STORE_URL, external: true },
-    { label: "Contact", href: "/contact" },
-    { label: "Instagram", href: INSTAGRAM_URL, external: true },
   ],
+  [{ label: "Contact", href: "/contact" }],
+  [{ label: "Instagram", href: INSTAGRAM_URL, external: true }],
 ];
 
 /** Korean e-commerce legal line — placeholders until business details are confirmed. */
