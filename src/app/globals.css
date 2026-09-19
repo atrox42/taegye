@@ -220,6 +220,7 @@ button {
   color-scheme: only light !important;
   forced-color-adjust: none !important;
   border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
 }
 
 .site-nav a,
@@ -249,6 +250,7 @@ button {
     background-color: transparent !important;
     background-image: none !important;
     border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -283,5 +285,6 @@ button {
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
+    box-shadow: none;
   }
 }
