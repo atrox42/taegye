@@ -53,6 +53,9 @@
 
 :root {
   color-scheme: only light;
+  --site-nav-edge: 0.75rem;
+  --site-nav-pad: 0.5rem;
+  --site-gutter: calc(var(--site-nav-edge) + var(--site-nav-pad));
   --site-nav-offset: calc(4.75rem + env(safe-area-inset-top, 0px));
   /* Gradient + data-URI + file. Force-dark often skips image paint. */
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
@@ -219,6 +222,16 @@ button {
   forced-color-adjust: none;
 }
 
+.site-gutter {
+  padding-left: var(--site-gutter);
+  padding-right: var(--site-gutter);
+}
+
+.site-header {
+  left: var(--site-nav-edge);
+  right: var(--site-nav-edge);
+}
+
 .site-main {
   padding-top: var(--site-nav-offset);
 }
@@ -244,6 +257,8 @@ button {
   width: 100%;
   position: relative;
   overflow: hidden;
+  padding-left: var(--site-nav-pad);
+  padding-right: var(--site-nav-pad);
   background-color: #ffffff !important;
   background-image: url("/bg-white.jpg"), url("/bg-white.png") !important;
   background-repeat: no-repeat !important;
@@ -270,11 +285,19 @@ button {
 
 @media (min-width: 768px) {
   :root {
+    --site-nav-edge: 0px;
+    --site-nav-pad: 1.5rem;
+    --site-gutter: 1.5rem;
     --site-nav-offset: 0px;
   }
 
   .site-main {
     padding-top: 0;
+  }
+
+  .site-header {
+    left: 0;
+    right: 0;
   }
 
   .site-header,
@@ -284,6 +307,11 @@ button {
     border-radius: 0;
     box-shadow: none;
     overflow: visible;
+  }
+
+  .site-nav {
+    padding-left: var(--site-nav-pad);
+    padding-right: var(--site-nav-pad);
   }
 
   .site-nav-bitmap {

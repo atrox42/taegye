@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <article className="site-page px-5 pt-8 pb-24 sm:px-8 sm:pt-24 sm:pb-32">
+    <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
       <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">about</h1>
       <div className="mt-12 max-w-xl space-y-16 sm:mt-16 sm:space-y-20">
         <section lang="en" className="space-y-7 text-[13px] leading-[1.9] tracking-[0.02em]">

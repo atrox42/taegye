@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="site-page px-5 pt-10 pb-24 sm:px-6 sm:pt-28">
+    <div className="site-page site-gutter pt-10 pb-24 sm:pt-28">
       <p className="text-[11px] lowercase tracking-[0.14em]">404</p>
       <Link
         href="/"

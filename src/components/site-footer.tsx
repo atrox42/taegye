@@ -28,7 +28,7 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
 export function SiteFooter() {
   return (
     <footer className="site-footer" style={forceWhiteStyle}>
-      <div className="flex w-full flex-col gap-12 px-6 pt-14 pb-8 md:flex-row md:items-start md:justify-between md:gap-0 md:px-10 md:pt-16 md:pb-10 lg:px-14">
+      <div className="site-gutter flex w-full flex-col gap-12 pt-14 pb-8 md:flex-row md:items-start md:justify-between md:gap-0 md:pt-16 md:pb-10">
         <Link href="/" className="inline-flex shrink-0 self-start" aria-label={SITE_NAME}>
           <BrandLogo />
         </Link>
@@ -53,7 +53,7 @@ export function SiteFooter() {
         </nav>
       </div>
 
-      <div className="overflow-visible px-6 pb-[max(2.5rem,calc(1.5rem+env(safe-area-inset-bottom,0px)))] md:px-10 lg:px-14">
+      <div className="site-gutter overflow-visible pb-[max(2.5rem,calc(1.5rem+env(safe-area-inset-bottom,0px)))]">
         <FooterLegal />
       </div>
     </footer>
