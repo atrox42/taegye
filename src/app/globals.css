@@ -191,9 +191,19 @@ body {
 .site-nav {
   background-color: #ffffff !important;
   color: #111111 !important;
+  border-radius: 0;
 }
 
-.site-nav a {
+.site-nav a,
+.site-nav a:hover,
+.site-nav a:focus,
+.site-nav a:active,
+.site-nav a:visited {
+  text-decoration: none !important;
+  color: #999999 !important;
+}
+
+.site-nav a[aria-current="page"] {
   color: #111111 !important;
 }
 
