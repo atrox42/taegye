@@ -13,10 +13,10 @@ export const INSTAGRAM_URL = "https://www.instagram.com/taegye_/";
 export const CONTACT_EMAIL = "hello@taegye.kr";
 
 export const NAV_ITEMS = [
-  { label: "home", href: "/" },
-  { label: "new", href: "/new" },
-  { label: "about", href: "/about" },
-  { label: "store", href: STORE_URL, external: true },
+  { label: "Home", href: "/" },
+  { label: "New", href: "/new" },
+  { label: "About", href: "/about" },
+  { label: "Store", href: STORE_URL, external: true },
 ] as const;
 
 /** Logo display box — keep within the 135×48 px brand lockup. */
@@ -89,8 +89,19 @@ export const ABOUT = {
   ],
 } as const;
 
+export const NEW_CATEGORIES = [
+  { id: "wall-kit", label: "Wall-kit" },
+  { id: "one-port", label: "One-port" },
+  { id: "etc", label: "Etc" },
+] as const;
+
+export type NewCategoryId = (typeof NEW_CATEGORIES)[number]["id"];
+
+export const DEFAULT_NEW_CATEGORY: NewCategoryId = "wall-kit";
+
 export type NewProduct = {
   id: string;
+  category: NewCategoryId;
   name: string;
   price: string;
   emptySrc: string;
@@ -116,6 +127,7 @@ export const STAND_NOTE = {
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
+    category: "wall-kit",
     name: "Modular Stand, Silver",
     price: STAND_PRICE,
     emptySrc: "/products/stand-silver.webp",
@@ -125,6 +137,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "purple",
+    category: "wall-kit",
     name: "Modular Stand, Purple",
     price: STAND_PRICE,
     emptySrc: "/products/stand-purple.webp",
@@ -134,6 +147,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "black",
+    category: "wall-kit",
     name: "Modular Stand, Black",
     price: STAND_PRICE,
     emptySrc: "/products/stand-black.webp",
@@ -143,6 +157,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "green",
+    category: "wall-kit",
     name: "Modular Stand, Green",
     price: STAND_PRICE,
     emptySrc: "/products/stand-green.webp",
@@ -152,6 +167,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "white",
+    category: "wall-kit",
     name: "Modular Stand, White",
     price: STAND_PRICE,
     emptySrc: "/products/stand-white.webp",

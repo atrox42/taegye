@@ -30,10 +30,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <article className="site-page site-gutter pt-8 pb-24 sm:pt-20 sm:pb-32" style={forceWhiteStyle}>
       <Link
         href="/new"
-        className="text-[11px] font-normal lowercase tracking-[0.14em] no-underline hover:no-underline"
+        className="text-[11px] font-normal tracking-[0.14em] no-underline hover:no-underline"
         style={{ color: "#999999" }}
       >
-        new
+        New
       </Link>
 
       <div className="mt-10 grid items-start gap-12 md:mt-16 md:grid-cols-2 md:gap-16 lg:gap-24">
