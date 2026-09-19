@@ -20,7 +20,7 @@ export function FooterLegal() {
           aria-controls={detailsId}
           aria-label={open ? "Hide business information" : "Show business information"}
           onClick={() => setOpen((value) => !value)}
-          className="inline cursor-pointer align-baseline text-[10px] tracking-[0.08em] text-foreground/50 transition-opacity hover:opacity-70"
+          className="inline cursor-pointer align-baseline px-0.5 text-[10px] tracking-[0.08em] text-foreground/50 transition-opacity hover:opacity-70"
         >
           +
         </button>
