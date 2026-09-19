@@ -28,15 +28,12 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
 export function SiteFooter() {
   return (
     <footer className="site-footer" style={forceWhiteStyle}>
-      <div className="site-gutter flex w-full flex-col gap-12 pt-14 pb-8 md:flex-row md:items-start md:justify-between md:gap-0 md:pt-16 md:pb-10">
+      <div className="site-footer-row site-gutter">
         <Link href="/" className="inline-flex shrink-0 self-start" aria-label={SITE_NAME}>
           <BrandLogo />
         </Link>
 
-        <nav
-          aria-label="Footer"
-          className="ml-0 grid w-full max-w-[20rem] grid-cols-2 gap-x-10 md:ml-auto md:w-auto md:max-w-none md:gap-x-24 lg:gap-x-32"
-        >
+        <nav aria-label="Footer" className="site-footer-nav">
           {FOOTER_COLUMNS.map((column) => (
             <ul
               key={column.map((item) => item.label).join("-")}

@@ -5,6 +5,8 @@ export function HomeHero() {
     <section className="home-hero" aria-label="TAEGYE">
       <video
         className="home-hero-media"
+        width={192}
+        height={108}
         autoPlay
         muted
         loop

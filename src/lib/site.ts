@@ -13,10 +13,10 @@ export const INSTAGRAM_URL = "https://www.instagram.com/taegye_/";
 export const CONTACT_EMAIL = "hello@taegye.kr";
 
 export const NAV_ITEMS = [
-  { label: "home", href: "/" },
-  { label: "new", href: "/new" },
-  { label: "about", href: "/about" },
-  { label: "store", href: STORE_URL, external: true },
+  { label: "Home", href: "/" },
+  { label: "New", href: "/new" },
+  { label: "About", href: "/about" },
+  { label: "Store", href: STORE_URL, external: true },
 ] as const;
 
 /** Logo display box — keep within the 135×48 px brand lockup. */
@@ -24,7 +24,7 @@ export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
 
-/** Home full-bleed grass loop (192×108, CSS object-cover). */
+/** Home grass loop — keep at intrinsic 192×108, never upscale. */
 export const HERO_VIDEO_SRC = "/hero-grass-loop.mp4";
 export const HERO_VIDEO_POSTER = "/hero-grass-poster.jpg";
 
@@ -89,8 +89,19 @@ export const ABOUT = {
   ],
 } as const;
 
+export const NEW_CATEGORIES = [
+  { id: "wall-kit", label: "Wall-kit" },
+  { id: "one-port", label: "One-port" },
+  { id: "etc", label: "Etc" },
+] as const;
+
+export type NewCategoryId = (typeof NEW_CATEGORIES)[number]["id"];
+
+export const DEFAULT_NEW_CATEGORY: NewCategoryId = "wall-kit";
+
 export type NewProduct = {
   id: string;
+  category: NewCategoryId;
   name: string;
   price: string;
   emptySrc: string;
@@ -101,10 +112,22 @@ export type NewProduct = {
 
 export const STAND_PRICE = "KRW 108,000";
 
+export const STAND_NOTE = {
+  en: [
+    "A modular vessel for a moss object.",
+    "Keep in indirect light. Water sparingly.",
+  ],
+  kr: [
+    "이끼를 담는 모듈러 스탠드.",
+    "직사광선을 피하고, 물은 적게 주세요.",
+  ],
+} as const;
+
 /** /new catalog — silver, purple, black, green, white. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
+    category: "wall-kit",
     name: "Modular Stand, Silver",
     price: STAND_PRICE,
     emptySrc: "/products/stand-silver.webp",
@@ -114,6 +137,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "purple",
+    category: "wall-kit",
     name: "Modular Stand, Purple",
     price: STAND_PRICE,
     emptySrc: "/products/stand-purple.webp",
@@ -123,6 +147,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "black",
+    category: "wall-kit",
     name: "Modular Stand, Black",
     price: STAND_PRICE,
     emptySrc: "/products/stand-black.webp",
@@ -132,6 +157,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "green",
+    category: "wall-kit",
     name: "Modular Stand, Green",
     price: STAND_PRICE,
     emptySrc: "/products/stand-green.webp",
@@ -141,6 +167,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   },
   {
     id: "white",
+    category: "wall-kit",
     name: "Modular Stand, White",
     price: STAND_PRICE,
     emptySrc: "/products/stand-white.webp",
@@ -149,6 +176,10 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossAlt: "TAEGYE modular stand in white with moss",
   },
 ];
+
+export function getNewProduct(id: string) {
+  return NEW_PRODUCTS.find((product) => product.id === id);
+}
 
 export const FAQ_ITEMS = [
   {

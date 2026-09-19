@@ -33,7 +33,7 @@ export function SiteHeader() {
               : pathname === item.href || pathname.startsWith(`${item.href}/`));
 
           const className = cn(
-            "relative z-10 shrink-0 text-left text-[10px] lowercase leading-none tracking-[0.08em] no-underline hover:no-underline focus:no-underline active:no-underline md:text-[11px] md:tracking-[0.14em]",
+            "relative z-10 shrink-0 text-left text-[10px] leading-none tracking-[0.08em] no-underline hover:no-underline focus:no-underline active:no-underline md:text-[11px] md:tracking-[0.14em]",
             isActive ? "font-medium" : "font-normal"
           );
 

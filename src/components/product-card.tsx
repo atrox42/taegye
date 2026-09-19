@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
 
 import { forceWhiteStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
@@ -12,20 +12,11 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product, priority = false }: ProductCardProps) {
-  const [moss, setMoss] = useState(false);
-
   return (
-    <article
-      className="product-card cursor-pointer"
+    <Link
+      href={`/new/${product.id}`}
+      className="product-card block no-underline hover:no-underline"
       style={forceWhiteStyle}
-      data-moss={moss ? "on" : "off"}
-      onMouseEnter={() => setMoss(true)}
-      onMouseLeave={() => setMoss(false)}
-      onClick={() => {
-        if (!window.matchMedia("(hover: hover)").matches) {
-          setMoss((value) => !value);
-        }
-      }}
     >
       <div className="relative aspect-square overflow-hidden" style={forceWhiteStyle}>
         <div className="product-empty absolute inset-0">
@@ -58,6 +49,6 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           {product.price}
         </p>
       </div>
-    </article>
+    </Link>
   );
 }
