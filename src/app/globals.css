@@ -208,6 +208,11 @@ main,
   forced-color-adjust: none !important;
 }
 
+.product-card:hover > .product-stage {
+  background-color: #772dce !important;
+  background-image: none !important;
+}
+
 html,
 body,
 .site-shell {
@@ -374,14 +379,31 @@ button {
   background-color: #ffffff;
 }
 
+.home-hero-stage {
+  position: relative;
+  width: 192px;
+  height: 108px;
+  flex-shrink: 0;
+}
+
 .home-hero-media {
   display: block;
   width: 192px;
   height: 108px;
   max-width: 192px;
   max-height: 108px;
-  flex-shrink: 0;
   object-fit: fill;
+}
+
+.home-hero-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: auto;
+  max-width: 30px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .site-white-layer {
@@ -509,4 +531,9 @@ button {
     background-image: none !important;
     box-shadow: none;
   }
+}
+
+.product-card:hover > .product-stage {
+  background-color: #772dce !important;
+  background-image: none !important;
 }

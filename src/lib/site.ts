@@ -23,6 +23,7 @@ export const NAV_ITEMS = [
 export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
+export const LOGO_MARK_WHITE_SRC = "/logo-mark-white.svg";
 
 /** Home grass loop — keep at intrinsic 192×108, never upscale. */
 export const HERO_VIDEO_SRC = "/hero-grass-loop.mp4";
