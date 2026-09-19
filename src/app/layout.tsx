@@ -57,7 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <meta name="theme-color" content="#ffffff" />
         <style
           dangerouslySetInnerHTML={{
-            __html: `:root,html,body,#__next,main,.site-shell,.site-main,.site-footer,.site-page,.site-header,.site-nav,.site-white-layer,.new-page,.new-grid,.new-grid-item{color-scheme:only light!important;background-color:#ffffff!important;background-image:${FORCE_WHITE_IMAGE}!important;forced-color-adjust:none}`,
+            __html: `:root,html,body,#__next,main,.site-shell,.site-main,.site-footer,.site-page,.site-header,.site-nav,.site-white-layer,.new-page,.new-grid,.new-grid-item{color-scheme:only light!important;background-color:#ffffff!important;background-image:${FORCE_WHITE_IMAGE}!important;background-size:100% 100%!important;forced-color-adjust:none}`,
           }}
         />
       </head>
