@@ -29,8 +29,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light",
+  colorScheme: "only light",
   themeColor: [
+    { color: "#ffffff" },
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#ffffff" },
   ],
@@ -44,8 +45,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       style={{ colorScheme: "only light", backgroundColor: "#ffffff" }}
     >
       <head>
-        <meta name="color-scheme" content="only light" />
+        <meta name="color-scheme" content="light only" />
         <meta name="supported-color-schemes" content="light" />
+        <meta name="theme-color" content="#ffffff" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `:root,html,body,#__next,main{color-scheme:only light!important;background:#fff!important;background-color:#fff!important}`,
+          }}
+        />
       </head>
       <body
         className="min-h-full font-sans"

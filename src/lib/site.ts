@@ -88,25 +88,39 @@ export const ABOUT = {
 export type NewProduct = {
   id: string;
   name: string;
+  price: string;
   emptySrc: string;
   mossSrc: string;
   emptyAlt: string;
   mossAlt: string;
 };
 
-/** /new catalog — empty default, moss on hover. Prices omitted until Smart Store is live. */
+export const STAND_PRICE = "KRW 108,000";
+
+/** /new catalog — purple and silver first, then remaining colors. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "purple",
     name: "Modular Stand, Purple",
+    price: STAND_PRICE,
     emptySrc: "/products/stand-purple.webp",
     mossSrc: "/products/stand-purple-moss.webp",
     emptyAlt: "TAEGYE modular stand in purple",
     mossAlt: "TAEGYE modular stand in purple with moss",
   },
   {
+    id: "silver",
+    name: "Modular Stand, Silver",
+    price: STAND_PRICE,
+    emptySrc: "/products/stand-silver.webp",
+    mossSrc: "/products/stand-silver-moss.webp",
+    emptyAlt: "TAEGYE modular stand in frosted silver",
+    mossAlt: "TAEGYE modular stand in frosted silver with moss",
+  },
+  {
     id: "white",
     name: "Modular Stand, White",
+    price: STAND_PRICE,
     emptySrc: "/products/stand-white.webp",
     mossSrc: "/products/stand-white-moss.webp",
     emptyAlt: "TAEGYE modular stand in white",
@@ -115,6 +129,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "black",
     name: "Modular Stand, Black",
+    price: STAND_PRICE,
     emptySrc: "/products/stand-black.webp",
     mossSrc: "/products/stand-black-moss.webp",
     emptyAlt: "TAEGYE modular stand in black",
@@ -123,18 +138,11 @@ export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "green",
     name: "Modular Stand, Green",
+    price: STAND_PRICE,
     emptySrc: "/products/stand-green.webp",
     mossSrc: "/products/stand-green-moss.webp",
     emptyAlt: "TAEGYE modular stand in green",
     mossAlt: "TAEGYE modular stand in green with moss",
-  },
-  {
-    id: "silver",
-    name: "Modular Stand, Silver",
-    emptySrc: "/products/stand-silver.webp",
-    mossSrc: "/products/stand-silver-moss.webp",
-    emptyAlt: "TAEGYE modular stand in frosted silver",
-    mossAlt: "TAEGYE modular stand in frosted silver with moss",
   },
 ];
 

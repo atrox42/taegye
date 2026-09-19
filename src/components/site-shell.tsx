@@ -4,11 +4,15 @@ import { SiteHeader } from "@/components/site-header";
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <div
+      id="__next"
       className="site-shell flex min-h-svh flex-col"
-      style={{ backgroundColor: "#ffffff", color: "#111111" }}
+      style={{ backgroundColor: "#ffffff", color: "#111111", colorScheme: "only light" }}
     >
       <SiteHeader />
-      <main className="site-main flex-1" style={{ backgroundColor: "#ffffff" }}>
+      <main
+        className="site-main flex-1"
+        style={{ backgroundColor: "#ffffff", colorScheme: "only light" }}
+      >
         {children}
       </main>
       <SiteFooter />

@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Dark utilities never apply — the brand site is always light. */
-@custom-variant dark (&:is(.never-dark *));
+/* Dark utilities never apply — OS / prefers-color-scheme must not activate dark:. */
+@custom-variant dark (&:not(*));
 
 @theme inline {
   --color-background: var(--background);
@@ -53,38 +53,39 @@
 
 :root {
   color-scheme: only light;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --site-nav-offset: calc(4.75rem + env(safe-area-inset-top, 0px));
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f6f6;
+  --secondary-foreground: #111111;
+  --muted: #f6f6f6;
+  --muted-foreground: #999999;
+  --accent: #f6f6f6;
+  --accent-foreground: #111111;
+  --destructive: #c0392b;
+  --border: #ebebeb;
+  --input: #ebebeb;
+  --ring: #bbbbbb;
+  --chart-1: #dddddd;
+  --chart-2: #999999;
+  --chart-3: #666666;
+  --chart-4: #444444;
+  --chart-5: #222222;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #111111;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f6f6f6;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #ebebeb;
+  --sidebar-ring: #bbbbbb;
 }
 
 html,
@@ -100,32 +101,32 @@ body,
   body,
   .dark {
     color-scheme: only light;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --background: #ffffff;
+    --foreground: #111111;
+    --card: #ffffff;
+    --card-foreground: #111111;
+    --popover: #ffffff;
+    --popover-foreground: #111111;
+    --primary: #111111;
+    --primary-foreground: #ffffff;
+    --secondary: #f6f6f6;
+    --secondary-foreground: #111111;
+    --muted: #f6f6f6;
+    --muted-foreground: #999999;
+    --accent: #f6f6f6;
+    --accent-foreground: #111111;
+    --destructive: #c0392b;
+    --border: #ebebeb;
+    --input: #ebebeb;
+    --ring: #bbbbbb;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #111111;
+    --sidebar-primary: #111111;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #f6f6f6;
+    --sidebar-accent-foreground: #111111;
+    --sidebar-border: #ebebeb;
+    --sidebar-ring: #bbbbbb;
   }
 }
 
@@ -169,29 +170,56 @@ body,
   }
 }
 
-/* Unlayered so this wins over Tailwind/shadcn and Android forced-dark. */
+/* Unlayered so this wins over Tailwind/shadcn and Android / Samsung force-dark. */
+*,
+*::before,
+*::after {
+  forced-color-adjust: none;
+}
+
 html,
-body {
+body,
+#__next,
+#root,
+main,
+.site-shell,
+.site-main,
+.site-footer,
+.site-page,
+.product-card,
+.product-card > div {
   background: #ffffff !important;
   background-color: #ffffff !important;
   color: #111111 !important;
   color-scheme: only light !important;
+  forced-color-adjust: none !important;
+}
+
+html,
+body {
+  background-image: linear-gradient(#ffffff, #ffffff) !important;
+}
+
+input,
+textarea,
+select,
+button {
+  color-scheme: only light !important;
   forced-color-adjust: none;
 }
 
-.site-shell,
-.site-main,
-.site-footer,
-.product-card {
-  background-color: #ffffff !important;
-  color: #111111 !important;
-  color-scheme: only light !important;
+.site-main {
+  padding-top: var(--site-nav-offset);
 }
 
 .site-nav {
+  background: #ffffff !important;
   background-color: #ffffff !important;
+  background-image: linear-gradient(#ffffff, #ffffff) !important;
   color: #111111 !important;
-  border-radius: 0;
+  color-scheme: only light !important;
+  forced-color-adjust: none !important;
+  border-radius: 10px;
 }
 
 .site-nav a,
@@ -208,20 +236,52 @@ body {
 }
 
 @media (min-width: 768px) {
+  :root {
+    --site-nav-offset: 0px;
+  }
+
+  .site-main {
+    padding-top: 0;
+  }
+
   .site-nav {
+    background: transparent !important;
     background-color: transparent !important;
+    background-image: none !important;
+    border-radius: 0;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   html,
   body,
+  #__next,
+  #root,
+  main,
   .site-shell,
   .site-main,
-  .site-footer {
+  .site-footer,
+  .site-page,
+  .product-card {
     background: #ffffff !important;
     background-color: #ffffff !important;
+    background-image: linear-gradient(#ffffff, #ffffff) !important;
     color: #111111 !important;
     color-scheme: only light !important;
+    forced-color-adjust: none !important;
+  }
+
+  .site-nav {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: linear-gradient(#ffffff, #ffffff) !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) and (min-width: 768px) {
+  .site-nav {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
   }
 }

@@ -51,6 +51,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       <p className="mt-3 text-left text-[11px] leading-5 tracking-[0.04em]" style={{ color: "#111111" }}>
         {product.name}
       </p>
+      <p className="mt-1 text-left text-[11px] leading-5 tracking-[0.04em]" style={{ color: "#111111" }}>
+        {product.price}
+      </p>
     </article>
   );
 }

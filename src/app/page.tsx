@@ -15,12 +15,14 @@ export default function HomePage() {
   return (
     <section
       aria-label="Featured products"
-      className="grid grid-cols-1 md:grid-cols-2"
+      className="site-page grid grid-cols-1 md:grid-cols-2"
+      style={{ backgroundColor: "#ffffff" }}
     >
       {HERO_PANELS.map((panel) => (
         <div
           key={panel.src}
-          className="relative aspect-square bg-[#f6f6f6] md:aspect-auto md:min-h-svh"
+          className="relative aspect-square bg-white md:aspect-auto md:min-h-svh"
+          style={{ backgroundColor: "#ffffff" }}
         >
           <Image
             src={panel.src}
