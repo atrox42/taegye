@@ -101,6 +101,17 @@ export type NewProduct = {
 
 export const STAND_PRICE = "KRW 108,000";
 
+export const STAND_NOTE = {
+  en: [
+    "A modular vessel for a moss object.",
+    "Keep in indirect light. Water sparingly.",
+  ],
+  kr: [
+    "이끼를 담는 모듈러 스탠드.",
+    "직사광선을 피하고, 물은 적게 주세요.",
+  ],
+} as const;
+
 /** /new catalog — silver, purple, black, green, white. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
@@ -149,6 +160,10 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossAlt: "TAEGYE modular stand in white with moss",
   },
 ];
+
+export function getNewProduct(id: string) {
+  return NEW_PRODUCTS.find((product) => product.id === id);
+}
 
 export const FAQ_ITEMS = [
   {
