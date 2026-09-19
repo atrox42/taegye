@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { forceWhiteStyle } from "@/lib/force-white";
+
 const HERO_PANELS = [
   {
     src: "/hero-silver.webp",
@@ -16,13 +18,13 @@ export default function HomePage() {
     <section
       aria-label="Featured products"
       className="site-page grid grid-cols-1 md:grid-cols-2"
-      style={{ backgroundColor: "#ffffff" }}
+      style={forceWhiteStyle}
     >
       {HERO_PANELS.map((panel) => (
         <div
           key={panel.src}
-          className="relative aspect-square bg-white md:aspect-auto md:min-h-svh"
-          style={{ backgroundColor: "#ffffff" }}
+          className="relative aspect-square md:aspect-auto md:min-h-svh"
+          style={forceWhiteStyle}
         >
           <Image
             src={panel.src}

@@ -54,6 +54,10 @@
 :root {
   color-scheme: only light;
   --site-nav-offset: calc(4.75rem + env(safe-area-inset-top, 0px));
+  /* Gradient + data-URI + file. Force-dark often skips image paint. */
+  --force-white-image: linear-gradient(#ffffff, #ffffff),
+    url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC"),
+    url("/bg-white.png");
   --background: #ffffff;
   --foreground: #111111;
   --card: #ffffff;
@@ -94,7 +98,6 @@ body,
   color-scheme: only light;
 }
 
-/* Keep the light palette even if the OS or a .dark class requests dark UI. */
 @media (prefers-color-scheme: dark) {
   :root,
   html,
@@ -135,12 +138,12 @@ body,
     @apply border-border outline-ring/50;
   }
   html {
-    @apply font-sans bg-white;
+    @apply font-sans;
     color-scheme: only light;
     background-color: #ffffff;
   }
   body {
-    @apply bg-white text-neutral-900 antialiased;
+    @apply text-neutral-900 antialiased;
     color-scheme: only light;
     background-color: #ffffff;
     color: #111111;
@@ -170,7 +173,7 @@ body,
   }
 }
 
-/* Unlayered so this wins over Tailwind/shadcn and Android / Samsung force-dark. */
+/* Unlayered. Never use the `background` shorthand — it wipes background-image. */
 *,
 *::before,
 *::after {
@@ -186,18 +189,22 @@ main,
 .site-main,
 .site-footer,
 .site-page,
+.site-header,
 .product-card,
 .product-card > div {
-  background: #ffffff !important;
   background-color: #ffffff !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: repeat !important;
   color: #111111 !important;
   color-scheme: only light !important;
   forced-color-adjust: none !important;
 }
 
 html,
-body {
-  background-image: linear-gradient(#ffffff, #ffffff) !important;
+body,
+.site-shell {
+  min-height: 100%;
+  min-height: 100dvh;
 }
 
 input,
@@ -213,9 +220,9 @@ button {
 }
 
 .site-nav {
-  background: #ffffff !important;
   background-color: #ffffff !important;
-  background-image: linear-gradient(#ffffff, #ffffff) !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: repeat !important;
   color: #111111 !important;
   color-scheme: only light !important;
   forced-color-adjust: none !important;
@@ -245,8 +252,8 @@ button {
     padding-top: 0;
   }
 
+  .site-header,
   .site-nav {
-    background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
     border-radius: 0;
@@ -264,25 +271,27 @@ button {
   .site-main,
   .site-footer,
   .site-page,
-  .product-card {
-    background: #ffffff !important;
+  .site-header,
+  .product-card,
+  .product-card > div {
     background-color: #ffffff !important;
-    background-image: linear-gradient(#ffffff, #ffffff) !important;
+    background-image: var(--force-white-image) !important;
+    background-repeat: repeat !important;
     color: #111111 !important;
     color-scheme: only light !important;
     forced-color-adjust: none !important;
   }
 
   .site-nav {
-    background: #ffffff !important;
     background-color: #ffffff !important;
-    background-image: linear-gradient(#ffffff, #ffffff) !important;
+    background-image: var(--force-white-image) !important;
+    background-repeat: repeat !important;
   }
 }
 
 @media (prefers-color-scheme: dark) and (min-width: 768px) {
+  .site-header,
   .site-nav {
-    background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
     box-shadow: none;

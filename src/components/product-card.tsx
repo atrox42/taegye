@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { forceWhiteStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
 
 type ProductCardProps = {
@@ -16,6 +17,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <article
       className="product-card cursor-pointer"
+      style={forceWhiteStyle}
       data-moss={moss ? "on" : "off"}
       onMouseEnter={() => setMoss(true)}
       onMouseLeave={() => setMoss(false)}
@@ -25,7 +27,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         }
       }}
     >
-      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: "#ffffff" }}>
+      <div className="relative aspect-square overflow-hidden" style={forceWhiteStyle}>
         <div className="product-empty absolute inset-0">
           <Image
             src={product.emptySrc}
