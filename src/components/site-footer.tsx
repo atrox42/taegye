@@ -2,30 +2,33 @@ import Link from "next/link";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
-import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
+import { StoreLabel } from "@/components/store-label";
+import { FOOTER_COLUMNS, SITE_NAME, STORE_URL, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
-  const className =
-    "text-[12px] font-normal tracking-[0.04em] text-foreground/80 transition-opacity hover:opacity-50";
+  const isStore = href === STORE_URL && label.toLowerCase() === "store";
+  const className = "text-[12px] font-normal tracking-[0.04em] no-underline";
+  const style = { color: "#111111" };
+  const children = isStore ? <StoreLabel casing="title" /> : label;
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-        {label}
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
+        {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={className}>
-      {label}
+    <Link href={href} className={className} style={style}>
+      {children}
     </Link>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="bg-white">
+    <footer className="site-footer bg-white" style={{ backgroundColor: "#ffffff", color: "#111111" }}>
       <div className="flex flex-col gap-10 px-5 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:py-12 lg:px-10">
         <Link href="/" className="inline-flex shrink-0 items-center" aria-label={SITE_NAME}>
           <BrandLogo />

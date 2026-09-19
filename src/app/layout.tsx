@@ -30,17 +30,27 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#ffffff" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`light ${geistSans.variable} ${notoSansKr.variable} h-full bg-white antialiased`}
+      className={`light ${geistSans.variable} ${notoSansKr.variable} h-full antialiased`}
       style={{ colorScheme: "only light", backgroundColor: "#ffffff" }}
     >
-      <body className="min-h-full bg-white font-sans text-neutral-900">
+      <head>
+        <meta name="color-scheme" content="only light" />
+        <meta name="supported-color-schemes" content="light" />
+      </head>
+      <body
+        className="min-h-full font-sans"
+        style={{ colorScheme: "only light", backgroundColor: "#ffffff", color: "#111111" }}
+      >
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
