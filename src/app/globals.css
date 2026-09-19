@@ -190,6 +190,10 @@ main,
 .site-footer,
 .site-page,
 .site-header,
+.site-white-layer,
+.new-page,
+.new-grid,
+.new-grid-item,
 .product-card,
 .product-card > div {
   background-color: #ffffff !important;
@@ -219,7 +223,16 @@ button {
   padding-top: var(--site-nav-offset);
 }
 
+.site-white-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+}
+
 .site-nav {
+  display: flex;
+  width: 100%;
   background-color: #ffffff !important;
   background-image: var(--force-white-image) !important;
   background-repeat: repeat !important;
@@ -272,6 +285,10 @@ button {
   .site-footer,
   .site-page,
   .site-header,
+  .site-white-layer,
+  .new-page,
+  .new-grid,
+  .new-grid-item,
   .product-card,
   .product-card > div {
     background-color: #ffffff !important;
