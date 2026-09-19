@@ -24,6 +24,10 @@ export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
 
+/** Home full-bleed loop. Drop the mp4 at this path when the asset is ready. */
+export const HERO_VIDEO_SRC = "/hero-grass-loop.mp4";
+export const HERO_VIDEO_POSTER = "/hero-grass-poster.jpg";
+
 export const COPYRIGHT = {
   year: 2026,
   owner: "LAB TAEGYE",
