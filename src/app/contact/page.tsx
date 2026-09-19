@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { StoreLabel } from "@/components/store-label";
 import { CONTACT_EMAIL, LEGAL, STORE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -35,7 +34,7 @@ export default function ContactPage() {
           className="inline-flex text-[11px] lowercase tracking-[0.14em] no-underline"
           style={{ color: "#111111" }}
         >
-          <StoreLabel />
+          store
         </a>
       </div>
     </article>
