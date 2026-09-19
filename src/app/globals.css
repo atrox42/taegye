@@ -227,6 +227,61 @@ button {
   padding-right: var(--site-gutter);
 }
 
+/* Windowpane: 1px shared internal lines, no outer frame. */
+.new-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+
+.new-grid-item {
+  padding: 1.25rem 1rem 1.75rem;
+  border-right: 1px solid #111111;
+  border-bottom: 1px solid #111111;
+}
+
+.new-grid-item:nth-child(2n) {
+  border-right: none;
+}
+
+.new-grid-item:last-child {
+  border-bottom: none;
+}
+
+.new-grid-item:nth-last-child(2):nth-child(odd):has(+ .new-grid-item:last-child:nth-child(even)) {
+  border-bottom: none;
+}
+
+@media (min-width: 768px) {
+  .new-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .new-grid-item {
+    padding: 1.5rem 1.25rem 2rem;
+    border-right: 1px solid #111111;
+    border-bottom: 1px solid #111111;
+  }
+
+  .new-grid-item:nth-child(2n) {
+    border-right: 1px solid #111111;
+  }
+
+  .new-grid-item:nth-child(4n) {
+    border-right: none;
+  }
+
+  .new-grid-item:last-child {
+    border-bottom: none;
+  }
+
+  .new-grid-item:nth-last-child(-n + 4):nth-child(4n + 1):has(+ .new-grid-item:nth-child(4n):last-child),
+  .new-grid-item:nth-last-child(-n + 3):nth-child(4n + 2):has(+ .new-grid-item:nth-child(4n):last-child),
+  .new-grid-item:nth-last-child(-n + 2):nth-child(4n + 3):has(+ .new-grid-item:nth-child(4n):last-child) {
+    border-bottom: none;
+  }
+}
+
 .site-header {
   left: var(--site-nav-edge);
   right: var(--site-nav-edge);
