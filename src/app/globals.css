@@ -246,7 +246,7 @@ button {
   font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1;
-  cursor: pointer;
+  text-decoration: none;
 }
 
 .new-subnav-item[aria-current="page"] {

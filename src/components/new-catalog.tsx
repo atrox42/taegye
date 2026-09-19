@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { ProductCard } from "@/components/product-card";
 import { forceWhiteStyle } from "@/lib/force-white";
@@ -17,8 +18,6 @@ function isNewCategory(value: string | null): value is NewCategoryId {
 }
 
 export function NewCatalog() {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const raw = searchParams.get("cat");
   const active: NewCategoryId = isNewCategory(raw) ? raw : DEFAULT_NEW_CATEGORY;
@@ -33,25 +32,18 @@ export function NewCatalog() {
       <nav aria-label="New categories" className="new-subnav">
         {NEW_CATEGORIES.map((category) => {
           const isActive = category.id === active;
+          const href =
+            category.id === DEFAULT_NEW_CATEGORY ? "/new" : `/new?cat=${category.id}`;
           return (
-            <button
+            <Link
               key={category.id}
-              type="button"
+              href={href}
+              scroll={false}
               className="new-subnav-item"
               aria-current={isActive ? "page" : undefined}
-              onClick={() => {
-                const next = new URLSearchParams(searchParams.toString());
-                if (category.id === DEFAULT_NEW_CATEGORY) {
-                  next.delete("cat");
-                } else {
-                  next.set("cat", category.id);
-                }
-                const query = next.toString();
-                router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-              }}
             >
               {category.label}
-            </button>
+            </Link>
           );
         })}
       </nav>
