@@ -62,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <meta name="theme-color" content="#ffffff" />
         <style
           dangerouslySetInnerHTML={{
-            __html: `:root,html,body,#__next,main,.site-shell,.site-main,.site-footer,.site-page,.site-header,.site-nav,.site-white-layer,.home-hero,.new-page,.new-grid,.new-grid-item,.pdp,.pdp-visual,.pdp-stage,.pdp-copy,.site-footer-inner{color-scheme:only light!important;background-color:#ffffff!important;background-image:${FORCE_WHITE_IMAGE}!important;background-size:100% 100%!important;color:#111111!important;-webkit-text-fill-color:#111111;forced-color-adjust:none}.site-nav a{color:#999999!important;-webkit-text-fill-color:#999999!important}.site-nav a[aria-current=page]{color:#111111!important;-webkit-text-fill-color:#111111!important}`,
+            __html: `:root,html,body,main,.site-shell,.site-main,.site-footer,.site-page,.site-header,.site-nav,.site-white-layer,.home-hero,.new-page,.new-grid,.new-grid-item,.pdp,.pdp-visual,.pdp-stage,.pdp-copy,.site-footer-inner{color-scheme:only light!important;background-color:#ffffff!important;background-image:${FORCE_WHITE_IMAGE}!important;background-size:100% 100%!important;color:#111111!important;forced-color-adjust:none}`,
           }}
         />
       </head>

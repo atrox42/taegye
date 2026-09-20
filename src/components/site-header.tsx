@@ -11,10 +11,10 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="site-header pointer-events-none fixed top-3 z-50 w-auto max-w-none md:top-0 md:w-full">
+    <header className="site-header pointer-events-none fixed z-50">
       <nav
         aria-label="Primary"
-        className="site-nav pointer-events-auto relative flex w-full items-center justify-between overflow-hidden rounded-lg px-0 py-2.5 shadow-[0_2px_16px_rgba(0,0,0,0.12)] md:justify-start md:gap-x-3.5 md:overflow-visible md:rounded-none md:py-5 md:shadow-none"
+        className="site-nav pointer-events-auto relative flex w-full items-center justify-between"
         style={forceWhiteStyle}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts next/image wrappers */}
@@ -22,7 +22,7 @@ export function SiteHeader() {
           src={WHITE_BITMAP_SRC}
           alt=""
           aria-hidden
-          className="site-nav-bitmap pointer-events-none absolute inset-0 h-full w-full object-cover md:hidden"
+          className="site-nav-bitmap pointer-events-none absolute inset-0 h-full w-full object-cover"
         />
         {NAV_ITEMS.map((item) => {
           const isExternal = "external" in item && item.external;
@@ -32,15 +32,7 @@ export function SiteHeader() {
               ? pathname === "/"
               : pathname === item.href || pathname.startsWith(`${item.href}/`));
 
-          const className = cn(
-            "site-type relative z-10 shrink-0 text-left no-underline hover:no-underline focus:no-underline active:no-underline",
-            isActive ? "font-medium" : "font-normal"
-          );
-
-          const style = {
-            color: isActive ? "#111111" : "#999999",
-            WebkitTextFillColor: isActive ? "#111111" : "#999999",
-          };
+          const className = cn("site-nav-link site-type relative z-10", isActive && "is-active");
 
           if (isExternal) {
             return (
@@ -50,7 +42,6 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={className}
-                style={style}
               >
                 {item.label}
               </a>
@@ -62,7 +53,6 @@ export function SiteHeader() {
               key={item.label}
               href={item.href}
               className={className}
-              style={style}
               aria-current={isActive ? "page" : undefined}
             >
               {item.label}
