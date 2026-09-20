@@ -130,6 +130,8 @@ export type NewProduct = {
   id: string;
   category: NewCategoryId;
   name: string;
+  nameKr: string;
+  finish: string;
   price: string;
   emptySrc: string;
   mossSrc: string;
@@ -138,6 +140,32 @@ export type NewProduct = {
 };
 
 export const STAND_PRICE = "KRW 108,000";
+
+export const STAND_FEATURES = [
+  "A modular vessel for a moss object",
+  "Open L-frame",
+] as const;
+
+export const STAND_FEATURES_TAIL = ["Sits on a wall", "Looks different over time"] as const;
+
+export const STAND_STAR_NOTE = "* Keep in indirect light. Water sparingly.";
+
+export const STAND_ORIGIN = "Made In Korea";
+
+export const STAND_ACCORDION = [
+  {
+    label: "Size Guide",
+    body: "Dimensions to be confirmed. Wall-kit modular stand.",
+  },
+  {
+    label: "Care",
+    body: "Keep in indirect light. Water sparingly. Let the moss set its own pace.",
+  },
+  {
+    label: "Shipping & Returns",
+    body: "Shipping and returns are listed at checkout on the store.",
+  },
+] as const;
 
 export const STAND_NOTE = {
   en: [
@@ -156,6 +184,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     id: "silver",
     category: "wall-kit",
     name: "Modular Stand, Silver",
+    nameKr: "모듈러 스탠드, 실버",
+    finish: "Silver finish",
     price: STAND_PRICE,
     emptySrc: "/products/stand-silver.webp",
     mossSrc: "/products/stand-silver-moss.webp",
@@ -166,6 +196,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     id: "purple",
     category: "wall-kit",
     name: "Modular Stand, Purple",
+    nameKr: "모듈러 스탠드, 퍼플",
+    finish: "Purple finish",
     price: STAND_PRICE,
     emptySrc: "/products/stand-purple.webp",
     mossSrc: "/products/stand-purple-moss.webp",
@@ -176,6 +208,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     id: "black",
     category: "wall-kit",
     name: "Modular Stand, Black",
+    nameKr: "모듈러 스탠드, 블랙",
+    finish: "Black finish",
     price: STAND_PRICE,
     emptySrc: "/products/stand-black.webp",
     mossSrc: "/products/stand-black-moss.webp",
@@ -186,6 +220,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     id: "green",
     category: "wall-kit",
     name: "Modular Stand, Green",
+    nameKr: "모듈러 스탠드, 그린",
+    finish: "Green finish",
     price: STAND_PRICE,
     emptySrc: "/products/stand-green.webp",
     mossSrc: "/products/stand-green-moss.webp",
@@ -196,6 +232,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     id: "white",
     category: "wall-kit",
     name: "Modular Stand, White",
+    nameKr: "모듈러 스탠드, 화이트",
+    finish: "White finish",
     price: STAND_PRICE,
     emptySrc: "/products/stand-white.webp",
     mossSrc: "/products/stand-white-moss.webp",

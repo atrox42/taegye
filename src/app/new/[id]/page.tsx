@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProductAccordions } from "@/components/product-accordions";
 import { forceWhiteStyle } from "@/lib/force-white";
-import { NEW_PRODUCTS, STAND_NOTE, STORE_URL, getNewProduct } from "@/lib/site";
+import {
+  NEW_PRODUCTS,
+  STAND_FEATURES,
+  STAND_FEATURES_TAIL,
+  STAND_ORIGIN,
+  STAND_STAR_NOTE,
+  STORE_URL,
+  getNewProduct,
+} from "@/lib/site";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -26,72 +34,61 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const product = getNewProduct(id);
   if (!product) notFound();
 
+  const features = [...STAND_FEATURES, product.finish, ...STAND_FEATURES_TAIL];
+
   return (
-    <article className="site-page site-gutter pt-8 pb-24 sm:pt-20 sm:pb-32" style={forceWhiteStyle}>
-      <Link
-        href="/new"
-        className="site-type no-underline hover:no-underline"
-        style={{ color: "#999999" }}
-      >
-        New
-      </Link>
-
-      <div className="mt-10 grid items-start gap-12 md:mt-16 md:grid-cols-2 md:gap-16 lg:gap-24">
-        <div className="product-card" style={forceWhiteStyle}>
-          <div className="relative aspect-square overflow-hidden" style={forceWhiteStyle}>
-            <div className="product-empty absolute inset-0">
-              <Image
-                src={product.emptySrc}
-                alt={product.emptyAlt}
-                fill
-                priority
-                sizes="(min-width: 768px) 46vw, 92vw"
-                className="object-contain object-center"
-              />
-            </div>
-            <div className="product-moss absolute inset-0">
-              <Image
-                src={product.mossSrc}
-                alt={product.mossAlt}
-                fill
-                sizes="(min-width: 768px) 46vw, 92vw"
-                className="object-contain object-center"
-              />
-            </div>
+    <article className="site-page site-gutter pdp pt-8 pb-24 sm:pt-20 sm:pb-32" style={forceWhiteStyle}>
+      <div className="product-card pdp-visual" style={forceWhiteStyle}>
+        <div className="pdp-stage relative aspect-square overflow-hidden" style={forceWhiteStyle}>
+          <div className="product-empty absolute inset-0">
+            <Image
+              src={product.emptySrc}
+              alt={product.emptyAlt}
+              fill
+              priority
+              sizes="280px"
+              className="object-contain object-center"
+            />
+          </div>
+          <div className="product-moss absolute inset-0">
+            <Image
+              src={product.mossSrc}
+              alt={product.mossAlt}
+              fill
+              sizes="280px"
+              className="object-contain object-center"
+            />
           </div>
         </div>
+      </div>
 
-        <div className="max-w-sm md:pt-4">
-          <h1 className="site-type" style={{ color: "#111111" }}>
-            {product.name}
-          </h1>
-          <p className="site-type mt-2" style={{ color: "#111111" }}>
-            {product.price}
-          </p>
+      <div className="pdp-copy">
+        <p className="site-type pdp-label">Description -</p>
+        <h1 className="site-type pdp-title">{product.name}</h1>
+        <p className="site-type pdp-title-kr">{product.nameKr}</p>
+        <p className="site-type pdp-price">{product.price}</p>
 
-          <div className="mt-10 space-y-6">
-            <section lang="en" className="space-y-2 text-[13px] leading-[1.9] tracking-[0.02em]">
-              {STAND_NOTE.en.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </section>
-            <section lang="ko" className="space-y-2 text-[13px] leading-[2] tracking-[0.04em]">
-              {STAND_NOTE.kr.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </section>
-          </div>
+        <ul className="pdp-features">
+          {features.map((line) => (
+            <li key={line} className="site-type site-type-copy">
+              {line}
+            </li>
+          ))}
+        </ul>
 
-          <a
-            href={STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-12 inline-block text-[11px] lowercase tracking-[0.14em] no-underline hover:no-underline"
-            style={{ color: "#111111" }}
-          >
-            store
-          </a>
-        </div>
+        <p className="site-type site-type-copy pdp-note">{STAND_STAR_NOTE}</p>
+        <p className="site-type pdp-origin">{STAND_ORIGIN}</p>
+
+        <ProductAccordions />
+
+        <a
+          href={STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="site-type pdp-store no-underline hover:no-underline"
+        >
+          Store
+        </a>
       </div>
     </article>
   );

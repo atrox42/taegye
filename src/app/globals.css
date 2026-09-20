@@ -210,9 +210,7 @@ main,
 
 .new-grid-item:has(.product-card:hover),
 .new-grid-item:has(.product-card:hover) .product-card,
-.new-grid-item:has(.product-card:hover) .product-card > div,
-.product-card:hover,
-.product-card:hover > div {
+.new-grid-item:has(.product-card:hover) .product-card > div {
   background-color: #e8e8e8 !important;
   background-image: none !important;
 }
@@ -290,6 +288,115 @@ button {
   .about-line {
     white-space: nowrap;
   }
+}
+
+.pdp {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2.75rem;
+}
+
+@media (min-width: 768px) {
+  .pdp {
+    flex-direction: row;
+    gap: 5rem;
+  }
+}
+
+.pdp-visual {
+  width: min(100%, 240px);
+  flex: 0 0 auto;
+}
+
+@media (min-width: 768px) {
+  .pdp-visual {
+    width: 280px;
+  }
+}
+
+.pdp-stage {
+  width: 100%;
+}
+
+.pdp-copy {
+  max-width: 22rem;
+  text-align: left;
+}
+
+.pdp-label,
+.pdp-title,
+.pdp-title-kr,
+.pdp-price,
+.pdp-note,
+.pdp-origin,
+.pdp-store {
+  margin: 0;
+}
+
+.pdp-title {
+  margin-top: 1.75rem;
+}
+
+.pdp-title-kr {
+  margin-top: 0.45rem;
+}
+
+.pdp-price {
+  margin-top: 0.85rem;
+}
+
+.pdp-features {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+}
+
+.pdp-features li {
+  margin: 0;
+}
+
+.pdp-note {
+  margin-top: 1.75rem;
+}
+
+.pdp-origin {
+  margin-top: 1.75rem;
+}
+
+.pdp-accordions {
+  margin-top: 2.25rem;
+}
+
+.pdp-acc {
+  border: 0;
+}
+
+.pdp-acc + .pdp-acc {
+  margin-top: 0.85rem;
+}
+
+.pdp-acc-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pdp-acc-summary::-webkit-details-marker {
+  display: none;
+}
+
+.pdp-acc-body {
+  margin: 0.55rem 0 0;
+  max-width: 18rem;
+}
+
+.pdp-store {
+  display: inline-block;
+  margin-top: 2.25rem;
 }
 
 .new-subnav {
@@ -645,9 +752,7 @@ button {
 
 .new-grid-item:has(.product-card:hover),
 .new-grid-item:has(.product-card:hover) .product-card,
-.new-grid-item:has(.product-card:hover) .product-card > div,
-.product-card:hover,
-.product-card:hover > div {
+.new-grid-item:has(.product-card:hover) .product-card > div {
   background-color: #e8e8e8 !important;
   background-image: none !important;
 }
