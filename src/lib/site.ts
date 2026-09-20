@@ -22,7 +22,8 @@ export const NAV_ITEMS = [
 /** Logo display box — keep within the 135×48 px brand lockup. */
 export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
-export const LOGO_SRC = "/logo-taegye.png";
+/** JPEG on a white plate — OEM Force Dark inverts transparent PNG chrome. */
+export const LOGO_SRC = "/logo-taegye.jpg";
 
 /** Home loops — intrinsic 230×130; CSS displays half-size on mobile. */
 export const HERO_CLIP = { width: 230, height: 130 } as const;

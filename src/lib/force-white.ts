@@ -13,5 +13,16 @@ export const forceWhiteStyle = {
   backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
   color: "#111111",
+  WebkitTextFillColor: "#111111",
   colorScheme: "only light",
+} as const;
+
+export const forceInkStyle = {
+  color: "#111111",
+  WebkitTextFillColor: "#111111",
+} as const;
+
+export const forceMutedStyle = {
+  color: "#999999",
+  WebkitTextFillColor: "#999999",
 } as const;
