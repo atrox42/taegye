@@ -5,7 +5,7 @@ import { NewCatalog } from "@/components/new-catalog";
 import { forceWhiteStyle } from "@/lib/force-white";
 
 export const metadata: Metadata = {
-  title: "New",
+  title: "Product",
 };
 
 export default function NewPage() {

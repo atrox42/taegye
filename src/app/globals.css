@@ -59,6 +59,16 @@
   --site-nav-offset: calc(4.75rem + env(safe-area-inset-top, 0px));
   --hero-clip-w: 115px;
   --hero-clip-h: 65px;
+  /* Site tracking — 10% tighter than the previous 0.01 / 0.08 / 0.14 / 0.096 / 0.168 set. */
+  --tracking-body: 0.009em;
+  --tracking-copy: 0.018em;
+  --tracking-copy-kr: 0.036em;
+  --tracking-label: 0.072em;
+  --tracking-label-lg: 0.126em;
+  --tracking-nav: 0.086em;
+  --tracking-nav-lg: 0.151em;
+  --tracking-title: 0.162em;
+  --tracking-footer: 0.054em;
   /* Gradient + data-URI + file. Force-dark often skips image paint. */
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
@@ -152,7 +162,7 @@ body,
     background-color: #ffffff;
     color: #111111;
     font-size: 13px;
-    letter-spacing: 0.01em;
+    letter-spacing: var(--tracking-body);
   }
 }
 
@@ -237,11 +247,11 @@ button {
   padding-right: var(--site-gutter);
 }
 
-/* Shared label type — primary nav, product name/price, New subnav. */
+/* Shared label type — primary nav, product name/price, Product subnav. */
 .site-type {
   font-size: 10px;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   line-height: 1;
   color: #111111;
 }
@@ -249,7 +259,7 @@ button {
 @media (min-width: 768px) {
   .site-type {
     font-size: 11px;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--tracking-label-lg);
   }
 }
 
@@ -689,7 +699,7 @@ button {
 }
 
 .site-nav a {
-  letter-spacing: 0.096em;
+  letter-spacing: var(--tracking-nav);
 }
 
 html.force-dark-caught .site-nav a,
@@ -706,7 +716,7 @@ html.force-dark-caught .site-nav a[aria-current="page"] {
 
 @media (min-width: 768px) {
   .site-nav a {
-    letter-spacing: 0.168em;
+    letter-spacing: var(--tracking-nav-lg);
   }
 }
 

@@ -14,7 +14,7 @@ export const CONTACT_EMAIL = "hello@taegye.kr";
 
 export const NAV_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "New", href: "/new" },
+  { label: "Product", href: "/new" },
   { label: "About", href: "/about" },
   { label: "Store", href: STORE_URL, external: true },
 ] as const;
@@ -118,18 +118,20 @@ export const ABOUT = {
 } as const;
 
 export const NEW_CATEGORIES = [
+  { id: "all", label: "All" },
   { id: "wall-kit", label: "Wall-kit" },
   { id: "one-port", label: "One-port" },
   { id: "etc", label: "Etc" },
 ] as const;
 
 export type NewCategoryId = (typeof NEW_CATEGORIES)[number]["id"];
+export type NewProductCategoryId = Exclude<NewCategoryId, "all">;
 
-export const DEFAULT_NEW_CATEGORY: NewCategoryId = "wall-kit";
+export const DEFAULT_NEW_CATEGORY: NewCategoryId = "all";
 
 export type NewProduct = {
   id: string;
-  category: NewCategoryId;
+  category: NewProductCategoryId;
   name: string;
   nameKr: string;
   finish: string;

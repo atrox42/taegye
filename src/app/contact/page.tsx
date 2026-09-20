@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
-      <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">contact</h1>
-      <div className="mt-12 max-w-xl space-y-8 text-[13px] leading-7 tracking-[0.02em]">
+      <h1 className="text-[11px] font-normal lowercase tracking-[var(--tracking-title)]">contact</h1>
+      <div className="mt-12 max-w-xl space-y-8 text-[13px] leading-7 tracking-[var(--tracking-copy)]">
         <section className="space-y-2">
           <p>Inquiries</p>
           <a href={`mailto:${CONTACT_EMAIL}`} className="block lowercase hover:opacity-50">
@@ -31,7 +31,7 @@ export default function ContactPage() {
           href={STORE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex text-[11px] lowercase tracking-[0.14em] no-underline"
+          className="inline-flex text-[11px] lowercase tracking-[var(--tracking-label-lg)] no-underline"
           style={{ color: "#111111" }}
         >
           store

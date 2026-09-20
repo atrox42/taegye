@@ -10,7 +10,7 @@ export function FooterLegal() {
 
   return (
     <div>
-      <p className="text-[10px] tracking-[0.08em] text-foreground/50">
+      <p className="text-[10px] tracking-[var(--tracking-label)] text-foreground/50">
         <span>
           © {COPYRIGHT.year} {COPYRIGHT.owner}{" "}
         </span>
@@ -20,7 +20,7 @@ export function FooterLegal() {
           aria-controls={detailsId}
           aria-label={open ? "Hide business information" : "Show business information"}
           onClick={() => setOpen((value) => !value)}
-          className="inline cursor-pointer align-baseline px-0.5 text-[10px] tracking-[0.08em] text-foreground/50 transition-opacity hover:opacity-70"
+          className="inline cursor-pointer align-baseline px-0.5 text-[10px] tracking-[var(--tracking-label)] text-foreground/50 transition-opacity hover:opacity-70"
         >
           +
         </button>
@@ -28,7 +28,7 @@ export function FooterLegal() {
       {open ? (
         <p
           id={detailsId}
-          className="mt-2 max-w-full break-words text-[10px] leading-5 tracking-[0.02em] text-foreground/45"
+          className="mt-2 max-w-full break-words text-[10px] leading-5 tracking-[var(--tracking-copy)] text-foreground/45"
         >
           {legalLine()}
         </p>

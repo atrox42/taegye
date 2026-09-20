@@ -19,12 +19,12 @@ const ROWS = [
 export default function LegalPage() {
   return (
     <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
-      <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">legals</h1>
-      <p className="mt-8 max-w-xl text-[13px] leading-7 tracking-[0.02em] text-foreground/70">
+      <h1 className="text-[11px] font-normal lowercase tracking-[var(--tracking-title)]">legals</h1>
+      <p className="mt-8 max-w-xl text-[13px] leading-7 tracking-[var(--tracking-copy)] text-foreground/70">
         Business information for {SITE_NAME}. Details below are placeholders until
         registration is confirmed.
       </p>
-      <dl className="mt-12 max-w-xl space-y-4 text-[13px] leading-7 tracking-[0.02em]">
+      <dl className="mt-12 max-w-xl space-y-4 text-[13px] leading-7 tracking-[var(--tracking-copy)]">
         {ROWS.map((row) => (
           <div key={row.label} className="grid grid-cols-1 gap-1 sm:grid-cols-[10rem_1fr]">
             <dt className="text-foreground/50">{row.label}</dt>

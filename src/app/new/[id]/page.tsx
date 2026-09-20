@@ -25,7 +25,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
   const product = getNewProduct(id);
-  if (!product) return { title: "new" };
+  if (!product) return { title: "Product" };
   return { title: product.name };
 }
 

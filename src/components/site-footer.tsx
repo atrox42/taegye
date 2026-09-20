@@ -12,7 +12,7 @@ import {
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const className =
-    "text-[11px] font-normal leading-none tracking-[0.06em] no-underline";
+    "text-[11px] font-normal leading-none tracking-[var(--tracking-footer)] no-underline";
   const style = { color: "#111111" };
 
   if (external) {

@@ -22,14 +22,14 @@ export function NewCatalog() {
   const raw = searchParams.get("cat");
   const active: NewCategoryId = isNewCategory(raw) ? raw : DEFAULT_NEW_CATEGORY;
 
-  const products = useMemo(
-    () => NEW_PRODUCTS.filter((product) => product.category === active),
-    [active]
-  );
+  const products = useMemo(() => {
+    if (active === "all") return NEW_PRODUCTS;
+    return NEW_PRODUCTS.filter((product) => product.category === active);
+  }, [active]);
 
   return (
     <>
-      <nav aria-label="New categories" className="new-subnav">
+      <nav aria-label="Product categories" className="new-subnav">
         {NEW_CATEGORIES.map((category) => {
           const isActive = category.id === active;
           const href =
