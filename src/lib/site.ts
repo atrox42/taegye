@@ -182,6 +182,10 @@ export const STAND_NOTE = {
   ],
 } as const;
 
+/** Decorative /new grid tile — not a product. Inserted after purple. */
+export const GRID_SLOT_TEXTURE = "/products/grid-slot-texture.webp";
+export const GRID_SLOT_AFTER_ID = "purple";
+
 /** /new catalog — silver, purple, black, green, white. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
