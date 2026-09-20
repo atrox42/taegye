@@ -24,9 +24,12 @@ export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
 
-/** Home grass loop — keep at intrinsic 192×108, never upscale. */
-export const HERO_VIDEO_SRC = "/hero-grass-loop.mp4";
-export const HERO_VIDEO_POSTER = "/hero-grass-poster.jpg";
+/** Home loops — keep at intrinsic 192×108, never upscale. */
+export const HERO_CLIPS = [
+  { id: "a", src: "/hero-loop-a.mp4", poster: "/hero-poster-a.jpg", mark: true },
+  { id: "b", src: "/hero-loop-b.mp4", poster: "/hero-poster-b.jpg", mark: false },
+  { id: "c", src: "/hero-loop-c.mp4", poster: "/hero-poster-c.jpg", mark: false },
+] as const;
 
 export const COPYRIGHT = {
   year: 2026,
