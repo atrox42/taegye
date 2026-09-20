@@ -24,12 +24,13 @@ export function FooterLegal() {
         >
           +
         </button>
+        {open ? (
+          <span id={detailsId} className="site-footer-copy-details">
+            {" "}
+            {legalLine()}
+          </span>
+        ) : null}
       </p>
-      {open ? (
-        <p id={detailsId} className="site-footer-copy-details">
-          {legalLine()}
-        </p>
-      ) : null}
     </div>
   );
 }

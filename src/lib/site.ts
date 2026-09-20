@@ -154,7 +154,7 @@ export const STAND_ORIGIN = "Made In Korea";
 
 export const STAND_ACCORDION = [
   {
-    label: "Size Guide",
+    label: "Size",
     body: "Dimensions to be confirmed. Wall-kit modular stand.",
   },
   {
