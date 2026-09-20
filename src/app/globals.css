@@ -553,6 +553,16 @@ button {
   color: #111111 !important;
 }
 
+.site-nav a {
+  letter-spacing: 0.096em;
+}
+
+@media (min-width: 768px) {
+  .site-nav a {
+    letter-spacing: 0.168em;
+  }
+}
+
 @media (min-width: 768px) {
   :root {
     --site-nav-edge: 0px;
