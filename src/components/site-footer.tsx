@@ -2,12 +2,13 @@ import Link from "next/link";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
-import { forceWhiteStyle } from "@/lib/force-white";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const className = "site-type no-underline hover:no-underline";
-  const style = { color: "#111111" };
+  const style = forceInkStyle;
 
   if (external) {
     return (
@@ -27,6 +28,7 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
 export function SiteFooter() {
   return (
     <footer className="site-footer" style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
       <div className="site-footer-inner site-gutter">
         <div className="site-footer-row">
           <Link href="/" className="site-footer-logo inline-flex shrink-0 self-start" aria-label={SITE_NAME}>

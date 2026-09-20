@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
 
 type ProductCardProps = {
@@ -42,10 +42,10 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         </div>
       </div>
       <div className="mt-3 text-left">
-        <p className="site-type" style={{ color: "#111111" }}>
+        <p className="site-type" style={forceInkStyle}>
           {product.name}
         </p>
-        <p className="site-type product-price mt-0.5" style={{ color: "#111111" }}>
+        <p className="site-type product-price mt-0.5" style={forceInkStyle}>
           {product.price}
         </p>
       </div>

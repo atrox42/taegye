@@ -37,7 +37,10 @@ export function SiteHeader() {
             isActive ? "font-medium" : "font-normal"
           );
 
-          const style = { color: isActive ? "#111111" : "#999999" };
+          const style = {
+            color: isActive ? "#111111" : "#999999",
+            WebkitTextFillColor: isActive ? "#111111" : "#999999",
+          };
 
           if (isExternal) {
             return (

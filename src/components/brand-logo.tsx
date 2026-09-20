@@ -18,7 +18,7 @@ export function BrandLogo({ className, priority = false }: BrandLogoProps) {
       decoding={priority ? "sync" : "async"}
       fetchPriority={priority ? "high" : "auto"}
       className={cn(
-        "h-auto w-auto object-contain object-left",
+        "brand-logo h-auto w-auto object-contain object-left",
         className
       )}
       style={{
@@ -26,6 +26,8 @@ export function BrandLogo({ className, priority = false }: BrandLogoProps) {
         maxHeight: LOGO_DISPLAY.height,
         height: LOGO_DISPLAY.height,
         width: "auto",
+        backgroundColor: "#ffffff",
+        filter: "none",
       }}
     />
   );
