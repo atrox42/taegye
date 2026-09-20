@@ -3,16 +3,10 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
 import { forceWhiteStyle } from "@/lib/force-white";
-import {
-  FOOTER_COLUMNS,
-  FOOTER_INSTAGRAM,
-  SITE_NAME,
-  type FooterLinkItem,
-} from "@/lib/site";
+import { FOOTER_COLUMNS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
-  const className =
-    "text-[11px] font-normal leading-none tracking-[var(--tracking-label-lg)] no-underline";
+  const className = "site-type no-underline hover:no-underline";
   const style = { color: "#111111" };
 
   if (external) {
@@ -33,18 +27,17 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
 export function SiteFooter() {
   return (
     <footer className="site-footer" style={forceWhiteStyle}>
-      <div className="site-footer-row site-gutter">
-        <Link href="/" className="inline-flex shrink-0 self-start" aria-label={SITE_NAME}>
-          <BrandLogo />
-        </Link>
+      <div className="site-footer-inner site-gutter">
+        <div className="site-footer-row">
+          <Link href="/" className="site-footer-logo inline-flex shrink-0 self-start" aria-label={SITE_NAME}>
+            <BrandLogo />
+          </Link>
 
-        <nav aria-label="Footer" className="site-footer-nav">
-          <div className="site-footer-cols">
+          <nav aria-label="Footer" className="site-footer-nav">
             {FOOTER_COLUMNS.map((column) => (
               <ul
                 key={column.map((item) => item.label).join("-")}
-                className="flex min-w-0 flex-col"
-                style={{ lineHeight: 2.42 }}
+                className="site-footer-col"
               >
                 {column.map((item) => (
                   <li key={`${item.label}-${item.href}`}>
@@ -53,17 +46,12 @@ export function SiteFooter() {
                 ))}
               </ul>
             ))}
-          </div>
-          <ul className="site-footer-instagram flex min-w-0 flex-col" style={{ lineHeight: 2.42 }}>
-            <li>
-              <FooterLink {...FOOTER_INSTAGRAM} />
-            </li>
-          </ul>
-        </nav>
-      </div>
+          </nav>
+        </div>
 
-      <div className="site-gutter overflow-visible pb-[max(2.5rem,calc(1.5rem+env(safe-area-inset-bottom,0px)))]">
-        <FooterLegal />
+        <div className="site-footer-legal">
+          <FooterLegal />
+        </div>
       </div>
     </footer>
   );

@@ -45,10 +45,16 @@ export type FooterLinkItem = {
   external?: boolean;
 };
 
-/** Link stacks left of Instagram. Instagram is rendered flush right. */
+export const FOOTER_INSTAGRAM: FooterLinkItem = {
+  label: "Instagram",
+  href: INSTAGRAM_URL,
+  external: true,
+};
+
+/** Compact footer clusters — Account/Legals/Faq · About/Store · Contact · Instagram. */
 export const FOOTER_COLUMNS: FooterLinkItem[][] = [
-  [{ label: "Account", href: STORE_URL, external: true }],
   [
+    { label: "Account", href: STORE_URL, external: true },
     { label: "Legals", href: "/legal" },
     { label: "Faq", href: "/faq" },
   ],
@@ -57,13 +63,8 @@ export const FOOTER_COLUMNS: FooterLinkItem[][] = [
     { label: "Store", href: STORE_URL, external: true },
   ],
   [{ label: "Contact", href: "/contact" }],
+  [FOOTER_INSTAGRAM],
 ];
-
-export const FOOTER_INSTAGRAM: FooterLinkItem = {
-  label: "Instagram",
-  href: INSTAGRAM_URL,
-  external: true,
-};
 
 /** Korean e-commerce legal line — placeholders until business details are confirmed. */
 export const LEGAL = {
