@@ -463,7 +463,7 @@ button {
 }
 
 .home-hero-clip-a {
-  top: clamp(5.25rem, 16vh, calc(100% - 16rem));
+  top: clamp(6.5rem, 18vh, calc(100% - 16rem));
   left: clamp(0.75rem, 5vw, calc(100% - 242px));
   z-index: 2;
 }
