@@ -261,6 +261,44 @@ button {
   }
 }
 
+/* Same face as .site-type; open the line for paragraphs. */
+.site-type-copy {
+  line-height: 1.9;
+}
+
+.site-type-copy[lang="ko"] {
+  line-height: 2;
+  word-break: keep-all;
+}
+
+.about-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+  max-width: none;
+}
+
+.about-copy {
+  margin: 0;
+  max-width: none;
+}
+
+.about-line {
+  display: inline;
+}
+
+@media (min-width: 768px) {
+  .about-break-sm {
+    display: none;
+  }
+}
+
+@media (min-width: 1400px) {
+  .about-line {
+    white-space: nowrap;
+  }
+}
+
 .new-subnav {
   display: flex;
   flex-wrap: wrap;

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 
 import { ABOUT } from "@/lib/site";
 
@@ -6,21 +7,42 @@ export const metadata: Metadata = {
   title: "about",
 };
 
+function AboutLines({
+  lang,
+  lines,
+}: {
+  lang: "en" | "ko";
+  lines: readonly (readonly string[])[];
+}) {
+  return (
+    <p lang={lang} className="site-type site-type-copy about-copy">
+      {lines.map((line, lineIndex) => (
+        <span key={line.join(" ")} className="about-line">
+          {line.map((phrase, phraseIndex) => (
+            <Fragment key={phrase}>
+              {phraseIndex > 0 ? (
+                <>
+                  {" "}
+                  <br className="about-break-sm" />
+                </>
+              ) : null}
+              {phrase}
+            </Fragment>
+          ))}
+          {lineIndex < lines.length - 1 ? <br /> : null}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 export default function AboutPage() {
   return (
     <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
-      <h1 className="text-[11px] font-normal lowercase tracking-[0.18em]">about</h1>
-      <div className="mt-12 max-w-xl space-y-16 sm:mt-16 sm:space-y-20">
-        <section lang="en" className="space-y-7 text-[13px] leading-[1.9] tracking-[0.02em]">
-          {ABOUT.en.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </section>
-        <section lang="ko" className="space-y-7 text-[13px] leading-[2] tracking-[0.04em]">
-          {ABOUT.kr.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </section>
+      <h1 className="site-type lowercase">about</h1>
+      <div className="about-stack mt-12 sm:mt-16">
+        <AboutLines lang="en" lines={ABOUT.en} />
+        <AboutLines lang="ko" lines={ABOUT.kr} />
       </div>
     </article>
   );
