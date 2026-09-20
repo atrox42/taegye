@@ -57,6 +57,8 @@
   --site-nav-pad: 0.5rem;
   --site-gutter: calc(var(--site-nav-edge) + var(--site-nav-pad));
   --site-nav-offset: calc(4.75rem + env(safe-area-inset-top, 0px));
+  --hero-clip-w: 115px;
+  --hero-clip-h: 65px;
   /* Gradient + data-URI + file. Force-dark often skips image paint. */
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
@@ -558,59 +560,84 @@ button {
   min-height: 100svh;
   min-height: 100dvh;
   overflow: hidden;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+  color-scheme: only light !important;
+  forced-color-adjust: none !important;
+}
+
+.home-hero-bitmap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
 }
 
 .home-hero-clip {
   position: absolute;
-  width: 230px;
-  height: 130px;
-  max-width: 230px;
-  max-height: 130px;
+  width: var(--hero-clip-w);
+  height: var(--hero-clip-h);
+  max-width: var(--hero-clip-w);
+  max-height: var(--hero-clip-h);
+  overflow: hidden;
 }
 
 .home-hero-clip-a {
-  top: clamp(6.5rem, 18vh, calc(100% - 16rem));
-  left: clamp(0.75rem, 5vw, calc(100% - 242px));
+  top: clamp(5.5rem, 16vh, calc(100% - var(--hero-clip-h) - 5.5rem));
+  left: clamp(0.75rem, 6vw, calc(100% - var(--hero-clip-w) - 12px));
   z-index: 2;
 }
 
 .home-hero-clip-b {
-  top: clamp(10rem, 39vh, calc(100% - 14rem));
-  left: clamp(0.75rem, calc(100% - 230px - 6vw), calc(100% - 242px));
+  top: clamp(8.5rem, 38vh, calc(100% - var(--hero-clip-h) - 4rem));
+  left: clamp(
+    0.75rem,
+    calc(100% - var(--hero-clip-w) - 8vw),
+    calc(100% - var(--hero-clip-w) - 12px)
+  );
   z-index: 3;
 }
 
 .home-hero-clip-c {
-  top: clamp(15rem, 64vh, calc(100% - 10rem));
-  left: clamp(0.75rem, 28vw, calc(100% - 242px));
+  top: clamp(12.5rem, 62vh, calc(100% - var(--hero-clip-h) - 2.5rem));
+  left: clamp(0.75rem, 24vw, calc(100% - var(--hero-clip-w) - 12px));
   z-index: 1;
 }
 
 @media (min-width: 768px) {
   .home-hero-clip-a {
-    top: clamp(5rem, 19vh, calc(100% - 18rem));
-    left: clamp(1.5rem, 12vw, calc(100% - 254px));
+    top: clamp(5rem, 19vh, calc(100% - var(--hero-clip-h) - 5rem));
+    left: clamp(1.5rem, 12vw, calc(100% - var(--hero-clip-w) - 24px));
   }
 
   .home-hero-clip-b {
-    top: clamp(7.5rem, 28vh, calc(100% - 16rem));
-    left: clamp(1.5rem, calc(100% - 230px - 13vw), calc(100% - 254px));
+    top: clamp(7.5rem, 28vh, calc(100% - var(--hero-clip-h) - 4rem));
+    left: clamp(
+      1.5rem,
+      calc(100% - var(--hero-clip-w) - 13vw),
+      calc(100% - var(--hero-clip-w) - 24px)
+    );
   }
 
   .home-hero-clip-c {
-    top: clamp(13rem, 56vh, calc(100% - 12rem));
-    left: clamp(1.5rem, 39vw, calc(100% - 254px));
+    top: clamp(13rem, 56vh, calc(100% - var(--hero-clip-h) - 3rem));
+    left: clamp(1.5rem, 39vw, calc(100% - var(--hero-clip-w) - 24px));
   }
 }
 
 .home-hero-media {
   display: block;
-  width: 230px;
-  height: 130px;
-  max-width: 230px;
-  max-height: 130px;
-  object-fit: none;
+  width: var(--hero-clip-w);
+  height: var(--hero-clip-h);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .site-white-layer {
@@ -622,6 +649,7 @@ button {
 
 .site-white-bitmap,
 .site-nav-bitmap,
+.home-hero-bitmap,
 .force-dark-overlay {
   width: 100%;
   height: 100%;
@@ -664,6 +692,18 @@ button {
   letter-spacing: 0.096em;
 }
 
+html.force-dark-caught .site-nav a,
+html.force-dark-caught .site-nav a:hover,
+html.force-dark-caught .site-nav a:focus,
+html.force-dark-caught .site-nav a:active,
+html.force-dark-caught .site-nav a:visited {
+  color: #999999 !important;
+}
+
+html.force-dark-caught .site-nav a[aria-current="page"] {
+  color: #111111 !important;
+}
+
 @media (min-width: 768px) {
   .site-nav a {
     letter-spacing: 0.168em;
@@ -676,6 +716,8 @@ button {
     --site-nav-pad: 1.5rem;
     --site-gutter: 1.5rem;
     --site-nav-offset: 0px;
+    --hero-clip-w: 230px;
+    --hero-clip-h: 130px;
   }
 
   .site-main {

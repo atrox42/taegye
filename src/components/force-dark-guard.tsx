@@ -23,6 +23,14 @@ function paintWhite(el: HTMLElement) {
   el.style.setProperty("color-scheme", "only light", "important");
 }
 
+function restoreNavInk() {
+  const links = document.querySelectorAll<HTMLElement>(".site-nav a");
+  for (const link of links) {
+    const current = link.getAttribute("aria-current") === "page";
+    link.style.setProperty("color", current ? "#111111" : "#999999", "important");
+  }
+}
+
 function ensureOverlay() {
   if (document.querySelector("img.force-dark-overlay")) return;
   const img = document.createElement("img");
@@ -41,9 +49,12 @@ function inspectAndRepair() {
     document.body,
     document.querySelector<HTMLElement>(".site-shell"),
     document.querySelector<HTMLElement>(".site-main"),
+    document.querySelector<HTMLElement>(".home-hero"),
     document.querySelector<HTMLElement>(".new-page"),
     document.querySelector<HTMLElement>(".new-grid"),
   ].filter((el): el is HTMLElement => Boolean(el));
+
+  restoreNavInk();
 
   const inverted = nodes.some((el) => isDarkPaint(getComputedStyle(el).backgroundColor));
   if (!inverted) return;
@@ -52,8 +63,11 @@ function inspectAndRepair() {
   for (const el of nodes) paintWhite(el);
 
   const nav = document.querySelector<HTMLElement>(".site-nav");
-  if (nav) paintWhite(nav);
+  if (nav && window.matchMedia("(max-width: 767px)").matches) {
+    paintWhite(nav);
+  }
 
+  restoreNavInk();
   ensureOverlay();
 }
 

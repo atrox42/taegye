@@ -24,8 +24,9 @@ export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 
 export const LOGO_SRC = "/logo-taegye.png";
 
-/** Home loops — keep at intrinsic 230×130, never upscale. */
+/** Home loops — intrinsic 230×130; CSS displays half-size on mobile. */
 export const HERO_CLIP = { width: 230, height: 130 } as const;
+export const HERO_CLIP_MOBILE = { width: 115, height: 65 } as const;
 
 export const HERO_CLIPS = [
   { id: "a", src: "/hero-loop-a.mp4", poster: "/hero-poster-a.jpg" },
@@ -139,7 +140,8 @@ export type NewProduct = {
   mossAlt: string;
 };
 
-export const STAND_PRICE = "KRW 108,000";
+export const STAND_PRICE_SILVER = "KRW 103,000";
+export const STAND_PRICE_COLOR = "KRW 86,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
@@ -186,7 +188,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Modular Stand, Silver",
     nameKr: "모듈러 스탠드, 실버",
     finish: "Silver finish",
-    price: STAND_PRICE,
+    price: STAND_PRICE_SILVER,
     emptySrc: "/products/stand-silver.webp",
     mossSrc: "/products/stand-silver-moss.webp",
     emptyAlt: "TAEGYE modular stand in frosted silver",
@@ -198,7 +200,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Modular Stand, Purple",
     nameKr: "모듈러 스탠드, 퍼플",
     finish: "Purple finish",
-    price: STAND_PRICE,
+    price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-purple.webp",
     mossSrc: "/products/stand-purple-moss.webp",
     emptyAlt: "TAEGYE modular stand in purple",
@@ -210,7 +212,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Modular Stand, Black",
     nameKr: "모듈러 스탠드, 블랙",
     finish: "Black finish",
-    price: STAND_PRICE,
+    price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-black.webp",
     mossSrc: "/products/stand-black-moss.webp",
     emptyAlt: "TAEGYE modular stand in black",
@@ -222,7 +224,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Modular Stand, Green",
     nameKr: "모듈러 스탠드, 그린",
     finish: "Green finish",
-    price: STAND_PRICE,
+    price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-green.webp",
     mossSrc: "/products/stand-green-moss.webp",
     emptyAlt: "TAEGYE modular stand in green",
@@ -234,7 +236,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Modular Stand, White",
     nameKr: "모듈러 스탠드, 화이트",
     finish: "White finish",
-    price: STAND_PRICE,
+    price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-white.webp",
     mossSrc: "/products/stand-white-moss.webp",
     emptyAlt: "TAEGYE modular stand in white",
