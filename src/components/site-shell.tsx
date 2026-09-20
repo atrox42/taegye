@@ -6,7 +6,7 @@ import { forceWhiteStyle } from "@/lib/force-white";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
-    <div id="__next" className="site-shell relative z-0 flex min-h-svh flex-col" style={forceWhiteStyle}>
+    <div className="site-shell relative z-0 flex min-h-svh flex-col" style={forceWhiteStyle}>
       <WhiteBitmapLayer />
       <ForceDarkGuard />
       <div className="relative z-[1] flex min-h-svh flex-1 flex-col">

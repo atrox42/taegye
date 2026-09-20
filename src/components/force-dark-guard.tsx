@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 import { WHITE_BITMAP_SRC } from "@/lib/force-white";
 
+let overlayPlaced = false;
+
 function parseRgb(color: string): [number, number, number] | null {
   const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
   if (!match) return null;
@@ -90,7 +92,11 @@ function collectNodes() {
 }
 
 function ensureOverlay() {
-  if (document.querySelector("img.force-dark-overlay")) return;
+  if (overlayPlaced || document.querySelector("img.force-dark-overlay")) {
+    overlayPlaced = true;
+    return;
+  }
+  overlayPlaced = true;
   const img = document.createElement("img");
   img.src = WHITE_BITMAP_SRC;
   img.alt = "";
@@ -125,38 +131,70 @@ function inspectAndRepair() {
 
 export function ForceDarkGuard() {
   useEffect(() => {
-    inspectAndRepair();
-    const frame = window.requestAnimationFrame(inspectAndRepair);
-    const late = window.setTimeout(inspectAndRepair, 80);
-    let elapsed = 0;
+    let repairing = false;
+    let cancelled = false;
+    let debounceTimer = 0;
+
+    const observer = new MutationObserver(() => {
+      if (repairing || cancelled) return;
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(run, 80);
+    });
+
+    function observe() {
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "style"],
+      });
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["class", "style"],
+      });
+    }
+
+    function run() {
+      if (cancelled || repairing) return;
+      repairing = true;
+      observer.disconnect();
+      observer.takeRecords();
+      try {
+        inspectAndRepair();
+      } catch {
+        /* never whitescreen the app */
+      } finally {
+        observer.takeRecords();
+        repairing = false;
+        if (!cancelled) observe();
+      }
+    }
+
+    run();
+    const frame = window.requestAnimationFrame(run);
+    const late = window.setTimeout(run, 250);
+
+    let ticks = 0;
     const interval = window.setInterval(() => {
-      inspectAndRepair();
-      elapsed += 150;
-      if (elapsed >= 4000) window.clearInterval(interval);
-    }, 150);
+      run();
+      ticks += 1;
+      if (ticks >= 4) window.clearInterval(interval);
+    }, 400);
 
-    const observer = new MutationObserver(() => inspectAndRepair());
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "style"],
-    });
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ["class", "style"],
-    });
+    observe();
 
-    window.addEventListener("resize", inspectAndRepair);
-    window.addEventListener("pageshow", inspectAndRepair);
-    window.addEventListener("orientationchange", inspectAndRepair);
+    window.addEventListener("resize", run);
+    window.addEventListener("pageshow", run);
+    window.addEventListener("orientationchange", run);
 
     return () => {
+      cancelled = true;
       window.cancelAnimationFrame(frame);
       window.clearTimeout(late);
+      window.clearTimeout(debounceTimer);
       window.clearInterval(interval);
       observer.disconnect();
-      window.removeEventListener("resize", inspectAndRepair);
-      window.removeEventListener("pageshow", inspectAndRepair);
-      window.removeEventListener("orientationchange", inspectAndRepair);
+      window.removeEventListener("resize", run);
+      window.removeEventListener("pageshow", run);
+      window.removeEventListener("orientationchange", run);
     };
   }, []);
 
