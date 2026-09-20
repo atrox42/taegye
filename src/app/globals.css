@@ -245,6 +245,22 @@ button {
   padding-right: var(--site-gutter);
 }
 
+/* Shared label type — primary nav, product name/price, New subnav. */
+.site-type {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: #111111;
+}
+
+@media (min-width: 768px) {
+  .site-type {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
+}
+
 .new-subnav {
   display: flex;
   flex-wrap: wrap;
@@ -259,10 +275,6 @@ button {
   border-bottom: 1px solid transparent;
   background: none;
   color: #999999;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  line-height: 1;
   text-decoration: none;
 }
 
@@ -274,8 +286,6 @@ button {
 .new-empty {
   margin: 0;
   color: #999999;
-  font-size: 11px;
-  letter-spacing: 0.08em;
 }
 
 /* Windowpane: 1px outer frame on all sides + shared internal lines. */

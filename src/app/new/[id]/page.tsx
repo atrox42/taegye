@@ -30,7 +30,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <article className="site-page site-gutter pt-8 pb-24 sm:pt-20 sm:pb-32" style={forceWhiteStyle}>
       <Link
         href="/new"
-        className="text-[11px] font-normal tracking-[0.14em] no-underline hover:no-underline"
+        className="site-type no-underline hover:no-underline"
         style={{ color: "#999999" }}
       >
         New
@@ -62,10 +62,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <div className="max-w-sm md:pt-4">
-          <h1 className="text-[13px] font-normal tracking-[0.04em]" style={{ color: "#111111" }}>
+          <h1 className="site-type" style={{ color: "#111111" }}>
             {product.name}
           </h1>
-          <p className="mt-2 text-[13px] tracking-[0.04em]" style={{ color: "#111111" }}>
+          <p className="site-type mt-2" style={{ color: "#111111" }}>
             {product.price}
           </p>
 

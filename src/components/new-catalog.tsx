@@ -39,7 +39,7 @@ export function NewCatalog() {
               key={category.id}
               href={href}
               scroll={false}
-              className="new-subnav-item"
+              className="site-type new-subnav-item"
               aria-current={isActive ? "page" : undefined}
             >
               {category.label}
@@ -57,7 +57,7 @@ export function NewCatalog() {
           ))}
         </ul>
       ) : (
-        <p className="new-empty">coming soon</p>
+        <p className="site-type new-empty">coming soon</p>
       )}
     </>
   );
