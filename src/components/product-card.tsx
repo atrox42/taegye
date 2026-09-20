@@ -45,7 +45,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         <p className="site-type" style={{ color: "#111111" }}>
           {product.name}
         </p>
-        <p className="site-type mt-0.5" style={{ color: "#111111" }}>
+        <p className="site-type product-price mt-0.5" style={{ color: "#111111" }}>
           {product.price}
         </p>
       </div>

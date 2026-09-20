@@ -66,7 +66,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <p className="site-type pdp-label">Description -</p>
         <h1 className="site-type pdp-title">{product.name}</h1>
         <p className="site-type pdp-title-kr">{product.nameKr}</p>
-        <p className="site-type pdp-price">{product.price}</p>
+        <p className="site-type pdp-price product-price">{product.price}</p>
 
         <ul className="pdp-features">
           {features.map((line) => (
