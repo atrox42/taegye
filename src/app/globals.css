@@ -428,7 +428,7 @@ button {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 1.25rem 1.75rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .new-subnav-item {
