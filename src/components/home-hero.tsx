@@ -1,4 +1,4 @@
-import { HERO_CLIPS, LOGO_SRC, SITE_NAME } from "@/lib/site";
+import { HERO_CLIP, HERO_CLIPS } from "@/lib/site";
 
 export function HomeHero() {
   return (
@@ -7,8 +7,8 @@ export function HomeHero() {
         <div key={clip.id} className={`home-hero-clip home-hero-clip-${clip.id}`}>
           <video
             className="home-hero-media"
-            width={192}
-            height={108}
+            width={HERO_CLIP.width}
+            height={HERO_CLIP.height}
             autoPlay
             muted
             loop
@@ -20,15 +20,6 @@ export function HomeHero() {
           >
             <source src={clip.src} type="video/mp4" />
           </video>
-          {clip.mark ? (
-            // eslint-disable-next-line @next/next/no-img-element -- same footer lockup PNG, CSS-whitened
-            <img
-              src={LOGO_SRC}
-              alt={SITE_NAME}
-              width={30}
-              className="home-hero-mark"
-            />
-          ) : null}
         </div>
       ))}
     </section>

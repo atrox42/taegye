@@ -456,71 +456,54 @@ button {
 
 .home-hero-clip {
   position: absolute;
-  width: 192px;
-  height: 108px;
-  max-width: 192px;
-  max-height: 108px;
+  width: 230px;
+  height: 130px;
+  max-width: 230px;
+  max-height: 130px;
 }
 
 .home-hero-clip-a {
-  top: clamp(5.25rem, 17vh, calc(100% - 14rem));
-  left: clamp(0.75rem, 6vw, calc(100% - 204px));
+  top: clamp(5.25rem, 16vh, calc(100% - 16rem));
+  left: clamp(0.75rem, 5vw, calc(100% - 242px));
   z-index: 2;
 }
 
 .home-hero-clip-b {
-  top: clamp(9.5rem, 40vh, calc(100% - 12rem));
-  left: clamp(0.75rem, calc(100% - 192px - 7vw), calc(100% - 204px));
+  top: clamp(10rem, 39vh, calc(100% - 14rem));
+  left: clamp(0.75rem, calc(100% - 230px - 6vw), calc(100% - 242px));
   z-index: 3;
 }
 
 .home-hero-clip-c {
-  top: clamp(14rem, 66vh, calc(100% - 8.5rem));
-  left: clamp(0.75rem, 32vw, calc(100% - 204px));
+  top: clamp(15rem, 64vh, calc(100% - 10rem));
+  left: clamp(0.75rem, 28vw, calc(100% - 242px));
   z-index: 1;
 }
 
 @media (min-width: 768px) {
   .home-hero-clip-a {
-    top: clamp(5rem, 20vh, calc(100% - 16rem));
-    left: clamp(1.5rem, 13vw, calc(100% - 220px));
+    top: clamp(5rem, 19vh, calc(100% - 18rem));
+    left: clamp(1.5rem, 12vw, calc(100% - 254px));
   }
 
   .home-hero-clip-b {
-    top: clamp(7rem, 29vh, calc(100% - 14rem));
-    left: clamp(1.5rem, calc(100% - 192px - 14vw), calc(100% - 220px));
+    top: clamp(7.5rem, 28vh, calc(100% - 16rem));
+    left: clamp(1.5rem, calc(100% - 230px - 13vw), calc(100% - 254px));
   }
 
   .home-hero-clip-c {
-    top: clamp(12rem, 58vh, calc(100% - 10rem));
-    left: clamp(1.5rem, 41vw, calc(100% - 220px));
+    top: clamp(13rem, 56vh, calc(100% - 12rem));
+    left: clamp(1.5rem, 39vw, calc(100% - 254px));
   }
 }
 
 .home-hero-media {
   display: block;
-  width: 192px;
-  height: 108px;
-  max-width: 192px;
-  max-height: 108px;
+  width: 230px;
+  height: 130px;
+  max-width: 230px;
+  max-height: 130px;
   object-fit: none;
-}
-
-.home-hero-mark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-  width: 30px;
-  height: auto;
-  max-width: 30px;
-  max-height: none;
-  aspect-ratio: 598 / 384;
-  object-fit: contain;
-  object-position: center;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  filter: brightness(0) invert(1);
 }
 
 .site-white-layer {
