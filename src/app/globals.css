@@ -59,16 +59,16 @@
   --site-nav-offset: calc(4.75rem + env(safe-area-inset-top, 0px));
   --hero-clip-w: 115px;
   --hero-clip-h: 65px;
-  /* Site tracking — 10% tighter than the previous 0.01 / 0.08 / 0.14 / 0.096 / 0.168 set. */
-  --tracking-body: 0.009em;
-  --tracking-copy: 0.018em;
-  --tracking-copy-kr: 0.036em;
-  --tracking-label: 0.072em;
-  --tracking-label-lg: 0.126em;
-  --tracking-nav: 0.086em;
-  --tracking-nav-lg: 0.151em;
-  --tracking-title: 0.162em;
-  --tracking-footer: 0.054em;
+  /* Site tracking — another 20% tighter than the 0.072 / 0.126 / 0.086 / 0.151 set. */
+  --tracking-body: 0.007em;
+  --tracking-copy: 0.014em;
+  --tracking-copy-kr: 0.029em;
+  --tracking-label: 0.058em;
+  --tracking-label-lg: 0.101em;
+  --tracking-nav: 0.069em;
+  --tracking-nav-lg: 0.121em;
+  --tracking-title: 0.130em;
+  --tracking-footer: 0.043em;
   /* Gradient + data-URI + file. Force-dark often skips image paint. */
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
