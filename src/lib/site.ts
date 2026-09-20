@@ -37,7 +37,7 @@ export const HERO_CLIPS = [
 
 export const COPYRIGHT = {
   year: 2026,
-  owner: "LAB TAEGYE",
+  owner: "TAEGYE LAB",
 } as const;
 
 export type FooterLinkItem = {
@@ -52,19 +52,13 @@ export const FOOTER_INSTAGRAM: FooterLinkItem = {
   external: true,
 };
 
-/** Compact footer clusters — Account/Legals/Faq · About/Store · Contact · Instagram. */
-export const FOOTER_COLUMNS: FooterLinkItem[][] = [
-  [
-    { label: "Account", href: STORE_URL, external: true },
-    { label: "Legals", href: "/legal" },
-    { label: "Faq", href: "/faq" },
-  ],
-  [
-    { label: "About", href: "/about" },
-    { label: "Store", href: STORE_URL, external: true },
-  ],
-  [{ label: "Contact", href: "/contact" }],
-  [FOOTER_INSTAGRAM],
+/** Desktop footer — one horizontal row. No Account, no Store. */
+export const FOOTER_LINKS: FooterLinkItem[] = [
+  { label: "Legals", href: "/legal" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Faq", href: "/faq" },
+  FOOTER_INSTAGRAM,
 ];
 
 /** Korean e-commerce legal line — placeholders until business details are confirmed. */

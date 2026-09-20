@@ -9,13 +9,10 @@ export function FooterLegal() {
   const detailsId = useId();
 
   return (
-    <div>
-      <p
-        className="text-[10px] tracking-[var(--tracking-label)]"
-        style={{ color: "#999999", WebkitTextFillColor: "#999999" }}
-      >
+    <div className="site-footer-copy">
+      <p className="site-footer-copy-line site-type">
         <span>
-          © {COPYRIGHT.year} {COPYRIGHT.owner}{" "}
+          ©{COPYRIGHT.year} {COPYRIGHT.owner}{" "}
         </span>
         <button
           type="button"
@@ -23,18 +20,13 @@ export function FooterLegal() {
           aria-controls={detailsId}
           aria-label={open ? "Hide business information" : "Show business information"}
           onClick={() => setOpen((value) => !value)}
-          className="inline cursor-pointer align-baseline px-0.5 text-[10px] tracking-[var(--tracking-label)] transition-opacity hover:opacity-70"
-          style={{ color: "#999999", WebkitTextFillColor: "#999999" }}
+          className="site-footer-copy-plus"
         >
           +
         </button>
       </p>
       {open ? (
-        <p
-          id={detailsId}
-          className="mt-2 max-w-full break-words text-[10px] leading-5 tracking-[var(--tracking-copy)]"
-          style={{ color: "#999999", WebkitTextFillColor: "#999999" }}
-        >
+        <p id={detailsId} className="site-footer-copy-details">
           {legalLine()}
         </p>
       ) : null}
