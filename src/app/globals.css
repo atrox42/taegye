@@ -802,7 +802,8 @@ button {
   text-decoration: none !important;
   color: #000000 !important;
   -webkit-text-fill-color: #000000 !important;
-  opacity: 0.5;
+  opacity: 0.55;
+  font-size: 11px;
   font-weight: 400;
   letter-spacing: var(--tracking-label);
 }
@@ -810,6 +811,7 @@ button {
 .site-nav-link.is-active,
 .site-nav a[aria-current="page"] {
   opacity: 1;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -861,6 +863,7 @@ button {
     color: #999999 !important;
     -webkit-text-fill-color: #999999 !important;
     opacity: 1;
+    font-size: 11px;
     font-weight: 400;
     letter-spacing: var(--tracking-label-lg);
   }
@@ -869,6 +872,7 @@ button {
   .site-nav a[aria-current="page"] {
     color: #111111 !important;
     -webkit-text-fill-color: #111111 !important;
+    font-size: 11px;
     font-weight: 500;
   }
 }
