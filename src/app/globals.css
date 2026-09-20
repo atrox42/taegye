@@ -565,7 +565,6 @@ button {
 
 .site-footer {
   position: relative;
-  border-top: 1px solid #111111;
 }
 
 .site-footer-inner {
@@ -588,14 +587,20 @@ button {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.7rem 0.85rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .site-footer-copy {
+  min-width: 0;
+  max-width: 100%;
   margin: 0;
+  overflow-x: auto;
 }
 
 .site-footer-copy-line {
   margin: 0;
+  white-space: nowrap;
   color: #111111 !important;
   -webkit-text-fill-color: #111111 !important;
 }
@@ -613,12 +618,10 @@ button {
 }
 
 .site-footer-copy-details {
-  margin: 0.45rem 0 0;
-  max-width: 28rem;
+  display: inline;
+  margin: 0;
   color: #111111 !important;
   -webkit-text-fill-color: #111111 !important;
-  font-size: 10px;
-  line-height: 1.6;
   letter-spacing: var(--tracking-copy);
 }
 
@@ -661,7 +664,13 @@ button {
 
   .site-footer-brand {
     flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
     gap: 0.85rem;
+  }
+
+  .site-footer-copy {
+    flex: 1 1 auto;
   }
 
   .site-footer-nav {
