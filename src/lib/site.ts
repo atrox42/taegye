@@ -83,14 +83,14 @@ export function legalLine() {
   ].join("  ·  ");
 }
 
-/** About page — EN is 3 display lines, KR is 2. Phrases wrap only on small screens. */
+/** About page — each paragraph is three display lines (EN 3+3, KR 3+3). */
 export const ABOUT = {
   en: [
     [
       "TAEGYE is an object brand working with terrariums.",
       "We consider each piece as a whole, from the combination of plants and materials to the vessel that holds them.",
+      "We care as much about how these elements come together and sit within a space as we do about the beauty of an individual plant.",
     ],
-    ["We care as much about how these elements come together and sit within a space as we do about the beauty of an individual plant."],
     [
       "A terrarium continues to change after it is made.",
       "As plants grow, new shapes emerge and the arrangement takes on a different character.",
