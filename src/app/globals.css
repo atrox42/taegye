@@ -330,13 +330,13 @@ button {
 }
 
 .pdp-visual {
-  width: min(100%, 240px);
+  width: min(100%, 480px);
   flex: 0 0 auto;
 }
 
 @media (min-width: 768px) {
   .pdp-visual {
-    width: 280px;
+    width: 560px;
   }
 }
 
@@ -360,7 +360,19 @@ button {
 }
 
 .pdp-title {
+  margin-top: 0;
+}
+
+.pdp-desc {
   margin-top: 1.75rem;
+}
+
+.pdp-desc-body {
+  margin: 0.55rem 0 0;
+}
+
+.pdp-desc-body .pdp-features {
+  margin-top: 0;
 }
 
 .pdp-title-kr {

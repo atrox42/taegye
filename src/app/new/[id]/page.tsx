@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { ProductAccordions } from "@/components/product-accordions";
+import { ProductDescription } from "@/components/product-description";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
@@ -50,7 +51,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               alt={product.emptyAlt}
               fill
               priority
-              sizes="280px"
+              sizes="(min-width: 768px) 560px, 100vw"
               className="object-contain object-center"
             />
           </div>
@@ -59,7 +60,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               src={product.mossSrc}
               alt={product.mossAlt}
               fill
-              sizes="280px"
+              sizes="(min-width: 768px) 560px, 100vw"
               className="object-contain object-center"
             />
           </div>
@@ -67,21 +68,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       <div className="pdp-copy" style={forceWhiteStyle}>
-        <p className="site-type pdp-label" style={forceInkStyle}>Description -</p>
         <h1 className="site-type pdp-title" style={forceInkStyle}>{product.name}</h1>
         <p className="site-type pdp-title-kr" style={forceInkStyle}>{product.nameKr}</p>
         <p className="site-type pdp-price product-price" style={forceInkStyle}>{product.price}</p>
 
-        <ul className="pdp-features">
-          {features.map((line) => (
-            <li key={line} className="site-type site-type-copy" style={forceInkStyle}>
-              {line}
-            </li>
-          ))}
-        </ul>
-
-        <p className="site-type site-type-copy pdp-note" style={forceInkStyle}>{STAND_STAR_NOTE}</p>
-        <p className="site-type pdp-origin" style={forceInkStyle}>{STAND_ORIGIN}</p>
+        <ProductDescription>
+          <ul className="pdp-features">
+            {features.map((line) => (
+              <li key={line} className="site-type site-type-copy" style={forceInkStyle}>
+                {line}
+              </li>
+            ))}
+          </ul>
+          <p className="site-type site-type-copy pdp-note" style={forceInkStyle}>{STAND_STAR_NOTE}</p>
+          <p className="site-type pdp-origin" style={forceInkStyle}>{STAND_ORIGIN}</p>
+        </ProductDescription>
 
         <ProductAccordions />
 
