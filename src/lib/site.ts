@@ -21,6 +21,8 @@ export const NAV_ITEMS = [
 
 /** Logo display box — keep within the 135×48 px brand lockup. */
 export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
+/** Footer lockup — 20% smaller than the default. */
+export const FOOTER_LOGO_DISPLAY = { width: 108, height: 38 } as const;
 
 /** JPEG on a white plate — OEM Force Dark inverts transparent PNG chrome. */
 export const LOGO_SRC = "/logo-taegye.jpg";

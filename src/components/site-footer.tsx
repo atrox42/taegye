@@ -4,7 +4,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
-import { FOOTER_LINKS, SITE_NAME, type FooterLinkItem } from "@/lib/site";
+import { FOOTER_LINKS, FOOTER_LOGO_DISPLAY, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const className = "site-type site-footer-link no-underline hover:no-underline";
@@ -33,7 +33,7 @@ export function SiteFooter() {
         <div className="site-footer-row">
           <div className="site-footer-brand">
             <Link href="/" className="site-footer-logo inline-flex shrink-0" aria-label={SITE_NAME}>
-              <BrandLogo />
+              <BrandLogo width={FOOTER_LOGO_DISPLAY.width} height={FOOTER_LOGO_DISPLAY.height} />
             </Link>
             <FooterLegal />
           </div>

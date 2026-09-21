@@ -4,10 +4,20 @@ import { cn } from "@/lib/utils";
 type BrandLogoProps = {
   className?: string;
   priority?: boolean;
+  width?: number;
+  height?: number;
 };
 
-/** Exact wordmark artwork, sized to fit inside a 135×48 CSS px box. */
-export function BrandLogo({ className, priority = false }: BrandLogoProps) {
+/** Exact wordmark artwork, sized to fit inside a 135×48 CSS px box by default. */
+export function BrandLogo({
+  className,
+  priority = false,
+  width,
+  height,
+}: BrandLogoProps) {
+  const maxWidth = width ?? LOGO_DISPLAY.width;
+  const maxHeight = height ?? LOGO_DISPLAY.height;
+
   return (
     // eslint-disable-next-line @next/next/no-img-element -- raster brand mark with CSS size cap
     <img
@@ -22,9 +32,9 @@ export function BrandLogo({ className, priority = false }: BrandLogoProps) {
         className
       )}
       style={{
-        maxWidth: LOGO_DISPLAY.width,
-        maxHeight: LOGO_DISPLAY.height,
-        height: LOGO_DISPLAY.height,
+        maxWidth,
+        maxHeight,
+        height: maxHeight,
         width: "auto",
         backgroundColor: "#ffffff",
         filter: "none",
