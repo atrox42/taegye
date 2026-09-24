@@ -72,6 +72,7 @@
   /* Gradient + data-URI + file. Force-dark often skips image paint. */
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
+  --ink-111-image: url("/ink-111.jpg");
   --background: #ffffff;
   --foreground: #111111;
   --card: #ffffff;
@@ -259,7 +260,12 @@ button {
   letter-spacing: var(--tracking-label);
   line-height: 1;
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
 }
 
 @media (min-width: 768px) {
@@ -319,7 +325,12 @@ button {
 .pdp-copy,
 .pdp-copy * {
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
 }
 
 @media (min-width: 768px) {
@@ -470,7 +481,12 @@ button {
 
 .new-subnav-item[aria-current="page"] {
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   opacity: 1;
   font-weight: 500;
   border-bottom-color: #111111;
@@ -527,7 +543,12 @@ button {
 
   .new-subnav-item[aria-current="page"] {
     color: #111111 !important;
-    -webkit-text-fill-color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     font-weight: 400;
     border-bottom-color: #111111;
   }
@@ -616,7 +637,12 @@ button {
   margin: 0;
   white-space: nowrap;
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
 }
 
 .site-footer-copy-plus {
@@ -626,7 +652,12 @@ button {
   background: none;
   cursor: pointer;
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   font: inherit;
   letter-spacing: inherit;
 }
@@ -636,6 +667,9 @@ button {
   margin: 0;
   color: #999999 !important;
   -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
   letter-spacing: var(--tracking-copy);
 }
 
@@ -673,7 +707,12 @@ button {
 .site-footer li,
 .site-footer-link {
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
 }
 
 @media (min-width: 768px) {
@@ -876,6 +915,9 @@ button {
   text-decoration: none !important;
   color: #999999 !important;
   -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
   opacity: 1;
   font-size: 11px;
   font-weight: 400;
@@ -885,7 +927,12 @@ button {
 .site-nav-link.is-active,
 .site-nav a[aria-current="page"] {
   color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   opacity: 1;
   font-size: 12px;
   font-weight: 500;
@@ -938,6 +985,9 @@ button {
   .site-nav a:visited {
     color: #999999 !important;
     -webkit-text-fill-color: #999999 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
     opacity: 1;
     font-size: 11px;
     font-weight: 400;
@@ -947,7 +997,12 @@ button {
   .site-nav-link.is-active,
   .site-nav a[aria-current="page"] {
     color: #111111 !important;
-    -webkit-text-fill-color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     font-size: 11px;
     font-weight: 500;
   }
@@ -1000,35 +1055,57 @@ button {
   .site-nav a:visited {
     color: #999999 !important;
     -webkit-text-fill-color: #999999 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
     opacity: 1;
   }
 
   .site-nav-link.is-active,
   .site-nav a[aria-current="page"] {
     color: #111111 !important;
-    -webkit-text-fill-color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     opacity: 1;
   }
 
   .new-subnav-item {
     color: #999999 !important;
     -webkit-text-fill-color: #999999 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
     opacity: 1;
   }
 
   .new-subnav-item[aria-current="page"] {
     color: #111111 !important;
-    -webkit-text-fill-color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     border-bottom-color: #111111;
   }
 
-  .site-footer,
   .site-footer a,
   .site-footer p,
   .site-footer button,
-  .site-footer summary {
+  .site-footer summary,
+  .site-footer-link,
+  .site-footer-copy-line {
     color: #111111 !important;
-    -webkit-text-fill-color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
   }
 }
 
@@ -1048,13 +1125,21 @@ button {
   .site-nav a:visited {
     color: #999999 !important;
     -webkit-text-fill-color: #999999 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
     opacity: 1;
   }
 
   .site-nav-link.is-active,
   .site-nav a[aria-current="page"] {
     color: #111111 !important;
-    -webkit-text-fill-color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
   }
 }
 
