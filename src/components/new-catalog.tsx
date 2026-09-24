@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { ProductCard } from "@/components/product-card";
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceWhiteStyle } from "@/lib/force-white";
 import {
   DEFAULT_NEW_CATEGORY,
   GRID_SLOT_AFTER_ID,
@@ -61,7 +61,6 @@ export function NewCatalog() {
               scroll={false}
               className={`site-type new-subnav-item${isActive ? " is-active" : ""}`}
               aria-current={isActive ? "page" : undefined}
-              style={isActive ? forceInkStyle : undefined}
             >
               {category.label}
             </Link>

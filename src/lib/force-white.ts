@@ -33,4 +33,7 @@ export const forceInkStyle = {
 export const forceMutedStyle = {
   color: "#999999",
   WebkitTextFillColor: "#999999",
+  backgroundImage: "none",
+  WebkitBackgroundClip: "border-box",
+  backgroundClip: "border-box",
 } as const;

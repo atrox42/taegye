@@ -3,23 +3,22 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
 import { FooterLegal } from "@/components/footer-legal";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceWhiteStyle } from "@/lib/force-white";
 import { FOOTER_LINKS, FOOTER_LOGO_DISPLAY, SITE_NAME, type FooterLinkItem } from "@/lib/site";
 
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const className = "site-type site-footer-link no-underline hover:no-underline";
-  const style = forceInkStyle;
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
         {label}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={className} style={style}>
+    <Link href={href} className={className}>
       {label}
     </Link>
   );

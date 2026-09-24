@@ -472,7 +472,7 @@ button {
   margin-bottom: 0.75rem;
 }
 
-.new-subnav-item {
+.new-subnav-item:not([aria-current="page"]):not(.is-active) {
   padding: 0 0 3px;
   border: 0;
   border-bottom: 1px solid transparent;
@@ -486,18 +486,18 @@ button {
   text-decoration: none;
 }
 
+/* #111 CSS inverts under Force Dark; #555 does not, and still reads as active. */
 .new-subnav-item[aria-current="page"],
 .new-subnav-item.is-active {
-  color: #111111 !important;
-  -webkit-text-fill-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
+  padding: 0 0 3px;
+  color: #555555 !important;
+  -webkit-text-fill-color: #555555 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
   opacity: 1;
   font-weight: 500;
-  border-bottom-color: #111111;
+  border-bottom: 1px solid #555555;
 }
 
 .new-empty {
@@ -551,15 +551,13 @@ button {
 
   .new-subnav-item[aria-current="page"],
   .new-subnav-item.is-active {
-    color: #111111 !important;
-    -webkit-text-fill-color: transparent !important;
-    background-image: var(--ink-111-image) !important;
-    background-repeat: repeat !important;
-    background-size: 8px 8px !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
+    color: #555555 !important;
+    -webkit-text-fill-color: #555555 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
     font-weight: 400;
-    border-bottom-color: #111111;
+    border-bottom-color: #555555;
   }
 
   .new-grid {
@@ -712,15 +710,20 @@ button {
   display: none !important;
 }
 
-.site-footer a,
+.site-footer-logo {
+  -webkit-text-fill-color: unset !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+
+.site-footer a.site-footer-link,
 .site-footer-link {
-  color: #111111 !important;
-  -webkit-text-fill-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
+  color: #555555 !important;
+  -webkit-text-fill-color: #555555 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
 }
 
 @media (min-width: 768px) {
@@ -1090,23 +1093,18 @@ button {
     opacity: 1;
   }
 
-  .new-subnav-item[aria-current="page"] {
-    color: #111111 !important;
-    -webkit-text-fill-color: transparent !important;
-    background-image: var(--ink-111-image) !important;
-    background-repeat: repeat !important;
-    background-size: 8px 8px !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    border-bottom-color: #111111;
+  .new-subnav-item[aria-current="page"],
+  .new-subnav-item.is-active {
+    color: #555555 !important;
+    -webkit-text-fill-color: #555555 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    border-bottom-color: #555555;
   }
 
-  .site-footer a,
-  .site-footer p,
-  .site-footer button,
-  .site-footer summary,
-  .site-footer-link,
-  .site-footer-copy-line {
+  .site-footer-copy-line,
+  .site-footer-copy-plus {
     color: #111111 !important;
     -webkit-text-fill-color: transparent !important;
     background-image: var(--ink-111-image) !important;
@@ -1114,6 +1112,15 @@ button {
     background-size: 8px 8px !important;
     -webkit-background-clip: text !important;
     background-clip: text !important;
+  }
+
+  .site-footer a.site-footer-link,
+  .site-footer-link {
+    color: #555555 !important;
+    -webkit-text-fill-color: #555555 !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
   }
 }
 
