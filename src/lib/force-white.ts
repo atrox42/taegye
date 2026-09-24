@@ -14,7 +14,7 @@ export const forceWhiteStyle = {
   backgroundRepeat: "no-repeat",
   color: "#111111",
   WebkitTextFillColor: "#111111",
-  colorScheme: "only light",
+  colorScheme: "light dark",
 } as const;
 
 export const forceInkStyle = {
