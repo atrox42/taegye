@@ -322,8 +322,13 @@ button {
   gap: 2.75rem;
 }
 
-.pdp-copy,
-.pdp-copy * {
+.pdp-copy .site-type,
+.pdp-copy a,
+.pdp-copy li,
+.pdp-copy p,
+.pdp-copy h1,
+.pdp-copy summary,
+.pdp-copy span {
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
   background-image: var(--ink-111-image) !important;
@@ -471,15 +476,18 @@ button {
   padding: 0 0 3px;
   border: 0;
   border-bottom: 1px solid transparent;
-  background: none;
   color: #999999 !important;
   -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
   opacity: 1;
   font-weight: 400;
   text-decoration: none;
 }
 
-.new-subnav-item[aria-current="page"] {
+.new-subnav-item[aria-current="page"],
+.new-subnav-item.is-active {
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
   background-image: var(--ink-111-image) !important;
@@ -541,7 +549,8 @@ button {
     font-weight: 400;
   }
 
-  .new-subnav-item[aria-current="page"] {
+  .new-subnav-item[aria-current="page"],
+  .new-subnav-item.is-active {
     color: #111111 !important;
     -webkit-text-fill-color: transparent !important;
     background-image: var(--ink-111-image) !important;
@@ -704,7 +713,6 @@ button {
 }
 
 .site-footer a,
-.site-footer li,
 .site-footer-link {
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
