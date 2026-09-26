@@ -843,24 +843,19 @@ button {
 }
 
 @media (min-width: 768px) {
-  .home-hero-clip-a {
-    top: clamp(5rem, 19vh, calc(100% - var(--hero-clip-h) - 5rem));
-    left: clamp(1.5rem, 12vw, calc(100% - var(--hero-clip-w) - 24px));
+  .home-hero-clip {
+    opacity: 0;
+    transition: opacity 280ms ease;
   }
 
-  .home-hero-clip-b {
-    top: clamp(7.5rem, 28vh, calc(100% - var(--hero-clip-h) - 4rem));
-    right: auto;
-    left: clamp(
-      1.5rem,
-      calc(100% - var(--hero-clip-w) - 13vw),
-      calc(100% - var(--hero-clip-w) - 24px)
-    );
+  .home-hero.is-placed .home-hero-clip {
+    opacity: 1;
   }
 
+  .home-hero-clip-a,
+  .home-hero-clip-b,
   .home-hero-clip-c {
-    top: clamp(13rem, 56vh, calc(100% - var(--hero-clip-h) - 3rem));
-    left: clamp(1.5rem, 39vw, calc(100% - var(--hero-clip-w) - 24px));
+    right: auto;
   }
 }
 
