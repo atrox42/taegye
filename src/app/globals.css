@@ -73,6 +73,7 @@
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
   --ink-111-image: url("/ink-111.jpg");
+  --line-e5-image: url("/line-e5.jpg");
   --background: #ffffff;
   --foreground: #111111;
   --card: #ffffff;
@@ -965,22 +966,74 @@ button {
   align-items: center;
 }
 
-.site-menu-icon,
-.site-menu-chevron {
-  display: block;
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+/* Thin bars / glyphs — JPEG fill or clip-text so Force Dark cannot invert a small <img>. */
+.site-ink-bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18px;
+  height: 11px;
+  pointer-events: none;
 }
 
-.site-menu-chevron {
-  width: 16px;
+.site-ink-bars > span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: transparent;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  background-clip: border-box !important;
+  forced-color-adjust: none;
+}
+
+.site-ink-glyph {
+  display: block;
+  font-family: Arial, Helvetica, "Noto Sans", sans-serif;
+  font-weight: 200;
+  font-size: 22px;
+  line-height: 1;
+  color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  forced-color-adjust: none;
+  pointer-events: none;
+}
+
+.site-ink-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
   height: 16px;
+  font-size: 18px;
+  font-weight: 200;
+  transform-origin: 50% 55%;
   transition: transform 160ms ease;
 }
 
-.site-menu-chevron.is-open {
+.site-ink-chevron.is-open {
   transform: rotate(90deg);
+}
+
+.site-menu-hairline,
+.site-menu-nav::before,
+.site-menu-row::after {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background-color: transparent;
+  background-image: var(--line-e5-image) !important;
+  background-repeat: repeat-x !important;
+  background-size: auto 1px !important;
+  background-clip: border-box !important;
+  forced-color-adjust: none;
 }
 
 .site-menu {
@@ -1014,10 +1067,15 @@ button {
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-top: 1px solid #e8e8e8;
+  border: 0;
+}
+
+.site-menu-nav::before {
+  content: "";
 }
 
 .site-menu-row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1025,7 +1083,6 @@ button {
   min-height: 3.4rem;
   padding: 0.95rem 1.15rem;
   border: 0;
-  border-bottom: 1px solid #e8e8e8;
   background: transparent;
   text-align: left;
   text-decoration: none !important;
@@ -1034,13 +1091,26 @@ button {
   letter-spacing: var(--tracking-label);
   line-height: 1.2;
   color: #111111 !important;
+  cursor: pointer;
+}
+
+.site-menu-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.site-menu-label {
+  color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
+  background-color: transparent !important;
   background-image: var(--ink-111-image) !important;
   background-repeat: repeat !important;
   background-size: 8px 8px !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
-  cursor: pointer;
 }
 
 .site-menu-subrow {
@@ -1470,10 +1540,8 @@ html[data-intro="pending"] body {
   cursor: pointer;
 }
 
-.site-promo-x img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
+.site-promo-x .site-ink-glyph {
+  font-size: 20px;
 }
 
 .site-promo-visual {
@@ -1565,19 +1633,40 @@ html[data-intro="pending"] body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
   padding: 0.85rem 1rem;
   background-color: #ffffff !important;
   background-image: url("/bg-white.jpg") !important;
   background-size: 100% 100% !important;
 }
 
+.site-promo-strip::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-image: var(--line-e5-image) !important;
+  background-repeat: repeat-x !important;
+  background-size: auto 1px !important;
+  background-clip: border-box !important;
+}
+
 .site-promo-strip-btn {
   padding: 0;
   border: 0;
-  background: none;
+  background-color: transparent !important;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: var(--tracking-copy-kr);
+  white-space: nowrap;
+}
+
+.site-promo-strip-close {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 13px;
 }
 
 @media (min-width: 768px) {
