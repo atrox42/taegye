@@ -1901,7 +1901,7 @@ html[data-intro="pending"] body {
   justify-content: center;
   width: 100%;
   min-height: 2.75rem;
-  padding: 0.7rem 1.35rem;
+  padding: 0;
   background-color: #574667 !important;
   background-image: var(--purple-574667-image) !important;
   background-size: 256px 256px !important;
@@ -1913,10 +1913,12 @@ html[data-intro="pending"] body {
 }
 
 .site-promo-cta-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 1.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem;
   font-family: var(--font-noto-sans-kr), sans-serif;
   font-size: 13px;
   letter-spacing: var(--tracking-copy-kr);
