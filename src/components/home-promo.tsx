@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
-import { InkClose } from "@/components/ink-icons";
+import { InkClose, InkHairline } from "@/components/ink-icons";
 import { forceInkStyle, forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
@@ -143,6 +143,7 @@ export function HomePromo() {
           </a>
         </div>
         <div className="site-promo-strip">
+          <InkHairline />
           <button type="button" className="site-promo-ink site-promo-strip-btn" onClick={hideToday} style={forceInkStyle}>
             {HOME_PROMO.hideTodayLabel}
           </button>

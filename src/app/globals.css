@@ -966,7 +966,7 @@ button {
   align-items: center;
 }
 
-/* Thin bars / glyphs — JPEG fill or clip-text so Force Dark cannot invert a small <img>. */
+/* Large ink JPEG cropped to a hairline — small paint boxes invert under Force Dark. */
 .site-ink-bars {
   display: flex;
   flex-direction: column;
@@ -976,15 +976,22 @@ button {
   pointer-events: none;
 }
 
-.site-ink-bars > span {
+.site-ink-crop {
   display: block;
   width: 100%;
   height: 1px;
-  background-color: transparent;
+  overflow: hidden;
+}
+
+.site-ink-fill {
+  display: block;
+  width: 256px;
+  height: 256px;
+  max-width: none;
+  background-color: transparent !important;
   background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  background-clip: border-box !important;
+  background-repeat: no-repeat !important;
+  background-size: 256px 256px !important;
   forced-color-adjust: none;
 }
 
@@ -992,7 +999,7 @@ button {
   display: block;
   font-family: Arial, Helvetica, "Noto Sans", sans-serif;
   font-weight: 200;
-  font-size: 22px;
+  font-size: 32px;
   line-height: 1;
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
@@ -1006,13 +1013,17 @@ button {
   pointer-events: none;
 }
 
+.site-ink-close {
+  font-size: 32px;
+}
+
 .site-ink-chevron {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 16px;
-  font-size: 18px;
+  width: 18px;
+  height: 28px;
+  font-size: 28px;
   font-weight: 200;
   transform-origin: 50% 55%;
   transition: transform 160ms ease;
@@ -1022,18 +1033,20 @@ button {
   transform: rotate(90deg);
 }
 
-.site-menu-hairline,
-.site-menu-nav::before,
-.site-menu-row::after {
+.site-ink-hairline {
   display: block;
-  height: 1px;
   width: 100%;
-  background-color: transparent;
-  background-image: var(--line-e5-image) !important;
-  background-repeat: repeat-x !important;
-  background-size: auto 1px !important;
-  background-clip: border-box !important;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
   forced-color-adjust: none;
+}
+
+.site-ink-hairline img {
+  display: block;
+  width: 1200px;
+  height: 256px;
+  max-width: none;
 }
 
 .site-menu {
@@ -1070,10 +1083,6 @@ button {
   border: 0;
 }
 
-.site-menu-nav::before {
-  content: "";
-}
-
 .site-menu-row {
   position: relative;
   display: flex;
@@ -1094,12 +1103,12 @@ button {
   cursor: pointer;
 }
 
-.site-menu-row::after {
-  content: "";
+.site-menu-row > .site-ink-hairline {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
 }
 
 .site-menu-label {
@@ -1541,7 +1550,7 @@ html[data-intro="pending"] body {
 }
 
 .site-promo-x .site-ink-glyph {
-  font-size: 20px;
+  font-size: 32px;
 }
 
 .site-promo-visual {
@@ -1640,25 +1649,20 @@ html[data-intro="pending"] body {
   background-size: 100% 100% !important;
 }
 
-.site-promo-strip::before {
-  content: "";
+.site-promo-strip > .site-ink-hairline {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background-image: var(--line-e5-image) !important;
-  background-repeat: repeat-x !important;
-  background-size: auto 1px !important;
-  background-clip: border-box !important;
+  width: 100%;
 }
 
 .site-promo-strip-btn {
-  padding: 0;
+  padding: 0.35rem 0;
   border: 0;
   background-color: transparent !important;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: var(--tracking-copy-kr);
   white-space: nowrap;
 }
@@ -1666,7 +1670,8 @@ html[data-intro="pending"] body {
 .site-promo-strip-close {
   margin-left: auto;
   flex-shrink: 0;
-  font-size: 13px;
+  padding: 0.45rem 0.85rem;
+  font-size: 16px;
 }
 
 @media (min-width: 768px) {

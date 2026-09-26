@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
 import { BrandLogo } from "@/components/brand-logo";
-import { InkBars, InkChevron, InkClose } from "@/components/ink-icons";
+import { InkBars, InkChevron, InkClose, InkHairline } from "@/components/ink-icons";
 import { forceWhiteStyle, PANEL_BITMAP_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, STORE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -86,9 +86,11 @@ export function SiteHeader() {
         {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
         <img src={PANEL_BITMAP_SRC} alt="" aria-hidden className="site-menu-bitmap" />
         <nav aria-label="Mobile" className="site-menu-nav">
+          <InkHairline />
           <Link href="/" className="site-menu-row" onClick={closeMenu}>
             <span className="site-menu-label">Home</span>
             <InkChevron />
+            <InkHairline />
           </Link>
           <button
             type="button"
@@ -98,6 +100,7 @@ export function SiteHeader() {
           >
             <span className="site-menu-label">Product</span>
             <InkChevron open={productOpen} />
+            <InkHairline />
           </button>
           {productOpen ? (
             <div className="site-menu-sub">
@@ -110,6 +113,7 @@ export function SiteHeader() {
                 >
                   <span className="site-menu-label">{category.label}</span>
                   <InkChevron />
+                  <InkHairline />
                 </Link>
               ))}
             </div>
@@ -117,6 +121,7 @@ export function SiteHeader() {
           <Link href="/about" className="site-menu-row" onClick={closeMenu}>
             <span className="site-menu-label">About</span>
             <InkChevron />
+            <InkHairline />
           </Link>
           <a
             href={STORE_URL}
@@ -127,6 +132,7 @@ export function SiteHeader() {
           >
             <span className="site-menu-label">Store</span>
             <InkChevron />
+            <InkHairline />
           </a>
         </nav>
       </div>
