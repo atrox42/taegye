@@ -922,6 +922,11 @@ button {
   text-decoration: none !important;
 }
 
+.home-new-in-title {
+  min-width: 4.5rem;
+  padding: 0.2rem 0;
+}
+
 .home-new-in-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -995,7 +1000,12 @@ button {
   background-color: #ffffff !important;
   background-image: url("/bg-white.jpg") !important;
   background-size: 100% 100% !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
   text-align: center;
+}
+
+.home-new-in-cta-label {
   font-size: 13px;
   letter-spacing: var(--tracking-label);
 }

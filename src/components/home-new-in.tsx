@@ -41,8 +41,10 @@ export function HomeNewIn() {
               </span>
             </div>
             <Link href={`/new/${item.product.id}`} className="home-new-in-cta">
-              <span className="home-new-in-cta-face site-type" style={forceInkStyle}>
-                View product
+              <span className="home-new-in-cta-face">
+                <span className="home-new-in-cta-label site-type" style={forceInkStyle}>
+                  View product
+                </span>
               </span>
             </Link>
           </article>
