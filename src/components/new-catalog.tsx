@@ -77,7 +77,17 @@ export function NewCatalog() {
       setPlacement(null);
       return;
     }
-    const src = GRID_TEXTURE_SRCS[Math.floor(Math.random() * GRID_TEXTURE_SRCS.length)];
+    const rawTex = searchParams.get("tex");
+    const pinned = rawTex
+      ? GRID_TEXTURE_SRCS.find((src) => src.endsWith(`/${rawTex}.webp`))
+      : undefined;
+    const rawMoss = searchParams.get("moss");
+    const moss = rawMoss === null ? Number.NaN : Number(rawMoss);
+    const src =
+      pinned ??
+      (Number.isInteger(moss)
+        ? GRID_TEXTURE_SRCS[((moss - 1) % GRID_TEXTURE_SRCS.length + GRID_TEXTURE_SRCS.length) % GRID_TEXTURE_SRCS.length]
+        : GRID_TEXTURE_SRCS[Math.floor(Math.random() * GRID_TEXTURE_SRCS.length)]);
     setPlacement({ slot, src });
   }, [products.length, searchParams]);
 
