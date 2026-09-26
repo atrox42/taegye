@@ -1,3 +1,5 @@
+import { HomePromo } from "@/components/home-promo";
+import { IntroSplash } from "@/components/intro-splash";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WhiteBitmapLayer } from "@/components/white-bitmap-layer";
@@ -14,6 +16,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </main>
         <SiteFooter />
       </div>
+      <IntroSplash />
+      <HomePromo />
     </div>
   );
 }

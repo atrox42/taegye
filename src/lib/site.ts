@@ -27,15 +27,29 @@ export const FOOTER_LOGO_DISPLAY = { width: 108, height: 38 } as const;
 /** JPEG on a white plate — OEM Force Dark inverts transparent PNG chrome. */
 export const LOGO_SRC = "/logo-taegye.jpg";
 
-/** Home loops — intrinsic 230×130; CSS displays half-size on mobile. */
+/** Home loops — intrinsic 230×130; CSS displays 138×78 on mobile. */
 export const HERO_CLIP = { width: 230, height: 130 } as const;
-export const HERO_CLIP_MOBILE = { width: 115, height: 65 } as const;
+export const HERO_CLIP_MOBILE = { width: 138, height: 78 } as const;
 
 export const HERO_CLIPS = [
   { id: "a", src: "/hero-loop-a.mp4", poster: "/hero-poster-a.jpg" },
   { id: "b", src: "/hero-loop-b.mp4", poster: "/hero-poster-b.jpg" },
   { id: "c", src: "/hero-loop-c.mp4", poster: "/hero-poster-c.jpg" },
 ] as const;
+
+/** Home opening promo — set `enabled: false` to hide without deleting copy. */
+export const HOME_PROMO = {
+  enabled: true,
+  eyebrow: "GRAND OPENING",
+  title: "5% OFF",
+  lines: ["오픈 기념 5% 쿠폰", "스마트스토어 첫 구매 시"],
+  ctaEn: "Store",
+  ctaKr: "쿠폰 받으러 가기 →",
+  href: STORE_URL,
+  hideTodayLabel: "오늘 하루 보지 않기",
+  closeLabel: "닫기",
+  textureSrc: "/products/grid-slot-texture.webp",
+} as const;
 
 export const COPYRIGHT = {
   year: 2026,

@@ -3,6 +3,7 @@
  * Real raster files + <img> nodes are much harder for OEM auto-dark to invert.
  */
 export const WHITE_BITMAP_SRC = "/bg-white.jpg";
+export const PANEL_BITMAP_SRC = "/bg-fafafa.jpg";
 export const INK_111_SRC = "/ink-111.jpg";
 
 export const FORCE_WHITE_IMAGE =
