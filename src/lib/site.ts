@@ -80,9 +80,8 @@ export const FOOTER_INSTAGRAM: FooterLinkItem = {
   external: true,
 };
 
-/** Desktop footer — one horizontal row. No Account, no Store. */
+/** Desktop footer — one horizontal row. No Account, no Store, no Legals. */
 export const FOOTER_LINKS: FooterLinkItem[] = [
-  { label: "Legals", href: "/legal" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "Faq", href: "/faq" },

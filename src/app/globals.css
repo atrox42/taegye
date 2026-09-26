@@ -452,8 +452,10 @@ button {
   list-style: none;
 }
 
-.pdp-acc-summary::-webkit-details-marker {
+.pdp-acc-summary::-webkit-details-marker,
+.pdp-acc-summary::marker {
   display: none;
+  content: none;
 }
 
 .pdp-acc-body {
@@ -659,6 +661,8 @@ button {
   padding: 0;
   border: 0;
   background: none;
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
@@ -701,6 +705,18 @@ button {
   padding-inline-start: 0;
   list-style: none !important;
   list-style-type: none !important;
+}
+
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker,
+details > summary::marker,
+summary::-webkit-details-marker,
+summary::marker {
+  display: none !important;
+  content: none !important;
 }
 
 .site-footer-nav li::marker,
