@@ -208,7 +208,7 @@ export const STAND_NOTE = {
 /**
  * Decorative /new grid tile — not a product.
  * Slot is 1-indexed and chosen client-side among 2–6.
- * Image is picked from the moss set after mount.
+ * Image is picked from the moss + wood set after mount.
  */
 export const GRID_TEXTURE_SRCS = [
   "/products/grid-textures/moss-1.webp",
@@ -216,6 +216,9 @@ export const GRID_TEXTURE_SRCS = [
   "/products/grid-textures/moss-3.webp",
   "/products/grid-textures/moss-4.webp",
   "/products/grid-textures/moss-5.webp",
+  "/products/grid-textures/wood-1.webp",
+  "/products/grid-textures/wood-2.webp",
+  "/products/grid-textures/wood-3.webp",
 ] as const;
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
