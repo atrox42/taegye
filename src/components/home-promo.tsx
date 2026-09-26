@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
+import { InkClose, InkHairline } from "@/components/ink-icons";
 import { forceInkStyle, forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
@@ -115,8 +116,7 @@ export function HomePromo() {
         <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="site-promo-card-bitmap" />
         <div className="site-promo-visual">
         <button type="button" className="site-promo-x" aria-label="Close" onClick={closeSession}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-          <img src="/icon-close.jpg" alt="" width={20} height={20} />
+          <InkClose />
         </button>
           {/* eslint-disable-next-line @next/next/no-img-element -- texture stays photographic under Force Dark */}
           <img src={HOME_PROMO.textureSrc} alt="" aria-hidden className="site-promo-texture" />
@@ -143,10 +143,16 @@ export function HomePromo() {
           </a>
         </div>
         <div className="site-promo-strip">
+          <InkHairline />
           <button type="button" className="site-promo-ink site-promo-strip-btn" onClick={hideToday} style={forceInkStyle}>
             {HOME_PROMO.hideTodayLabel}
           </button>
-          <button type="button" className="site-promo-ink site-promo-strip-btn" onClick={closeSession} style={forceInkStyle}>
+          <button
+            type="button"
+            className="site-promo-ink site-promo-strip-btn site-promo-strip-close"
+            onClick={closeSession}
+            style={forceInkStyle}
+          >
             {HOME_PROMO.closeLabel}
           </button>
         </div>

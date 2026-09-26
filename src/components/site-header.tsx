@@ -4,12 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
-import { BrandLogo } from "@/components/brand-logo";
-import { forceInkStyle, forceWhiteStyle, PANEL_BITMAP_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import { InkBars, InkChevron, InkClose, InkHairline } from "@/components/ink-icons";
+import { forceWhiteStyle, PANEL_BITMAP_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, STORE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
-
-const MENU_LOGO = { width: 78, height: 28 } as const;
 
 function categoryHref(id: string) {
   return id === DEFAULT_NEW_CATEGORY ? "/new" : `/new?cat=${id}`;
@@ -64,18 +62,8 @@ export function SiteHeader() {
           aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((value) => !value)}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-          <img
-            src={open ? "/icon-close.jpg" : "/icon-menu.jpg"}
-            alt=""
-            width={24}
-            height={24}
-            className="site-menu-icon"
-          />
+          {open ? <InkClose /> : <InkBars />}
         </button>
-        <Link href="/" className="site-menubar-logo" onClick={closeMenu} aria-label="TAEGYE home">
-          <BrandLogo width={MENU_LOGO.width} height={MENU_LOGO.height} priority />
-        </Link>
       </div>
 
       <div
@@ -92,27 +80,21 @@ export function SiteHeader() {
         {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
         <img src={PANEL_BITMAP_SRC} alt="" aria-hidden className="site-menu-bitmap" />
         <nav aria-label="Mobile" className="site-menu-nav">
-          <Link href="/" className="site-menu-row" style={forceInkStyle} onClick={closeMenu}>
-            <span>Home</span>
-            {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-            <img src="/icon-chevron.jpg" alt="" width={16} height={16} className="site-menu-chevron" />
+          <InkHairline />
+          <Link href="/" className="site-menu-row" onClick={closeMenu}>
+            <span className="site-menu-label">Home</span>
+            <InkChevron />
+            <InkHairline />
           </Link>
           <button
             type="button"
             className={cn("site-menu-row", productOpen && "is-expanded")}
             aria-expanded={productOpen}
             onClick={() => setProductOpen((value) => !value)}
-            style={forceInkStyle}
           >
-            <span>Product</span>
-            {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-            <img
-              src="/icon-chevron.jpg"
-              alt=""
-              width={16}
-              height={16}
-              className={cn("site-menu-chevron", productOpen && "is-open")}
-            />
+            <span className="site-menu-label">Product</span>
+            <InkChevron open={productOpen} />
+            <InkHairline />
           </button>
           {productOpen ? (
             <div className="site-menu-sub">
@@ -121,32 +103,30 @@ export function SiteHeader() {
                   key={category.id}
                   href={categoryHref(category.id)}
                   className="site-menu-row site-menu-subrow"
-                  style={forceInkStyle}
                   onClick={closeMenu}
                 >
-                  <span>{category.label}</span>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-                  <img src="/icon-chevron.jpg" alt="" width={16} height={16} className="site-menu-chevron" />
+                  <span className="site-menu-label">{category.label}</span>
+                  <InkChevron />
+                  <InkHairline />
                 </Link>
               ))}
             </div>
           ) : null}
-          <Link href="/about" className="site-menu-row" style={forceInkStyle} onClick={closeMenu}>
-            <span>About</span>
-            {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-            <img src="/icon-chevron.jpg" alt="" width={16} height={16} className="site-menu-chevron" />
+          <Link href="/about" className="site-menu-row" onClick={closeMenu}>
+            <span className="site-menu-label">About</span>
+            <InkChevron />
+            <InkHairline />
           </Link>
           <a
             href={STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="site-menu-row"
-            style={forceInkStyle}
             onClick={closeMenu}
           >
-            <span>Store</span>
-            {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
-            <img src="/icon-chevron.jpg" alt="" width={16} height={16} className="site-menu-chevron" />
+            <span className="site-menu-label">Store</span>
+            <InkChevron />
+            <InkHairline />
           </a>
         </nav>
       </div>
