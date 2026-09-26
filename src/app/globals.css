@@ -73,6 +73,8 @@
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
   --ink-111-image: url("/ink-111.jpg");
+  --white-clip-image: url("/bg-white.jpg");
+  --purple-574667-image: url("/purple-574667.jpg");
   --line-e5-image: url("/line-e5.jpg");
   --background: #ffffff;
   --foreground: #111111;
@@ -1238,6 +1240,10 @@ summary::marker {
   mask-repeat: no-repeat;
 }
 
+.site-ink-x.is-white .site-ink-fill {
+  background-image: url("/bg-white.jpg") !important;
+}
+
 .site-ink-chevron {
   width: 14px;
   height: 16px;
@@ -1790,22 +1796,24 @@ html[data-intro="pending"] body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 16.5rem;
-  padding: 2.4rem 1.4rem 1.6rem;
-  background-color: #f2f2f2 !important;
-  background-image: url("/bg-f2f2f2.jpg") !important;
+  min-height: 18.5rem;
+  padding: 2.8rem 1.6rem 2.1rem;
+  background-color: #574667 !important;
+  background-image: var(--purple-574667-image) !important;
   background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
   text-align: center;
+  forced-color-adjust: none;
 }
 
-.site-promo-texture {
+.site-promo-purple {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.18;
   pointer-events: none;
+  forced-color-adjust: none;
 }
 
 .site-promo-ink {
@@ -1821,47 +1829,98 @@ html[data-intro="pending"] body {
   background-clip: text !important;
 }
 
+.site-promo-white {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #ffffff !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--white-clip-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
 .site-promo-eyebrow,
-.site-promo-title,
-.site-promo-cta {
+.site-promo-title {
   font-family: var(--font-splash), "Roboto Condensed", "Arial Narrow", sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
 }
 
 .site-promo-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0 1.5rem;
   font-size: 11px;
+  letter-spacing: 0.16em;
 }
 
 .site-promo-title {
-  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.15rem;
+  min-height: 3.25rem;
   font-size: 42px;
   line-height: 1;
   letter-spacing: 0.06em;
 }
 
 .site-promo-line {
-  margin-top: 0.45rem;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.05rem;
+  min-height: 2.25rem;
+  padding: 0 1.25rem;
+  font-size: 13px;
   letter-spacing: var(--tracking-copy-kr);
   line-height: 1.5;
 }
 
 .site-promo-cta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  margin-top: 1.35rem;
-  font-size: 12px;
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  margin-top: 1.7rem;
+  min-width: 10.75rem;
+  padding: 1px;
+  background-color: transparent !important;
+  background-image: var(--white-clip-image) !important;
+  background-repeat: repeat !important;
+  background-size: 256px 256px !important;
   text-decoration: none !important;
-  line-height: 1.4;
 }
 
-.site-promo-cta-kr {
+.site-promo-cta-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.7rem 1.35rem;
+  background-color: #574667 !important;
+  background-image: var(--purple-574667-image) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+  text-align: center;
+  forced-color-adjust: none;
+}
+
+.site-promo-cta-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
   font-family: var(--font-noto-sans-kr), sans-serif;
-  text-transform: none;
+  font-size: 13px;
   letter-spacing: var(--tracking-copy-kr);
+  text-transform: none;
 }
 
 .site-promo-strip {
