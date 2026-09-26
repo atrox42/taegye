@@ -190,7 +190,7 @@ export const STAND_ACCORDION = [
   },
   {
     label: "Shipping & Returns",
-    body: "Shipping and returns are listed at checkout on the store.",
+    body: "Shipping and returns are listed at checkout on the Store.",
   },
 ] as const;
 
@@ -281,7 +281,7 @@ export const FAQ_ITEMS = [
   {
     q: { en: "Where can I purchase TAEGYE?", kr: "태계는 어디에서 구매할 수 있나요?" },
     a: {
-      en: "All pieces are available on our store.",
+      en: "All pieces are available on our Store.",
       kr: "모든 제품은 네이버 스마트스토어에서 구매할 수 있습니다.",
     },
   },
@@ -295,7 +295,7 @@ export const FAQ_ITEMS = [
   {
     q: { en: "Do you ship?", kr: "배송이 가능한가요?" },
     a: {
-      en: "Shipping details are listed at checkout on the store.",
+      en: "Shipping details are listed at checkout on the Store.",
       kr: "배송 안내는 스마트스토어 결제 페이지에서 확인할 수 있습니다.",
     },
   },

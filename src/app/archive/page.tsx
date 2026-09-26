@@ -3,14 +3,14 @@ import type { Metadata } from "next";
 import { ImageSlot } from "@/components/image-slot";
 
 export const metadata: Metadata = {
-  title: "archive",
+  title: "Archive",
 };
 
 export default function ArchivePage() {
   return (
     <div className="site-page pt-4 sm:pt-16">
-      <h1 className="site-gutter py-4 text-[11px] font-normal lowercase tracking-[var(--tracking-label-lg)]">
-        archive
+      <h1 className="site-gutter py-4 text-[11px] font-normal tracking-[var(--tracking-label-lg)]">
+        Archive
       </h1>
       <div className="grid grid-cols-2 gap-0">
         {Array.from({ length: 4 }, (_, i) => (

@@ -5,7 +5,7 @@ import { forceWhiteStyle } from "@/lib/force-white";
 import { ABOUT } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "about",
+  title: "About",
 };
 
 function AboutParagraph({
