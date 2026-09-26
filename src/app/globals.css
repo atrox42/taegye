@@ -988,38 +988,41 @@ button {
   forced-color-adjust: none;
 }
 
-.site-ink-glyph {
+.site-ink-mark {
   display: block;
-  font-family: Arial, Helvetica, "Noto Sans", sans-serif;
-  font-weight: 200;
-  font-size: 32px;
-  line-height: 1;
-  color: #111111 !important;
-  -webkit-text-fill-color: transparent !important;
-  background-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  forced-color-adjust: none;
+  overflow: hidden;
   pointer-events: none;
+  forced-color-adjust: none;
 }
 
-.site-ink-close {
-  font-size: 32px;
+.site-ink-x {
+  width: 18px;
+  height: 18px;
+}
+
+.site-ink-x .site-ink-fill {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M3 3 L15 15 M15 3 L3 15' stroke='white' stroke-width='1.15' fill='none'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M3 3 L15 15 M15 3 L3 15' stroke='white' stroke-width='1.15' fill='none'/></svg>");
+  -webkit-mask-size: 18px 18px;
+  mask-size: 18px 18px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .site-ink-chevron {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 28px;
-  font-size: 28px;
-  font-weight: 200;
+  width: 14px;
+  height: 16px;
   transform-origin: 50% 55%;
   transition: transform 160ms ease;
+}
+
+.site-ink-chevron .site-ink-fill {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 16'><path d='M4 3 L10 8 L4 13' stroke='white' stroke-width='1.15' fill='none'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 16'><path d='M4 3 L10 8 L4 13' stroke='white' stroke-width='1.15' fill='none'/></svg>");
+  -webkit-mask-size: 14px 16px;
+  mask-size: 14px 16px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .site-ink-chevron.is-open {
@@ -1544,8 +1547,9 @@ html[data-intro="pending"] body {
   cursor: pointer;
 }
 
-.site-promo-x .site-ink-glyph {
-  font-size: 32px;
+.site-promo-x .site-ink-x {
+  width: 18px;
+  height: 18px;
 }
 
 .site-promo-visual {
@@ -1653,20 +1657,25 @@ html[data-intro="pending"] body {
 }
 
 .site-promo-strip-btn {
-  padding: 0.35rem 0;
+  padding: 0.2rem 0;
   border: 0;
   background-color: transparent !important;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 13px;
   letter-spacing: var(--tracking-copy-kr);
   white-space: nowrap;
 }
 
 .site-promo-strip-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
   margin-left: auto;
   flex-shrink: 0;
-  padding: 0.45rem 0.85rem;
-  font-size: 16px;
+  min-width: 5.5rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 0.25rem 0.75rem 1rem;
+  font-size: 13px;
 }
 
 @media (min-width: 768px) {

@@ -18,16 +18,16 @@ export function InkBars({ className }: { className?: string }) {
 
 export function InkClose({ className }: { className?: string }) {
   return (
-    <span className={cn("site-ink-glyph site-ink-close", className)} aria-hidden>
-      ×
+    <span className={cn("site-ink-mark site-ink-x", className)} aria-hidden>
+      <span className="site-ink-fill" />
     </span>
   );
 }
 
 export function InkChevron({ open = false, className }: { open?: boolean; className?: string }) {
   return (
-    <span className={cn("site-ink-glyph site-ink-chevron", open && "is-open", className)} aria-hidden>
-      ›
+    <span className={cn("site-ink-mark site-ink-chevron", open && "is-open", className)} aria-hidden>
+      <span className="site-ink-fill" />
     </span>
   );
 }
