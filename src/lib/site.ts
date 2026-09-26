@@ -38,6 +38,18 @@ export const HERO_CLIPS = [
 ] as const;
 
 /** Home opening promo — set `enabled: false` to hide without deleting copy. */
+/** Home “New In” — first item is the mobile feature; desktop shows both. */
+export const HOME_NEW_IN = [
+  {
+    id: "silver",
+    caption: "Modular Stand, Silver — moss on steel.",
+  },
+  {
+    id: "purple",
+    caption: "Modular Stand, Purple — moss on steel.",
+  },
+] as const;
+
 export const HOME_PROMO = {
   enabled: true,
   eyebrow: "GRAND OPENING",
