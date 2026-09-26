@@ -1551,6 +1551,12 @@ html[data-intro="pending"] body {
   line-height: 1.4;
 }
 
+.site-promo-cta-kr {
+  font-family: var(--font-noto-sans-kr), sans-serif;
+  text-transform: none;
+  letter-spacing: var(--tracking-copy-kr);
+}
+
 .site-promo-strip {
   position: relative;
   z-index: 1;

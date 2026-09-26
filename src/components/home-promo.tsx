@@ -14,6 +14,10 @@ function forceHold() {
   return new URLSearchParams(window.location.search).get("promo") === "hold";
 }
 
+function querySkip() {
+  return new URLSearchParams(window.location.search).get("promo") === "skip";
+}
+
 function hiddenForToday() {
   try {
     const until = Number(window.localStorage.getItem(HIDE_KEY) || "0");
@@ -57,6 +61,7 @@ export function HomePromo() {
   useEffect(() => {
     if (!HOME_PROMO.enabled || pathname !== "/") return;
     if (typeof window === "undefined") return;
+    if (querySkip()) return;
     if (hiddenForToday() || closedThisSession()) {
       if (!forceHold()) return;
     }
@@ -134,7 +139,7 @@ export function HomePromo() {
             style={forceInkStyle}
           >
             <span>{HOME_PROMO.ctaEn}</span>
-            <span>{HOME_PROMO.ctaKr}</span>
+            <span className="site-promo-cta-kr">{HOME_PROMO.ctaKr}</span>
           </a>
         </div>
         <div className="site-promo-strip">

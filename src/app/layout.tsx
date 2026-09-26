@@ -59,6 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`light ${geistSans.variable} ${notoSansKr.variable} ${robotoCondensed.variable} h-full antialiased`}
       style={rootPaint}
     >
