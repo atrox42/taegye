@@ -4,7 +4,14 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
 import { InkClose, InkHairline } from "@/components/ink-icons";
-import { forceInkStyle, forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import {
+  forceInkStyle,
+  forcePurpleStyle,
+  forceWhiteClipStyle,
+  forceWhiteStyle,
+  PURPLE_574667_PNG_SRC,
+  WHITE_BITMAP_SRC,
+} from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
 const HIDE_KEY = "taegye-promo-hide-until";
@@ -114,32 +121,32 @@ export function HomePromo() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
         <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="site-promo-card-bitmap" />
-        <div className="site-promo-visual">
-        <button type="button" className="site-promo-x" aria-label="Close" onClick={closeSession}>
-          <InkClose />
-        </button>
-          {/* eslint-disable-next-line @next/next/no-img-element -- texture stays photographic under Force Dark */}
-          <img src={HOME_PROMO.textureSrc} alt="" aria-hidden className="site-promo-texture" />
-          <p className="site-promo-ink site-promo-eyebrow" style={forceInkStyle}>
+        <div className="site-promo-visual" style={forcePurpleStyle}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- exact #574667 PNG fill skips Force Dark invert */}
+          <img src={PURPLE_574667_PNG_SRC} alt="" aria-hidden className="site-promo-purple" />
+          <button type="button" className="site-promo-x" aria-label="Close" onClick={closeSession}>
+            <InkClose tone="white" />
+          </button>
+          <p className="site-promo-white site-promo-eyebrow" style={forceWhiteClipStyle}>
             {HOME_PROMO.eyebrow}
           </p>
-          <p id={titleId} className="site-promo-ink site-promo-title" style={forceInkStyle}>
+          <p id={titleId} className="site-promo-white site-promo-title" style={forceWhiteClipStyle}>
             {HOME_PROMO.title}
           </p>
-          {HOME_PROMO.lines.map((line) => (
-            <p key={line} className="site-promo-ink site-promo-line" style={forceInkStyle}>
-              {line}
-            </p>
-          ))}
+          <p className="site-promo-white site-promo-line" style={forceWhiteClipStyle}>
+            {HOME_PROMO.line}
+          </p>
           <a
             href={HOME_PROMO.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="site-promo-ink site-promo-cta"
-            style={forceInkStyle}
+            className="site-promo-cta"
           >
-            <span>{HOME_PROMO.ctaEn}</span>
-            <span className="site-promo-cta-kr">{HOME_PROMO.ctaKr}</span>
+            <span className="site-promo-cta-face" style={forcePurpleStyle}>
+              <span className="site-promo-white site-promo-cta-label" style={forceWhiteClipStyle}>
+                {HOME_PROMO.cta}
+              </span>
+            </span>
           </a>
         </div>
         <div className="site-promo-strip">

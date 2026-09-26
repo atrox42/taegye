@@ -16,9 +16,15 @@ export function InkBars({ className }: { className?: string }) {
   );
 }
 
-export function InkClose({ className }: { className?: string }) {
+export function InkClose({
+  className,
+  tone = "ink",
+}: {
+  className?: string;
+  tone?: "ink" | "white";
+}) {
   return (
-    <span className={cn("site-ink-mark site-ink-x", className)} aria-hidden>
+    <span className={cn("site-ink-mark site-ink-x", tone === "white" && "is-white", className)} aria-hidden>
       <span className="site-ink-fill" />
     </span>
   );

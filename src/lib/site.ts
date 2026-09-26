@@ -54,13 +54,11 @@ export const HOME_PROMO = {
   enabled: true,
   eyebrow: "GRAND OPENING",
   title: "5% OFF",
-  lines: ["오픈 기념 5% 쿠폰", "스마트스토어 첫 구매 시"],
-  ctaEn: "Store",
-  ctaKr: "쿠폰 받으러 가기 →",
+  line: "스마트스토어 첫 구매 5% 할인",
+  cta: "쿠폰 받기",
   href: STORE_URL,
   hideTodayLabel: "오늘 하루 보지 않기",
   closeLabel: "닫기",
-  textureSrc: "/products/grid-slot-texture.webp",
 } as const;
 
 export const COPYRIGHT = {
@@ -217,7 +215,6 @@ export const GRID_TEXTURE_SRCS = [
   "/products/grid-textures/moss-4.webp",
   "/products/grid-textures/moss-5.webp",
   "/products/grid-textures/wood-1.webp",
-  "/products/grid-textures/wood-2.webp",
   "/products/grid-textures/wood-3.webp",
 ] as const;
 export const GRID_TEXTURE_SLOT_MIN = 2;
