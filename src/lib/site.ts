@@ -205,9 +205,14 @@ export const STAND_NOTE = {
   ],
 } as const;
 
-/** Decorative /new grid tile — not a product. Inserted after purple. */
-export const GRID_SLOT_TEXTURE = "/products/grid-slot-texture.webp";
-export const GRID_SLOT_AFTER_ID = "purple";
+/**
+ * Decorative /new grid tile — not a product.
+ * Slot is 1-indexed and chosen client-side among 2–6.
+ * Moss set (moss-1.webp … moss-5.webp) replaces this fallback when the files land.
+ */
+export const GRID_TEXTURE_SRCS = ["/products/grid-slot-texture.webp"] as const;
+export const GRID_TEXTURE_SLOT_MIN = 2;
+export const GRID_TEXTURE_SLOT_MAX = 6;
 
 /** /new catalog — silver, purple, black, green, white. */
 export const NEW_PRODUCTS: NewProduct[] = [

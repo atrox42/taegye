@@ -607,6 +607,12 @@ button {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  opacity: 0;
+}
+
+.new-grid.is-placed .new-grid-texture-media {
+  opacity: 1;
+  transition: opacity 280ms ease;
 }
 
 .site-footer {
