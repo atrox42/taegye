@@ -1005,13 +1005,12 @@ button {
   letter-spacing: var(--tracking-label);
 }
 
-.site-footer-mark {
+.site-float-dock {
   position: relative;
   display: flex;
   justify-content: center;
-  min-height: calc(52px + 62px + 48px);
-  padding-top: 52px;
-  padding-bottom: 48px;
+  min-height: calc(62px + 24px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   pointer-events: none;
 }
 
@@ -1070,10 +1069,9 @@ button {
     margin-right: auto;
   }
 
-  .site-footer-mark {
-    display: none;
-    min-height: 0;
-    padding: 0;
+  .site-float-dock {
+    min-height: calc(77px + 24px);
+    padding-bottom: 24px;
   }
 
   .site-float-logo {
@@ -1083,10 +1081,6 @@ button {
 
   .site-float-logo img {
     width: 120px;
-  }
-
-  .site-float-logo.is-docked {
-    display: none;
   }
 
   .site-footer-logo {

@@ -1,3 +1,4 @@
+import { FloatLogo } from "@/components/float-logo";
 import { HomePromo } from "@/components/home-promo";
 import { IntroSplash } from "@/components/intro-splash";
 import { SiteFooter } from "@/components/site-footer";
@@ -13,6 +14,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <SiteHeader />
         <main className="site-main flex-1" style={forceWhiteStyle}>
           {children}
+          <FloatLogo />
         </main>
         <SiteFooter />
       </div>

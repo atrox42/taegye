@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { BrandLogo } from "@/components/brand-logo";
-import { FloatLogo } from "@/components/float-logo";
 import { FooterLegal } from "@/components/footer-legal";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
@@ -30,7 +29,6 @@ export function SiteFooter() {
     <footer className="site-footer" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
       <div className="site-footer-inner site-gutter">
-        <FloatLogo />
         <div className="site-footer-row">
           <div className="site-footer-brand">
             <Link href="/" className="site-footer-logo inline-flex shrink-0" aria-label={SITE_NAME}>
