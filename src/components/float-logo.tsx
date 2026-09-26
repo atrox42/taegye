@@ -23,12 +23,26 @@ export function FloatLogo() {
     if (!logo || !slot) return;
 
     const update = () => {
-      logo.classList.toggle("is-hidden", isChromeOpen());
       const desktop = window.matchMedia("(min-width: 768px)").matches;
       const logoH = logo.offsetHeight || (desktop ? 77 : 62);
       const padTop = parseFloat(getComputedStyle(slot).paddingTop) || 52;
       const dockLine = window.innerHeight - 24 - logoH;
-      logo.classList.toggle("is-docked", slot.getBoundingClientRect().top + padTop <= dockLine);
+      const docked = slot.getBoundingClientRect().top + padTop <= dockLine;
+      logo.classList.toggle("is-docked", docked);
+
+      const logoBox = logo.getBoundingClientRect();
+      const coversCard =
+        !docked &&
+        [...document.querySelectorAll(".product-card, .home-new-in-card")].some((el) => {
+          const r = el.getBoundingClientRect();
+          return !(
+            r.right < logoBox.left + 8 ||
+            r.left > logoBox.right - 8 ||
+            r.bottom < logoBox.top + 8 ||
+            r.top > logoBox.bottom - 8
+          );
+        });
+      logo.classList.toggle("is-hidden", isChromeOpen() || coversCard);
     };
 
     update();

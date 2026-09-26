@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function NewPage() {
   return (
-    <div className="site-page new-page site-gutter pt-5 pb-24 sm:pt-16 sm:pb-28" style={forceWhiteStyle}>
+    <div className="site-page new-page site-gutter pt-5 sm:pt-16" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
       <Suspense>
         <NewCatalog />
