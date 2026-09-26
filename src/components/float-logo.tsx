@@ -26,8 +26,9 @@ export function FloatLogo() {
       logo.classList.toggle("is-hidden", isChromeOpen());
       const desktop = window.matchMedia("(min-width: 768px)").matches;
       const logoH = logo.offsetHeight || (desktop ? 77 : 62);
+      const padTop = parseFloat(getComputedStyle(slot).paddingTop) || 52;
       const dockLine = window.innerHeight - 24 - logoH;
-      logo.classList.toggle("is-docked", slot.getBoundingClientRect().top <= dockLine);
+      logo.classList.toggle("is-docked", slot.getBoundingClientRect().top + padTop <= dockLine);
     };
 
     update();
