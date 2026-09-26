@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { LEGAL, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "legals",
+  title: "Legal",
 };
 
 const ROWS = [
@@ -19,7 +19,7 @@ const ROWS = [
 export default function LegalPage() {
   return (
     <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
-      <h1 className="text-[11px] font-normal lowercase tracking-[var(--tracking-title)]">legals</h1>
+      <h1 className="text-[11px] font-normal tracking-[var(--tracking-title)]">Legal</h1>
       <p className="mt-8 max-w-xl text-[13px] leading-7 tracking-[var(--tracking-copy)] text-foreground/70">
         Business information for {SITE_NAME}. Details below are placeholders until
         registration is confirmed.

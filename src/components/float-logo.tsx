@@ -23,17 +23,12 @@ export function FloatLogo() {
     if (!logo || !slot) return;
 
     const update = () => {
-      const obscured = isChromeOpen();
-      logo.classList.toggle("is-hidden", obscured);
+      logo.classList.toggle("is-hidden", isChromeOpen());
       const desktop = window.matchMedia("(min-width: 768px)").matches;
-      const slotTop = slot.getBoundingClientRect().top;
       const logoH = logo.offsetHeight || (desktop ? 77 : 62);
+      const padTop = parseFloat(getComputedStyle(slot).paddingTop) || 52;
       const dockLine = window.innerHeight - 24 - logoH;
-      if (desktop) {
-        logo.classList.toggle("is-docked", slotTop <= window.innerHeight - 8);
-      } else {
-        logo.classList.toggle("is-docked", slotTop <= dockLine);
-      }
+      logo.classList.toggle("is-docked", slot.getBoundingClientRect().top + padTop <= dockLine);
     };
 
     update();
@@ -49,7 +44,7 @@ export function FloatLogo() {
   }, []);
 
   return (
-    <div className="site-footer-mark" ref={slotRef}>
+    <div className="site-float-dock" ref={slotRef}>
       <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- JPEG wordmark on a white plate */}
         <img src={LOGO_SRC} alt="" width={598} height={384} />

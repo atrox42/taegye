@@ -452,8 +452,10 @@ button {
   list-style: none;
 }
 
-.pdp-acc-summary::-webkit-details-marker {
+.pdp-acc-summary::-webkit-details-marker,
+.pdp-acc-summary::marker {
   display: none;
+  content: none;
 }
 
 .pdp-acc-body {
@@ -605,6 +607,12 @@ button {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  opacity: 0;
+}
+
+.new-grid.is-placed .new-grid-texture-media {
+  opacity: 1;
+  transition: opacity 280ms ease;
 }
 
 .site-footer {
@@ -614,7 +622,7 @@ button {
 .site-footer-inner {
   position: relative;
   z-index: 1;
-  padding-top: 1.15rem;
+  padding-top: 0;
   padding-bottom: max(1.15rem, calc(0.85rem + env(safe-area-inset-bottom, 0px)));
 }
 
@@ -659,6 +667,8 @@ button {
   padding: 0;
   border: 0;
   background: none;
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
@@ -703,6 +713,18 @@ button {
   list-style-type: none !important;
 }
 
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker,
+details > summary::marker,
+summary::-webkit-details-marker,
+summary::marker {
+  display: none !important;
+  content: none !important;
+}
+
 .site-footer-nav li::marker,
 .site-footer-nav li::before,
 .site-footer-nav li::after,
@@ -730,7 +752,7 @@ button {
 
 @media (min-width: 768px) {
   .site-footer-inner {
-    padding-top: 1.35rem;
+    padding-top: 0;
     padding-bottom: 1.35rem;
   }
 
@@ -1005,7 +1027,7 @@ button {
   letter-spacing: var(--tracking-label);
 }
 
-.site-footer-mark {
+.site-float-dock {
   position: relative;
   display: flex;
   justify-content: center;
@@ -1044,10 +1066,6 @@ button {
   pointer-events: none;
 }
 
-.site-footer-logo {
-  display: none;
-}
-
 @media (min-width: 768px) {
   .home-new-in {
     padding: 5.5rem var(--site-gutter) 6rem;
@@ -1070,10 +1088,8 @@ button {
     margin-right: auto;
   }
 
-  .site-footer-mark {
-    display: none;
-    min-height: 0;
-    padding: 0;
+  .site-float-dock {
+    min-height: calc(52px + 77px + 48px);
   }
 
   .site-float-logo {
@@ -1083,14 +1099,6 @@ button {
 
   .site-float-logo img {
     width: 120px;
-  }
-
-  .site-float-logo.is-docked {
-    display: none;
-  }
-
-  .site-footer-logo {
-    display: inline-flex;
   }
 }
 

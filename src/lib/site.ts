@@ -80,9 +80,8 @@ export const FOOTER_INSTAGRAM: FooterLinkItem = {
   external: true,
 };
 
-/** Desktop footer — one horizontal row. No Account, no Store. */
+/** Desktop footer — one horizontal row. No Account, no Store, no Legals. */
 export const FOOTER_LINKS: FooterLinkItem[] = [
-  { label: "Legals", href: "/legal" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "Faq", href: "/faq" },
@@ -191,7 +190,7 @@ export const STAND_ACCORDION = [
   },
   {
     label: "Shipping & Returns",
-    body: "Shipping and returns are listed at checkout on the store.",
+    body: "Shipping and returns are listed at checkout on the Store.",
   },
 ] as const;
 
@@ -206,9 +205,14 @@ export const STAND_NOTE = {
   ],
 } as const;
 
-/** Decorative /new grid tile — not a product. Inserted after purple. */
-export const GRID_SLOT_TEXTURE = "/products/grid-slot-texture.webp";
-export const GRID_SLOT_AFTER_ID = "purple";
+/**
+ * Decorative /new grid tile — not a product.
+ * Slot is 1-indexed and chosen client-side among 2–6.
+ * Moss set (moss-1.webp … moss-5.webp) replaces this fallback when the files land.
+ */
+export const GRID_TEXTURE_SRCS = ["/products/grid-slot-texture.webp"] as const;
+export const GRID_TEXTURE_SLOT_MIN = 2;
+export const GRID_TEXTURE_SLOT_MAX = 6;
 
 /** /new catalog — silver, purple, black, green, white. */
 export const NEW_PRODUCTS: NewProduct[] = [
@@ -282,7 +286,7 @@ export const FAQ_ITEMS = [
   {
     q: { en: "Where can I purchase TAEGYE?", kr: "태계는 어디에서 구매할 수 있나요?" },
     a: {
-      en: "All pieces are available on our store.",
+      en: "All pieces are available on our Store.",
       kr: "모든 제품은 네이버 스마트스토어에서 구매할 수 있습니다.",
     },
   },
@@ -296,7 +300,7 @@ export const FAQ_ITEMS = [
   {
     q: { en: "Do you ship?", kr: "배송이 가능한가요?" },
     a: {
-      en: "Shipping details are listed at checkout on the store.",
+      en: "Shipping details are listed at checkout on the Store.",
       kr: "배송 안내는 스마트스토어 결제 페이지에서 확인할 수 있습니다.",
     },
   },
