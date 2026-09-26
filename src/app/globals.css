@@ -1478,6 +1478,7 @@ html[data-intro="pending"] body {
 
 .site-promo-visual {
   position: relative;
+  isolation: isolate;
   z-index: 1;
   display: flex;
   flex-direction: column;

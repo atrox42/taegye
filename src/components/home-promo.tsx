@@ -113,11 +113,11 @@ export function HomePromo() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
         <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="site-promo-card-bitmap" />
+        <div className="site-promo-visual">
         <button type="button" className="site-promo-x" aria-label="Close" onClick={closeSession}>
           {/* eslint-disable-next-line @next/next/no-img-element -- raster icons skip Force Dark invert */}
           <img src="/icon-close.jpg" alt="" width={20} height={20} />
         </button>
-        <div className="site-promo-visual">
           {/* eslint-disable-next-line @next/next/no-img-element -- texture stays photographic under Force Dark */}
           <img src={HOME_PROMO.textureSrc} alt="" aria-hidden className="site-promo-texture" />
           <p className="site-promo-ink site-promo-eyebrow" style={forceInkStyle}>
