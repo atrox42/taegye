@@ -56,6 +56,7 @@
   --site-nav-edge: 0px;
   --site-nav-pad: 1rem;
   --site-gutter: 1rem;
+  --float-clearance: calc(24px + 62px + 16px + env(safe-area-inset-bottom, 0px));
   --site-nav-offset: calc(3.25rem + env(safe-area-inset-top, 0px));
   --hero-clip-w: 138px;
   --hero-clip-h: 78px;
@@ -521,9 +522,13 @@ button {
 }
 
 .new-grid-item {
-  padding: 1.25rem 1rem 1.75rem;
+  padding: 0.95rem 0.85rem 1.05rem;
   border-right: 1px solid #111111;
   border-bottom: 1px solid #111111;
+}
+
+.new-page {
+  padding-bottom: calc(4.5rem + var(--float-clearance));
 }
 
 .new-grid-item .product-card {
@@ -543,6 +548,14 @@ button {
 }
 
 @media (min-width: 768px) {
+  :root {
+    --float-clearance: calc(24px + 77px + 20px);
+  }
+
+  .new-page {
+    padding-bottom: calc(5.5rem + var(--float-clearance));
+  }
+
   .new-subnav {
     gap: 1.25rem 1.75rem;
     margin-bottom: 1rem;
