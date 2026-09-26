@@ -922,7 +922,7 @@ button {
   z-index: 60;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.7rem;
+  gap: 0;
   width: 100%;
   height: calc(3.25rem + env(safe-area-inset-top, 0px));
   padding: env(safe-area-inset-top, 0px) 1rem 0;
@@ -957,13 +957,6 @@ button {
   border: 0;
   background: transparent;
   cursor: pointer;
-}
-
-.site-menubar-logo {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
 }
 
 /* Large ink JPEG cropped to a hairline — small paint boxes invert under Force Dark. */

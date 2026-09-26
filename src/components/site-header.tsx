@@ -4,13 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
-import { BrandLogo } from "@/components/brand-logo";
 import { InkBars, InkChevron, InkClose, InkHairline } from "@/components/ink-icons";
 import { forceWhiteStyle, PANEL_BITMAP_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, STORE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
-
-const MENU_LOGO = { width: 78, height: 28 } as const;
 
 function categoryHref(id: string) {
   return id === DEFAULT_NEW_CATEGORY ? "/new" : `/new?cat=${id}`;
@@ -67,9 +64,6 @@ export function SiteHeader() {
         >
           {open ? <InkClose /> : <InkBars />}
         </button>
-        <Link href="/" className="site-menubar-logo" onClick={closeMenu} aria-label="TAEGYE home">
-          <BrandLogo width={MENU_LOGO.width} height={MENU_LOGO.height} priority />
-        </Link>
       </div>
 
       <div
