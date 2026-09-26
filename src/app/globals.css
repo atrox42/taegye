@@ -1112,6 +1112,8 @@ button {
 }
 
 .site-menu-label {
+  min-width: 3.5rem;
+  padding: 0.2rem 0;
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
   background-color: transparent !important;
@@ -1124,7 +1126,7 @@ button {
 
 .site-menu-subrow {
   padding-left: 1.85rem;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .site-nav {
