@@ -992,8 +992,14 @@ select::-ms-expand {
   position: relative;
   isolation: isolate;
   z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   width: 100%;
   margin-top: calc(var(--site-nav-offset) * -1);
+  padding-top: var(--site-nav-offset);
   height: 100lvh;
   min-height: 100lvh;
   max-height: 100lvh;
@@ -1017,45 +1023,31 @@ select::-ms-expand {
 }
 
 .home-hero-clip {
-  position: absolute;
+  position: relative;
   z-index: 1;
-  width: var(--hero-clip-w);
-  height: var(--hero-clip-h);
-  max-width: var(--hero-clip-w);
-  max-height: var(--hero-clip-h);
+  flex: 0 0 auto;
+  width: min(
+    calc(var(--hero-clip-w) * var(--hero-scale, 1)),
+    calc(100vw - 2 * var(--site-gutter))
+  );
+  aspect-ratio: 230 / 130;
+  height: auto;
+  max-width: calc(100vw - 2 * var(--site-gutter));
   overflow: hidden;
 }
 
-/* Mobile: one centered column, zero gap, vertically balanced below the bar. */
-.home-hero-clip-a,
-.home-hero-clip-b,
-.home-hero-clip-c {
-  left: calc(50% - (var(--hero-clip-w) / 2));
-  right: auto;
-}
-
-.home-hero-clip-a {
-  top: calc(
-    var(--site-nav-offset) + (100lvh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2
-  );
-}
-
-.home-hero-clip-b {
-  top: calc(
-    var(--site-nav-offset) + (100lvh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2 +
-      var(--hero-clip-h)
-  );
-}
-
-.home-hero-clip-c {
-  top: calc(
-    var(--site-nav-offset) + (100lvh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2 +
-      (var(--hero-clip-h) * 2)
-  );
-}
-
 @media (min-width: 768px) {
+  .home-hero {
+    display: block;
+    padding-top: 0;
+  }
+
   .home-hero-clip {
+    position: absolute;
+    width: calc(var(--hero-clip-w) * var(--hero-scale, 1));
+    height: calc(var(--hero-clip-h) * var(--hero-scale, 1));
+    max-width: none;
+    aspect-ratio: auto;
     opacity: 0;
     transition: opacity 280ms ease;
   }
@@ -1063,20 +1055,12 @@ select::-ms-expand {
   .home-hero.is-placed .home-hero-clip {
     opacity: 1;
   }
-
-  .home-hero-clip-a,
-  .home-hero-clip-b,
-  .home-hero-clip-c {
-    right: auto;
-  }
 }
 
 .home-hero-media {
   display: block;
-  width: var(--hero-clip-w);
-  height: var(--hero-clip-h);
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
 }
