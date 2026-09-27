@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-const DURATION_MS = 780;
+const DURATION_MS = 860;
 const SESSION_KEY = "taegye-dissolve";
 
 type DissolveApi = {
@@ -44,11 +44,22 @@ function reducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function isShown(el: Element) {
+  let node: Element | null = el;
+  while (node && node !== document.documentElement) {
+    const style = window.getComputedStyle(node);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) < 0.2) {
+      return false;
+    }
+    node = node.parentElement;
+  }
+  return true;
+}
+
 function visibleGridImages() {
   return Array.from(document.querySelectorAll<HTMLImageElement>(".new-grid img")).filter((img) => {
     if (img.classList.contains("white-surface-fill")) return false;
-    const style = window.getComputedStyle(img);
-    if (style.visibility === "hidden" || Number(style.opacity) < 0.2) return false;
+    if (!isShown(img)) return false;
     const r = img.getBoundingClientRect();
     return r.width > 4 && r.height > 4 && img.naturalWidth > 0;
   });

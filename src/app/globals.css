@@ -617,19 +617,21 @@ html.is-dissolving {
     width: min(56vw, 720px);
   }
 
+  .pdp-atelier > .pdp-rail-copy,
   .pdp-rail-copy {
     position: absolute;
     left: var(--site-gutter);
-    top: 44%;
+    top: 42%;
     z-index: 2;
     width: min(17rem, 20vw);
     transform: translateY(-30%);
   }
 
+  .pdp-atelier > .pdp-rail-buy,
   .pdp-rail-buy {
     position: absolute;
     right: var(--site-gutter);
-    top: 44%;
+    top: 42%;
     z-index: 2;
     display: flex;
     width: min(12rem, 16vw);
@@ -1522,7 +1524,7 @@ select::-ms-expand {
 }
 
 .pdp > :not(.white-surface-fill),
-.pdp-atelier > :not(.white-surface-fill),
+.pdp-atelier > :not(.white-surface-fill):not(.pdp-rail),
 .pdp-hero > :not(.white-surface-fill),
 .pdp-visual > :not(.white-surface-fill),
 .new-page > :not(.white-surface-fill),
