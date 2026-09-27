@@ -68,14 +68,6 @@ export function InkClose({
   );
 }
 
-export function InkChevron({ open = false, className }: { open?: boolean; className?: string }) {
-  return (
-    <span className={cn("site-ink-mark site-ink-chevron", open && "is-open", className)} aria-hidden>
-      <span className="site-ink-fill" />
-    </span>
-  );
-}
-
 export function InkHairline({ className }: { className?: string }) {
   return (
     <span className={cn("site-ink-hairline", className)} aria-hidden>
