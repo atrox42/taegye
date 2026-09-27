@@ -6,64 +6,42 @@ import { useEffect, useRef } from "react";
 import { SITE_NAME } from "@/lib/site";
 
 function isChromeOpen() {
+  const introDone = document.documentElement.dataset.intro === "done";
+  const desktop = window.matchMedia("(min-width: 768px)").matches;
+  const splashOpen =
+    !introDone &&
+    !desktop &&
+    Boolean(document.querySelector(".site-splash:not(.is-out)"));
   return Boolean(
-    document.querySelector(".site-splash") ||
+    splashOpen ||
       document.querySelector(".site-promo") ||
       document.querySelector(".site-header.is-open"),
   );
 }
 
+/** Sticky bottom-center mark. No scroll listeners — docking is native CSS. */
 export function FloatLogo() {
   const logoRef = useRef<HTMLAnchorElement>(null);
-  const slotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const logo = logoRef.current;
-    const slot = slotRef.current;
-    if (!logo || !slot) return;
+    if (!logo) return;
 
-    const update = () => {
-      const desktop = window.matchMedia("(min-width: 768px)").matches;
-      const logoH = logo.offsetHeight || (desktop ? 54 : 43);
-      const padTop = parseFloat(getComputedStyle(slot).paddingTop) || 52;
-      const dockLine = window.innerHeight - 24 - logoH;
-      const docked = slot.getBoundingClientRect().top + padTop <= dockLine;
-      logo.classList.toggle("is-docked", docked);
-
-      const logoBox = logo.getBoundingClientRect();
-      const coversCard =
-        !docked &&
-        [...document.querySelectorAll(".product-card, .home-new-in-card")].some((el) => {
-          const r = el.getBoundingClientRect();
-          return !(
-            r.right < logoBox.left + 8 ||
-            r.left > logoBox.right - 8 ||
-            r.bottom < logoBox.top + 8 ||
-            r.top > logoBox.bottom - 8
-          );
-        });
-      logo.classList.toggle("is-hidden", isChromeOpen() || coversCard);
+    const syncHide = () => {
+      logo.classList.toggle("is-hidden", isChromeOpen());
     };
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, subtree: true, childList: true });
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      observer.disconnect();
-    };
+    syncHide();
+    const mo = new MutationObserver(syncHide);
+    mo.observe(document.documentElement, { attributes: true, subtree: true, childList: true });
+    return () => mo.disconnect();
   }, []);
 
   return (
-    <div className="site-float-dock" ref={slotRef}>
-      <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
-        <span className="site-float-logo-mark" aria-hidden>
-          <span className="site-ink-fill" />
-        </span>
-      </Link>
-    </div>
+    <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
+      <span className="site-float-logo-mark" aria-hidden>
+        <span className="site-ink-fill" />
+      </span>
+    </Link>
   );
 }

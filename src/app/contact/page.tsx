@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { StoreLink } from "@/components/store-mention";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { forceWhiteStyle } from "@/lib/force-white";
 import { CONTACT_EMAIL, LEGAL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -9,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32">
+    <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32" style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
       <h1 className="text-[11px] font-normal tracking-[var(--tracking-title)]">Contact</h1>
       <div className="mt-12 max-w-xl space-y-8 text-[13px] leading-7 tracking-[var(--tracking-copy)]">
         <section className="space-y-2">

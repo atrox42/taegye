@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { ProductCard } from "@/components/product-card";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
 import {
   DEFAULT_NEW_CATEGORY,
@@ -124,6 +125,7 @@ export function NewCatalog() {
               </li>
             ) : (
               <li key={entry.product.id} className="new-grid-item" style={forceWhiteStyle}>
+                <WhiteSurfaceFill />
                 <ProductCard product={entry.product} priority={index < 4} />
               </li>
             ),

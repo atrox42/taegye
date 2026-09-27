@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { FloatLogo } from "@/components/float-logo";
 import { FooterLegal } from "@/components/footer-legal";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
@@ -29,7 +28,6 @@ export function SiteFooter() {
     <footer className="site-footer" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
       <div className="site-footer-inner site-gutter">
-        <FloatLogo />
         <div className="site-footer-row">
           <div className="site-footer-brand">
             <FooterLegal />

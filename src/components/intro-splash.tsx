@@ -8,8 +8,6 @@ const STORAGE_KEY = "taegye-intro";
 const HOLD_MS = 2200;
 const FADE_MS = 400;
 
-type Phase = "hidden" | "in" | "out";
-
 function queryFlag(name: string, value: string) {
   if (typeof window === "undefined") return false;
   return new URLSearchParams(window.location.search).get(name) === value;
@@ -19,67 +17,49 @@ function shouldHold() {
   return queryFlag("intro", "hold");
 }
 
-function shouldSkip() {
-  return queryFlag("intro", "skip") || queryFlag("promo", "hold");
-}
-
-function alreadySeen() {
-  try {
-    return window.sessionStorage.getItem(STORAGE_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
 export function IntroSplash() {
-  const [phase, setPhase] = useState<Phase>("hidden");
+  const [out, setOut] = useState(false);
 
   useEffect(() => {
-    const hold = shouldHold();
-    const desktop = window.matchMedia("(min-width: 768px)").matches;
-    if (desktop || (!hold && (alreadySeen() || shouldSkip()))) {
-      document.documentElement.dataset.intro = "done";
+    const root = document.documentElement;
+    if (root.dataset.intro === "done") {
       window.dispatchEvent(new Event("taegye:intro-done"));
       return;
     }
 
-    document.documentElement.dataset.intro = "pending";
+    root.dataset.intro = "pending";
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const fade = reduced ? 0 : FADE_MS;
-    const holdFor = hold ? 120000 : reduced ? 1600 : HOLD_MS;
+    const holdFor = shouldHold() ? 120000 : reduced ? 1600 : HOLD_MS;
 
-    const frame = window.requestAnimationFrame(() => setPhase("in"));
+    document.body.style.overflow = "hidden";
+
     let hideTimer = 0;
     const outTimer = window.setTimeout(() => {
-      if (hold) return;
-      setPhase("out");
+      if (shouldHold()) return;
+      setOut(true);
       hideTimer = window.setTimeout(() => {
-        setPhase("hidden");
-        document.documentElement.dataset.intro = "done";
+        root.dataset.intro = "done";
         try {
           window.sessionStorage.setItem(STORAGE_KEY, "1");
         } catch {
           /* ignore quota / private mode */
         }
+        document.body.style.overflow = "";
         window.dispatchEvent(new Event("taegye:intro-done"));
       }, fade);
-    }, fade + holdFor);
-
-    document.body.style.overflow = "hidden";
+    }, holdFor);
 
     return () => {
-      window.cancelAnimationFrame(frame);
       window.clearTimeout(outTimer);
       window.clearTimeout(hideTimer);
       document.body.style.overflow = "";
     };
   }, []);
 
-  if (phase === "hidden") return null;
-
   return (
     <div
-      className={`site-splash ${phase === "in" ? "is-in" : "is-out"}`}
+      className={`site-splash${out ? " is-out" : ""}`}
       role="presentation"
       aria-hidden
     >
