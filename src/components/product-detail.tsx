@@ -1,0 +1,103 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import { PdpReveal } from "@/components/pdp-reveal";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import {
+  NEW_PRODUCTS,
+  STAND_NOTE,
+  STORE_URL,
+  productColorLabel,
+  productFamilyLabel,
+  type NewProduct,
+} from "@/lib/site";
+
+type ProductDetailProps = {
+  product: NewProduct;
+};
+
+export function ProductDetail({ product }: ProductDetailProps) {
+  const family = productFamilyLabel(product);
+  const color = productColorLabel(product);
+
+  return (
+    <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
+      <PdpReveal>
+        <div className="pdp-hero" style={forceWhiteStyle}>
+          <WhiteSurfaceFill />
+          <div className="pdp-stage relative aspect-square">
+            <WhiteSurfaceFill />
+            <Image
+              src={product.mossSrc}
+              alt={product.mossAlt}
+              fill
+              priority
+              sizes="(min-width: 768px) 58vw, 100vw"
+              className="object-contain object-center"
+            />
+          </div>
+        </div>
+      </PdpReveal>
+
+      <div className="pdp-rail pdp-rail-copy">
+        <h1 className="site-type pdp-name">
+          <span className="pdp-name-line">{family}</span>
+          <span className="pdp-name-line">{color}</span>
+        </h1>
+        <div className="pdp-blurb">
+          {STAND_NOTE.en.map((line) => (
+            <p key={line} lang="en" className="site-type site-type-copy about-copy" style={forceInkStyle}>
+              {line}
+            </p>
+          ))}
+        </div>
+      </div>
+
+      <div className="pdp-rail pdp-rail-buy">
+        <p className="site-type pdp-price product-price" style={forceInkStyle}>
+          {product.price}
+        </p>
+        <div className="pdp-swatches" role="list" aria-label="Color">
+          {NEW_PRODUCTS.map((item) => {
+            const label = productColorLabel(item);
+            const current = item.id === product.id;
+            const className = `pdp-swatch${current ? " is-current" : ""}`;
+            if (current) {
+              return (
+                <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
+                  <img src={`/swatches/${item.id}.png`} alt="" />
+                  <span className="sr-only">{label}</span>
+                </span>
+              );
+            }
+            return (
+              <Link
+                key={item.id}
+                role="listitem"
+                href={`/new/${item.id}`}
+                className={className}
+                title={label}
+                aria-label={label}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
+                <img src={`/swatches/${item.id}.png`} alt="" />
+              </Link>
+            );
+          })}
+        </div>
+        <a
+          href={STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="site-type pdp-store no-underline hover:no-underline"
+          style={forceInkStyle}
+        >
+          Store
+        </a>
+      </div>
+    </article>
+  );
+}
