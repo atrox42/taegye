@@ -10,6 +10,7 @@ import {
   forcePurpleStyle,
   forceWhiteClipStyle,
   forceWhiteStyle,
+  DIM_BLACK_PNG_SRC,
   PURPLE_574667_PNG_SRC,
   WHITE_BITMAP_SRC,
 } from "@/lib/force-white";
@@ -93,7 +94,7 @@ export function HomePromo() {
     <div className="site-promo" role="presentation">
       <button type="button" className="site-promo-dim" aria-label="Close promotion" onClick={() => hide(false)} />
       {/* eslint-disable-next-line @next/next/no-img-element -- dark raster dimmer skips Force Dark invert */}
-      <img src="/dim-black.jpg" alt="" aria-hidden className="site-promo-dim-bitmap" />
+      <img src={DIM_BLACK_PNG_SRC} alt="" aria-hidden className="site-promo-dim-bitmap" />
       <div
         className="site-promo-card"
         role="dialog"

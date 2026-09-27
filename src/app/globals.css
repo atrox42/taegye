@@ -2003,6 +2003,8 @@ html[data-intro="pending"] body {
   opacity: 1;
   visibility: visible;
   transition: none;
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 html[data-promo="off"] .site-promo {
@@ -2016,7 +2018,8 @@ html[data-promo="off"] .site-promo {
   inset: 0;
   z-index: 0;
   border: 0;
-  background: transparent;
+  background: transparent !important;
+  background-image: none !important;
   cursor: pointer;
 }
 
@@ -2026,10 +2029,12 @@ html[data-promo="off"] .site-promo {
   z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  opacity: 0.35;
+  object-fit: fill;
+  opacity: 1;
   pointer-events: none;
   transition: none;
+  background: transparent !important;
+  background-image: none !important;
 }
 
 .site-promo-card {
