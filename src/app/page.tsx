@@ -1,10 +1,20 @@
 import { HomeHero } from "@/components/home-hero";
 import { HomeNewIn } from "@/components/home-new-in";
+import { parseHeroScales, shuffleHeroScales } from "@/lib/hero-scale";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ scales?: string }>;
+}) {
+  const params = await searchParams;
+  const scales = parseHeroScales(params.scales ?? null) ?? shuffleHeroScales();
+
   return (
     <>
-      <HomeHero />
+      <HomeHero scales={scales} />
       <HomeNewIn />
     </>
   );

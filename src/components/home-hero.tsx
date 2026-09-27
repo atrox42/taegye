@@ -1,15 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import {
+  parseHeroScales,
+  placeScaledClips,
+  type HeroScaleTriple,
+  type HeroSlot,
+} from "@/lib/hero-scale";
 import { HERO_CLIP, HERO_CLIPS } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-type Slot = { top: string; left: string };
-
 /** Desktop-only scatter presets — 230×130 clips, clear of the nav, no overlap. */
-export const HERO_LAYOUT_PRESETS: Slot[][] = [
+export const HERO_LAYOUT_PRESETS: HeroSlot[][] = [
   [
     { top: "19%", left: "12%" },
     { top: "28%", left: "71%" },
@@ -47,50 +51,52 @@ export const HERO_LAYOUT_PRESETS: Slot[][] = [
   ],
 ];
 
-function shuffle<T>(items: T[]) {
-  const next = [...items];
-  for (let i = next.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [next[i], next[j]] = [next[j], next[i]];
-  }
-  return next;
-}
+export function HomeHero({ scales }: { scales: HeroScaleTriple }) {
+  const heroRef = useRef<HTMLElement>(null);
+  const [slots, setSlots] = useState<HeroSlot[] | null>(null);
 
-export function HomeHero() {
-  const [placed, setPlaced] = useState<{ slots: Slot[] | null; order: number[] } | null>(null);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const resolved = parseHeroScales(params.get("scales")) ?? scales;
     if (!window.matchMedia("(min-width: 768px)").matches) {
-      setPlaced({ slots: null, order: [0, 1, 2] });
+      setSlots(null);
       return;
     }
-    const raw = new URLSearchParams(window.location.search).get("layout");
+    const raw = params.get("layout");
     const parsed = raw === null ? Number.NaN : Number(raw);
     const index = Number.isInteger(parsed)
-      ? ((parsed % HERO_LAYOUT_PRESETS.length) + HERO_LAYOUT_PRESETS.length) % HERO_LAYOUT_PRESETS.length
+      ? ((parsed % HERO_LAYOUT_PRESETS.length) + HERO_LAYOUT_PRESETS.length) %
+        HERO_LAYOUT_PRESETS.length
       : Math.floor(Math.random() * HERO_LAYOUT_PRESETS.length);
-    setPlaced({
-      slots: HERO_LAYOUT_PRESETS.at(index) ?? HERO_LAYOUT_PRESETS[0],
-      order: shuffle([0, 1, 2]),
-    });
-  }, []);
+    const preset = HERO_LAYOUT_PRESETS.at(index) ?? HERO_LAYOUT_PRESETS[0];
+    const box = heroRef.current?.getBoundingClientRect();
+    const vw = box?.width ?? window.innerWidth;
+    const vh = box?.height ?? window.innerHeight;
+    setSlots(placeScaledClips(resolved, vw, vh, preset));
+  }, [scales]);
 
   return (
-    <section className={cn("home-hero", placed && "is-placed")} aria-label="TAEGYE" style={forceWhiteStyle}>
+    <section
+      ref={heroRef}
+      className={cn("home-hero", slots && "is-placed")}
+      aria-label="TAEGYE"
+      data-hero-scales={scales.join(",")}
+      style={forceWhiteStyle}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint; raster stays white */}
-      <img
-        src={WHITE_BITMAP_SRC}
-        alt=""
-        aria-hidden
-        className="home-hero-bitmap"
-      />
+      <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="home-hero-bitmap" />
       {HERO_CLIPS.map((clip, index) => {
-        const slot = placed?.slots?.[placed.order[index]];
+        const scale = scales[index];
+        const slot = slots?.[index];
         return (
           <div
             key={clip.id}
             className={`home-hero-clip home-hero-clip-${clip.id}`}
-            style={slot ? { top: slot.top, left: slot.left, right: "auto" } : undefined}
+            data-hero-scale={String(scale)}
+            style={{
+              ["--hero-scale" as string]: String(scale),
+              ...(slot ? { top: slot.top, left: slot.left, right: "auto" } : null),
+            }}
           >
             <video
               className="home-hero-media"
