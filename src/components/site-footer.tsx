@@ -30,6 +30,7 @@ export function SiteFooter() {
       <div className="site-footer-inner site-gutter">
         <WhiteSurfaceFill />
         <div className="site-footer-row">
+          <WhiteSurfaceFill />
           <div className="site-footer-brand">
             <FooterLegal />
           </div>

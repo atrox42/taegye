@@ -666,6 +666,7 @@ button {
 }
 
 .site-footer-row {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1006,7 +1007,9 @@ summary::marker {
   background-size: 100% 100% !important;
 }
 
-.home-new-in-visual img {
+.home-new-in-visual img:not(.white-surface-fill) {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
@@ -1014,9 +1017,8 @@ summary::marker {
   object-position: center;
 }
 
-.home-new-in-visual img:not(.white-surface-fill) {
-  position: relative;
-  z-index: 1;
+.home-new-in-visual .white-surface-fill {
+  object-fit: cover;
 }
 
 .home-new-in-caption {
@@ -1243,8 +1245,9 @@ summary::marker {
 .site-page > :not(.white-surface-fill),
 .site-footer > :not(.white-surface-fill),
 .site-footer-inner > :not(.white-surface-fill),
-.site-column > :not(.white-surface-fill),
-.site-float-track > :not(.white-surface-fill),
+.site-footer-row > :not(.white-surface-fill),
+.site-column > :not(.white-surface-fill):not(.site-header),
+.site-float-track > :not(.white-surface-fill):not(.site-float-logo),
 .product-card > :not(.white-surface-fill),
 .home-new-in-head > :not(.white-surface-fill),
 .home-new-in-card > :not(.white-surface-fill),
