@@ -3,6 +3,8 @@
  * Real raster files + <img> nodes are much harder for OEM auto-dark to invert.
  */
 export const WHITE_BITMAP_SRC = "/bg-white.jpg";
+/** 8×8 black at 40% alpha — Force Dark leaves PNG alpha alone; JPEG plates do not. */
+export const DIM_BLACK_PNG_SRC = "/dim-black.png";
 export const PANEL_BITMAP_SRC = "/bg-fafafa.jpg";
 export const INK_111_SRC = "/ink-111.jpg";
 /** TAEGYE product-base mid purple — JPEG/PNG fills skip OEM Force Dark invert. */
