@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
-import { InkBars, InkChevron, InkClose, InkHairline } from "@/components/ink-icons";
+import { InkBars, InkClose, InkHairline } from "@/components/ink-icons";
 import { forceWhiteStyle, PANEL_BITMAP_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, STORE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -83,7 +83,6 @@ export function SiteHeader() {
           <InkHairline />
           <Link href="/" className="site-menu-row" onClick={closeMenu}>
             <span className="site-menu-label">Home</span>
-            <InkChevron />
             <InkHairline />
           </Link>
           <button
@@ -93,7 +92,6 @@ export function SiteHeader() {
             onClick={() => setProductOpen((value) => !value)}
           >
             <span className="site-menu-label">Product</span>
-            <InkChevron open={productOpen} />
             <InkHairline />
           </button>
           {productOpen ? (
@@ -106,7 +104,6 @@ export function SiteHeader() {
                   onClick={closeMenu}
                 >
                   <span className="site-menu-label">{category.label}</span>
-                  <InkChevron />
                   <InkHairline />
                 </Link>
               ))}
@@ -114,7 +111,6 @@ export function SiteHeader() {
           ) : null}
           <Link href="/about" className="site-menu-row" onClick={closeMenu}>
             <span className="site-menu-label">About</span>
-            <InkChevron />
             <InkHairline />
           </Link>
           <a
@@ -125,7 +121,6 @@ export function SiteHeader() {
             onClick={closeMenu}
           >
             <span className="site-menu-label">Store</span>
-            <InkChevron />
             <InkHairline />
           </a>
         </nav>
@@ -150,45 +145,54 @@ export function SiteHeader() {
 }
 
 function DesktopNavLinks({ pathname }: { pathname: string }) {
-  const items = [
-    { label: "Home", href: "/" },
-    { label: "Product", href: "/new" },
-    { label: "About", href: "/about" },
-    { label: "Store", href: STORE_URL, external: true },
-  ] as const;
+  const homeActive = pathname === "/";
+  const productActive = pathname === "/new" || pathname.startsWith("/new/");
+  const aboutActive = pathname === "/about";
 
-  return items.map((item) => {
-    const isExternal = "external" in item && item.external;
-    const isActive =
-      !isExternal &&
-      (item.href === "/"
-        ? pathname === "/"
-        : pathname === item.href || pathname.startsWith(`${item.href}/`));
-    const className = cn("site-nav-link site-type relative z-10", isActive && "is-active");
-
-    if (isExternal) {
-      return (
-        <a
-          key={item.label}
-          href={item.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={className}
-        >
-          {item.label}
-        </a>
-      );
-    }
-
-    return (
+  return (
+    <>
       <Link
-        key={item.label}
-        href={item.href}
-        className={className}
-        aria-current={isActive ? "page" : undefined}
+        href="/"
+        className={cn("site-nav-link site-type relative z-10", homeActive && "is-active")}
+        aria-current={homeActive ? "page" : undefined}
       >
-        {item.label}
+        Home
       </Link>
-    );
-  });
+      <div className="site-nav-product">
+        <Link
+          href="/new"
+          className={cn("site-nav-link site-type relative z-10", productActive && "is-active")}
+          aria-current={productActive ? "page" : undefined}
+        >
+          Product
+        </Link>
+        <div className="site-nav-product-sub">
+          {NEW_CATEGORIES.map((category) => (
+            <Link
+              key={category.id}
+              href={categoryHref(category.id)}
+              className="site-nav-link site-type site-nav-product-item"
+            >
+              {category.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+      <Link
+        href="/about"
+        className={cn("site-nav-link site-type relative z-10", aboutActive && "is-active")}
+        aria-current={aboutActive ? "page" : undefined}
+      >
+        About
+      </Link>
+      <a
+        href={STORE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="site-nav-link site-type relative z-10"
+      >
+        Store
+      </a>
+    </>
+  );
 }

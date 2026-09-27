@@ -1406,6 +1406,9 @@ select::-ms-expand {
   margin-left: 0;
   padding: 0;
   border: 0;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   cursor: pointer;
 }
@@ -1474,24 +1477,15 @@ select::-ms-expand {
   background-image: url("/bg-white.jpg") !important;
 }
 
-.site-ink-chevron {
-  width: 14px;
-  height: 16px;
-  transform-origin: 50% 55%;
-  transition: transform 160ms ease;
-}
-
+/* Never paint a disclosure triangle — OEM dark mode turns these into a gray ▼ chip. */
+.site-ink-chevron,
 .site-ink-chevron .site-ink-fill {
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 16'><path d='M4 3 L10 8 L4 13' stroke='white' stroke-width='1.15' fill='none'/></svg>");
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 16'><path d='M4 3 L10 8 L4 13' stroke='white' stroke-width='1.15' fill='none'/></svg>");
-  -webkit-mask-size: 14px 16px;
-  mask-size: 14px 16px;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-.site-ink-chevron.is-open {
-  transform: rotate(90deg);
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
 }
 
 .site-ink-hairline {
@@ -1548,12 +1542,16 @@ select::-ms-expand {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 100%;
   min-height: 3.4rem;
   padding: 0.95rem 1.15rem;
   border: 0;
-  background: transparent;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent !important;
+  background-image: none !important;
   text-align: left;
   text-decoration: none !important;
   font-size: 16px;
@@ -1562,6 +1560,21 @@ select::-ms-expand {
   line-height: 1.2;
   color: #111111 !important;
   cursor: pointer;
+}
+
+.site-menu-row::before,
+.site-menu-row::after,
+.site-menu-row::-webkit-details-marker,
+.site-nav-link::before,
+.site-nav-link::after,
+.site-nav a::before,
+.site-nav a::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  border: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .site-menu-row > .site-ink-hairline {
@@ -1679,6 +1692,38 @@ select::-ms-expand {
     justify-content: flex-start;
     gap: 0.875rem;
     padding: 1.25rem var(--site-nav-pad);
+  }
+
+  .site-nav-product {
+    position: relative;
+  }
+
+  .site-nav-product-sub {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 20;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+    min-width: 6.5rem;
+    padding: 0.45rem 0.15rem 0.2rem;
+    border: 0;
+    box-shadow: none;
+    background-color: #ffffff !important;
+    background-image: url("/bg-white.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+  }
+
+  .site-nav-product:hover .site-nav-product-sub,
+  .site-nav-product:focus-within .site-nav-product-sub {
+    display: flex;
+  }
+
+  .site-nav-product-item {
+    display: block;
   }
 
   .site-nav-bitmap {
@@ -2182,7 +2227,7 @@ html[data-intro="pending"] body {
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.42rem 1rem;
   border: 0;
   border-top: 0;
   box-shadow: none;
@@ -2194,7 +2239,7 @@ html[data-intro="pending"] body {
 .site-promo-strip-btn {
   display: inline-flex;
   align-items: center;
-  min-height: 2.75rem;
+  min-height: 1.925rem;
   padding: 0.2rem 0;
   border: 0;
   background-color: transparent !important;
@@ -2211,8 +2256,8 @@ html[data-intro="pending"] body {
   margin-left: auto;
   flex-shrink: 0;
   min-width: 5.5rem;
-  min-height: 2.75rem;
-  padding: 0.75rem 0.25rem 0.75rem 1rem;
+  min-height: 1.925rem;
+  padding: 0.525rem 0.25rem 0.525rem 1rem;
   font-size: 13px;
 }
 
