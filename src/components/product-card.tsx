@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { MouseEvent } from "react";
 
+import { useGridDissolve } from "@/components/grid-dissolve";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
@@ -13,9 +15,21 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product, priority = false }: ProductCardProps) {
+  const dissolve = useGridDissolve();
+  const href = `/new/${product.id}`;
+
+  const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+      return;
+    }
+    event.preventDefault();
+    dissolve.start(href);
+  };
+
   return (
     <Link
-      href={`/new/${product.id}`}
+      href={href}
+      onClick={onClick}
       className="product-card relative block no-underline hover:no-underline"
       style={forceWhiteStyle}
     >

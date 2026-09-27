@@ -1,4 +1,5 @@
 import { FloatLogo } from "@/components/float-logo";
+import { GridDissolveProvider } from "@/components/grid-dissolve";
 import { HomePromo } from "@/components/home-promo";
 import { IntroSplashController } from "@/components/intro-splash";
 import { SiteFooter } from "@/components/site-footer";
@@ -9,6 +10,7 @@ import { forceInkStyle, forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-wh
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
+    <GridDissolveProvider>
     <div className="site-shell relative z-0 flex min-h-lvh flex-col" style={forceWhiteStyle}>
       <WhiteBitmapLayer />
       <div className="site-column relative z-[1] flex min-h-lvh flex-1 flex-col">
@@ -34,5 +36,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <IntroSplashController />
       <HomePromo />
     </div>
+    </GridDissolveProvider>
   );
 }

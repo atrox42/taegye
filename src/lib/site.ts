@@ -203,6 +203,15 @@ export const STAND_NOTE = {
   ],
 } as const;
 
+export function productColorLabel(product: NewProduct) {
+  const parts = product.name.split(", ");
+  return parts[1] ?? product.finish.replace(/ finish$/i, "");
+}
+
+export function productFamilyLabel(product: NewProduct) {
+  return product.name.split(", ")[0] ?? product.name;
+}
+
 /**
  * Decorative /new grid tile — not a product.
  * Slot is 1-indexed and chosen client-side among 2–6.
