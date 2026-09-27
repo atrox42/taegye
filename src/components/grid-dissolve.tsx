@@ -128,10 +128,10 @@ function buildTiles(): Tile[] {
         dy: box.y + piece.y,
         dw: piece.w,
         dh: piece.h,
-        delay: (nx * 0.32 + Math.random() * 0.68) * 0.48,
-        dur: 0.22 + Math.random() * 0.22,
-        ox: (Math.random() - 0.5) * 14,
-        oy: (Math.random() - 0.5) * 10,
+        delay: nx * 0.4 + Math.random() * 0.22,
+        dur: 0.2 + Math.random() * 0.18,
+        ox: (Math.random() - 0.5) * 16,
+        oy: (Math.random() - 0.5) * 12,
       });
     }
   }
@@ -233,24 +233,42 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const tiles = buildTiles();
-      const { ctx } = ensureCanvas();
-      if (!ctx || tiles.length === 0) {
-        go();
-        return;
-      }
-
-      const begun = performance.now();
-      const tick = (now: number) => {
-        const t = (now - begun) / DURATION_MS;
-        paint(ctx, tiles, Math.min(1, t));
-        if (t < 1) {
-          raf.current = requestAnimationFrame(tick);
-        } else {
+      const run = (tiles: Tile[]) => {
+        const { ctx } = ensureCanvas();
+        if (!ctx || tiles.length === 0) {
           go();
+          return;
         }
+
+        const hold = Number((window as Window & { __TAEGYE_DISSOLVE_HOLD?: number }).__TAEGYE_DISSOLVE_HOLD);
+        if (Number.isFinite(hold)) {
+          paint(ctx, tiles, Math.min(1, Math.max(0, hold)));
+          return;
+        }
+
+        const begun = performance.now();
+        const tick = (now: number) => {
+          const t = (now - begun) / DURATION_MS;
+          paint(ctx, tiles, Math.min(1, t));
+          if (t < 1) {
+            raf.current = requestAnimationFrame(tick);
+          } else {
+            go();
+          }
+        };
+        raf.current = requestAnimationFrame(tick);
       };
-      raf.current = requestAnimationFrame(tick);
+
+      void Promise.all(
+        visibleGridImages().map((img) => (img.decode ? img.decode().catch(() => undefined) : Promise.resolve())),
+      ).then(() => {
+        const tiles = buildTiles();
+        if (tiles.length === 0) {
+          window.setTimeout(() => run(buildTiles()), 80);
+          return;
+        }
+        run(tiles);
+      });
     },
     [reset, router],
   );
