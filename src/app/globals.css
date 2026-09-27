@@ -362,13 +362,22 @@ button {
   appearance: none;
   -webkit-appearance: none;
   cursor: text;
-  font: inherit;
-  letter-spacing: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
+  line-height: 1.9;
   text-align: left;
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   user-select: text;
   -webkit-user-select: text;
+}
+
+@media (min-width: 768px) {
+  .contact-email {
+    font-size: 11px;
+    letter-spacing: var(--tracking-label-lg);
+  }
 }
 
 .contact-email:hover,
@@ -385,14 +394,19 @@ button {
 
 .contact-copied {
   position: relative;
+  z-index: 1;
   display: inline-block;
   margin: 0;
-  padding: 0;
+  padding: 0.1rem 0;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: var(--tracking-label);
-  line-height: 1;
+  line-height: 1.9;
   animation: contact-copied-out 1.2s ease forwards;
+}
+
+.contact-copied .white-surface-fill {
+  z-index: 0;
 }
 
 @keyframes contact-copied-out {

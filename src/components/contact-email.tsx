@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle } from "@/lib/force-white";
 import { CONTACT_EMAIL } from "@/lib/site";
 
@@ -29,8 +28,7 @@ export function ContactEmail() {
   const timer = useRef<number>(0);
 
   const onCopy = useCallback(async () => {
-    const ok = await copyText(CONTACT_EMAIL);
-    if (!ok) return;
+    await copyText(CONTACT_EMAIL);
     window.clearTimeout(timer.current);
     setCopied(true);
     timer.current = window.setTimeout(() => setCopied(false), 1200);
@@ -49,7 +47,6 @@ export function ContactEmail() {
       </button>
       {copied ? (
         <span className="contact-copied site-type" role="status" style={forceInkStyle}>
-          <WhiteSurfaceFill />
           Copied
         </span>
       ) : null}
