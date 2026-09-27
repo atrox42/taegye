@@ -973,7 +973,7 @@ summary::marker {
 .home-new-in-title,
 .home-new-in-more {
   margin: 0;
-  font-size: 15px;
+  font-size: 10.5px;
   font-weight: 400;
   letter-spacing: var(--tracking-label);
   text-decoration: none !important;
@@ -1297,7 +1297,7 @@ summary::marker {
   cursor: pointer;
 }
 
-/* Device-pixel hairlines — 1 device px each, integer tops. JPEG crop skips Force Dark. */
+/* Device-pixel bars — 2 device px each, integer tops. JPEG crop skips Force Dark. */
 .site-ink-bars {
   position: relative;
   display: block;
