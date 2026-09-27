@@ -97,6 +97,7 @@ export function NewCatalog() {
   return (
     <>
       <nav aria-label="Product categories" className="new-subnav">
+        <WhiteSurfaceFill />
         {NEW_CATEGORIES.map((category) => {
           const isActive = category.id === active;
           const href =

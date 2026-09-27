@@ -957,7 +957,8 @@ summary::marker {
 
 .home-new-in-head,
 .home-new-in-grid,
-.home-new-in-card {
+.home-new-in-card,
+.home-new-in-caption {
   position: relative;
   z-index: 1;
 }
@@ -1238,10 +1239,25 @@ summary::marker {
 .pdp-visual > :not(.white-surface-fill),
 .new-page > :not(.white-surface-fill),
 .new-grid-item > :not(.white-surface-fill),
+.new-subnav > :not(.white-surface-fill),
 .site-page > :not(.white-surface-fill),
-.site-footer > :not(.white-surface-fill) {
+.site-footer > :not(.white-surface-fill),
+.site-footer-inner > :not(.white-surface-fill),
+.site-column > :not(.white-surface-fill),
+.site-float-track > :not(.white-surface-fill),
+.product-card > :not(.white-surface-fill),
+.home-new-in-head > :not(.white-surface-fill),
+.home-new-in-card > :not(.white-surface-fill),
+.home-new-in-caption > :not(.white-surface-fill) {
   position: relative;
   z-index: 1;
+}
+
+.site-column,
+.site-float-track,
+.new-subnav,
+.product-card {
+  position: relative;
 }
 
 .site-menubar,

@@ -16,9 +16,10 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <Link
       href={`/new/${product.id}`}
-      className="product-card block no-underline hover:no-underline"
+      className="product-card relative block no-underline hover:no-underline"
       style={forceWhiteStyle}
     >
+      <WhiteSurfaceFill />
       <div className="product-stage relative aspect-square overflow-hidden">
         <WhiteSurfaceFill />
         <div className="product-empty absolute inset-0">

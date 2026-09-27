@@ -28,6 +28,7 @@ export function SiteFooter() {
     <footer className="site-footer" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
       <div className="site-footer-inner site-gutter">
+        <WhiteSurfaceFill />
         <div className="site-footer-row">
           <div className="site-footer-brand">
             <FooterLegal />

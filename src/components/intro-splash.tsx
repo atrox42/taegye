@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { forceInkStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import { useEffect } from "react";
 
 const STORAGE_KEY = "taegye-intro";
 const HOLD_MS = 2200;
@@ -17,11 +15,11 @@ function shouldHold() {
   return queryFlag("intro", "hold");
 }
 
-export function IntroSplash() {
-  const [out, setOut] = useState(false);
-
+/** Fades the SSR splash. Markup lives in SiteShell so the first HTML frame has it. */
+export function IntroSplashController() {
   useEffect(() => {
     const root = document.documentElement;
+    const splash = document.querySelector(".site-splash");
     if (root.dataset.intro === "done") {
       window.dispatchEvent(new Event("taegye:intro-done"));
       return;
@@ -37,7 +35,7 @@ export function IntroSplash() {
     let hideTimer = 0;
     const outTimer = window.setTimeout(() => {
       if (shouldHold()) return;
-      setOut(true);
+      splash?.classList.add("is-out");
       hideTimer = window.setTimeout(() => {
         root.dataset.intro = "done";
         try {
@@ -57,18 +55,5 @@ export function IntroSplash() {
     };
   }, []);
 
-  return (
-    <div
-      className={`site-splash${out ? " is-out" : ""}`}
-      role="presentation"
-      aria-hidden
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-      <img src={WHITE_BITMAP_SRC} alt="" className="site-splash-bitmap" />
-      <p className="site-splash-copy" style={forceInkStyle}>
-        <span>ALL</span>
-        <span>TAEGYE-RIUM</span>
-      </p>
-    </div>
-  );
+  return null;
 }
