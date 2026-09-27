@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
 
 type ProductCardProps = {
@@ -16,9 +16,8 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
     <Link
       href={`/new/${product.id}`}
       className="product-card block no-underline hover:no-underline"
-      style={forceWhiteStyle}
     >
-      <div className="product-stage relative aspect-square overflow-hidden" style={forceWhiteStyle}>
+      <div className="product-stage relative aspect-square overflow-hidden">
         <div className="product-empty absolute inset-0">
           <Image
             src={product.emptySrc}

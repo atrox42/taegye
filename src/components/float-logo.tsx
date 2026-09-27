@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-import { LOGO_SRC, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 
 function isChromeOpen() {
   return Boolean(
@@ -24,7 +24,7 @@ export function FloatLogo() {
 
     const update = () => {
       const desktop = window.matchMedia("(min-width: 768px)").matches;
-      const logoH = logo.offsetHeight || (desktop ? 77 : 62);
+      const logoH = logo.offsetHeight || (desktop ? 54 : 43);
       const padTop = parseFloat(getComputedStyle(slot).paddingTop) || 52;
       const dockLine = window.innerHeight - 24 - logoH;
       const docked = slot.getBoundingClientRect().top + padTop <= dockLine;
@@ -60,8 +60,9 @@ export function FloatLogo() {
   return (
     <div className="site-float-dock" ref={slotRef}>
       <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- JPEG wordmark on a white plate */}
-        <img src={LOGO_SRC} alt="" width={598} height={384} />
+        <span className="site-float-logo-mark" aria-hidden>
+          <span className="site-ink-fill" />
+        </span>
       </Link>
     </div>
   );
