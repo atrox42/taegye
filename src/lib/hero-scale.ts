@@ -33,7 +33,7 @@ export function mobileClipBox(scale: number, viewportWidth: number, gutter = 16)
     width: w,
     height: w * (130 / 230),
     clamped: rawW > maxW + 0.5,
-    effectiveScale: baseW === 0 ? 0 : w / baseW,
+    effectiveScale: w / baseW,
   };
 }
 
