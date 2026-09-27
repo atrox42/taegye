@@ -41,10 +41,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <article className="site-page site-gutter pdp pt-8 pb-24 sm:pt-20 sm:pb-32" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <div className="product-card pdp-visual" style={forceWhiteStyle}>
-        <WhiteSurfaceFill />
-        <div className="pdp-stage relative aspect-square overflow-hidden" style={forceWhiteStyle}>
-          <WhiteSurfaceFill />
+      <div className="product-card pdp-visual">
+        <div className="pdp-stage relative aspect-square overflow-hidden">
           <div className="product-empty absolute inset-0">
             <Image
               src={product.emptySrc}
