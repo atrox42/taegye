@@ -1,17 +1,43 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 import { cn } from "@/lib/utils";
 
+function useDeviceHair() {
+  const [dpr, setDpr] = useState(1);
+
+  useEffect(() => {
+    const update = () => setDpr(window.devicePixelRatio || 1);
+    update();
+    window.addEventListener("resize", update);
+    const mq = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    mq.addEventListener?.("change", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      mq.removeEventListener?.("change", update);
+    };
+  }, []);
+
+  const hair = 1 / dpr;
+  const barDev = Math.round(11 * dpr);
+  const gapDev = Math.max(1, Math.floor((barDev - 3) / 2));
+  const tops = [0, (1 + gapDev) / dpr, (2 + 2 * gapDev) / dpr];
+  const height = (3 + 2 * gapDev) / dpr;
+
+  return { hair, tops, height, dpr };
+}
+
 export function InkBars({ className }: { className?: string }) {
+  const { hair, tops, height } = useDeviceHair();
+
   return (
-    <span className={cn("site-ink-bars", className)} aria-hidden>
-      <span className="site-ink-crop">
-        <span className="site-ink-fill" />
-      </span>
-      <span className="site-ink-crop">
-        <span className="site-ink-fill" />
-      </span>
-      <span className="site-ink-crop">
-        <span className="site-ink-fill" />
-      </span>
+    <span className={cn("site-ink-bars", className)} style={{ height }} aria-hidden>
+      {tops.map((top) => (
+        <span key={top} className="site-ink-crop" style={{ top, height: hair }}>
+          <span className="site-ink-fill" />
+        </span>
+      ))}
     </span>
   );
 }
@@ -23,9 +49,16 @@ export function InkClose({
   className?: string;
   tone?: "ink" | "white";
 }) {
+  const { hair } = useDeviceHair();
+
   return (
     <span className={cn("site-ink-mark site-ink-x", tone === "white" && "is-white", className)} aria-hidden>
-      <span className="site-ink-fill" />
+      <span className="site-ink-x-arm" style={{ height: hair }}>
+        <span className="site-ink-fill" />
+      </span>
+      <span className="site-ink-x-arm is-cross" style={{ height: hair }}>
+        <span className="site-ink-fill" />
+      </span>
     </span>
   );
 }

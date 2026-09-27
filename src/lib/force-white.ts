@@ -8,12 +8,15 @@ export const INK_111_SRC = "/ink-111.jpg";
 /** TAEGYE product-base mid purple — JPEG/PNG fills skip OEM Force Dark invert. */
 export const PURPLE_574667_SRC = "/purple-574667.jpg";
 export const PURPLE_574667_PNG_SRC = "/purple-574667.png";
+/** Slightly darker promo CTA fill — reads as a button without a white outline. */
+export const PURPLE_463854_SRC = "/purple-463854.jpg";
 
 export const FORCE_WHITE_IMAGE =
   `url("${WHITE_BITMAP_SRC}"), url("/bg-white.png"), linear-gradient(#ffffff,#ffffff)`;
 
 export const FORCE_INK_IMAGE = `url("${INK_111_SRC}")`;
 export const FORCE_PURPLE_IMAGE = `url("${PURPLE_574667_SRC}")`;
+export const FORCE_PURPLE_DARK_IMAGE = `url("${PURPLE_463854_SRC}")`;
 export const FORCE_WHITE_CLIP_IMAGE = `url("${WHITE_BITMAP_SRC}")`;
 
 export const forceWhiteStyle = {
@@ -39,6 +42,15 @@ export const forceInkStyle = {
 export const forcePurpleStyle = {
   backgroundColor: "#574667",
   backgroundImage: FORCE_PURPLE_IMAGE,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  color: "#ffffff",
+  colorScheme: "light dark",
+} as const;
+
+export const forcePurpleDarkStyle = {
+  backgroundColor: "#463854",
+  backgroundImage: FORCE_PURPLE_DARK_IMAGE,
   backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
   color: "#ffffff",

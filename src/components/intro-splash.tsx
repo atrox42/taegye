@@ -36,7 +36,8 @@ export function IntroSplash() {
 
   useEffect(() => {
     const hold = shouldHold();
-    if (!hold && (alreadySeen() || shouldSkip())) {
+    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    if (desktop || (!hold && (alreadySeen() || shouldSkip()))) {
       document.documentElement.dataset.intro = "done";
       window.dispatchEvent(new Event("taegye:intro-done"));
       return;
