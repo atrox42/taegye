@@ -116,16 +116,18 @@ export function HomePromo() {
           <p id={titleId} className="site-promo-white site-promo-title" style={forceWhiteClipStyle}>
             {HOME_PROMO.title}
           </p>
-          <p className="site-promo-white site-promo-line" style={forceWhiteClipStyle}>
-            {HOME_PROMO.line}
-          </p>
-          <a href={HOME_PROMO.href} target="_blank" rel="noopener noreferrer" className="site-promo-cta">
-            <span className="site-promo-cta-face" style={forcePurpleDarkStyle}>
-              <span className="site-promo-white site-promo-cta-label" style={forceWhiteClipStyle}>
-                {HOME_PROMO.cta}
+          <div className="site-promo-copy">
+            <p className="site-promo-white site-promo-line" style={forceWhiteClipStyle}>
+              {HOME_PROMO.line}
+            </p>
+            <a href={HOME_PROMO.href} target="_blank" rel="noopener noreferrer" className="site-promo-cta">
+              <span className="site-promo-cta-face" style={forcePurpleDarkStyle}>
+                <span className="site-promo-white site-promo-cta-label" style={forceWhiteClipStyle}>
+                  {HOME_PROMO.cta}
+                </span>
               </span>
-            </span>
-          </a>
+            </a>
+          </div>
         </div>
         <div className="site-promo-strip">
           <button
