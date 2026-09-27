@@ -343,8 +343,12 @@ button {
   margin: 0;
 }
 
+.text-page,
+.new-page {
+  padding-top: 32px;
+}
+
 .text-page {
-  padding-top: 1.25rem;
   padding-bottom: 6rem;
 }
 
@@ -358,8 +362,13 @@ button {
 }
 
 @media (min-width: 768px) {
+  .text-page,
+  .new-page {
+    /* Desktop nav (1.25rem + 1.25rem + 11px) plus a 48px gap under it. */
+    padding-top: calc(2.5rem + 11px + 48px);
+  }
+
   .text-page {
-    padding-top: 4rem;
     padding-bottom: 8rem;
   }
 
@@ -1711,40 +1720,8 @@ select::-ms-expand {
   .site-nav {
     display: flex;
     justify-content: flex-start;
-    gap: 0.875rem;
+    gap: 1.75rem;
     padding: 1.25rem var(--site-nav-pad);
-  }
-
-  .site-nav-product {
-    position: relative;
-  }
-
-  .site-nav-product-sub {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 20;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.45rem;
-    min-width: 6.5rem;
-    padding: 0.45rem 0.15rem 0.2rem;
-    border: 0;
-    box-shadow: none;
-    background-color: #ffffff !important;
-    background-image: url("/bg-white.jpg") !important;
-    background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
-  }
-
-  .site-nav-product:hover .site-nav-product-sub,
-  .site-nav-product:focus-within .site-nav-product-sub {
-    display: flex;
-  }
-
-  .site-nav-product-item {
-    display: block;
   }
 
   .site-nav-bitmap {
