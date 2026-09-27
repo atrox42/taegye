@@ -1720,7 +1720,7 @@ select::-ms-expand {
   .site-nav {
     display: flex;
     justify-content: flex-start;
-    gap: 1.75rem;
+    gap: 32px;
     padding: 1.25rem var(--site-nav-pad);
   }
 
