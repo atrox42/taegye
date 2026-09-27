@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useLayoutEffect, useId, useState } from "react";
 
 import { InkClose } from "@/components/ink-icons";
 import {
@@ -15,8 +15,8 @@ import {
 } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
-const HIDE_KEY = "taegye-promo-hide-until";
-const SESSION_KEY = "taegye-promo-closed";
+export const PROMO_HIDE_KEY = "taegye-promo-hide-until";
+export const PROMO_SESSION_KEY = "taegye-promo-closed";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function forceHold() {
@@ -29,7 +29,7 @@ function querySkip() {
 
 function hiddenForToday() {
   try {
-    const until = Number(window.localStorage.getItem(HIDE_KEY) || "0");
+    const until = Number(window.localStorage.getItem(PROMO_HIDE_KEY) || "0");
     return until > Date.now();
   } catch {
     return false;
@@ -38,79 +38,60 @@ function hiddenForToday() {
 
 function closedThisSession() {
   try {
-    return window.sessionStorage.getItem(SESSION_KEY) === "1";
+    return window.sessionStorage.getItem(PROMO_SESSION_KEY) === "1";
   } catch {
     return false;
   }
 }
 
+function setPromoFlag(on: boolean) {
+  document.documentElement.dataset.promo = on ? "on" : "off";
+}
+
 export function HomePromo() {
   const pathname = usePathname();
   const titleId = useId();
-  const [open, setOpen] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
-  const closeSession = () => {
-    setOpen(false);
+  const hide = (today: boolean) => {
+    setPromoFlag(false);
+    setDismissed(true);
     try {
-      window.sessionStorage.setItem(SESSION_KEY, "1");
+      window.sessionStorage.setItem(PROMO_SESSION_KEY, "1");
+      if (today) window.localStorage.setItem(PROMO_HIDE_KEY, String(Date.now() + DAY_MS));
     } catch {
       /* ignore */
     }
   };
 
-  const hideToday = () => {
-    setOpen(false);
-    try {
-      window.localStorage.setItem(HIDE_KEY, String(Date.now() + DAY_MS));
-    } catch {
-      /* ignore */
+  useLayoutEffect(() => {
+    if (!HOME_PROMO.enabled || pathname !== "/" || querySkip()) {
+      setPromoFlag(false);
+      return;
     }
-  };
-
-  useEffect(() => {
-    if (!HOME_PROMO.enabled || pathname !== "/") return;
-    if (typeof window === "undefined") return;
-    if (querySkip()) return;
-    if (hiddenForToday() || closedThisSession()) {
-      if (!forceHold()) return;
+    if ((hiddenForToday() || closedThisSession()) && !forceHold()) {
+      setPromoFlag(false);
+      setDismissed(true);
+      return;
     }
-
-    let delay = 0;
-    const show = () => {
-      delay = window.setTimeout(() => setOpen(true), forceHold() ? 0 : 500);
-    };
-
-    if (forceHold() || document.documentElement.dataset.intro === "done") {
-      show();
-    } else {
-      window.addEventListener("taegye:intro-done", show, { once: true });
-    }
-
-    return () => {
-      window.clearTimeout(delay);
-      window.removeEventListener("taegye:intro-done", show);
-    };
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!open) return;
+    setPromoFlag(true);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeSession();
+      if (event.key === "Escape") hide(false);
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [pathname]);
 
-  if (!open) return null;
+  if (!HOME_PROMO.enabled || pathname !== "/" || dismissed) return null;
 
   return (
     <div className="site-promo" role="presentation">
-      <button type="button" className="site-promo-dim" aria-label="Close promotion" onClick={closeSession} />
+      <button type="button" className="site-promo-dim" aria-label="Close promotion" onClick={() => hide(false)} />
       {/* eslint-disable-next-line @next/next/no-img-element -- dark raster dimmer skips Force Dark invert */}
       <img src="/dim-black.jpg" alt="" aria-hidden className="site-promo-dim-bitmap" />
       <div
@@ -125,7 +106,7 @@ export function HomePromo() {
         <div className="site-promo-visual" style={forcePurpleStyle}>
           {/* eslint-disable-next-line @next/next/no-img-element -- exact #574667 PNG fill skips Force Dark invert */}
           <img src={PURPLE_574667_PNG_SRC} alt="" aria-hidden className="site-promo-purple" />
-          <button type="button" className="site-promo-x" aria-label="Close" onClick={closeSession}>
+          <button type="button" className="site-promo-x" aria-label="Close" onClick={() => hide(false)}>
             <InkClose tone="white" />
           </button>
           <p className="site-promo-white site-promo-eyebrow" style={forceWhiteClipStyle}>
@@ -137,12 +118,7 @@ export function HomePromo() {
           <p className="site-promo-white site-promo-line" style={forceWhiteClipStyle}>
             {HOME_PROMO.line}
           </p>
-          <a
-            href={HOME_PROMO.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="site-promo-cta"
-          >
+          <a href={HOME_PROMO.href} target="_blank" rel="noopener noreferrer" className="site-promo-cta">
             <span className="site-promo-cta-face" style={forcePurpleDarkStyle}>
               <span className="site-promo-white site-promo-cta-label" style={forceWhiteClipStyle}>
                 {HOME_PROMO.cta}
@@ -151,13 +127,18 @@ export function HomePromo() {
           </a>
         </div>
         <div className="site-promo-strip">
-          <button type="button" className="site-promo-ink site-promo-strip-btn" onClick={hideToday} style={forceInkStyle}>
+          <button
+            type="button"
+            className="site-promo-ink site-promo-strip-btn"
+            onClick={() => hide(true)}
+            style={forceInkStyle}
+          >
             {HOME_PROMO.hideTodayLabel}
           </button>
           <button
             type="button"
             className="site-promo-ink site-promo-strip-btn site-promo-strip-close"
-            onClick={closeSession}
+            onClick={() => hide(false)}
             style={forceInkStyle}
           >
             {HOME_PROMO.closeLabel}

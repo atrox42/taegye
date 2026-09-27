@@ -2000,6 +2000,15 @@ html[data-intro="pending"] body {
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+
+html[data-promo="off"] .site-promo {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .site-promo-dim {
@@ -2020,6 +2029,7 @@ html[data-intro="pending"] body {
   object-fit: cover;
   opacity: 0.35;
   pointer-events: none;
+  transition: none;
 }
 
 .site-promo-card {
