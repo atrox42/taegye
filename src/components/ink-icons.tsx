@@ -19,22 +19,27 @@ function useDeviceHair() {
     };
   }, []);
 
-  const hair = 1 / dpr;
+  const strokeDev = 2;
+  const stroke = strokeDev / dpr;
   const barDev = Math.round(11 * dpr);
-  const gapDev = Math.max(1, Math.floor((barDev - 3) / 2));
-  const tops = [0, (1 + gapDev) / dpr, (2 + 2 * gapDev) / dpr];
-  const height = (3 + 2 * gapDev) / dpr;
+  const gapDev = Math.max(1, Math.floor((barDev - strokeDev * 3) / 2));
+  const tops = [
+    0,
+    (strokeDev + gapDev) / dpr,
+    (strokeDev * 2 + gapDev * 2) / dpr,
+  ];
+  const height = (strokeDev * 3 + gapDev * 2) / dpr;
 
-  return { hair, tops, height, dpr };
+  return { stroke, tops, height, dpr };
 }
 
 export function InkBars({ className }: { className?: string }) {
-  const { hair, tops, height } = useDeviceHair();
+  const { stroke, tops, height } = useDeviceHair();
 
   return (
     <span className={cn("site-ink-bars", className)} style={{ height }} aria-hidden>
       {tops.map((top) => (
-        <span key={top} className="site-ink-crop" style={{ top, height: hair }}>
+        <span key={top} className="site-ink-crop" style={{ top, height: stroke }}>
           <span className="site-ink-fill" />
         </span>
       ))}
@@ -49,14 +54,14 @@ export function InkClose({
   className?: string;
   tone?: "ink" | "white";
 }) {
-  const { hair } = useDeviceHair();
+  const { stroke } = useDeviceHair();
 
   return (
     <span className={cn("site-ink-mark site-ink-x", tone === "white" && "is-white", className)} aria-hidden>
-      <span className="site-ink-x-arm" style={{ height: hair }}>
+      <span className="site-ink-x-arm" style={{ height: stroke }}>
         <span className="site-ink-fill" />
       </span>
-      <span className="site-ink-x-arm is-cross" style={{ height: hair }}>
+      <span className="site-ink-x-arm is-cross" style={{ height: stroke }}>
         <span className="site-ink-fill" />
       </span>
     </span>

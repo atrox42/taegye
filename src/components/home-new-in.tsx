@@ -1,6 +1,15 @@
 import Link from "next/link";
 
-import { forceInkStyle, forceMutedStyle, forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import {
+  forceInkStyle,
+  forceMutedStyle,
+  forcePurpleStyle,
+  forceWhiteClipStyle,
+  forceWhiteStyle,
+  PURPLE_574667_SRC,
+  WHITE_BITMAP_SRC,
+} from "@/lib/force-white";
 import { HOME_NEW_IN, getNewProduct } from "@/lib/site";
 
 const FEATURED = HOME_NEW_IN.map((item) => {
@@ -15,6 +24,7 @@ export function HomeNewIn() {
       {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
       <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="home-new-in-bitmap" />
       <div className="home-new-in-head">
+        <WhiteSurfaceFill />
         <h2 className="home-new-in-title site-type" style={forceInkStyle}>
           New In
         </h2>
@@ -28,11 +38,19 @@ export function HomeNewIn() {
             key={item.id}
             className={index === 0 ? "home-new-in-card is-primary" : "home-new-in-card is-secondary"}
           >
+              <WhiteSurfaceFill />
             <Link href={`/new/${item.product.id}`} className="home-new-in-visual">
+              <WhiteSurfaceFill />
               {/* eslint-disable-next-line @next/next/no-img-element -- product photo stays photographic under Force Dark */}
-              <img src={item.product.mossSrc} alt={item.product.mossAlt} />
+              <img
+                src={item.product.mossSrc}
+                alt={item.product.mossAlt}
+                width={1024}
+                height={1024}
+              />
             </Link>
             <div className="home-new-in-caption">
+              <WhiteSurfaceFill />
               <span className="home-new-in-kicker site-type" style={forceMutedStyle}>
                 Featured:
               </span>
@@ -41,8 +59,10 @@ export function HomeNewIn() {
               </span>
             </div>
             <Link href={`/new/${item.product.id}`} className="home-new-in-cta">
-              <span className="home-new-in-cta-face">
-                <span className="home-new-in-cta-label site-type" style={forceInkStyle}>
+              <span className="home-new-in-cta-face" style={forcePurpleStyle}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- purple raster survives Samsung invert */}
+                <img src={PURPLE_574667_SRC} alt="" aria-hidden className="home-new-in-cta-fill" />
+                <span className="home-new-in-cta-label site-type" style={forceWhiteClipStyle}>
                   View product
                 </span>
               </span>

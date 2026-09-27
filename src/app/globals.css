@@ -214,10 +214,15 @@ main,
 .site-white-layer,
 .home-hero,
 .home-new-in,
+.home-new-in-visual,
 .new-page,
 .new-grid,
 .new-grid-item,
+.product-card,
+.product-stage,
 .pdp,
+.pdp-visual,
+.pdp-stage,
 .pdp-copy {
   background-color: #ffffff !important;
   background-image: var(--force-white-image) !important;
@@ -234,27 +239,33 @@ main,
   background-image: none !important;
 }
 
-/* Image wells stay clear so Samsung gray / page canvas shows through alpha. */
-.product-stage,
+/* Product photos + float mark stay clear. White comes from <img> plates. */
 .product-empty,
 .product-moss,
-.pdp-visual,
-.pdp-stage,
-.product-stage img,
+.product-stage img:not(.white-surface-fill),
 .product-empty img,
 .product-moss img,
-.pdp-visual img,
-.pdp-stage img {
+.pdp-visual img:not(.white-surface-fill),
+.pdp-stage img:not(.white-surface-fill),
+.home-new-in-visual img:not(.white-surface-fill),
+.site-float-logo,
+.site-float-logo-mark {
   background-color: transparent !important;
   background-image: none !important;
   box-shadow: none;
+}
+
+.product-empty,
+.product-moss {
+  z-index: 1;
 }
 
 html,
 body,
 .site-shell {
   min-height: 100%;
-  min-height: 100dvh;
+  min-height: 100lvh;
+  overscroll-behavior-y: none;
 }
 
 input,
@@ -534,6 +545,7 @@ button {
 }
 
 .new-grid-item {
+  position: relative;
   padding: 0.95rem 0.85rem 1.05rem;
   border-right: 1px solid #111111;
   border-bottom: 1px solid #111111;
@@ -654,6 +666,7 @@ button {
 }
 
 .site-footer-row {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -832,8 +845,9 @@ summary::marker {
   z-index: 0;
   width: 100%;
   margin-top: calc(var(--site-nav-offset) * -1);
-  min-height: 100svh;
-  min-height: 100dvh;
+  height: 100lvh;
+  min-height: 100lvh;
+  max-height: 100lvh;
   overflow: hidden;
   background-color: #ffffff !important;
   background-image: var(--force-white-image) !important;
@@ -873,20 +887,20 @@ summary::marker {
 
 .home-hero-clip-a {
   top: calc(
-    var(--site-nav-offset) + (100svh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2
+    var(--site-nav-offset) + (100lvh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2
   );
 }
 
 .home-hero-clip-b {
   top: calc(
-    var(--site-nav-offset) + (100svh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2 +
+    var(--site-nav-offset) + (100lvh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2 +
       var(--hero-clip-h)
   );
 }
 
 .home-hero-clip-c {
   top: calc(
-    var(--site-nav-offset) + (100svh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2 +
+    var(--site-nav-offset) + (100lvh - var(--site-nav-offset) - (var(--hero-clip-h) * 3)) / 2 +
       (var(--hero-clip-h) * 2)
   );
 }
@@ -944,7 +958,8 @@ summary::marker {
 
 .home-new-in-head,
 .home-new-in-grid,
-.home-new-in-card {
+.home-new-in-card,
+.home-new-in-caption {
   position: relative;
   z-index: 1;
 }
@@ -960,7 +975,7 @@ summary::marker {
 .home-new-in-title,
 .home-new-in-more {
   margin: 0;
-  font-size: 15px;
+  font-size: 10.5px;
   font-weight: 400;
   letter-spacing: var(--tracking-label);
   text-decoration: none !important;
@@ -982,6 +997,7 @@ summary::marker {
 }
 
 .home-new-in-visual {
+  position: relative;
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1.25;
@@ -991,12 +1007,18 @@ summary::marker {
   background-size: 100% 100% !important;
 }
 
-.home-new-in-visual img {
+.home-new-in-visual img:not(.white-surface-fill) {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center;
+}
+
+.home-new-in-visual .white-surface-fill {
+  object-fit: cover;
 }
 
 .home-new-in-caption {
@@ -1029,55 +1051,81 @@ summary::marker {
 .home-new-in-cta {
   display: block;
   margin-top: 0.85rem;
-  padding: 1px;
+  padding: 0;
+  border: 0;
   background-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 256px 256px !important;
+  background-image: none !important;
+  box-shadow: none;
   text-decoration: none !important;
 }
 
 .home-new-in-cta-face {
+  position: relative;
   display: block;
   width: 100%;
+  min-height: 2.75rem;
   padding: 0.8rem 1rem;
-  background-color: #ffffff !important;
-  background-image: url("/bg-white.jpg") !important;
+  overflow: hidden;
+  border: 0;
+  background-color: #574667 !important;
+  background-image: var(--purple-574667-image) !important;
   background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
   background-clip: border-box !important;
   -webkit-background-clip: border-box !important;
   text-align: center;
+  forced-color-adjust: none;
 }
 
-.home-new-in-cta-label {
-  font-size: 13px;
-  letter-spacing: var(--tracking-label);
-}
-
-.site-float-dock {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  min-height: calc(52px + 43px + 48px);
-  padding-top: 52px;
-  padding-bottom: 48px;
+.home-new-in-cta-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   pointer-events: none;
 }
 
+.home-new-in-cta-label {
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  letter-spacing: var(--tracking-label);
+  color: #ffffff !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--white-clip-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
+.site-float-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .site-float-logo {
-  position: fixed;
-  left: 50%;
+  position: sticky;
+  left: auto;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   z-index: 35;
   display: flex;
   width: 67px;
   height: 43px;
+  margin: 52px auto 48px;
+  flex-shrink: 0;
   background-color: transparent !important;
   background-image: none !important;
   box-shadow: none;
   border: 0;
-  transform: translateX(-50%);
+  transform: none;
   pointer-events: auto;
+  transition: opacity 150ms ease;
 }
 
 .site-float-logo-mark {
@@ -1109,13 +1157,6 @@ summary::marker {
   mask-position: center;
 }
 
-.site-float-logo.is-docked {
-  position: relative;
-  left: auto;
-  bottom: auto;
-  transform: none;
-}
-
 .site-float-logo.is-hidden {
   opacity: 0;
   pointer-events: none;
@@ -1143,10 +1184,6 @@ summary::marker {
     margin-right: auto;
   }
 
-  .site-float-dock {
-    min-height: calc(52px + 54px + 48px);
-  }
-
   .site-float-logo {
     width: 84px;
     height: 54px;
@@ -1170,6 +1207,7 @@ summary::marker {
 .site-white-bitmap,
 .site-nav-bitmap,
 .home-hero-bitmap,
+.home-new-in-cta-fill,
 .force-dark-overlay,
 .white-surface-fill {
   width: 100%;
@@ -1184,13 +1222,45 @@ summary::marker {
   z-index: 0;
 }
 
+.site-shell-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.product-card:hover .white-surface-fill,
+.new-grid-item:has(.product-card:hover) .white-surface-fill {
+  opacity: 0;
+}
+
 .pdp > :not(.white-surface-fill),
 .pdp-visual > :not(.white-surface-fill),
 .new-page > :not(.white-surface-fill),
+.new-grid-item > :not(.white-surface-fill),
+.new-subnav > :not(.white-surface-fill),
 .site-page > :not(.white-surface-fill),
-.site-footer > :not(.white-surface-fill) {
+.site-footer > :not(.white-surface-fill),
+.site-footer-inner > :not(.white-surface-fill),
+.site-footer-row > :not(.white-surface-fill),
+.site-column > :not(.white-surface-fill):not(.site-header),
+.site-float-track > :not(.white-surface-fill):not(.site-float-logo),
+.product-card > :not(.white-surface-fill),
+.home-new-in-head > :not(.white-surface-fill),
+.home-new-in-card > :not(.white-surface-fill),
+.home-new-in-caption > :not(.white-surface-fill) {
   position: relative;
   z-index: 1;
+}
+
+.site-column,
+.site-float-track,
+.new-subnav,
+.product-card {
+  position: relative;
 }
 
 .site-menubar,
@@ -1246,7 +1316,7 @@ summary::marker {
   cursor: pointer;
 }
 
-/* Device-pixel hairlines — 1 device px each, integer tops. JPEG crop skips Force Dark. */
+/* Device-pixel bars — 2 device px each, integer tops. JPEG crop skips Force Dark. */
 .site-ink-bars {
   position: relative;
   display: block;
@@ -1567,13 +1637,18 @@ summary::marker {
   .site-white-layer,
   .home-hero,
   .home-new-in,
+  .home-new-in-visual,
   .site-menubar,
   .site-menu,
   .site-splash,
   .new-page,
   .new-grid,
   .new-grid-item,
+  .product-card,
+  .product-stage,
   .pdp,
+  .pdp-visual,
+  .pdp-stage,
   .pdp-copy {
     background-color: #ffffff !important;
     background-image: var(--force-white-image) !important;
@@ -1698,11 +1773,8 @@ summary::marker {
   }
 }
 
-.product-stage,
 .product-empty,
 .product-moss,
-.pdp-visual,
-.pdp-stage,
 .site-float-logo,
 .site-float-logo-mark {
   background-color: transparent !important;
@@ -1722,12 +1794,11 @@ summary::marker {
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  opacity: 0;
-}
-
-.site-splash.is-in {
   opacity: 1;
-  transition: opacity 400ms ease;
+  background-color: #ffffff !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
 }
 
 .site-splash.is-out {
@@ -1751,7 +1822,7 @@ html[data-intro="pending"] body {
 }
 
 .site-splash-bitmap {
-  opacity: 0.95;
+  opacity: 1;
 }
 
 .site-splash-copy {
@@ -1786,7 +1857,6 @@ html[data-intro="pending"] body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-splash.is-in,
   .site-splash.is-out {
     transition: none;
   }

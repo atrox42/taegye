@@ -1,22 +1,37 @@
+import { FloatLogo } from "@/components/float-logo";
 import { HomePromo } from "@/components/home-promo";
-import { IntroSplash } from "@/components/intro-splash";
+import { IntroSplashController } from "@/components/intro-splash";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WhiteBitmapLayer } from "@/components/white-bitmap-layer";
-import { forceWhiteStyle } from "@/lib/force-white";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { forceInkStyle, forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="site-shell relative z-0 flex min-h-svh flex-col" style={forceWhiteStyle}>
+    <div className="site-shell relative z-0 flex min-h-lvh flex-col" style={forceWhiteStyle}>
       <WhiteBitmapLayer />
-      <div className="relative z-[1] flex min-h-svh flex-1 flex-col">
+      <div className="site-column relative z-[1] flex min-h-lvh flex-1 flex-col">
+        <WhiteSurfaceFill />
         <SiteHeader />
-        <main className="site-main flex-1" style={forceWhiteStyle}>
-          {children}
-        </main>
+        <div className="site-float-track">
+          <WhiteSurfaceFill />
+          <main className="site-main flex-1" style={forceWhiteStyle}>
+            {children}
+          </main>
+          <FloatLogo />
+        </div>
         <SiteFooter />
       </div>
-      <IntroSplash />
+      <div className="site-splash" role="presentation" aria-hidden>
+        {/* eslint-disable-next-line @next/next/no-img-element -- first-paint white raster */}
+        <img src={WHITE_BITMAP_SRC} alt="" className="site-splash-bitmap" />
+        <p className="site-splash-copy" style={forceInkStyle}>
+          <span>ALL</span>
+          <span>TAEGYE-RIUM</span>
+        </p>
+      </div>
+      <IntroSplashController />
       <HomePromo />
     </div>
   );
