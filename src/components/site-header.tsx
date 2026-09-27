@@ -13,11 +13,33 @@ function categoryHref(id: string) {
   return id === DEFAULT_NEW_CATEGORY ? "/new" : `/new?cat=${id}`;
 }
 
+function useMobileViewport() {
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767.98px)");
+    const sync = () => setMobile(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
+  return mobile;
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
+  const mobile = useMobileViewport();
   const [open, setOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
   const panelId = useId();
+
+  useEffect(() => {
+    if (!mobile) {
+      setOpen(false);
+      setProductOpen(false);
+    }
+  }, [mobile]);
 
   useEffect(() => {
     const previous = document.body.style.overflow;
@@ -44,87 +66,97 @@ export function SiteHeader() {
     setProductOpen(false);
   };
 
+  const toggleProduct = () => setProductOpen((value) => !value);
+
   return (
     <header className={cn("site-header pointer-events-none fixed z-50", open && "is-open")}>
-      <div className="site-menubar pointer-events-auto" style={forceWhiteStyle}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-        <img
-          src={WHITE_BITMAP_SRC}
-          alt=""
-          aria-hidden
-          className="site-menubar-bitmap"
-        />
-        <button
-          type="button"
-          className="site-menubar-toggle"
-          aria-expanded={open}
-          aria-controls={panelId}
-          aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((value) => !value)}
-        >
-          {open ? <InkClose /> : <InkBars />}
-        </button>
-      </div>
-
-      <div
-        id={panelId}
-        className={cn("site-menu", open && "is-open")}
-        aria-hidden={!open}
-        inert={!open ? true : undefined}
-        style={{
-          ...forceWhiteStyle,
-          backgroundColor: "#fafafa",
-          backgroundImage: `url("${PANEL_BITMAP_SRC}"), url("${WHITE_BITMAP_SRC}")`,
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-        <img src={PANEL_BITMAP_SRC} alt="" aria-hidden className="site-menu-bitmap" />
-        <nav aria-label="Mobile" className="site-menu-nav">
-          <InkHairline />
-          <Link href="/" className="site-menu-row" onClick={closeMenu}>
-            <span className="site-menu-label">Home</span>
-            <InkHairline />
-          </Link>
+      {mobile ? (
+        <div className="site-menubar pointer-events-auto" style={forceWhiteStyle}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
+          <img
+            src={WHITE_BITMAP_SRC}
+            alt=""
+            aria-hidden
+            className="site-menubar-bitmap"
+          />
           <button
             type="button"
-            className={cn("site-menu-row", productOpen && "is-expanded")}
-            aria-expanded={productOpen}
-            onClick={() => setProductOpen((value) => !value)}
+            className="site-menubar-toggle"
+            aria-expanded={open}
+            aria-controls={panelId}
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((value) => !value)}
           >
-            <span className="site-menu-label">Product</span>
-            <InkHairline />
+            {open ? <InkClose /> : <InkBars />}
           </button>
-          {productOpen ? (
-            <div className="site-menu-sub">
-              {NEW_CATEGORIES.map((category) => (
-                <Link
-                  key={category.id}
-                  href={categoryHref(category.id)}
-                  className="site-menu-row site-menu-subrow"
-                  onClick={closeMenu}
-                >
-                  <span className="site-menu-label">{category.label}</span>
-                  <InkHairline />
-                </Link>
-              ))}
+        </div>
+      ) : null}
+
+      {mobile && open ? (
+        <div
+          id={panelId}
+          className="site-menu is-open"
+          style={{
+            ...forceWhiteStyle,
+            backgroundColor: "#fafafa",
+            backgroundImage: `url("${PANEL_BITMAP_SRC}"), url("${WHITE_BITMAP_SRC}")`,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
+          <img src={PANEL_BITMAP_SRC} alt="" aria-hidden className="site-menu-bitmap" />
+          <nav aria-label="Mobile" className="site-menu-nav">
+            <InkHairline />
+            <Link href="/" className="site-menu-row" onClick={closeMenu}>
+              <span className="site-menu-label">Home</span>
+              <InkHairline />
+            </Link>
+            <div
+              className={cn("site-menu-row", productOpen && "is-expanded")}
+              role="button"
+              tabIndex={0}
+              onClick={toggleProduct}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  toggleProduct();
+                }
+              }}
+            >
+              <span className="site-menu-label">Product</span>
+              <InkHairline />
             </div>
-          ) : null}
-          <Link href="/about" className="site-menu-row" onClick={closeMenu}>
-            <span className="site-menu-label">About</span>
-            <InkHairline />
-          </Link>
-          <a
-            href={STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="site-menu-row"
-            onClick={closeMenu}
-          >
-            <span className="site-menu-label">Store</span>
-            <InkHairline />
-          </a>
-        </nav>
-      </div>
+            {productOpen ? (
+              <div className="site-menu-sub">
+                {NEW_CATEGORIES.map((category) => (
+                  <Link
+                    key={category.id}
+                    href={categoryHref(category.id)}
+                    className="site-menu-row site-menu-subrow"
+                    onClick={closeMenu}
+                  >
+                    <span className="site-menu-label">{category.label}</span>
+                    <InkHairline />
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+            <Link href="/about" className="site-menu-row" onClick={closeMenu}>
+              <span className="site-menu-label">About</span>
+              <InkHairline />
+            </Link>
+            <a
+              href={STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-menu-row"
+              onClick={closeMenu}
+            >
+              <span className="site-menu-label">Store</span>
+              <InkHairline />
+            </a>
+          </nav>
+        </div>
+      ) : null}
 
       <nav
         aria-label="Primary"
