@@ -3,9 +3,10 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
-import { InkClose, InkHairline } from "@/components/ink-icons";
+import { InkClose } from "@/components/ink-icons";
 import {
   forceInkStyle,
+  forcePurpleDarkStyle,
   forcePurpleStyle,
   forceWhiteClipStyle,
   forceWhiteStyle,
@@ -142,7 +143,7 @@ export function HomePromo() {
             rel="noopener noreferrer"
             className="site-promo-cta"
           >
-            <span className="site-promo-cta-face" style={forcePurpleStyle}>
+            <span className="site-promo-cta-face" style={forcePurpleDarkStyle}>
               <span className="site-promo-white site-promo-cta-label" style={forceWhiteClipStyle}>
                 {HOME_PROMO.cta}
               </span>
@@ -150,7 +151,6 @@ export function HomePromo() {
           </a>
         </div>
         <div className="site-promo-strip">
-          <InkHairline />
           <button type="button" className="site-promo-ink site-promo-strip-btn" onClick={hideToday} style={forceInkStyle}>
             {HOME_PROMO.hideTodayLabel}
           </button>
