@@ -1393,11 +1393,11 @@ select::-ms-expand {
   position: relative;
   z-index: 60;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   gap: 0;
   width: 100%;
   height: calc(3.25rem + env(safe-area-inset-top, 0px));
-  padding: env(safe-area-inset-top, 0px) 1rem 0;
+  padding: env(safe-area-inset-top, 0px) var(--site-gutter) 0;
   background-color: #ffffff !important;
   background-image: url("/bg-white.jpg") !important;
   background-repeat: no-repeat !important;
@@ -1421,10 +1421,11 @@ select::-ms-expand {
   z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   width: 2.5rem;
   height: 2.5rem;
   margin-left: 0;
+  margin-right: 0;
   padding: 0;
   border: 0;
   box-shadow: none;
