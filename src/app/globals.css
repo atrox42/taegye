@@ -355,7 +355,7 @@ button {
 .pdp-copy li,
 .pdp-copy p,
 .pdp-copy h1,
-.pdp-copy summary,
+.pdp-copy button,
 .pdp-copy span {
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
@@ -474,14 +474,24 @@ button {
   align-items: baseline;
   justify-content: flex-start;
   gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
+  font: inherit;
   list-style: none;
 }
 
 .pdp-acc-summary::-webkit-details-marker,
-.pdp-acc-summary::marker {
-  display: none;
-  content: none;
+.pdp-acc-summary::marker,
+.pdp-acc-summary::before,
+.pdp-acc-summary::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
 }
 
 .pdp-acc-body {
@@ -757,12 +767,36 @@ details > summary {
   list-style: none;
 }
 
+/* Samsung Internet paints a native ▼ on a dark chip; kill every disclosure widget. */
+details,
+summary,
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: none !important;
+}
+
+details,
+summary {
+  list-style: none !important;
+  list-style-type: none !important;
+}
+
 details > summary::-webkit-details-marker,
 details > summary::marker,
+details > summary::before,
+details > summary::after,
 summary::-webkit-details-marker,
-summary::marker {
+summary::marker,
+summary::before,
+summary::after,
+select::-ms-expand {
   display: none !important;
   content: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: none !important;
+  border: 0 !important;
 }
 
 .site-footer-nav li::marker,
