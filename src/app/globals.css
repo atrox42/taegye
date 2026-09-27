@@ -343,8 +343,29 @@ button {
   margin: 0;
 }
 
-.contact-body {
-  margin-top: 3rem;
+.text-page {
+  padding-top: 1.25rem;
+  padding-bottom: 6rem;
+}
+
+.text-page-title {
+  margin: 0;
+  padding: 0;
+}
+
+.text-page-body {
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .text-page {
+    padding-top: 4rem;
+    padding-bottom: 8rem;
+  }
+
+  .text-page-body {
+    margin-top: 1rem;
+  }
 }
 
 .contact-email-row {

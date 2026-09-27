@@ -29,9 +29,10 @@ function AboutParagraph({
 
 export default function AboutPage() {
   return (
-    <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32" style={forceWhiteStyle}>
+    <article className="site-page text-page site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <div className="about-langs">
+      <h1 className="text-page-title site-type">About</h1>
+      <div className="about-langs text-page-body">
         <div className="about-stack">
           {ABOUT.en.map((lines) => (
             <AboutParagraph key={lines[0]} lang="en" lines={lines} />

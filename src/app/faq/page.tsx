@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { StoreLink, StoreMention } from "@/components/store-mention";
+import { StoreMention } from "@/components/store-mention";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
 import { FAQ_ITEMS } from "@/lib/site";
@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 
 export default function FaqPage() {
   return (
-    <article className="site-page site-gutter pt-8 pb-24 sm:pt-24 sm:pb-32" style={forceWhiteStyle}>
+    <article className="site-page text-page site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <h1 className="text-[11px] font-normal tracking-[var(--tracking-title)]">Faq</h1>
-      <div className="faq-body mt-12 max-w-xl space-y-12">
+      <h1 className="text-page-title site-type">Faq</h1>
+      <div className="faq-body text-page-body">
         {FAQ_ITEMS.map((item) => (
           <section key={item.q.en} className="space-y-4">
             <h2 className="site-type site-type-copy">{item.q.en}</h2>
@@ -29,7 +29,6 @@ export default function FaqPage() {
             </p>
           </section>
         ))}
-        <StoreLink className="inline-flex text-[11px] tracking-[var(--tracking-label-lg)] no-underline" />
       </div>
     </article>
   );
