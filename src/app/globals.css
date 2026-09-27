@@ -829,9 +829,8 @@ button {
   display: inline;
   padding: 0;
   border: 0;
+  margin: 0;
   background: none;
-  appearance: none;
-  -webkit-appearance: none;
   cursor: pointer;
   color: #111111 !important;
   -webkit-text-fill-color: transparent !important;
@@ -863,17 +862,7 @@ button {
   width: auto;
   margin: 0;
   padding: 0;
-  padding-inline-start: 0;
   list-style: none !important;
-  list-style-type: none !important;
-}
-
-.site-footer-nav li {
-  margin: 0;
-  padding: 0;
-  padding-inline-start: 0;
-  list-style: none !important;
-  list-style-type: none !important;
 }
 
 details > summary {
@@ -912,17 +901,24 @@ select::-ms-expand {
   border: 0 !important;
 }
 
-.site-footer-nav li::marker,
-.site-footer-nav li::before,
-.site-footer-nav li::after,
+.site-footer-nav > a::marker,
+.site-footer-nav > a::before,
+.site-footer-nav > a::after,
 .site-footer-link::before,
-.site-footer-link::after {
+.site-footer-link::after,
+.site-footer-copy-plus::before,
+.site-footer-copy-plus::after {
   content: none !important;
   display: none !important;
+  background: none !important;
+  border: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .site-footer-logo {
   display: none;
+  text-decoration: none !important;
   -webkit-text-fill-color: unset !important;
   background-image: none !important;
   -webkit-background-clip: border-box !important;
@@ -936,6 +932,7 @@ select::-ms-expand {
   background-image: none !important;
   -webkit-background-clip: border-box !important;
   background-clip: border-box !important;
+  text-decoration: none !important;
 }
 
 @media (min-width: 768px) {
@@ -1873,6 +1870,7 @@ select::-ms-expand {
     background-image: none !important;
     -webkit-background-clip: border-box !important;
     background-clip: border-box !important;
+    text-decoration: none !important;
   }
 }
 
