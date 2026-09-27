@@ -1,13 +1,11 @@
 "use client";
 
+import { ProductDisclosure } from "@/components/product-disclosure";
+
 export function ProductDescription({ children }: { children: React.ReactNode }) {
   return (
-    <details className="pdp-acc pdp-desc">
-      <summary className="pdp-acc-summary site-type">
-        <span>Description</span>
-        <span aria-hidden>+</span>
-      </summary>
-      <div className="pdp-desc-body">{children}</div>
-    </details>
+    <ProductDisclosure label="Description" className="pdp-desc" bodyClassName="pdp-desc-body">
+      {children}
+    </ProductDisclosure>
   );
 }
