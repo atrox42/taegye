@@ -560,6 +560,7 @@ button {
 }
 
 .pdp-reveal {
+  width: 100%;
   opacity: 0;
 }
 
