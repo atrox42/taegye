@@ -2042,7 +2042,7 @@ html[data-promo="off"] .site-promo {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(88vw, 420px);
+  width: min(74.8vw, 357px);
   overflow: hidden;
   background-color: #ffffff !important;
   background-image: url("/bg-white.jpg") !important;
@@ -2182,9 +2182,12 @@ html[data-promo="off"] .site-promo {
 .site-promo-cta {
   position: relative;
   z-index: 1;
-  display: inline-block;
+  display: block;
+  width: 70%;
   margin-top: 1.7rem;
-  min-width: 10.75rem;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 0;
   padding: 0;
   border: 0;
   background-color: transparent !important;
@@ -2294,7 +2297,7 @@ html[data-promo="off"] .site-promo {
 
 @media (min-width: 768px) {
   .site-promo-card {
-    width: 420px;
+    width: 357px;
   }
 
   .site-promo-title {
