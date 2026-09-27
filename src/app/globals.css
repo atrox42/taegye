@@ -1026,10 +1026,7 @@ select::-ms-expand {
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  width: min(
-    calc(var(--hero-clip-w) * var(--hero-scale, 1)),
-    calc(100vw - 2 * var(--site-gutter))
-  );
+  width: var(--hero-clip-w);
   aspect-ratio: 230 / 130;
   height: auto;
   max-width: calc(100vw - 2 * var(--site-gutter));

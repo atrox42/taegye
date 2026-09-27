@@ -1,4 +1,5 @@
-export const HERO_SCALES = [2.5, 1, 0.4] as const;
+/** Desktop-only shuffle. Mobile always paints the 1× clip (138×78). */
+export const HERO_SCALES = [1.25, 1, 0.4] as const;
 
 export type HeroScale = (typeof HERO_SCALES)[number];
 export type HeroScaleTriple = [HeroScale, HeroScale, HeroScale];
@@ -19,7 +20,7 @@ export function parseHeroScales(raw: string | null): HeroScaleTriple | null {
   const parts = raw.split(",").map(Number);
   if (parts.length !== 3 || parts.some((value) => !Number.isFinite(value))) return null;
   const sorted = [...parts].sort((a, b) => a - b);
-  const expected = [0.4, 1, 2.5];
+  const expected = [0.4, 1, 1.25];
   if (!expected.every((value, index) => Math.abs(value - sorted[index]) < 1e-6)) return null;
   return parts as HeroScaleTriple;
 }
@@ -50,7 +51,7 @@ function overlaps(
   );
 }
 
-/** Desktop scatter: honor a preset when given, then clamp the 2.5x box and un-overlap. */
+/** Desktop scatter: honor a preset when given, then clamp the largest box and un-overlap. */
 export function placeScaledClips(
   scales: number[],
   vw: number,

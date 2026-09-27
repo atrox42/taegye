@@ -81,6 +81,7 @@ export function HomeHero({ scales }: { scales: HeroScaleTriple }) {
       className={cn("home-hero", slots && "is-placed")}
       aria-label="TAEGYE"
       data-hero-scales={scales.join(",")}
+      data-hero-mobile-equal="1"
       style={forceWhiteStyle}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint; raster stays white */}
