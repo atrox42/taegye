@@ -76,6 +76,7 @@
   --ink-111-image: url("/ink-111.jpg");
   --white-clip-image: url("/bg-white.jpg");
   --purple-574667-image: url("/purple-574667.jpg");
+  --purple-6F5C82-image: url("/purple-6F5C82.jpg");
   --purple-463854-image: url("/purple-463854.jpg");
   --line-e5-image: url("/line-e5.jpg");
   --background: #ffffff;
@@ -334,6 +335,74 @@ button {
 
 .about-line {
   display: inline;
+}
+
+.contact-body,
+.faq-body .site-type-copy,
+.faq-body h2 {
+  margin: 0;
+}
+
+.contact-body {
+  margin-top: 3rem;
+}
+
+.contact-email-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem 0.75rem;
+}
+
+.contact-email {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: text;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.contact-email:hover,
+.contact-email:focus,
+.contact-email:focus-visible,
+.contact-email:active {
+  color: inherit;
+  background: none;
+  text-decoration: none;
+  opacity: 1;
+  outline: none;
+  box-shadow: none;
+}
+
+.contact-copied {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
+  line-height: 1;
+  animation: contact-copied-out 1.2s ease forwards;
+}
+
+@keyframes contact-copied-out {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -809,6 +878,7 @@ select::-ms-expand {
 }
 
 .site-footer-logo {
+  display: none;
   -webkit-text-fill-color: unset !important;
   background-image: none !important;
   -webkit-background-clip: border-box !important;
@@ -852,6 +922,10 @@ select::-ms-expand {
     flex-wrap: nowrap;
     gap: 2rem;
     margin-left: auto;
+  }
+
+  .site-footer-logo {
+    display: inline-flex;
   }
 }
 
@@ -1101,8 +1175,8 @@ select::-ms-expand {
   padding: 0.8rem 1rem;
   overflow: hidden;
   border: 0;
-  background-color: #574667 !important;
-  background-image: var(--purple-574667-image) !important;
+  background-color: #6F5C82 !important;
+  background-image: var(--purple-6F5C82-image) !important;
   background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
   background-clip: border-box !important;
@@ -1197,37 +1271,9 @@ select::-ms-expand {
 }
 
 @media (min-width: 768px) {
-  .home-new-in {
-    padding: 5.5rem var(--site-gutter) 6rem;
-  }
-
-  .home-new-in-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .home-new-in-card.is-secondary {
-    display: block;
-  }
-
-  .home-new-in-head {
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
+  .home-new-in,
   .site-float-logo {
-    width: 84px;
-    height: 54px;
-    bottom: 24px;
-  }
-
-  .site-float-logo-mark,
-  .site-float-logo-mark .site-ink-fill {
-    width: 84px;
-    height: 54px;
+    display: none !important;
   }
 }
 

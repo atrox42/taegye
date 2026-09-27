@@ -4,10 +4,10 @@ import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import {
   forceInkStyle,
   forceMutedStyle,
-  forcePurpleStyle,
+  forcePurpleLightStyle,
   forceWhiteClipStyle,
   forceWhiteStyle,
-  PURPLE_574667_SRC,
+  PURPLE_6F5C82_SRC,
   WHITE_BITMAP_SRC,
 } from "@/lib/force-white";
 import { HOME_NEW_IN, getNewProduct } from "@/lib/site";
@@ -59,9 +59,9 @@ export function HomeNewIn() {
               </span>
             </div>
             <Link href={`/new/${item.product.id}`} className="home-new-in-cta">
-              <span className="home-new-in-cta-face" style={forcePurpleStyle}>
+              <span className="home-new-in-cta-face" style={forcePurpleLightStyle}>
                 {/* eslint-disable-next-line @next/next/no-img-element -- purple raster survives Samsung invert */}
-                <img src={PURPLE_574667_SRC} alt="" aria-hidden className="home-new-in-cta-fill" />
+                <img src={PURPLE_6F5C82_SRC} alt="" aria-hidden className="home-new-in-cta-fill" />
                 <span className="home-new-in-cta-label site-type" style={forceWhiteClipStyle}>
                   View product
                 </span>
