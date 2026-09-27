@@ -1715,38 +1715,6 @@ select::-ms-expand {
     padding: 1.25rem var(--site-nav-pad);
   }
 
-  .site-nav-product {
-    position: relative;
-  }
-
-  .site-nav-product-sub {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 20;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.45rem;
-    min-width: 6.5rem;
-    padding: 0.45rem 0.15rem 0.2rem;
-    border: 0;
-    box-shadow: none;
-    background-color: #ffffff !important;
-    background-image: url("/bg-white.jpg") !important;
-    background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
-  }
-
-  .site-nav-product:hover .site-nav-product-sub,
-  .site-nav-product:focus-within .site-nav-product-sub {
-    display: flex;
-  }
-
-  .site-nav-product-item {
-    display: block;
-  }
-
   .site-nav-bitmap {
     display: none;
   }

@@ -158,26 +158,13 @@ function DesktopNavLinks({ pathname }: { pathname: string }) {
       >
         Home
       </Link>
-      <div className="site-nav-product">
-        <Link
-          href="/new"
-          className={cn("site-nav-link site-type relative z-10", productActive && "is-active")}
-          aria-current={productActive ? "page" : undefined}
-        >
-          Product
-        </Link>
-        <div className="site-nav-product-sub">
-          {NEW_CATEGORIES.map((category) => (
-            <Link
-              key={category.id}
-              href={categoryHref(category.id)}
-              className="site-nav-link site-type site-nav-product-item"
-            >
-              {category.label}
-            </Link>
-          ))}
-        </div>
-      </div>
+      <Link
+        href="/new"
+        className={cn("site-nav-link site-type relative z-10", productActive && "is-active")}
+        aria-current={productActive ? "page" : undefined}
+      >
+        Product
+      </Link>
       <Link
         href="/about"
         className={cn("site-nav-link site-type relative z-10", aboutActive && "is-active")}
