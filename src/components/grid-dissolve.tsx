@@ -13,9 +13,9 @@ import {
 
 const DURATION_MS = 680;
 const SESSION_KEY = "taegye-dissolve";
-const PLATE_A = "#D9D9D9";
-const PLATE_B = "#CFCFCF";
-const PLATE_EDGE = "#BDBDBD";
+const PLATE_A = "#FAFAFA";
+const PLATE_B = "#F6F6F6";
+const PLATE_EDGE = "#EFEFEF";
 const opaqueCache = new WeakMap<HTMLImageElement, { sx: number; sy: number; sw: number; sh: number } | null>();
 
 type DissolveApi = {
