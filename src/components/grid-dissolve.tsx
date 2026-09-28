@@ -30,6 +30,7 @@ const DissolveContext = createContext<DissolveApi>({
 
 type Tile = {
   img: HTMLImageElement;
+  layout: HTMLImageElement;
   sx: number;
   sy: number;
   sw: number;
@@ -42,6 +43,35 @@ type Tile = {
   dur: number;
   gray: string;
 };
+
+const drawCache = new Map<string, HTMLImageElement>();
+
+function rawUrl(img: HTMLImageElement) {
+  const src = img.currentSrc || img.src || "";
+  try {
+    const url = new URL(src, window.location.origin);
+    if (url.pathname.includes("/_next/image")) {
+      const inner = url.searchParams.get("url");
+      if (inner) return new URL(inner, window.location.origin).href;
+    }
+    return url.href;
+  } catch {
+    return src;
+  }
+}
+
+function primedDrawImage(img: HTMLImageElement) {
+  const url = rawUrl(img);
+  let cached = drawCache.get(url);
+  if (!cached) {
+    cached = new Image();
+    cached.decoding = "sync";
+    cached.src = url;
+    drawCache.set(url, cached);
+  }
+  if (cached.complete && cached.naturalWidth > 1) return cached;
+  return img;
+}
 
 function isShown(el: Element) {
   let node: Element | null = el;
@@ -199,28 +229,32 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
   const tiles: Tile[] = [];
   const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
   const vw = window.innerWidth;
-  for (const img of visibleGridImages()) {
-    const box = containedBox(img);
+  for (const layout of visibleGridImages()) {
+    const draw = primedDrawImage(layout);
+    const box = containedBox(layout);
     boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
-    const opaque = opaqueSource(img);
+    const opaque = opaqueSource(draw);
+    const nw = draw.naturalWidth || box.nw;
+    const nh = draw.naturalHeight || box.nh;
     const region = opaque
       ? {
-          x: box.x + (opaque.sx / box.nw) * box.w,
-          y: box.y + (opaque.sy / box.nh) * box.h,
-          w: (opaque.sw / box.nw) * box.w,
-          h: (opaque.sh / box.nh) * box.h,
+          x: box.x + (opaque.sx / nw) * box.w,
+          y: box.y + (opaque.sy / nh) * box.h,
+          w: (opaque.sw / nw) * box.w,
+          h: (opaque.sh / nh) * box.h,
           sx: opaque.sx,
           sy: opaque.sy,
           sw: opaque.sw,
           sh: opaque.sh,
         }
-      : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: box.nw, sh: box.nh };
+      : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: nw, sh: nh };
     const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
     splitRect(0, 0, region.w, region.h, raw, region.w < 180 ? 12 : 16);
     for (const piece of raw) {
       const nx = (region.x + piece.x) / Math.max(1, vw);
       tiles.push({
-        img,
+        img: draw,
+        layout,
         sx: region.sx + (piece.x / region.w) * region.sw,
         sy: region.sy + (piece.y / region.h) * region.sh,
         sw: (piece.w / region.w) * region.sw,
@@ -268,10 +302,10 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
   if (t <= 0) {
     const seen = new Set<HTMLImageElement>();
     for (const tile of tiles) {
-      if (seen.has(tile.img)) continue;
-      seen.add(tile.img);
-      const box = containedBox(tile.img);
-      ctx.drawImage(tile.img, 0, 0, box.nw, box.nh, box.x, box.y, box.w, box.h);
+      if (seen.has(tile.layout)) continue;
+      seen.add(tile.layout);
+      const box = containedBox(tile.layout);
+      ctx.drawImage(tile.img, 0, 0, tile.img.naturalWidth, tile.img.naturalHeight, box.x, box.y, box.w, box.h);
     }
     return;
   }
@@ -341,6 +375,15 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
       void document.body.offsetHeight;
 
+      const visibles = visibleGridImages();
+      for (const img of visibles) primedDrawImage(img);
+
+      const sourcesReady = () =>
+        visibles.every((img) => {
+          const draw = primedDrawImage(img);
+          return draw.complete && draw.naturalWidth > 1;
+        });
+
       const run = (tiles: Tile[]) => {
         const { ctx } = ensureCanvas();
         if (!ctx) {
@@ -375,10 +418,14 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         raf.current = requestAnimationFrame(tick);
       };
 
-      const first = buildTiles();
-      if (first.tiles.length > 0) {
-        publishBoxes(first.boxes);
-        run(first.tiles);
+      const kick = () => {
+        const built = buildTiles();
+        publishBoxes(built.boxes);
+        run(built.tiles);
+      };
+
+      if (sourcesReady()) {
+        kick();
         return;
       }
 
@@ -389,11 +436,12 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       }
 
       void Promise.all(
-        visibleGridImages().map((img) => (img.decode ? img.decode().catch(() => undefined) : Promise.resolve())),
+        visibles.map((img) => {
+          const draw = primedDrawImage(img);
+          return draw.decode ? draw.decode().catch(() => undefined) : Promise.resolve();
+        }),
       ).then(() => {
-        const retry = buildTiles();
-        publishBoxes(retry.boxes);
-        run(retry.tiles);
+        kick();
       });
     },
     [reset, router],
