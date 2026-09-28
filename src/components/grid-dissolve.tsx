@@ -11,12 +11,14 @@ import {
   type ReactNode,
 } from "react";
 
+import { GRID_TEXTURE_SRCS, NEW_PRODUCTS } from "@/lib/site";
+
 const DURATION_MS = 680;
 const SESSION_KEY = "taegye-dissolve";
 const PLATE_A = "#FAFAFA";
 const PLATE_B = "#F6F6F6";
 const PLATE_EDGE = "#EFEFEF";
-const opaqueCache = new WeakMap<HTMLImageElement, { sx: number; sy: number; sw: number; sh: number } | null>();
+const opaqueCache = new Map<string, { sx: number; sy: number; sw: number; sh: number } | null>();
 
 type DissolveApi = {
   start: (href: string) => void;
@@ -65,12 +67,29 @@ function primedDrawImage(img: HTMLImageElement) {
   let cached = drawCache.get(url);
   if (!cached) {
     cached = new Image();
-    cached.decoding = "sync";
+    cached.decoding = "async";
     cached.src = url;
     drawCache.set(url, cached);
   }
   if (cached.complete && cached.naturalWidth > 1) return cached;
   return img;
+}
+
+function preloadUrl(src: string) {
+  try {
+    const abs = new URL(src, window.location.origin).href;
+    if (drawCache.has(abs)) return drawCache.get(abs)!;
+    const img = new Image();
+    img.decoding = "async";
+    img.src = src;
+    drawCache.set(abs, img);
+    void (img.decode ? img.decode().catch(() => undefined) : Promise.resolve()).then(() => {
+      if (img.naturalWidth > 1) opaqueSource(img);
+    });
+    return img;
+  } catch {
+    return null;
+  }
 }
 
 function isShown(el: Element) {
@@ -148,13 +167,14 @@ function containedBox(img: HTMLImageElement) {
 }
 
 function opaqueSource(img: HTMLImageElement) {
-  const hit = opaqueCache.get(img);
+  const url = rawUrl(img);
+  const hit = opaqueCache.get(url);
   if (hit !== undefined) return hit;
   const nw = img.naturalWidth;
   const nh = img.naturalHeight;
   const full = { sx: 0, sy: 0, sw: nw, sh: nh };
   if (nw < 2 || nh < 2) {
-    opaqueCache.set(img, full);
+    opaqueCache.set(url, full);
     return full;
   }
   try {
@@ -163,7 +183,7 @@ function opaqueSource(img: HTMLImageElement) {
     canvas.height = nh;
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) {
-      opaqueCache.set(img, full);
+      opaqueCache.set(url, full);
       return full;
     }
     ctx.drawImage(img, 0, 0);
@@ -172,7 +192,7 @@ function opaqueSource(img: HTMLImageElement) {
     let minY = nh;
     let maxX = 0;
     let maxY = 0;
-    const step = nw > 400 ? 2 : 1;
+    const step = nw > 400 ? 4 : 2;
     for (let y = 0; y < nh; y += step) {
       for (let x = 0; x < nw; x += step) {
         if (data[(y * nw + x) * 4 + 3] > 16) {
@@ -184,7 +204,7 @@ function opaqueSource(img: HTMLImageElement) {
       }
     }
     if (maxX < minX) {
-      opaqueCache.set(img, null);
+      opaqueCache.set(url, null);
       return null;
     }
     const box = {
@@ -193,10 +213,10 @@ function opaqueSource(img: HTMLImageElement) {
       sw: Math.min(nw, maxX + 3) - Math.max(0, minX - 2),
       sh: Math.min(nh, maxY + 3) - Math.max(0, minY - 2),
     };
-    opaqueCache.set(img, box);
+    opaqueCache.set(url, box);
     return box;
   } catch {
-    opaqueCache.set(img, full);
+    opaqueCache.set(url, full);
     return full;
   }
 }
@@ -210,7 +230,9 @@ function splitRect(
   min = 16,
 ) {
   const area = w * h;
-  if (w < min * 2 || h < min * 2 || area < 700 || Math.random() < 0.16) {
+  const stopChance = min >= 22 ? 0.28 : 0.16;
+  const minArea = min >= 22 ? 1400 : 700;
+  if (w < min * 2 || h < min * 2 || area < minArea || Math.random() < stopChance) {
     tiles.push({ x, y, w, h });
     return;
   }
@@ -249,7 +271,8 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
         }
       : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: nw, sh: nh };
     const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
-    splitRect(0, 0, region.w, region.h, raw, region.w < 180 ? 12 : 16);
+    const min = vw < 480 ? 28 : vw < 768 ? 22 : region.w < 180 ? 12 : 16;
+    splitRect(0, 0, region.w, region.h, raw, min);
     for (const piece of raw) {
       const nx = (region.x + piece.x) / Math.max(1, vw);
       tiles.push({
@@ -288,9 +311,11 @@ function ensureCanvas() {
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
   canvas.style.pointerEvents = "auto";
-  const ctx = canvas.getContext("2d", { alpha: false });
-  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  void canvas.offsetHeight;
+  const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
+  if (ctx) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+  }
   return { canvas, ctx, dpr };
 }
 
@@ -315,7 +340,6 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
     const p = local <= 0 ? 0 : Math.min(1, local / tile.dur);
     const alpha = 1 - p;
     if (alpha <= 0.02) continue;
-    ctx.save();
     ctx.globalAlpha = alpha;
     ctx.fillStyle = tile.gray;
     ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
@@ -323,8 +347,8 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
     ctx.lineWidth = 1;
     ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
     ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, tile.dx, tile.dy, tile.dw, tile.dh);
-    ctx.restore();
   }
+  ctx.globalAlpha = 1;
 }
 
 function removeCanvas() {
@@ -371,9 +395,16 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         window.setTimeout(reset, 900);
       };
 
+      try {
+        router.prefetch(href);
+      } catch {
+        /* ignore */
+      }
+      const id = href.split("/").pop();
+      if (id) preloadUrl(`/products/stand-${id}.webp`);
+
       document.documentElement.classList.add("is-dissolving");
       document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
-      void document.body.offsetHeight;
 
       const visibles = visibleGridImages();
       for (const img of visibles) primedDrawImage(img);
@@ -446,6 +477,19 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
     },
     [reset, router],
   );
+
+  useEffect(() => {
+    for (const product of NEW_PRODUCTS) {
+      preloadUrl(product.emptySrc);
+      preloadUrl(product.mossSrc);
+      try {
+        router.prefetch(`/new/${product.id}`);
+      } catch {
+        /* ignore */
+      }
+    }
+    for (const src of GRID_TEXTURE_SRCS) preloadUrl(src);
+  }, [router]);
 
   useEffect(() => {
     const onPageShow = (event: PageTransitionEvent) => {
