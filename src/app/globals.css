@@ -183,12 +183,20 @@ body,
     opacity: 0;
   }
 
-  .product-card[data-moss="on"] .product-empty,
+  .product-card[data-moss="on"] .product-empty {
+    opacity: 0;
+  }
+
+  .product-card[data-moss="on"] .product-moss {
+    opacity: 1;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
   .product-card:hover .product-empty {
     opacity: 0;
   }
 
-  .product-card[data-moss="on"] .product-moss,
   .product-card:hover .product-moss {
     opacity: 1;
   }
@@ -236,10 +244,12 @@ main,
   forced-color-adjust: none !important;
 }
 
-.new-grid-item:has(.product-card:hover),
-.new-grid-item:has(.product-card:hover) .product-card {
-  background-color: #e8e8e8 !important;
-  background-image: none !important;
+@media (hover: hover) and (pointer: fine) {
+  .new-grid-item:has(.product-card:hover),
+  .new-grid-item:has(.product-card:hover) .product-card {
+    background-color: #e8e8e8 !important;
+    background-image: none !important;
+  }
 }
 
 /* Product photos + float mark stay clear. White comes from <img> plates. */
@@ -566,10 +576,12 @@ button {
 .pdp-reveal {
   width: 100%;
   opacity: 0;
+  transform: none;
 }
 
 .pdp-reveal.is-on {
   opacity: 1;
+  transform: none;
   transition: opacity 0.55s ease;
 }
 
@@ -586,6 +598,20 @@ button {
 
 html.is-dissolving {
   overflow: hidden;
+}
+
+html.is-dissolving .product-moss,
+.new-grid.is-dissolve-lock .product-moss,
+.new-grid.is-dissolve-lock .product-card:hover .product-moss {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+html.is-dissolving .product-empty,
+.new-grid.is-dissolve-lock .product-empty,
+.new-grid.is-dissolve-lock .product-card:hover .product-empty {
+  opacity: 1 !important;
+  transition: none !important;
 }
 
 .pdp-copy .site-type,
@@ -1546,9 +1572,11 @@ select::-ms-expand {
   pointer-events: none;
 }
 
-.product-card:hover .white-surface-fill,
-.new-grid-item:has(.product-card:hover) .white-surface-fill {
-  opacity: 0;
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover .white-surface-fill,
+  .new-grid-item:has(.product-card:hover) .white-surface-fill {
+    opacity: 0;
+  }
 }
 
 .pdp > :not(.white-surface-fill):not(.pdp-rail),
@@ -2114,9 +2142,11 @@ select::-ms-expand {
   background-image: none !important;
 }
 
-.new-grid-item:has(.product-card:hover) .product-card {
-  background-color: #e8e8e8 !important;
-  background-image: none !important;
+@media (hover: hover) and (pointer: fine) {
+  .new-grid-item:has(.product-card:hover) .product-card {
+    background-color: #e8e8e8 !important;
+    background-image: none !important;
+  }
 }
 
 .site-splash {
