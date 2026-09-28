@@ -209,19 +209,30 @@ body,
   forced-color-adjust: none;
 }
 
+/* One raster plate on the shell. Nested wrappers stay transparent so
+   stacked covering JPEGs cannot hide descendants (desktop /new grid). */
 html,
 body,
 #__next,
 #root,
-main,
 .site-shell,
-.site-main,
 .site-footer,
-.site-footer-inner,
-.site-page,
 .site-header,
 .site-white-layer,
-.home-hero,
+.home-hero {
+  background-color: #ffffff !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+  color: #111111 !important;
+  color-scheme: only light !important;
+  forced-color-adjust: none !important;
+}
+
+main,
+.site-main,
+.site-page,
+.site-footer-inner,
 .home-new-in,
 .home-new-in-visual,
 .new-page,
@@ -234,14 +245,12 @@ main,
 .pdp-hero,
 .pdp-visual,
 .pdp-stage,
-.pdp-copy {
-  background-color: #ffffff !important;
-  background-image: var(--force-white-image) !important;
-  background-repeat: no-repeat !important;
-  background-size: 100% 100% !important;
-  color: #111111 !important;
-  color-scheme: only light !important;
-  forced-color-adjust: none !important;
+.pdp-copy,
+.pdp-gallery,
+.pdp-gallery-slide,
+.new-subnav {
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1458,10 +1467,8 @@ select::-ms-expand {
   z-index: 1;
   width: 100%;
   padding: 4.5rem var(--site-gutter) 6.5rem;
-  background-color: #ffffff !important;
-  background-image: var(--force-white-image) !important;
-  background-repeat: no-repeat !important;
-  background-size: 100% 100% !important;
+  background-color: transparent !important;
+  background-image: none !important;
   color-scheme: only light !important;
   forced-color-adjust: none !important;
 }
@@ -2138,20 +2145,29 @@ select::-ms-expand {
   body,
   #__next,
   #root,
-  main,
   .site-shell,
-  .site-main,
   .site-footer,
-  .site-footer-inner,
-  .site-page,
   .site-header,
   .site-white-layer,
   .home-hero,
-  .home-new-in,
-  .home-new-in-visual,
   .site-menubar,
   .site-menu,
-  .site-splash,
+  .site-splash {
+    background-color: #ffffff !important;
+    background-image: var(--force-white-image) !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    color: #111111 !important;
+    color-scheme: only light !important;
+    forced-color-adjust: none !important;
+  }
+
+  main,
+  .site-main,
+  .site-page,
+  .site-footer-inner,
+  .home-new-in,
+  .home-new-in-visual,
   .new-page,
   .new-grid,
   .new-grid-item,
@@ -2162,14 +2178,12 @@ select::-ms-expand {
   .pdp-hero,
   .pdp-visual,
   .pdp-stage,
-  .pdp-copy {
-    background-color: #ffffff !important;
-    background-image: var(--force-white-image) !important;
-    background-repeat: no-repeat !important;
-    background-size: 100% 100% !important;
-    color: #111111 !important;
-    color-scheme: only light !important;
-    forced-color-adjust: none !important;
+  .pdp-copy,
+  .pdp-gallery,
+  .pdp-gallery-slide,
+  .new-subnav {
+    background-color: transparent !important;
+    background-image: none !important;
   }
 
   .site-nav,

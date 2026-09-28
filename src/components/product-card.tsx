@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useRef, type MouseEvent, type PointerEvent } from "react";
 
 import { useGridDissolve } from "@/components/grid-dissolve";
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
 
 type ProductCardProps = {
@@ -60,11 +59,8 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerCancel}
       className="product-card relative block no-underline hover:no-underline"
-      style={forceWhiteStyle}
     >
-      <WhiteSurfaceFill />
       <div className="product-stage relative aspect-square overflow-hidden">
-        <WhiteSurfaceFill />
         <div className="product-empty absolute inset-0">
           <Image
             src={product.emptySrc}

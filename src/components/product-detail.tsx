@@ -3,8 +3,7 @@ import Link from "next/link";
 
 import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle } from "@/lib/force-white";
 import {
   NEW_PRODUCTS,
   STAND_NOTE,
@@ -29,10 +28,8 @@ function ProductHero({
   className?: string;
 }) {
   return (
-    <div className={className ? `pdp-hero ${className}` : "pdp-hero"} style={forceWhiteStyle}>
-      <WhiteSurfaceFill />
+    <div className={className ? `pdp-hero ${className}` : "pdp-hero"}>
       <div className="pdp-stage relative aspect-square">
-        <WhiteSurfaceFill />
         <Image
           src={src}
           alt={alt}
@@ -55,8 +52,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const mossHero = <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />;
 
   return (
-    <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
-      <WhiteSurfaceFill />
+    <article className="site-page pdp pdp-atelier site-gutter">
       <div className="pdp-mobile-gallery">
         <PdpGallery empty={emptyHero} moss={mossHero} />
       </div>
