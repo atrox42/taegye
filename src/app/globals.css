@@ -361,6 +361,7 @@ button {
 .contact-body,
 .pdp-copy,
 .site-type,
+.site-type *,
 .site-footer-link,
 .new-subnav-item {
   background-color: transparent !important;
