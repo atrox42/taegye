@@ -359,7 +359,10 @@ button {
 .text-page-body,
 .faq-body,
 .contact-body,
-.pdp-copy {
+.pdp-copy,
+.site-type,
+.site-footer-link,
+.new-subnav-item {
   background-color: transparent !important;
 }
 
