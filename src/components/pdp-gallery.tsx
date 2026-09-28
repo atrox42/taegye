@@ -67,8 +67,14 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
         onPointerDown={onPointerDown}
         onClick={onTrackClick}
       >
-        <div className="pdp-gallery-slide">{empty}</div>
-        <div className="pdp-gallery-slide">{moss}</div>
+        <div className="pdp-gallery-slide">
+          <WhiteSurfaceFill />
+          {empty}
+        </div>
+        <div className="pdp-gallery-slide">
+          <WhiteSurfaceFill />
+          {moss}
+        </div>
       </div>
       <p className="pdp-gallery-index site-type" aria-live="polite">
         {page} / 2

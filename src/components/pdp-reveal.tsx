@@ -3,19 +3,21 @@
 import { useLayoutEffect, useState, type ReactNode } from "react";
 
 export function PdpReveal({ children }: { children: ReactNode }) {
-  const [on, setOn] = useState(false);
+  const [on, setOn] = useState(true);
 
   useLayoutEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let fromDissolve = false;
     try {
+      fromDissolve = sessionStorage.getItem("taegye-dissolve") === "1";
       sessionStorage.removeItem("taegye-dissolve");
     } catch {
       /* ignore */
     }
-    if (reduced) {
+    if (!fromDissolve || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setOn(true);
       return;
     }
+    setOn(false);
     const id = window.requestAnimationFrame(() => setOn(true));
     return () => window.cancelAnimationFrame(id);
   }, []);

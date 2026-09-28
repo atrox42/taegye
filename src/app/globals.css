@@ -562,11 +562,25 @@ button {
   text-align: center;
 }
 
+.pdp-mobile-gallery {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .pdp-atelier > .pdp-reveal,
+  .pdp-atelier > .pdp-hero-moss,
+  .pdp-desktop-moss {
+    display: none !important;
+  }
+}
+
 @media (min-width: 768px) {
   .pdp-gallery,
   .pdp-gallery-track,
-  .pdp-gallery-slide {
-    display: contents;
+  .pdp-gallery-slide,
+  .pdp-mobile-gallery {
+    display: none !important;
   }
 
   .pdp-gallery-plate,

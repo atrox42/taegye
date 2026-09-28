@@ -49,18 +49,20 @@ function ProductHero({
 
 export function ProductDetail({ product }: ProductDetailProps) {
   const [blurbOne, blurbTwo] = STAND_NOTE.en;
+  const emptyHero = (
+    <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
+  );
+  const mossHero = <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />;
 
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <PdpGallery
-        empty={
-          <PdpReveal>
-            <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
-          </PdpReveal>
-        }
-        moss={<ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />}
-      />
+      <div className="pdp-mobile-gallery">
+        <PdpGallery empty={emptyHero} moss={mossHero} />
+      </div>
+      <PdpReveal>
+        <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
+      </PdpReveal>
 
       <div className="pdp-rails">
         <div className="pdp-rail pdp-rail-copy">
@@ -115,6 +117,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </a>
         </div>
       </div>
+      <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss pdp-desktop-moss" />
     </article>
   );
 }
