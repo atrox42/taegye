@@ -612,7 +612,7 @@ html.is-dissolving {
 
   .pdp-atelier {
     display: grid;
-    grid-template-columns: min(17rem, 20vw) minmax(0, 1fr) min(12rem, 16vw);
+    grid-template-columns: minmax(0, 1fr) min(56vw, 720px) minmax(0, 1fr);
     align-items: start;
     column-gap: 0;
     row-gap: 4.5rem;
