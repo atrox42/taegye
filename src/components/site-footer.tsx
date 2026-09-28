@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { BrandLogo } from "@/components/brand-logo";
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
 import {
   COPYRIGHT,
@@ -20,7 +19,6 @@ export function SiteFooter() {
 
   return (
     <footer className="site-footer" style={forceWhiteStyle}>
-      <WhiteSurfaceFill />
       <div className="site-footer-inner site-gutter">
         <div className="site-footer-row">
           <div className="site-footer-brand">
