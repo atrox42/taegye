@@ -295,11 +295,17 @@ body,
   overflow-x: hidden;
 }
 
-html,
+/* Classic Windows scrollbars take width. Keep the scroller on html from
+   first paint so the bar never appears later and shoves the layout. */
+html {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 body {
   overflow-x: hidden;
   overflow-y: visible;
-  scrollbar-gutter: stable;
 }
 
 .site-shell,
@@ -773,10 +779,6 @@ button {
   height: 100%;
   pointer-events: auto;
   background-color: transparent;
-}
-
-html.is-dissolving {
-  overflow: hidden;
 }
 
 html.is-dissolving .product-stage img:not(.white-surface-fill),
@@ -2368,10 +2370,6 @@ html[data-intro="done"] .site-splash {
   .site-splash {
     display: none !important;
   }
-}
-
-html[data-intro="pending"] body {
-  overflow: hidden;
 }
 
 .site-splash-bitmap {

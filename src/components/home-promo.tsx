@@ -76,14 +76,13 @@ export function HomePromo() {
       return;
     }
     setPromoFlag(true);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("is-promo-open");
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") hide(false);
     };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = previous;
+      document.documentElement.classList.remove("is-promo-open");
       window.removeEventListener("keydown", onKey);
     };
   }, [pathname]);
