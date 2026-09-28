@@ -17,6 +17,35 @@ type ProductDetailProps = {
   product: NewProduct;
 };
 
+function ProductHero({
+  src,
+  alt,
+  priority = false,
+  className,
+}: {
+  src: string;
+  alt: string;
+  priority?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={className ? `pdp-hero ${className}` : "pdp-hero"} style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
+      <div className="pdp-stage relative aspect-square">
+        <WhiteSurfaceFill />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes="(min-width: 768px) 58vw, 100vw"
+          className="object-contain object-center"
+        />
+      </div>
+    </div>
+  );
+}
+
 export function ProductDetail({ product }: ProductDetailProps) {
   const family = productFamilyLabel(product);
   const color = productColorLabel(product);
@@ -25,20 +54,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
       <PdpReveal>
-        <div className="pdp-hero" style={forceWhiteStyle}>
-          <WhiteSurfaceFill />
-          <div className="pdp-stage relative aspect-square">
-            <WhiteSurfaceFill />
-            <Image
-              src={product.mossSrc}
-              alt={product.mossAlt}
-              fill
-              priority
-              sizes="(min-width: 768px) 58vw, 100vw"
-              className="object-contain object-center"
-            />
-          </div>
-        </div>
+        <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
       </PdpReveal>
 
       <div className="pdp-rail pdp-rail-copy">
@@ -98,6 +114,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
           Store
         </a>
       </div>
+
+      <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />
     </article>
   );
 }
