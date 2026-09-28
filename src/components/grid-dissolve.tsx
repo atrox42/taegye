@@ -196,6 +196,16 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
   const h = document.documentElement.clientHeight;
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, w, h);
+  if (t <= 0) {
+    const seen = new Set<HTMLImageElement>();
+    for (const tile of tiles) {
+      if (seen.has(tile.img)) continue;
+      seen.add(tile.img);
+      const box = containedBox(tile.img);
+      ctx.drawImage(tile.img, 0, 0, box.nw, box.nh, box.x, box.y, box.w, box.h);
+    }
+    return;
+  }
   for (const tile of tiles) {
     const local = t - tile.delay;
     if (local >= tile.dur) continue;
