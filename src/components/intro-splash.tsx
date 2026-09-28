@@ -30,8 +30,6 @@ export function IntroSplashController() {
     const fade = reduced ? 0 : FADE_MS;
     const holdFor = shouldHold() ? 120000 : reduced ? 1600 : HOLD_MS;
 
-    document.body.style.overflow = "hidden";
-
     let hideTimer = 0;
     const outTimer = window.setTimeout(() => {
       if (shouldHold()) return;
@@ -43,7 +41,6 @@ export function IntroSplashController() {
         } catch {
           /* ignore quota / private mode */
         }
-        document.body.style.overflow = "";
         window.dispatchEvent(new Event("taegye:intro-done"));
       }, fade);
     }, holdFor);
@@ -51,7 +48,6 @@ export function IntroSplashController() {
     return () => {
       window.clearTimeout(outTimer);
       window.clearTimeout(hideTimer);
-      document.body.style.overflow = "";
     };
   }, []);
 
