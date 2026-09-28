@@ -89,7 +89,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           />
         </div>
       </div>
-      <div className="mt-3 text-left">
+      <div className="product-caption mt-3 text-left">
         <p className="site-type" style={forceInkStyle}>
           {product.name}
         </p>
