@@ -18,13 +18,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <SiteHeader />
         <div className="site-float-track">
           <WhiteSurfaceFill />
-          <main className="site-main flex-1" style={forceWhiteStyle}>
+          <main className="site-main relative flex-1" style={forceWhiteStyle}>
+            <WhiteSurfaceFill />
             {children}
           </main>
-          <FloatLogo />
         </div>
         <SiteFooter />
       </div>
+      <FloatLogo />
       <div className="site-splash" role="presentation" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element -- first-paint white raster */}
         <img src={WHITE_BITMAP_SRC} alt="" className="site-splash-bitmap" />

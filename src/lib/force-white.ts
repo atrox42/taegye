@@ -30,7 +30,7 @@ export const forceWhiteStyle = {
   backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
   color: "#111111",
-  colorScheme: "light dark",
+  colorScheme: "only light",
 } as const;
 
 /** CSS #111 is inverted by OEM Force Dark; a dark JPEG fill is not. */
@@ -50,7 +50,7 @@ export const forcePurpleStyle = {
   backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
   color: "#ffffff",
-  colorScheme: "light dark",
+  colorScheme: "only light",
 } as const;
 
 export const forcePurpleLightStyle = {
@@ -59,7 +59,7 @@ export const forcePurpleLightStyle = {
   backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
   color: "#ffffff",
-  colorScheme: "light dark",
+  colorScheme: "only light",
 } as const;
 
 export const forcePurpleDarkStyle = {
@@ -68,7 +68,7 @@ export const forcePurpleDarkStyle = {
   backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
   color: "#ffffff",
-  colorScheme: "light dark",
+  colorScheme: "only light",
 } as const;
 
 /** CSS #fff inverts under Force Dark; a white JPEG clip-text fill does not. */

@@ -19,7 +19,7 @@ function isChromeOpen() {
   );
 }
 
-/** Sticky bottom-center mark. No scroll listeners — docking is native CSS. */
+/** Viewport-fixed mark. Transparent PNG stays ink under OEM Force Dark. */
 export function FloatLogo() {
   const logoRef = useRef<HTMLAnchorElement>(null);
 
@@ -27,21 +27,38 @@ export function FloatLogo() {
     const logo = logoRef.current;
     if (!logo) return;
 
+    let footerInView = false;
     const syncHide = () => {
-      logo.classList.toggle("is-hidden", isChromeOpen());
+      logo.classList.toggle("is-hidden", isChromeOpen() || footerInView);
     };
 
     syncHide();
     const mo = new MutationObserver(syncHide);
     mo.observe(document.documentElement, { attributes: true, subtree: true, childList: true });
-    return () => mo.disconnect();
+
+    const footer = document.querySelector(".site-footer");
+    let io: IntersectionObserver | undefined;
+    if (footer) {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          footerInView = Boolean(entry?.isIntersecting);
+          syncHide();
+        },
+        { threshold: 0.35 },
+      );
+      io.observe(footer);
+    }
+
+    return () => {
+      mo.disconnect();
+      io?.disconnect();
+    };
   }, []);
 
   return (
     <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
-      <span className="site-float-logo-mark" aria-hidden>
-        <span className="site-ink-fill" />
-      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS-mask fills */}
+      <img src="/logo-taegye.png" alt="" className="site-float-logo-mark" />
     </Link>
   );
 }
