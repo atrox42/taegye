@@ -38,6 +38,7 @@ type Tile = {
   dur: number;
   ox: number;
   oy: number;
+  gray: string;
 };
 
 function reducedMotion() {
@@ -132,6 +133,7 @@ function buildTiles(): Tile[] {
         dur: 0.2 + Math.random() * 0.18,
         ox: (Math.random() - 0.5) * 16,
         oy: (Math.random() - 0.5) * 12,
+        gray: Math.random() < 0.5 ? "#EDEDED" : "#E6E6E6",
       });
     }
   }
@@ -169,19 +171,16 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
     const p = local <= 0 ? 0 : Math.min(1, local / tile.dur);
     const alpha = 1 - p;
     if (alpha <= 0.02) continue;
+    const x = tile.dx + tile.ox * p;
+    const y = tile.dy + tile.oy * p;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.drawImage(
-      tile.img,
-      tile.sx,
-      tile.sy,
-      tile.sw,
-      tile.sh,
-      tile.dx + tile.ox * p,
-      tile.dy + tile.oy * p,
-      tile.dw,
-      tile.dh,
-    );
+    ctx.fillStyle = tile.gray;
+    ctx.fillRect(x, y, tile.dw, tile.dh);
+    ctx.strokeStyle = "#DCDCDC";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
+    ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, x, y, tile.dw, tile.dh);
     ctx.restore();
   }
 }
