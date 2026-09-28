@@ -37,6 +37,7 @@ function ProductHero({
           alt={alt}
           fill
           priority={priority}
+          unoptimized={src.includes("/products/stand-") && !src.includes("-moss")}
           sizes="(min-width: 768px) 58vw, 100vw"
           className="object-contain object-center"
         />

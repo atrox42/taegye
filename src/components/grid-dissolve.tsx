@@ -11,8 +11,12 @@ import {
   type ReactNode,
 } from "react";
 
-const DURATION_MS = 860;
+const DURATION_MS = 680;
 const SESSION_KEY = "taegye-dissolve";
+const PLATE_A = "#D9D9D9";
+const PLATE_B = "#CFCFCF";
+const PLATE_EDGE = "#BDBDBD";
+const opaqueCache = new WeakMap<HTMLImageElement, { sx: number; sy: number; sw: number; sh: number } | null>();
 
 type DissolveApi = {
   start: (href: string) => void;
@@ -26,6 +30,7 @@ const DissolveContext = createContext<DissolveApi>({
 
 type Tile = {
   img: HTMLImageElement;
+  layout: HTMLImageElement;
   sx: number;
   sy: number;
   sw: number;
@@ -39,8 +44,33 @@ type Tile = {
   gray: string;
 };
 
-function reducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const drawCache = new Map<string, HTMLImageElement>();
+
+function rawUrl(img: HTMLImageElement) {
+  const src = img.currentSrc || img.src || "";
+  try {
+    const url = new URL(src, window.location.origin);
+    if (url.pathname.includes("/_next/image")) {
+      const inner = url.searchParams.get("url");
+      if (inner) return new URL(inner, window.location.origin).href;
+    }
+    return url.href;
+  } catch {
+    return src;
+  }
+}
+
+function primedDrawImage(img: HTMLImageElement) {
+  const url = rawUrl(img);
+  let cached = drawCache.get(url);
+  if (!cached) {
+    cached = new Image();
+    cached.decoding = "sync";
+    cached.src = url;
+    drawCache.set(url, cached);
+  }
+  if (cached.complete && cached.naturalWidth > 1) return cached;
+  return img;
 }
 
 function isShown(el: Element) {
@@ -117,6 +147,60 @@ function containedBox(img: HTMLImageElement) {
   };
 }
 
+function opaqueSource(img: HTMLImageElement) {
+  const hit = opaqueCache.get(img);
+  if (hit !== undefined) return hit;
+  const nw = img.naturalWidth;
+  const nh = img.naturalHeight;
+  const full = { sx: 0, sy: 0, sw: nw, sh: nh };
+  if (nw < 2 || nh < 2) {
+    opaqueCache.set(img, full);
+    return full;
+  }
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = nw;
+    canvas.height = nh;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) {
+      opaqueCache.set(img, full);
+      return full;
+    }
+    ctx.drawImage(img, 0, 0);
+    const data = ctx.getImageData(0, 0, nw, nh).data;
+    let minX = nw;
+    let minY = nh;
+    let maxX = 0;
+    let maxY = 0;
+    const step = nw > 400 ? 2 : 1;
+    for (let y = 0; y < nh; y += step) {
+      for (let x = 0; x < nw; x += step) {
+        if (data[(y * nw + x) * 4 + 3] > 16) {
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX < minX) {
+      opaqueCache.set(img, null);
+      return null;
+    }
+    const box = {
+      sx: Math.max(0, minX - 2),
+      sy: Math.max(0, minY - 2),
+      sw: Math.min(nw, maxX + 3) - Math.max(0, minX - 2),
+      sh: Math.min(nh, maxY + 3) - Math.max(0, minY - 2),
+    };
+    opaqueCache.set(img, box);
+    return box;
+  } catch {
+    opaqueCache.set(img, full);
+    return full;
+  }
+}
+
 function splitRect(
   x: number,
   y: number,
@@ -145,26 +229,43 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
   const tiles: Tile[] = [];
   const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
   const vw = window.innerWidth;
-  for (const img of visibleGridImages()) {
-    const box = containedBox(img);
+  for (const layout of visibleGridImages()) {
+    const draw = primedDrawImage(layout);
+    const box = containedBox(layout);
     boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
+    const opaque = opaqueSource(draw);
+    const nw = draw.naturalWidth || box.nw;
+    const nh = draw.naturalHeight || box.nh;
+    const region = opaque
+      ? {
+          x: box.x + (opaque.sx / nw) * box.w,
+          y: box.y + (opaque.sy / nh) * box.h,
+          w: (opaque.sw / nw) * box.w,
+          h: (opaque.sh / nh) * box.h,
+          sx: opaque.sx,
+          sy: opaque.sy,
+          sw: opaque.sw,
+          sh: opaque.sh,
+        }
+      : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: nw, sh: nh };
     const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
-    splitRect(0, 0, box.w, box.h, raw, box.w < 180 ? 12 : 16);
+    splitRect(0, 0, region.w, region.h, raw, region.w < 180 ? 12 : 16);
     for (const piece of raw) {
-      const nx = (box.x + piece.x) / Math.max(1, vw);
+      const nx = (region.x + piece.x) / Math.max(1, vw);
       tiles.push({
-        img,
-        sx: (piece.x / box.w) * box.nw,
-        sy: (piece.y / box.h) * box.nh,
-        sw: (piece.w / box.w) * box.nw,
-        sh: (piece.h / box.h) * box.nh,
-        dx: box.x + piece.x,
-        dy: box.y + piece.y,
+        img: draw,
+        layout,
+        sx: region.sx + (piece.x / region.w) * region.sw,
+        sy: region.sy + (piece.y / region.h) * region.sh,
+        sw: (piece.w / region.w) * region.sw,
+        sh: (piece.h / region.h) * region.sh,
+        dx: region.x + piece.x,
+        dy: region.y + piece.y,
         dw: piece.w,
         dh: piece.h,
-        delay: nx * 0.4 + Math.random() * 0.22,
-        dur: 0.2 + Math.random() * 0.18,
-        gray: Math.random() < 0.5 ? "#EDEDED" : "#E6E6E6",
+        delay: nx * 0.16 + Math.random() * 0.1,
+        dur: 0.64 + Math.random() * 0.16,
+        gray: Math.random() < 0.5 ? PLATE_A : PLATE_B,
       });
     }
   }
@@ -186,8 +287,10 @@ function ensureCanvas() {
   canvas.height = Math.round(h * dpr);
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
+  canvas.style.pointerEvents = "auto";
   const ctx = canvas.getContext("2d", { alpha: false });
   if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  void canvas.offsetHeight;
   return { canvas, ctx, dpr };
 }
 
@@ -199,10 +302,10 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
   if (t <= 0) {
     const seen = new Set<HTMLImageElement>();
     for (const tile of tiles) {
-      if (seen.has(tile.img)) continue;
-      seen.add(tile.img);
-      const box = containedBox(tile.img);
-      ctx.drawImage(tile.img, 0, 0, box.nw, box.nh, box.x, box.y, box.w, box.h);
+      if (seen.has(tile.layout)) continue;
+      seen.add(tile.layout);
+      const box = containedBox(tile.layout);
+      ctx.drawImage(tile.img, 0, 0, tile.img.naturalWidth, tile.img.naturalHeight, box.x, box.y, box.w, box.h);
     }
     return;
   }
@@ -213,15 +316,12 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
     const alpha = 1 - p;
     if (alpha <= 0.02) continue;
     ctx.save();
-    if (p > 0) {
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = tile.gray;
-      ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
-      ctx.strokeStyle = "#DCDCDC";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
-    }
     ctx.globalAlpha = alpha;
+    ctx.fillStyle = tile.gray;
+    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
+    ctx.strokeStyle = PLATE_EDGE;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
     ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, tile.dx, tile.dy, tile.dw, tile.dh);
     ctx.restore();
   }
@@ -231,6 +331,14 @@ function removeCanvas() {
   document.querySelectorAll(".grid-dissolve-canvas").forEach((node) => node.remove());
   document.documentElement.classList.remove("is-dissolving");
   document.querySelector(".new-grid")?.classList.remove("is-dissolve-lock");
+}
+
+function publishBoxes(boxes: Array<{ x: number; y: number; w: number; h: number }>) {
+  (
+    window as Window & {
+      __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
+    }
+  ).__TAEGYE_DISSOLVE_BOXES = boxes;
 }
 
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
@@ -263,24 +371,23 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         window.setTimeout(reset, 900);
       };
 
-      if (reducedMotion()) {
-        document.documentElement.classList.add("is-dissolving");
-        const { canvas, ctx } = ensureCanvas();
-        if (ctx) {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
-        }
-        canvas.classList.add("is-fade");
-        window.setTimeout(go, 280);
-        return;
-      }
+      document.documentElement.classList.add("is-dissolving");
+      document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
+      void document.body.offsetHeight;
+
+      const visibles = visibleGridImages();
+      for (const img of visibles) primedDrawImage(img);
+
+      const sourcesReady = () =>
+        visibles.every((img) => {
+          const draw = primedDrawImage(img);
+          return draw.complete && draw.naturalWidth > 1;
+        });
 
       const run = (tiles: Tile[]) => {
-        document.documentElement.classList.add("is-dissolving");
-        document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
         const { ctx } = ensureCanvas();
-        if (!ctx || tiles.length === 0) {
-          go();
+        if (!ctx) {
+          window.setTimeout(go, DURATION_MS);
           return;
         }
 
@@ -290,6 +397,14 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
           return;
         }
 
+        if (tiles.length === 0) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+          window.setTimeout(go, DURATION_MS);
+          return;
+        }
+
+        paint(ctx, tiles, 0);
         const begun = performance.now();
         const tick = (now: number) => {
           const t = (now - begun) / DURATION_MS;
@@ -303,30 +418,30 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         raf.current = requestAnimationFrame(tick);
       };
 
-      const first = buildTiles();
-      if (first.tiles.length > 0) {
-        (
-          window as Window & {
-            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
-          }
-        ).__TAEGYE_DISSOLVE_BOXES = first.boxes;
-        run(first.tiles);
+      const kick = () => {
+        const built = buildTiles();
+        publishBoxes(built.boxes);
+        run(built.tiles);
+      };
+
+      if (sourcesReady()) {
+        kick();
         return;
       }
+
+      const { ctx } = ensureCanvas();
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+      }
+
       void Promise.all(
-        visibleGridImages().map((img) => (img.decode ? img.decode().catch(() => undefined) : Promise.resolve())),
+        visibles.map((img) => {
+          const draw = primedDrawImage(img);
+          return draw.decode ? draw.decode().catch(() => undefined) : Promise.resolve();
+        }),
       ).then(() => {
-        const retry = buildTiles();
-        (
-          window as Window & {
-            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
-          }
-        ).__TAEGYE_DISSOLVE_BOXES = retry.boxes;
-        if (retry.tiles.length === 0) {
-          window.setTimeout(() => run(buildTiles().tiles), 80);
-          return;
-        }
-        run(retry.tiles);
+        kick();
       });
     },
     [reset, router],
