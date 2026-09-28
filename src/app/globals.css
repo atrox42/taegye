@@ -1539,6 +1539,7 @@ select::-ms-expand {
   background-color: transparent !important;
   background-image: none !important;
   pointer-events: none;
+  color-scheme: only light;
 }
 
 .site-float-logo.is-hidden {
