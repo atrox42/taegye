@@ -1,62 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 
 import { SITE_NAME } from "@/lib/site";
 
-function isChromeOpen() {
-  const introDone = document.documentElement.dataset.intro === "done";
-  const desktop = window.matchMedia("(min-width: 768px)").matches;
-  const splashOpen =
-    !introDone &&
-    !desktop &&
-    Boolean(document.querySelector(".site-splash:not(.is-out)"));
-  return Boolean(
-    splashOpen ||
-      document.querySelector(".site-promo") ||
-      document.querySelector(".site-header.is-open"),
-  );
-}
-
-/** Viewport-fixed mark. Transparent PNG stays ink under OEM Force Dark. */
+/** In-flow mobile mark above the footer. Transparent PNG stays ink under Force Dark. */
 export function FloatLogo() {
-  const logoRef = useRef<HTMLAnchorElement>(null);
-
-  useEffect(() => {
-    const logo = logoRef.current;
-    if (!logo) return;
-
-    let footerInView = false;
-    const syncHide = () => {
-      logo.classList.toggle("is-hidden", isChromeOpen() || footerInView);
-    };
-
-    syncHide();
-    const mo = new MutationObserver(syncHide);
-    mo.observe(document.documentElement, { attributes: true, subtree: true, childList: true });
-
-    const footer = document.querySelector(".site-footer");
-    let io: IntersectionObserver | undefined;
-    if (footer) {
-      io = new IntersectionObserver(
-        ([entry]) => {
-          footerInView = Boolean(entry?.isIntersecting);
-          syncHide();
-        },
-        { threshold: 0.35 },
-      );
-      io.observe(footer);
-    }
-
-    return () => {
-      mo.disconnect();
-      io?.disconnect();
-    };
-  }, []);
-
   return (
-    <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
+    <Link href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
       {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS-mask fills */}
       <img src="/logo-taegye.png" alt="" className="site-float-logo-mark" />
     </Link>

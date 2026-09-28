@@ -64,6 +64,7 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
       <div
         ref={trackRef}
         className="pdp-gallery-track"
+        data-gallery-scroller="true"
         onPointerDown={onPointerDown}
         onClick={onTrackClick}
       >
