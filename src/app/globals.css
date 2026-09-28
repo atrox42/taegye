@@ -284,7 +284,8 @@ body,
 
 html,
 body {
-  overflow-x: clip;
+  /* clip makes Chrome treat this as the containing/clip box for position:fixed. */
+  overflow-x: hidden;
 }
 
 input,
