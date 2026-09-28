@@ -406,6 +406,20 @@ function publishBoxes(boxes: Array<{ x: number; y: number; w: number; h: number 
   ).__TAEGYE_DISSOLVE_BOXES = boxes;
 }
 
+function publishTiles(tiles: Tile[]) {
+  (
+    window as Window & {
+      __TAEGYE_DISSOLVE_TILES?: Array<{ x: number; y: number; w: number; h: number; step: number }>;
+    }
+  ).__TAEGYE_DISSOLVE_TILES = tiles.map((tile) => ({
+    x: tile.dx,
+    y: tile.dy,
+    w: tile.dw,
+    h: tile.dh,
+    step: tile.step,
+  }));
+}
+
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const busy = useRef(false);
@@ -491,6 +505,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       const kick = () => {
         const built = buildTiles();
         publishBoxes(built.boxes);
+        publishTiles(built.tiles);
         run(built.tiles);
       };
 
