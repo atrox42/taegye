@@ -57,54 +57,57 @@ export function ProductDetail({ product }: ProductDetailProps) {
       </PdpReveal>
 
       <div className="pdp-rails">
-        <h1 className="site-type pdp-name pdp-rail-cell pdp-row-name">{product.name}</h1>
-        <p className="site-type pdp-price product-price pdp-rail-cell pdp-row-price" style={forceInkStyle}>
-          {product.price}
-        </p>
-        <p lang="en" className="site-type pdp-rail-cell pdp-row-blurb1" style={forceInkStyle}>
-          {blurbOne}
-        </p>
-        <div className="pdp-swatches pdp-rail-cell pdp-row-swatches" role="list" aria-label="Color">
-          {NEW_PRODUCTS.map((item) => {
-            const label = productColorLabel(item);
-            const current = item.id === product.id;
-            const className = `pdp-swatch${current ? " is-current" : ""}`;
-            if (current) {
+        <div className="pdp-rail pdp-rail-copy">
+          <h1 className="site-type pdp-name">{product.name}</h1>
+          <p lang="en" className="site-type pdp-note" style={forceInkStyle}>
+            {blurbOne}
+            <br />
+            {blurbTwo}
+          </p>
+        </div>
+        <div className="pdp-rail pdp-rail-buy">
+          <p className="site-type pdp-price product-price" style={forceInkStyle}>
+            {product.price}
+          </p>
+          <div className="pdp-swatches" role="list" aria-label="Color">
+            {NEW_PRODUCTS.map((item) => {
+              const label = productColorLabel(item);
+              const current = item.id === product.id;
+              const className = `pdp-swatch${current ? " is-current" : ""}`;
+              if (current) {
+                return (
+                  <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
+                    <img src={`/swatches/${item.id}.png`} alt="" />
+                    <span className="sr-only">{label}</span>
+                  </span>
+                );
+              }
               return (
-                <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>
+                <Link
+                  key={item.id}
+                  role="listitem"
+                  href={`/new/${item.id}`}
+                  className={className}
+                  title={label}
+                  aria-label={label}
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
                   <img src={`/swatches/${item.id}.png`} alt="" />
-                  <span className="sr-only">{label}</span>
-                </span>
+                </Link>
               );
-            }
-            return (
-              <Link
-                key={item.id}
-                role="listitem"
-                href={`/new/${item.id}`}
-                className={className}
-                title={label}
-                aria-label={label}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                <img src={`/swatches/${item.id}.png`} alt="" />
-              </Link>
-            );
-          })}
+            })}
+          </div>
+          <a
+            href={STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="site-type pdp-store no-underline hover:no-underline"
+            style={forceInkStyle}
+          >
+            Store
+          </a>
         </div>
-        <p lang="en" className="site-type pdp-rail-cell pdp-row-blurb2" style={forceInkStyle}>
-          {blurbTwo}
-        </p>
-        <a
-          href={STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="site-type pdp-store pdp-rail-cell pdp-row-store no-underline hover:no-underline"
-          style={forceInkStyle}
-        >
-          Store
-        </a>
       </div>
 
       <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />

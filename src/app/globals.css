@@ -499,44 +499,52 @@ button {
 }
 
 .pdp-rails {
+  --pdp-group-gap: 18px;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0;
 }
 
-.pdp-rail-cell {
+.pdp-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pdp-group-gap);
+}
+
+.pdp-rail-buy {
+  margin-top: var(--pdp-group-gap);
+}
+
+.pdp-name,
+.pdp-price,
+.pdp-store,
+.pdp-note {
   margin: 0;
-  min-height: var(--pdp-row-h, 22px);
-  line-height: var(--pdp-row-h, 22px);
 }
 
 .pdp-name {
-  margin: 0;
   white-space: nowrap;
+  line-height: 22px;
+  min-height: 22px;
 }
 
-.pdp-row-name {
-  order: 1;
+.pdp-price {
+  line-height: 22px;
+  min-height: 22px;
 }
 
-.pdp-row-blurb1 {
-  order: 2;
+.pdp-note {
+  line-height: 1.45;
 }
 
-.pdp-row-blurb2 {
-  order: 3;
+.pdp-store {
+  line-height: 22px;
 }
 
-.pdp-row-price {
-  order: 4;
-}
-
-.pdp-row-swatches {
-  order: 5;
-}
-
-.pdp-row-store {
-  order: 6;
+.pdp-rail .pdp-note,
+.pdp-rail .pdp-price,
+.pdp-rail .pdp-store {
+  margin-top: 0;
 }
 
 .pdp-swatch .sr-only {
@@ -685,8 +693,7 @@ html.is-dissolving .product-empty,
   }
 
   .pdp-atelier > .pdp-rails {
-    --pdp-row-h: 22px;
-    --pdp-row-gap: 18px;
+    --pdp-group-gap: 18px;
     position: sticky !important;
     grid-column: 1 / -1;
     grid-row: 1 / span 2;
@@ -695,62 +702,24 @@ html.is-dissolving .product-empty,
     align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr) min(56vw, 720px) minmax(0, 1fr);
-    grid-template-rows: repeat(3, var(--pdp-row-h));
-    row-gap: var(--pdp-row-gap);
     column-gap: 0;
+    row-gap: 0;
     width: 100%;
     pointer-events: none;
     transform: none;
   }
 
-  .pdp-rail-cell {
-    display: flex;
-    align-items: center;
-    min-height: var(--pdp-row-h);
-    height: var(--pdp-row-h);
-    line-height: var(--pdp-row-h);
+  .pdp-rail-copy {
+    grid-column: 1;
     pointer-events: auto;
   }
 
-  .pdp-row-name {
-    grid-column: 1;
-    grid-row: 1;
-    order: unset;
-  }
-
-  .pdp-row-price {
+  .pdp-rail-buy {
     grid-column: 3;
-    grid-row: 1;
-    order: unset;
-    justify-content: flex-end;
+    margin-top: 0;
+    align-items: flex-end;
     text-align: right;
-  }
-
-  .pdp-row-blurb1 {
-    grid-column: 1;
-    grid-row: 2;
-    order: unset;
-  }
-
-  .pdp-row-swatches {
-    grid-column: 3;
-    grid-row: 2;
-    order: unset;
-    justify-content: flex-end;
-  }
-
-  .pdp-row-blurb2 {
-    grid-column: 1;
-    grid-row: 3;
-    order: unset;
-  }
-
-  .pdp-row-store {
-    grid-column: 3;
-    grid-row: 3;
-    order: unset;
-    justify-content: flex-end;
-    text-align: right;
+    pointer-events: auto;
   }
 
   .pdp-atelier .pdp-price,
@@ -1655,6 +1624,12 @@ select::-ms-expand {
 .new-subnav,
 .product-card {
   position: relative;
+}
+
+.product-card {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 .site-menubar,
