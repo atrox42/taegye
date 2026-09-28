@@ -1,12 +1,10 @@
 import Link from "next/link";
 
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import {
   forceInkStyle,
   forceMutedStyle,
   forcePurpleLightStyle,
   forceWhiteClipStyle,
-  forceWhiteStyle,
   PURPLE_6F5C82_SRC,
   WHITE_BITMAP_SRC,
 } from "@/lib/force-white";
@@ -20,11 +18,10 @@ const FEATURED = HOME_NEW_IN.map((item) => {
 
 export function HomeNewIn() {
   return (
-    <section className="home-new-in" aria-label="New In" style={forceWhiteStyle}>
+    <section className="home-new-in" aria-label="New In">
       {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
       <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="home-new-in-bitmap" />
       <div className="home-new-in-head">
-        <WhiteSurfaceFill />
         <h2 className="home-new-in-title site-type" style={forceInkStyle}>
           New In
         </h2>
@@ -38,9 +35,7 @@ export function HomeNewIn() {
             key={item.id}
             className={index === 0 ? "home-new-in-card is-primary" : "home-new-in-card is-secondary"}
           >
-              <WhiteSurfaceFill />
             <Link href={`/new/${item.product.id}`} className="home-new-in-visual">
-              <WhiteSurfaceFill />
               {/* eslint-disable-next-line @next/next/no-img-element -- product photo stays photographic under Force Dark */}
               <img
                 src={item.product.mossSrc}
@@ -50,7 +45,6 @@ export function HomeNewIn() {
               />
             </Link>
             <div className="home-new-in-caption">
-              <WhiteSurfaceFill />
               <span className="home-new-in-kicker site-type" style={forceMutedStyle}>
                 Featured:
               </span>

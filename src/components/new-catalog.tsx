@@ -5,8 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { ProductCard } from "@/components/product-card";
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceWhiteStyle } from "@/lib/force-white";
 import {
   DEFAULT_NEW_CATEGORY,
   GRID_TEXTURE_SLOT_MAX,
@@ -97,7 +95,6 @@ export function NewCatalog() {
   return (
     <>
       <nav aria-label="Product categories" className="new-subnav">
-        <WhiteSurfaceFill />
         {NEW_CATEGORIES.map((category) => {
           const isActive = category.id === active;
           const href =
@@ -117,7 +114,7 @@ export function NewCatalog() {
       </nav>
 
       {products.length > 0 ? (
-        <ul className={cn("new-grid", placement && "is-placed")} style={forceWhiteStyle}>
+        <ul className={cn("new-grid", placement && "is-placed")}>
           {entries.map((entry, index) =>
             entry.type === "texture" ? (
               <li key="grid-texture" className="new-grid-item new-grid-item-texture">
@@ -125,8 +122,7 @@ export function NewCatalog() {
                 <img src={entry.src} alt="" aria-hidden className="new-grid-texture-media" />
               </li>
             ) : (
-              <li key={entry.product.id} className="new-grid-item" style={forceWhiteStyle}>
-                <WhiteSurfaceFill />
+              <li key={entry.product.id} className="new-grid-item">
                 <ProductCard product={entry.product} priority={index < 4} />
               </li>
             ),

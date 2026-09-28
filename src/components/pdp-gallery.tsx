@@ -10,8 +10,6 @@ import {
   type ReactNode,
 } from "react";
 
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-
 type PdpGalleryProps = {
   empty: ReactNode;
   moss: ReactNode;
@@ -60,7 +58,6 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
 
   return (
     <div className="pdp-gallery">
-      <WhiteSurfaceFill className="pdp-gallery-plate" />
       <div
         ref={trackRef}
         className="pdp-gallery-track"
@@ -69,11 +66,9 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
         onClick={onTrackClick}
       >
         <div className="pdp-gallery-slide">
-          <WhiteSurfaceFill />
           {empty}
         </div>
         <div className="pdp-gallery-slide">
-          <WhiteSurfaceFill />
           {moss}
         </div>
       </div>

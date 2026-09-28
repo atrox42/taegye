@@ -22,9 +22,7 @@ export function SiteFooter() {
     <footer className="site-footer" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
       <div className="site-footer-inner site-gutter">
-        <WhiteSurfaceFill />
         <div className="site-footer-row">
-          <WhiteSurfaceFill />
           <div className="site-footer-brand">
             <a href="/" className="site-footer-logo" aria-label={SITE_NAME}>
               <BrandLogo width={FOOTER_LOGO_DISPLAY.width} height={FOOTER_LOGO_DISPLAY.height} />
