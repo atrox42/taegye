@@ -141,11 +141,13 @@ function splitRect(
   }
 }
 
-function buildTiles(): Tile[] {
+function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
   const tiles: Tile[] = [];
+  const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
   const vw = window.innerWidth;
   for (const img of visibleGridImages()) {
     const box = containedBox(img);
+    boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
     const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
     splitRect(0, 0, box.w, box.h, raw, box.w < 180 ? 12 : 16);
     for (const piece of raw) {
@@ -166,7 +168,7 @@ function buildTiles(): Tile[] {
       });
     }
   }
-  return tiles;
+  return { tiles, boxes };
 }
 
 function ensureCanvas() {
@@ -274,8 +276,6 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
 
         const hold = Number((window as Window & { __TAEGYE_DISSOLVE_HOLD?: number }).__TAEGYE_DISSOLVE_HOLD);
         if (Number.isFinite(hold)) {
-          (window as Window & { __TAEGYE_DISSOLVE_BOXES?: Array<{ dx: number; dy: number; dw: number; dh: number }> }).__TAEGYE_DISSOLVE_BOXES =
-            tiles.map((tile) => ({ dx: tile.dx, dy: tile.dy, dw: tile.dw, dh: tile.dh }));
           paint(ctx, tiles, Math.min(1, Math.max(0, hold)));
           return;
         }
@@ -293,20 +293,30 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         raf.current = requestAnimationFrame(tick);
       };
 
-      const tiles = buildTiles();
-      if (tiles.length > 0) {
-        run(tiles);
+      const first = buildTiles();
+      if (first.tiles.length > 0) {
+        (
+          window as Window & {
+            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
+          }
+        ).__TAEGYE_DISSOLVE_BOXES = first.boxes;
+        run(first.tiles);
         return;
       }
       void Promise.all(
         visibleGridImages().map((img) => (img.decode ? img.decode().catch(() => undefined) : Promise.resolve())),
       ).then(() => {
         const retry = buildTiles();
-        if (retry.length === 0) {
-          window.setTimeout(() => run(buildTiles()), 80);
+        (
+          window as Window & {
+            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
+          }
+        ).__TAEGYE_DISSOLVE_BOXES = retry.boxes;
+        if (retry.tiles.length === 0) {
+          window.setTimeout(() => run(buildTiles().tiles), 80);
           return;
         }
-        run(retry);
+        run(retry.tiles);
       });
     },
     [reset, router],
