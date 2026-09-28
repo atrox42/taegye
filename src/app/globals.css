@@ -558,6 +558,9 @@ button {
 }
 
 .pdp-gallery-index {
+  position: relative;
+  z-index: 1;
+  display: block;
   margin: 0.65rem 0 0;
   text-align: center;
 }
