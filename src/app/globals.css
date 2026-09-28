@@ -727,17 +727,18 @@ html.is-dissolving {
   overflow: hidden;
 }
 
-html.is-dissolving .product-moss,
-.new-grid.is-dissolve-lock .product-moss,
-.new-grid.is-dissolve-lock .product-card:hover .product-moss {
-  opacity: 0 !important;
-  transition: none !important;
-}
-
+html.is-dissolving .product-stage img:not(.white-surface-fill),
 html.is-dissolving .product-empty,
+html.is-dissolving .product-moss,
+html.is-dissolving .new-grid-texture-media,
+.new-grid.is-dissolve-lock .product-stage img:not(.white-surface-fill),
 .new-grid.is-dissolve-lock .product-empty,
+.new-grid.is-dissolve-lock .product-moss,
+.new-grid.is-dissolve-lock .new-grid-texture-media,
+.new-grid.is-dissolve-lock .product-card:hover .product-moss,
 .new-grid.is-dissolve-lock .product-card:hover .product-empty {
-  opacity: 1 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
   transition: none !important;
 }
 

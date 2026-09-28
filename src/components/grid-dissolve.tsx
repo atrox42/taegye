@@ -27,16 +27,14 @@ type DissolveApi = {
 const DissolveContext = createContext<DissolveApi>({
   start: (href: string) => {
     window.location.assign(href);
+    return;
   },
 });
 
 type Tile = {
   img: HTMLImageElement;
   layout: HTMLImageElement;
-  sx: number;
-  sy: number;
-  sw: number;
-  sh: number;
+  box: { x: number; y: number; w: number; h: number };
   dx: number;
   dy: number;
   dw: number;
@@ -133,36 +131,23 @@ function visibleGridImages() {
   return [...picked.values(), ...loose];
 }
 
-function snap(n: number, dpr: number) {
-  return Math.round(n * dpr) / dpr;
-}
-
-function containedBox(img: HTMLImageElement) {
+function snapBox(img: HTMLImageElement) {
   const r = img.getBoundingClientRect();
   const nw = img.naturalWidth;
   const nh = img.naturalHeight;
   const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const round = (n: number) => Math.round(n * dpr) / dpr;
   if (window.getComputedStyle(img).objectFit === "cover") {
-    return {
-      x: snap(r.left, dpr),
-      y: snap(r.top, dpr),
-      w: snap(r.width, dpr),
-      h: snap(r.height, dpr),
-      nw,
-      nh,
-    };
+    const x = round(r.left);
+    const y = round(r.top);
+    return { x, y, w: round(r.left + r.width) - x, h: round(r.top + r.height) - y, nw, nh };
   }
   const scale = Math.min(r.width / nw, r.height / nh);
   const w = nw * scale;
   const h = nh * scale;
-  return {
-    x: snap(r.left + (r.width - w) / 2, dpr),
-    y: snap(r.top + (r.height - h) / 2, dpr),
-    w: snap(w, dpr),
-    h: snap(h, dpr),
-    nw,
-    nh,
-  };
+  const x = round(r.left + (r.width - w) / 2);
+  const y = round(r.top + (r.height - h) / 2);
+  return { x, y, w: round(r.left + (r.width + w) / 2) - x, h: round(r.top + (r.height + h) / 2) - y, nw, nh };
 }
 
 function opaqueSource(img: HTMLImageElement) {
@@ -220,48 +205,82 @@ function opaqueSource(img: HTMLImageElement) {
   }
 }
 
-function snapEdge(n: number, dpr: number) {
-  return Math.round(n * dpr) / dpr;
+type Cell = { r: number; c: number; r2: number; c2: number };
+
+function cellArea(cell: Cell) {
+  return (cell.r2 - cell.r + 1) * (cell.c2 - cell.c + 1);
+}
+
+function canJoin(a: Cell, b: Cell) {
+  const union: Cell = {
+    r: Math.min(a.r, b.r),
+    c: Math.min(a.c, b.c),
+    r2: Math.max(a.r2, b.r2),
+    c2: Math.max(a.c2, b.c2),
+  };
+  return cellArea(a) + cellArea(b) === cellArea(union);
 }
 
 function chunkRects(w: number, h: number, dpr: number) {
   const cols = 3;
-  const rows = h / Math.max(1, w) > 0.92 ? 3 : 2;
-  const xs = Array.from({ length: cols + 1 }, (_, i) => snapEdge((w * i) / cols, dpr));
-  const ys = Array.from({ length: rows + 1 }, (_, i) => snapEdge((h * i) / rows, dpr));
+  const W = Math.max(cols, Math.round(w * dpr));
+  const H = Math.max(2, Math.round(h * dpr));
+  const rows = H * 10 >= W * 9 ? 3 : 2;
+  const xs = Array.from({ length: cols + 1 }, (_, i) => Math.round((W * i) / cols));
+  const ys = Array.from({ length: rows + 1 }, (_, i) => Math.round((H * i) / rows));
   xs[0] = 0;
   ys[0] = 0;
-  xs[cols] = snapEdge(w, dpr);
-  ys[rows] = snapEdge(h, dpr);
+  xs[cols] = W;
+  ys[rows] = H;
 
-  const taken = Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
-  const rects: Array<{ x: number; y: number; w: number; h: number }> = [];
-
+  const pieces: Cell[] = [];
   for (let r = 0; r < rows; r += 1) {
     for (let c = 0; c < cols; c += 1) {
-      if (taken[r][c]) continue;
-      let c2 = c;
-      let r2 = r;
-      if (c + 1 < cols && !taken[r][c + 1] && Math.random() < 0.38) c2 = c + 1;
-      if (r + 1 < rows && Math.random() < 0.3) {
-        let open = true;
-        for (let cc = c; cc <= c2; cc += 1) {
-          if (taken[r + 1][cc]) open = false;
-        }
-        if (open) r2 = r + 1;
-      }
-      for (let rr = r; rr <= r2; rr += 1) {
-        for (let cc = c; cc <= c2; cc += 1) taken[rr][cc] = true;
-      }
-      rects.push({
-        x: xs[c],
-        y: ys[r],
-        w: xs[c2 + 1] - xs[c],
-        h: ys[r2 + 1] - ys[r],
-      });
+      pieces.push({ r, c, r2: r, c2: c });
     }
   }
-  return rects;
+
+  const target = Math.min(pieces.length, 5 + Math.floor(Math.random() * 3));
+  let guard = 32;
+  while (pieces.length > target && guard-- > 0) {
+    const pairs: Array<[number, number]> = [];
+    for (let i = 0; i < pieces.length; i += 1) {
+      for (let j = i + 1; j < pieces.length; j += 1) {
+        if (canJoin(pieces[i], pieces[j])) pairs.push([i, j]);
+      }
+    }
+    if (pairs.length === 0) break;
+    const [i, j] = pairs[Math.floor(Math.random() * pairs.length)];
+    const a = pieces[i];
+    const b = pieces[j];
+    const merged: Cell = {
+      r: Math.min(a.r, b.r),
+      c: Math.min(a.c, b.c),
+      r2: Math.max(a.r2, b.r2),
+      c2: Math.max(a.c2, b.c2),
+    };
+    pieces.splice(j, 1);
+    pieces.splice(i, 1);
+    pieces.push(merged);
+  }
+
+  return pieces.map((piece) => ({
+    x: xs[piece.c] / dpr,
+    y: ys[piece.r] / dpr,
+    w: (xs[piece.c2 + 1] - xs[piece.c]) / dpr,
+    h: (ys[piece.r2 + 1] - ys[piece.r]) / dpr,
+  }));
+}
+
+function currentStep(t: number) {
+  if (t <= 0) return 0;
+  if (t >= 1) return STEPS + 1;
+  return Math.min(STEPS, Math.floor(t * STEPS) + 1);
+}
+
+function holdProgress(hold: number) {
+  if (hold > 1) return hold / DURATION_MS;
+  return hold;
 }
 
 function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
@@ -271,24 +290,9 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
   let card = 0;
   for (const layout of visibleGridImages()) {
     const draw = primedDrawImage(layout);
-    const box = containedBox(layout);
+    const box = snapBox(layout);
     boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
-    const opaque = opaqueSource(draw);
-    const nw = draw.naturalWidth || box.nw;
-    const nh = draw.naturalHeight || box.nh;
-    const region = opaque
-      ? {
-          x: box.x + (opaque.sx / nw) * box.w,
-          y: box.y + (opaque.sy / nh) * box.h,
-          w: (opaque.sw / nw) * box.w,
-          h: (opaque.sh / nh) * box.h,
-          sx: opaque.sx,
-          sy: opaque.sy,
-          sw: opaque.sw,
-          sh: opaque.sh,
-        }
-      : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: nw, sh: nh };
-    const raw = chunkRects(region.w, region.h, dpr);
+    const raw = chunkRects(box.w, box.h, dpr);
     const order = raw.map((_, i) => i);
     for (let i = order.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -296,22 +300,18 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
       order[i] = order[j];
       order[j] = swap;
     }
-    const offset = card % 2;
+    const offset = card % STEPS;
     card += 1;
     raw.forEach((piece, index) => {
-      const rank = order[index];
       tiles.push({
         img: draw,
         layout,
-        sx: region.sx + (piece.x / region.w) * region.sw,
-        sy: region.sy + (piece.y / region.h) * region.sh,
-        sw: (piece.w / region.w) * region.sw,
-        sh: (piece.h / region.h) * region.sh,
-        dx: snapEdge(region.x, dpr) + piece.x,
-        dy: snapEdge(region.y, dpr) + piece.y,
+        box: { x: box.x, y: box.y, w: box.w, h: box.h },
+        dx: box.x + piece.x,
+        dy: box.y + piece.y,
         dw: piece.w,
         dh: piece.h,
-        step: 1 + ((rank + offset) % STEPS),
+        step: 1 + ((order[index] + offset) % STEPS),
         gray: Math.random() < 0.5 ? PLATE_A : PLATE_B,
       });
     });
@@ -335,35 +335,56 @@ function ensureCanvas() {
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
   canvas.style.pointerEvents = "auto";
-  const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
+  canvas.style.backgroundColor = "transparent";
+  const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   if (ctx) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
   }
   return { canvas, ctx, dpr };
 }
 
-function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
-  const w = document.documentElement.clientWidth;
-  const h = document.documentElement.clientHeight;
+function drawFull(ctx: CanvasRenderingContext2D, tile: Tile) {
+  const nw = tile.img.naturalWidth;
+  const nh = tile.img.naturalHeight;
+  if (nw < 1 || nh < 1) return;
   ctx.globalAlpha = 1;
-  ctx.fillStyle = PLATE_A;
-  ctx.fillRect(0, 0, w, h);
-  if (t <= 0) {
-    const seen = new Set<HTMLImageElement>();
-    for (const tile of tiles) {
-      if (seen.has(tile.layout)) continue;
-      seen.add(tile.layout);
-      const box = containedBox(tile.layout);
-      ctx.drawImage(tile.img, 0, 0, tile.img.naturalWidth, tile.img.naturalHeight, box.x, box.y, box.w, box.h);
-    }
-    return;
-  }
-  const step = t >= 1 ? STEPS + 1 : Math.floor(t * STEPS);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.drawImage(tile.img, 0, 0, nw, nh, tile.box.x, tile.box.y, tile.box.w, tile.box.h);
+}
+
+function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  const seen = new Set<HTMLImageElement>();
   for (const tile of tiles) {
-    if (tile.step <= step) continue;
-    ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, tile.dx, tile.dy, tile.dw, tile.dh);
+    if (seen.has(tile.layout)) continue;
+    seen.add(tile.layout);
+    drawFull(ctx, tile);
   }
+
+  if (t <= 0) return;
+
+  const step = currentStep(t);
+  ctx.save();
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.fillStyle = "#000000";
+  for (const tile of tiles) {
+    if (tile.step > step) continue;
+    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
+  }
+  ctx.restore();
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
   for (const tile of tiles) {
     if (tile.step !== step) continue;
     ctx.fillStyle = tile.gray;
@@ -444,13 +465,11 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
 
         const hold = Number((window as Window & { __TAEGYE_DISSOLVE_HOLD?: number }).__TAEGYE_DISSOLVE_HOLD);
         if (Number.isFinite(hold)) {
-          paint(ctx, tiles, Math.min(1, Math.max(0, hold)));
+          paint(ctx, tiles, Math.min(1, Math.max(0, holdProgress(hold))));
           return;
         }
 
         if (tiles.length === 0) {
-          ctx.fillStyle = PLATE_A;
-          ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
           window.setTimeout(go, DURATION_MS);
           return;
         }
@@ -478,12 +497,6 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       if (sourcesReady()) {
         kick();
         return;
-      }
-
-      const { ctx } = ensureCanvas();
-      if (ctx) {
-        ctx.fillStyle = PLATE_A;
-        ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
       }
 
       void Promise.all(
