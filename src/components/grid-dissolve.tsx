@@ -36,8 +36,6 @@ type Tile = {
   dh: number;
   delay: number;
   dur: number;
-  ox: number;
-  oy: number;
   gray: string;
 };
 
@@ -58,29 +56,62 @@ function isShown(el: Element) {
 }
 
 function visibleGridImages() {
-  return Array.from(document.querySelectorAll<HTMLImageElement>(".new-grid img")).filter((img) => {
+  const candidates = Array.from(document.querySelectorAll<HTMLImageElement>(".new-grid img")).filter((img) => {
     if (img.classList.contains("white-surface-fill")) return false;
     if (!isShown(img)) return false;
     const r = img.getBoundingClientRect();
     return r.width > 4 && r.height > 4 && img.naturalWidth > 0;
   });
+
+  const picked = new Map<Element, HTMLImageElement>();
+  const loose: HTMLImageElement[] = [];
+  for (const img of candidates) {
+    const card = img.closest(".product-card");
+    if (!card) {
+      loose.push(img);
+      continue;
+    }
+    if (img.closest(".product-moss") && Number(window.getComputedStyle(img.closest(".product-moss")!).opacity) < 0.8) {
+      continue;
+    }
+    const prev = picked.get(card);
+    if (!prev) {
+      picked.set(card, img);
+      continue;
+    }
+    const preferMoss = img.closest(".product-moss") && Number(window.getComputedStyle(img.closest(".product-moss")!).opacity) >= 0.8;
+    if (preferMoss) picked.set(card, img);
+  }
+  return [...picked.values(), ...loose];
+}
+
+function snap(n: number, dpr: number) {
+  return Math.round(n * dpr) / dpr;
 }
 
 function containedBox(img: HTMLImageElement) {
   const r = img.getBoundingClientRect();
   const nw = img.naturalWidth;
   const nh = img.naturalHeight;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
   if (window.getComputedStyle(img).objectFit === "cover") {
-    return { x: r.left, y: r.top, w: r.width, h: r.height, nw, nh };
+    return {
+      x: snap(r.left, dpr),
+      y: snap(r.top, dpr),
+      w: snap(r.width, dpr),
+      h: snap(r.height, dpr),
+      nw,
+      nh,
+    };
   }
   const scale = Math.min(r.width / nw, r.height / nh);
   const w = nw * scale;
   const h = nh * scale;
   return {
-    x: r.left + (r.width - w) / 2,
-    y: r.top + (r.height - h) / 2,
-    w,
-    h,
+    x: snap(r.left + (r.width - w) / 2, dpr),
+    y: snap(r.top + (r.height - h) / 2, dpr),
+    w: snap(w, dpr),
+    h: snap(h, dpr),
     nw,
     nh,
   };
@@ -110,11 +141,13 @@ function splitRect(
   }
 }
 
-function buildTiles(): Tile[] {
+function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
   const tiles: Tile[] = [];
+  const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
   const vw = window.innerWidth;
   for (const img of visibleGridImages()) {
     const box = containedBox(img);
+    boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
     const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
     splitRect(0, 0, box.w, box.h, raw, box.w < 180 ? 12 : 16);
     for (const piece of raw) {
@@ -131,13 +164,11 @@ function buildTiles(): Tile[] {
         dh: piece.h,
         delay: nx * 0.4 + Math.random() * 0.22,
         dur: 0.2 + Math.random() * 0.18,
-        ox: (Math.random() - 0.5) * 16,
-        oy: (Math.random() - 0.5) * 12,
         gray: Math.random() < 0.5 ? "#EDEDED" : "#E6E6E6",
       });
     }
   }
-  return tiles;
+  return { tiles, boxes };
 }
 
 function ensureCanvas() {
@@ -165,22 +196,33 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
   const h = document.documentElement.clientHeight;
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, w, h);
+  if (t <= 0) {
+    const seen = new Set<HTMLImageElement>();
+    for (const tile of tiles) {
+      if (seen.has(tile.img)) continue;
+      seen.add(tile.img);
+      const box = containedBox(tile.img);
+      ctx.drawImage(tile.img, 0, 0, box.nw, box.nh, box.x, box.y, box.w, box.h);
+    }
+    return;
+  }
   for (const tile of tiles) {
     const local = t - tile.delay;
     if (local >= tile.dur) continue;
     const p = local <= 0 ? 0 : Math.min(1, local / tile.dur);
     const alpha = 1 - p;
     if (alpha <= 0.02) continue;
-    const x = tile.dx + tile.ox * p;
-    const y = tile.dy + tile.oy * p;
     ctx.save();
+    if (p > 0) {
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = tile.gray;
+      ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
+      ctx.strokeStyle = "#DCDCDC";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
+    }
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = tile.gray;
-    ctx.fillRect(x, y, tile.dw, tile.dh);
-    ctx.strokeStyle = "#DCDCDC";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x + 0.5, y + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
-    ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, x, y, tile.dw, tile.dh);
+    ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, tile.dx, tile.dy, tile.dw, tile.dh);
     ctx.restore();
   }
 }
@@ -188,6 +230,7 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
 function removeCanvas() {
   document.querySelectorAll(".grid-dissolve-canvas").forEach((node) => node.remove());
   document.documentElement.classList.remove("is-dissolving");
+  document.querySelector(".new-grid")?.classList.remove("is-dissolve-lock");
 }
 
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
@@ -209,7 +252,6 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         return;
       }
       busy.current = true;
-      document.documentElement.classList.add("is-dissolving");
       try {
         sessionStorage.setItem(SESSION_KEY, "1");
       } catch {
@@ -222,6 +264,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       };
 
       if (reducedMotion()) {
+        document.documentElement.classList.add("is-dissolving");
         const { canvas, ctx } = ensureCanvas();
         if (ctx) {
           ctx.fillStyle = "#ffffff";
@@ -233,6 +276,8 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       }
 
       const run = (tiles: Tile[]) => {
+        document.documentElement.classList.add("is-dissolving");
+        document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
         const { ctx } = ensureCanvas();
         if (!ctx || tiles.length === 0) {
           go();
@@ -258,15 +303,30 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         raf.current = requestAnimationFrame(tick);
       };
 
+      const first = buildTiles();
+      if (first.tiles.length > 0) {
+        (
+          window as Window & {
+            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
+          }
+        ).__TAEGYE_DISSOLVE_BOXES = first.boxes;
+        run(first.tiles);
+        return;
+      }
       void Promise.all(
         visibleGridImages().map((img) => (img.decode ? img.decode().catch(() => undefined) : Promise.resolve())),
       ).then(() => {
-        const tiles = buildTiles();
-        if (tiles.length === 0) {
-          window.setTimeout(() => run(buildTiles()), 80);
+        const retry = buildTiles();
+        (
+          window as Window & {
+            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
+          }
+        ).__TAEGYE_DISSOLVE_BOXES = retry.boxes;
+        if (retry.tiles.length === 0) {
+          window.setTimeout(() => run(buildTiles().tiles), 80);
           return;
         }
-        run(tiles);
+        run(retry.tiles);
       });
     },
     [reset, router],
