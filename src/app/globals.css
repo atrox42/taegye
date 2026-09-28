@@ -351,6 +351,18 @@ button {
   max-width: none;
 }
 
+/* Wrappers must not paint a CSS slab — Force Dark and the gray-injection sim
+   would recolor them in front of the covering white raster. */
+.about-langs,
+.about-stack,
+.about-copy,
+.text-page-body,
+.faq-body,
+.contact-body,
+.pdp-copy {
+  background-color: transparent !important;
+}
+
 .about-copy {
   margin: 0;
   max-width: none;
