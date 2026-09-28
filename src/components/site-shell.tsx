@@ -18,7 +18,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <SiteHeader />
         <div className="site-float-track">
           <WhiteSurfaceFill />
-          <main className="site-main flex-1" style={forceWhiteStyle}>
+          <main className="site-main relative flex-1" style={forceWhiteStyle}>
+            <WhiteSurfaceFill />
             {children}
           </main>
           <FloatLogo />

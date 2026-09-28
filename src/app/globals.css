@@ -52,7 +52,7 @@
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: only light;
   --site-nav-edge: 0px;
   --site-nav-pad: 1rem;
   --site-gutter: 1rem;
@@ -116,7 +116,7 @@
 html,
 body,
 .dark {
-  color-scheme: light dark;
+  color-scheme: only light;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -124,7 +124,7 @@ body,
   html,
   body,
   .dark {
-    color-scheme: light dark;
+    color-scheme: only light;
     --background: #ffffff;
     --foreground: #111111;
     --card: #ffffff;
@@ -160,12 +160,12 @@ body,
   }
   html {
     @apply font-sans;
-    color-scheme: light dark;
+    color-scheme: only light;
     background-color: #ffffff;
   }
   body {
     @apply text-neutral-900 antialiased;
-    color-scheme: light dark;
+    color-scheme: only light;
     background-color: #ffffff;
     color: #111111;
     font-size: 13px;
@@ -240,7 +240,7 @@ main,
   background-repeat: no-repeat !important;
   background-size: 100% 100% !important;
   color: #111111 !important;
-  color-scheme: light dark !important;
+  color-scheme: only light !important;
   forced-color-adjust: none !important;
 }
 
@@ -291,7 +291,7 @@ input,
 textarea,
 select,
 button {
-  color-scheme: light dark !important;
+  color-scheme: only light !important;
   forced-color-adjust: none;
 }
 
@@ -359,6 +359,13 @@ button {
 .faq-body .site-type-copy,
 .faq-body h2 {
   margin: 0;
+}
+
+.text-page,
+.new-page,
+.site-page,
+.site-main {
+  position: relative;
 }
 
 .text-page,
@@ -881,18 +888,20 @@ html.is-dissolving .product-empty,
   text-decoration: none;
 }
 
-/* #111 CSS inverts under Force Dark; #555 does not, and still reads as active. */
+/* #111 CSS inverts under Force Dark; ink JPEG clip stays black. */
 .new-subnav-item[aria-current="page"],
 .new-subnav-item.is-active {
   padding: 0 0 3px;
-  color: #555555 !important;
-  -webkit-text-fill-color: #555555 !important;
-  background-image: none !important;
-  -webkit-background-clip: border-box !important;
-  background-clip: border-box !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   opacity: 1;
   font-weight: 500;
-  border-bottom: 1px solid #555555;
+  border-bottom: 1px solid #111111;
 }
 
 .new-empty {
@@ -917,7 +926,7 @@ html.is-dissolving .product-empty,
 }
 
 .new-page {
-  padding-bottom: calc(4.5rem + var(--float-clearance));
+  padding-bottom: calc(1.25rem + var(--float-clearance));
 }
 
 .new-grid-item .product-card {
@@ -942,7 +951,7 @@ html.is-dissolving .product-empty,
   }
 
   .new-page {
-    padding-bottom: calc(5.5rem + var(--float-clearance));
+    padding-bottom: 5.5rem;
   }
 
   .new-subnav {
@@ -959,13 +968,15 @@ html.is-dissolving .product-empty,
 
   .new-subnav-item[aria-current="page"],
   .new-subnav-item.is-active {
-    color: #555555 !important;
-    -webkit-text-fill-color: #555555 !important;
-    background-image: none !important;
-    -webkit-background-clip: border-box !important;
-    background-clip: border-box !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     font-weight: 400;
-    border-bottom-color: #555555;
+    border-bottom-color: #111111;
   }
 
   .new-grid {
@@ -1182,11 +1193,13 @@ select::-ms-expand {
 
 .site-footer a.site-footer-link,
 .site-footer-link {
-  color: #555555 !important;
-  -webkit-text-fill-color: #555555 !important;
-  background-image: none !important;
-  -webkit-background-clip: border-box !important;
-  background-clip: border-box !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: var(--ink-111-image) !important;
+  background-repeat: repeat !important;
+  background-size: 8px 8px !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   text-decoration: none !important;
 }
 
@@ -1265,7 +1278,7 @@ select::-ms-expand {
   background-image: var(--force-white-image) !important;
   background-repeat: no-repeat !important;
   background-size: 100% 100% !important;
-  color-scheme: light dark !important;
+  color-scheme: only light !important;
   forced-color-adjust: none !important;
 }
 
@@ -1329,7 +1342,7 @@ select::-ms-expand {
   background-image: var(--force-white-image) !important;
   background-repeat: no-repeat !important;
   background-size: 100% 100% !important;
-  color-scheme: light dark !important;
+  color-scheme: only light !important;
   forced-color-adjust: none !important;
 }
 
@@ -1497,14 +1510,15 @@ select::-ms-expand {
 }
 
 .site-float-logo {
-  position: sticky;
-  left: auto;
+  position: fixed;
+  left: 0;
+  right: 0;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   z-index: 35;
   display: flex;
   width: 67px;
   height: 43px;
-  margin: 52px auto 48px;
+  margin: 0 auto;
   flex-shrink: 0;
   background-color: transparent !important;
   background-image: none !important;
@@ -1606,6 +1620,7 @@ select::-ms-expand {
 .new-grid-item > :not(.white-surface-fill),
 .new-subnav > :not(.white-surface-fill),
 .site-page > :not(.white-surface-fill),
+.site-main > :not(.white-surface-fill),
 .site-footer > :not(.white-surface-fill),
 .site-footer-inner > :not(.white-surface-fill),
 .site-footer-row > :not(.white-surface-fill),
@@ -1621,8 +1636,15 @@ select::-ms-expand {
 
 .site-column,
 .site-float-track,
+.site-main,
+.site-page,
+.new-page,
+.new-grid,
 .new-subnav,
-.product-card {
+.product-card,
+.site-footer,
+.site-footer-inner,
+.site-footer-row {
   position: relative;
 }
 
@@ -1638,7 +1660,7 @@ select::-ms-expand {
 .site-splash-bitmap,
 .site-menubar-bitmap,
 .site-menu-bitmap {
-  color-scheme: light dark;
+  color-scheme: only light;
   forced-color-adjust: none;
 }
 
@@ -1892,7 +1914,7 @@ select::-ms-expand {
   background-image: url("/bg-white.jpg") !important;
   background-repeat: no-repeat !important;
   background-size: 100% 100% !important;
-  color-scheme: light dark !important;
+  color-scheme: only light !important;
   forced-color-adjust: none !important;
 }
 
@@ -2040,7 +2062,7 @@ select::-ms-expand {
     background-repeat: no-repeat !important;
     background-size: 100% 100% !important;
     color: #111111 !important;
-    color-scheme: light dark !important;
+    color-scheme: only light !important;
     forced-color-adjust: none !important;
   }
 
@@ -2095,12 +2117,14 @@ select::-ms-expand {
 
   .new-subnav-item[aria-current="page"],
   .new-subnav-item.is-active {
-    color: #555555 !important;
-    -webkit-text-fill-color: #555555 !important;
-    background-image: none !important;
-    -webkit-background-clip: border-box !important;
-    background-clip: border-box !important;
-    border-bottom-color: #555555;
+    color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    border-bottom-color: #111111;
   }
 
   .site-footer-copy-line,
@@ -2116,11 +2140,13 @@ select::-ms-expand {
 
   .site-footer a.site-footer-link,
   .site-footer-link {
-    color: #555555 !important;
-    -webkit-text-fill-color: #555555 !important;
-    background-image: none !important;
-    -webkit-background-clip: border-box !important;
-    background-clip: border-box !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: var(--ink-111-image) !important;
+    background-repeat: repeat !important;
+    background-size: 8px 8px !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     text-decoration: none !important;
   }
 }
@@ -2305,7 +2331,7 @@ html[data-promo="off"] .site-promo {
   background-color: #ffffff !important;
   background-image: url("/bg-white.jpg") !important;
   background-size: 100% 100% !important;
-  color-scheme: light dark;
+  color-scheme: only light;
   forced-color-adjust: none;
 }
 
