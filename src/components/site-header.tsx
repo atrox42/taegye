@@ -42,10 +42,9 @@ export function SiteHeader() {
   }, [mobile]);
 
   useEffect(() => {
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = open ? "hidden" : "";
+    document.documentElement.classList.toggle("is-nav-open", open);
     return () => {
-      document.body.style.overflow = previous;
+      document.documentElement.classList.remove("is-nav-open");
     };
   }, [open]);
 
