@@ -13,11 +13,11 @@ import {
 
 import { GRID_TEXTURE_SRCS, NEW_PRODUCTS } from "@/lib/site";
 
-const DURATION_MS = 680;
+const DURATION_MS = 660;
+const STEPS = 6;
 const SESSION_KEY = "taegye-dissolve";
 const PLATE_A = "#FAFAFA";
 const PLATE_B = "#F6F6F6";
-const PLATE_EDGE = "#EFEFEF";
 const opaqueCache = new Map<string, { sx: number; sy: number; sw: number; sh: number } | null>();
 
 type DissolveApi = {
@@ -41,8 +41,7 @@ type Tile = {
   dy: number;
   dw: number;
   dh: number;
-  delay: number;
-  dur: number;
+  step: number;
   gray: string;
 };
 
@@ -221,36 +220,55 @@ function opaqueSource(img: HTMLImageElement) {
   }
 }
 
-function splitRect(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  tiles: Array<{ x: number; y: number; w: number; h: number }>,
-  min = 16,
-) {
-  const area = w * h;
-  const stopChance = min >= 22 ? 0.28 : 0.16;
-  const minArea = min >= 22 ? 1400 : 700;
-  if (w < min * 2 || h < min * 2 || area < minArea || Math.random() < stopChance) {
-    tiles.push({ x, y, w, h });
-    return;
+function snapEdge(n: number, dpr: number) {
+  return Math.round(n * dpr) / dpr;
+}
+
+function chunkRects(w: number, h: number, dpr: number) {
+  const cols = 3;
+  const rows = h / Math.max(1, w) > 0.92 ? 3 : 2;
+  const xs = Array.from({ length: cols + 1 }, (_, i) => snapEdge((w * i) / cols, dpr));
+  const ys = Array.from({ length: rows + 1 }, (_, i) => snapEdge((h * i) / rows, dpr));
+  xs[0] = 0;
+  ys[0] = 0;
+  xs[cols] = snapEdge(w, dpr);
+  ys[rows] = snapEdge(h, dpr);
+
+  const taken = Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
+  const rects: Array<{ x: number; y: number; w: number; h: number }> = [];
+
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      if (taken[r][c]) continue;
+      let c2 = c;
+      let r2 = r;
+      if (c + 1 < cols && !taken[r][c + 1] && Math.random() < 0.38) c2 = c + 1;
+      if (r + 1 < rows && Math.random() < 0.3) {
+        let open = true;
+        for (let cc = c; cc <= c2; cc += 1) {
+          if (taken[r + 1][cc]) open = false;
+        }
+        if (open) r2 = r + 1;
+      }
+      for (let rr = r; rr <= r2; rr += 1) {
+        for (let cc = c; cc <= c2; cc += 1) taken[rr][cc] = true;
+      }
+      rects.push({
+        x: xs[c],
+        y: ys[r],
+        w: xs[c2 + 1] - xs[c],
+        h: ys[r2 + 1] - ys[r],
+      });
+    }
   }
-  if (w >= h) {
-    const cut = Math.max(min, Math.min(w - min, w * (0.28 + Math.random() * 0.44)));
-    splitRect(x, y, cut, h, tiles, min);
-    splitRect(x + cut, y, w - cut, h, tiles, min);
-  } else {
-    const cut = Math.max(min, Math.min(h - min, h * (0.28 + Math.random() * 0.44)));
-    splitRect(x, y, w, cut, tiles, min);
-    splitRect(x, y, w, h - cut, tiles, min);
-  }
+  return rects;
 }
 
 function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
   const tiles: Tile[] = [];
   const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
-  const vw = window.innerWidth;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  let card = 0;
   for (const layout of visibleGridImages()) {
     const draw = primedDrawImage(layout);
     const box = containedBox(layout);
@@ -270,11 +288,18 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
           sh: opaque.sh,
         }
       : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: nw, sh: nh };
-    const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
-    const min = vw < 480 ? 28 : vw < 768 ? 22 : region.w < 180 ? 12 : 16;
-    splitRect(0, 0, region.w, region.h, raw, min);
-    for (const piece of raw) {
-      const nx = (region.x + piece.x) / Math.max(1, vw);
+    const raw = chunkRects(region.w, region.h, dpr);
+    const order = raw.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const swap = order[i];
+      order[i] = order[j];
+      order[j] = swap;
+    }
+    const offset = card % 2;
+    card += 1;
+    raw.forEach((piece, index) => {
+      const rank = order[index];
       tiles.push({
         img: draw,
         layout,
@@ -282,15 +307,14 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
         sy: region.sy + (piece.y / region.h) * region.sh,
         sw: (piece.w / region.w) * region.sw,
         sh: (piece.h / region.h) * region.sh,
-        dx: region.x + piece.x,
-        dy: region.y + piece.y,
+        dx: snapEdge(region.x, dpr) + piece.x,
+        dy: snapEdge(region.y, dpr) + piece.y,
         dw: piece.w,
         dh: piece.h,
-        delay: nx * 0.16 + Math.random() * 0.1,
-        dur: 0.64 + Math.random() * 0.16,
+        step: 1 + ((rank + offset) % STEPS),
         gray: Math.random() < 0.5 ? PLATE_A : PLATE_B,
       });
-    }
+    });
   }
   return { tiles, boxes };
 }
@@ -322,7 +346,8 @@ function ensureCanvas() {
 function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
   const w = document.documentElement.clientWidth;
   const h = document.documentElement.clientHeight;
-  ctx.fillStyle = "#ffffff";
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = PLATE_A;
   ctx.fillRect(0, 0, w, h);
   if (t <= 0) {
     const seen = new Set<HTMLImageElement>();
@@ -334,21 +359,16 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
     }
     return;
   }
+  const step = t >= 1 ? STEPS + 1 : Math.floor(t * STEPS);
   for (const tile of tiles) {
-    const local = t - tile.delay;
-    if (local >= tile.dur) continue;
-    const p = local <= 0 ? 0 : Math.min(1, local / tile.dur);
-    const alpha = 1 - p;
-    if (alpha <= 0.02) continue;
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = tile.gray;
-    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
-    ctx.strokeStyle = PLATE_EDGE;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
+    if (tile.step <= step) continue;
     ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, tile.dx, tile.dy, tile.dw, tile.dh);
   }
-  ctx.globalAlpha = 1;
+  for (const tile of tiles) {
+    if (tile.step !== step) continue;
+    ctx.fillStyle = tile.gray;
+    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
+  }
 }
 
 function removeCanvas() {
@@ -429,7 +449,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         }
 
         if (tiles.length === 0) {
-          ctx.fillStyle = "#ffffff";
+          ctx.fillStyle = PLATE_A;
           ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
           window.setTimeout(go, DURATION_MS);
           return;
@@ -462,7 +482,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
 
       const { ctx } = ensureCanvas();
       if (ctx) {
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = PLATE_A;
         ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
       }
 

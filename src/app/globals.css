@@ -526,6 +526,55 @@ button {
   margin: 0 auto;
 }
 
+.pdp-gallery {
+  position: relative;
+  width: 100%;
+}
+
+.pdp-gallery-track {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  scrollbar-width: none;
+}
+
+.pdp-gallery-track::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.pdp-gallery-slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.pdp-gallery-index {
+  margin: 0.65rem 0 0;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .pdp-gallery,
+  .pdp-gallery-track,
+  .pdp-gallery-slide {
+    display: contents;
+  }
+
+  .pdp-gallery-plate,
+  .pdp-gallery-index {
+    display: none !important;
+  }
+}
+
 .pdp-rails {
   --pdp-group-gap: 18px;
   display: flex;
@@ -648,7 +697,7 @@ button {
   width: 100vw;
   height: 100vh;
   pointer-events: auto;
-  background-color: #ffffff;
+  background-color: transparent;
 }
 
 html.is-dissolving {
@@ -1617,8 +1666,8 @@ select::-ms-expand {
   }
 }
 
-.pdp > :not(.white-surface-fill):not(.pdp-rail):not(.pdp-rails),
-.pdp-atelier > :not(.white-surface-fill):not(.pdp-rail):not(.pdp-rails),
+.pdp > :not(.white-surface-fill):not(.pdp-rail):not(.pdp-rails):not(.pdp-gallery):not(.pdp-gallery-slide):not(.pdp-gallery-track),
+.pdp-atelier > :not(.white-surface-fill):not(.pdp-rail):not(.pdp-rails):not(.pdp-gallery):not(.pdp-gallery-slide):not(.pdp-gallery-track),
 .pdp-hero > :not(.white-surface-fill),
 .pdp-visual > :not(.white-surface-fill),
 .new-page > :not(.white-surface-fill),

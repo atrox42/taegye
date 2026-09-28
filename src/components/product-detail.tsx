@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
@@ -52,9 +53,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <PdpReveal>
-        <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
-      </PdpReveal>
+      <PdpGallery
+        empty={
+          <PdpReveal>
+            <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
+          </PdpReveal>
+        }
+        moss={<ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />}
+      />
 
       <div className="pdp-rails">
         <div className="pdp-rail pdp-rail-copy">
@@ -109,8 +115,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </a>
         </div>
       </div>
-
-      <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />
     </article>
   );
 }
