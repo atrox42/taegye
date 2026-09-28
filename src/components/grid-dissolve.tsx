@@ -11,11 +11,12 @@ import {
   type ReactNode,
 } from "react";
 
-const DURATION_MS = 640;
+const DURATION_MS = 680;
 const SESSION_KEY = "taegye-dissolve";
 const PLATE_A = "#D9D9D9";
 const PLATE_B = "#CFCFCF";
 const PLATE_EDGE = "#BDBDBD";
+const opaqueCache = new WeakMap<HTMLImageElement, { sx: number; sy: number; sw: number; sh: number } | null>();
 
 type DissolveApi = {
   start: (href: string) => void;
@@ -116,6 +117,60 @@ function containedBox(img: HTMLImageElement) {
   };
 }
 
+function opaqueSource(img: HTMLImageElement) {
+  const hit = opaqueCache.get(img);
+  if (hit !== undefined) return hit;
+  const nw = img.naturalWidth;
+  const nh = img.naturalHeight;
+  const full = { sx: 0, sy: 0, sw: nw, sh: nh };
+  if (nw < 2 || nh < 2) {
+    opaqueCache.set(img, full);
+    return full;
+  }
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = nw;
+    canvas.height = nh;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) {
+      opaqueCache.set(img, full);
+      return full;
+    }
+    ctx.drawImage(img, 0, 0);
+    const data = ctx.getImageData(0, 0, nw, nh).data;
+    let minX = nw;
+    let minY = nh;
+    let maxX = 0;
+    let maxY = 0;
+    const step = nw > 400 ? 2 : 1;
+    for (let y = 0; y < nh; y += step) {
+      for (let x = 0; x < nw; x += step) {
+        if (data[(y * nw + x) * 4 + 3] > 16) {
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX < minX) {
+      opaqueCache.set(img, null);
+      return null;
+    }
+    const box = {
+      sx: Math.max(0, minX - 2),
+      sy: Math.max(0, minY - 2),
+      sw: Math.min(nw, maxX + 3) - Math.max(0, minX - 2),
+      sh: Math.min(nh, maxY + 3) - Math.max(0, minY - 2),
+    };
+    opaqueCache.set(img, box);
+    return box;
+  } catch {
+    opaqueCache.set(img, full);
+    return full;
+  }
+}
+
 function splitRect(
   x: number,
   y: number,
@@ -147,22 +202,35 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
   for (const img of visibleGridImages()) {
     const box = containedBox(img);
     boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
+    const opaque = opaqueSource(img);
+    const region = opaque
+      ? {
+          x: box.x + (opaque.sx / box.nw) * box.w,
+          y: box.y + (opaque.sy / box.nh) * box.h,
+          w: (opaque.sw / box.nw) * box.w,
+          h: (opaque.sh / box.nh) * box.h,
+          sx: opaque.sx,
+          sy: opaque.sy,
+          sw: opaque.sw,
+          sh: opaque.sh,
+        }
+      : { x: box.x, y: box.y, w: box.w, h: box.h, sx: 0, sy: 0, sw: box.nw, sh: box.nh };
     const raw: Array<{ x: number; y: number; w: number; h: number }> = [];
-    splitRect(0, 0, box.w, box.h, raw, box.w < 180 ? 12 : 16);
+    splitRect(0, 0, region.w, region.h, raw, region.w < 180 ? 12 : 16);
     for (const piece of raw) {
-      const nx = (box.x + piece.x) / Math.max(1, vw);
+      const nx = (region.x + piece.x) / Math.max(1, vw);
       tiles.push({
         img,
-        sx: (piece.x / box.w) * box.nw,
-        sy: (piece.y / box.h) * box.nh,
-        sw: (piece.w / box.w) * box.nw,
-        sh: (piece.h / box.h) * box.nh,
-        dx: box.x + piece.x,
-        dy: box.y + piece.y,
+        sx: region.sx + (piece.x / region.w) * region.sw,
+        sy: region.sy + (piece.y / region.h) * region.sh,
+        sw: (piece.w / region.w) * region.sw,
+        sh: (piece.h / region.h) * region.sh,
+        dx: region.x + piece.x,
+        dy: region.y + piece.y,
         dw: piece.w,
         dh: piece.h,
-        delay: nx * 0.28 + Math.random() * 0.18,
-        dur: 0.32 + Math.random() * 0.18,
+        delay: nx * 0.16 + Math.random() * 0.1,
+        dur: 0.64 + Math.random() * 0.16,
         gray: Math.random() < 0.5 ? PLATE_A : PLATE_B,
       });
     }
@@ -269,9 +337,11 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         window.setTimeout(reset, 900);
       };
 
+      document.documentElement.classList.add("is-dissolving");
+      document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
+      void document.body.offsetHeight;
+
       const run = (tiles: Tile[]) => {
-        document.documentElement.classList.add("is-dissolving");
-        document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
         const { ctx } = ensureCanvas();
         if (!ctx) {
           window.setTimeout(go, DURATION_MS);
@@ -312,7 +382,6 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      document.documentElement.classList.add("is-dissolving");
       const { ctx } = ensureCanvas();
       if (ctx) {
         ctx.fillStyle = "#ffffff";
