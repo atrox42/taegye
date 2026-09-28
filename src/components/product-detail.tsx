@@ -9,7 +9,6 @@ import {
   STAND_NOTE,
   STORE_URL,
   productColorLabel,
-  productFamilyLabel,
   type NewProduct,
 } from "@/lib/site";
 
@@ -47,8 +46,7 @@ function ProductHero({
 }
 
 export function ProductDetail({ product }: ProductDetailProps) {
-  const family = productFamilyLabel(product);
-  const color = productColorLabel(product);
+  const [blurbOne, blurbTwo] = STAND_NOTE.en;
 
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
@@ -57,25 +55,15 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
       </PdpReveal>
 
-      <div className="pdp-rail pdp-rail-copy">
-        <h1 className="site-type pdp-name">
-          <span className="pdp-name-line">{family}</span>
-          <span className="pdp-name-line">{color}</span>
-        </h1>
-        <div className="pdp-blurb">
-          {STAND_NOTE.en.map((line) => (
-            <p key={line} lang="en" className="site-type site-type-copy about-copy" style={forceInkStyle}>
-              {line}
-            </p>
-          ))}
-        </div>
-      </div>
-
-      <div className="pdp-rail pdp-rail-buy">
-        <p className="site-type pdp-price product-price" style={forceInkStyle}>
+      <div className="pdp-rails">
+        <h1 className="site-type pdp-name pdp-rail-cell pdp-row-name">{product.name}</h1>
+        <p className="site-type pdp-price product-price pdp-rail-cell pdp-row-price" style={forceInkStyle}>
           {product.price}
         </p>
-        <div className="pdp-swatches" role="list" aria-label="Color">
+        <p lang="en" className="site-type pdp-rail-cell pdp-row-blurb1" style={forceInkStyle}>
+          {blurbOne}
+        </p>
+        <div className="pdp-swatches pdp-rail-cell pdp-row-swatches" role="list" aria-label="Color">
           {NEW_PRODUCTS.map((item) => {
             const label = productColorLabel(item);
             const current = item.id === product.id;
@@ -104,11 +92,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
             );
           })}
         </div>
+        <p lang="en" className="site-type pdp-rail-cell pdp-row-blurb2" style={forceInkStyle}>
+          {blurbTwo}
+        </p>
         <a
           href={STORE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="site-type pdp-store no-underline hover:no-underline"
+          className="site-type pdp-store pdp-rail-cell pdp-row-store no-underline hover:no-underline"
           style={forceInkStyle}
         >
           Store
