@@ -1032,6 +1032,7 @@ html.is-dissolving .product-empty,
 
 .site-footer {
   position: relative;
+  z-index: 40;
 }
 
 /* Windows paints a classic ▲/thumb/▼ chip when any footer box is scrollable. */
@@ -1533,29 +1534,11 @@ select::-ms-expand {
   display: block;
   width: 67px;
   height: 43px;
+  object-fit: contain;
   overflow: hidden;
   background-color: transparent !important;
   background-image: none !important;
   pointer-events: none;
-}
-
-.site-float-logo-mark .site-ink-fill {
-  width: 67px;
-  height: 43px;
-  background-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  -webkit-mask-image: url("/logo-taegye-mask.png");
-  mask-image: url("/logo-taegye-mask.png");
-  -webkit-mask-mode: alpha;
-  mask-mode: alpha;
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
 }
 
 .site-float-logo.is-hidden {

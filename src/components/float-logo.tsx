@@ -39,9 +39,9 @@ export function FloatLogo() {
 
   return (
     <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
-      <span className="site-float-logo-mark" aria-hidden>
-        <span className="site-ink-fill" />
-      </span>
+      {/* PNG with alpha — mask+JPEG fills disappear under Samsung Force Dark. */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS-mask fills */}
+      <img src="/logo-taegye.png" alt="" className="site-float-logo-mark" />
     </Link>
   );
 }
