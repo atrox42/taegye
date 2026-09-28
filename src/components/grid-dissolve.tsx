@@ -11,8 +11,11 @@ import {
   type ReactNode,
 } from "react";
 
-const DURATION_MS = 860;
+const DURATION_MS = 640;
 const SESSION_KEY = "taegye-dissolve";
+const PLATE_A = "#D9D9D9";
+const PLATE_B = "#CFCFCF";
+const PLATE_EDGE = "#BDBDBD";
 
 type DissolveApi = {
   start: (href: string) => void;
@@ -38,10 +41,6 @@ type Tile = {
   dur: number;
   gray: string;
 };
-
-function reducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 function isShown(el: Element) {
   let node: Element | null = el;
@@ -162,9 +161,9 @@ function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: 
         dy: box.y + piece.y,
         dw: piece.w,
         dh: piece.h,
-        delay: nx * 0.4 + Math.random() * 0.22,
-        dur: 0.2 + Math.random() * 0.18,
-        gray: Math.random() < 0.5 ? "#EDEDED" : "#E6E6E6",
+        delay: nx * 0.28 + Math.random() * 0.18,
+        dur: 0.32 + Math.random() * 0.18,
+        gray: Math.random() < 0.5 ? PLATE_A : PLATE_B,
       });
     }
   }
@@ -186,8 +185,10 @@ function ensureCanvas() {
   canvas.height = Math.round(h * dpr);
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
+  canvas.style.pointerEvents = "auto";
   const ctx = canvas.getContext("2d", { alpha: false });
   if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  void canvas.offsetHeight;
   return { canvas, ctx, dpr };
 }
 
@@ -213,15 +214,12 @@ function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
     const alpha = 1 - p;
     if (alpha <= 0.02) continue;
     ctx.save();
-    if (p > 0) {
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = tile.gray;
-      ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
-      ctx.strokeStyle = "#DCDCDC";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
-    }
     ctx.globalAlpha = alpha;
+    ctx.fillStyle = tile.gray;
+    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
+    ctx.strokeStyle = PLATE_EDGE;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tile.dx + 0.5, tile.dy + 0.5, Math.max(0, tile.dw - 1), Math.max(0, tile.dh - 1));
     ctx.drawImage(tile.img, tile.sx, tile.sy, tile.sw, tile.sh, tile.dx, tile.dy, tile.dw, tile.dh);
     ctx.restore();
   }
@@ -231,6 +229,14 @@ function removeCanvas() {
   document.querySelectorAll(".grid-dissolve-canvas").forEach((node) => node.remove());
   document.documentElement.classList.remove("is-dissolving");
   document.querySelector(".new-grid")?.classList.remove("is-dissolve-lock");
+}
+
+function publishBoxes(boxes: Array<{ x: number; y: number; w: number; h: number }>) {
+  (
+    window as Window & {
+      __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
+    }
+  ).__TAEGYE_DISSOLVE_BOXES = boxes;
 }
 
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
@@ -263,24 +269,12 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         window.setTimeout(reset, 900);
       };
 
-      if (reducedMotion()) {
-        document.documentElement.classList.add("is-dissolving");
-        const { canvas, ctx } = ensureCanvas();
-        if (ctx) {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
-        }
-        canvas.classList.add("is-fade");
-        window.setTimeout(go, 280);
-        return;
-      }
-
       const run = (tiles: Tile[]) => {
         document.documentElement.classList.add("is-dissolving");
         document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
         const { ctx } = ensureCanvas();
-        if (!ctx || tiles.length === 0) {
-          go();
+        if (!ctx) {
+          window.setTimeout(go, DURATION_MS);
           return;
         }
 
@@ -290,6 +284,14 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
           return;
         }
 
+        if (tiles.length === 0) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+          window.setTimeout(go, DURATION_MS);
+          return;
+        }
+
+        paint(ctx, tiles, 0);
         const begun = performance.now();
         const tick = (now: number) => {
           const t = (now - begun) / DURATION_MS;
@@ -305,27 +307,23 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
 
       const first = buildTiles();
       if (first.tiles.length > 0) {
-        (
-          window as Window & {
-            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
-          }
-        ).__TAEGYE_DISSOLVE_BOXES = first.boxes;
+        publishBoxes(first.boxes);
         run(first.tiles);
         return;
       }
+
+      document.documentElement.classList.add("is-dissolving");
+      const { ctx } = ensureCanvas();
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+      }
+
       void Promise.all(
         visibleGridImages().map((img) => (img.decode ? img.decode().catch(() => undefined) : Promise.resolve())),
       ).then(() => {
         const retry = buildTiles();
-        (
-          window as Window & {
-            __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
-          }
-        ).__TAEGYE_DISSOLVE_BOXES = retry.boxes;
-        if (retry.tiles.length === 0) {
-          window.setTimeout(() => run(buildTiles().tiles), 80);
-          return;
-        }
+        publishBoxes(retry.boxes);
         run(retry.tiles);
       });
     },
