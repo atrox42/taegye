@@ -541,6 +541,12 @@ button {
   line-height: 22px;
 }
 
+.pdp-rail .pdp-note,
+.pdp-rail .pdp-price,
+.pdp-rail .pdp-store {
+  margin-top: 0;
+}
+
 .pdp-swatch .sr-only {
   position: absolute;
   width: 1px;
