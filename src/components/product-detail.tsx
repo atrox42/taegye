@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
@@ -37,7 +38,7 @@ function ProductHero({
           alt={alt}
           fill
           priority={priority}
-          unoptimized={src.includes("/products/stand-") && !src.includes("-moss")}
+          unoptimized={src.includes("/products/stand-")}
           sizes="(min-width: 768px) 58vw, 100vw"
           className="object-contain object-center"
         />
@@ -48,10 +49,17 @@ function ProductHero({
 
 export function ProductDetail({ product }: ProductDetailProps) {
   const [blurbOne, blurbTwo] = STAND_NOTE.en;
+  const emptyHero = (
+    <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
+  );
+  const mossHero = <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />;
 
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
+      <div className="pdp-mobile-gallery">
+        <PdpGallery empty={emptyHero} moss={mossHero} />
+      </div>
       <PdpReveal>
         <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
       </PdpReveal>
@@ -109,8 +117,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </a>
         </div>
       </div>
-
-      <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />
+      <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss pdp-desktop-moss" />
     </article>
   );
 }

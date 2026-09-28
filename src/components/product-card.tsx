@@ -82,6 +82,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             alt=""
             fill
             priority={priority}
+            unoptimized
             sizes="(min-width: 768px) 25vw, 50vw"
             className="object-contain object-center"
             aria-hidden
