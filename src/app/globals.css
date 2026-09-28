@@ -284,12 +284,12 @@ body,
 
 html,
 body {
-  overflow-x: visible;
+  overflow-x: clip;
   overflow-y: visible;
 }
 
 .site-column {
-  overflow-x: hidden;
+  overflow: visible;
 }
 
 input,
@@ -363,10 +363,23 @@ button {
 .pdp-rails,
 .pdp-rail,
 .pdp-swatches,
+.pdp-store,
+.pdp-name,
+.pdp-note,
+.pdp-price,
+.product-price,
+.product-card p,
 .site-type,
 .site-type *,
 .site-footer-link,
-.new-subnav-item {
+.site-footer-nav,
+.site-footer-copy,
+.site-footer-copy-line,
+.site-footer-copy-plus,
+.site-footer-brand,
+.new-subnav-item,
+.site-menubar-toggle,
+.site-menubar-toggle * {
   background-color: transparent !important;
 }
 
@@ -517,9 +530,9 @@ button {
   flex-direction: column;
   align-items: stretch;
   gap: 1.5rem;
-  min-height: calc(100svh - var(--site-nav-offset) - 4.5rem);
+  min-height: 0;
   padding-top: 32px;
-  padding-bottom: 4rem;
+  padding-bottom: 2.5rem;
   overflow: visible;
 }
 
@@ -532,15 +545,18 @@ button {
 .pdp-gallery {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .pdp-gallery-track {
   display: flex;
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y;
@@ -556,9 +572,11 @@ button {
 
 .pdp-gallery-slide {
   position: relative;
+  box-sizing: border-box;
   flex: 0 0 100%;
   width: 100%;
   min-width: 100%;
+  max-width: 100%;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -574,6 +592,8 @@ button {
 .pdp-mobile-gallery {
   display: block;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 @media (max-width: 767.98px) {
@@ -1020,7 +1040,7 @@ html.is-dissolving .new-grid-texture-media,
 }
 
 .new-page {
-  padding-bottom: calc(1.25rem + var(--float-clearance));
+  padding-bottom: 1.25rem;
 }
 
 .new-grid-item .product-card {
@@ -1045,7 +1065,7 @@ html.is-dissolving .new-grid-texture-media,
   }
 
   .new-page {
-    padding-bottom: 5.5rem;
+    padding-bottom: 2.5rem;
   }
 
   .new-subnav {
@@ -1126,7 +1146,8 @@ html.is-dissolving .new-grid-texture-media,
 
 .site-footer {
   position: relative;
-  z-index: 40;
+  z-index: 1;
+  flex: 0 0 auto;
 }
 
 /* Windows paints a classic ▲/thumb/▼ chip when any footer box is scrollable. */
@@ -1605,23 +1626,22 @@ select::-ms-expand {
 }
 
 .site-float-logo {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  z-index: 35;
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  z-index: 1;
   display: flex;
   width: 67px;
   height: 43px;
-  margin: 0 auto;
-  flex-shrink: 0;
+  margin: 1.25rem auto 0.85rem;
+  flex: 0 0 auto;
   background-color: transparent !important;
   background-image: none !important;
   box-shadow: none;
   border: 0;
   transform: none;
   pointer-events: auto;
-  transition: opacity 150ms ease;
 }
 
 .site-float-logo-mark {
@@ -1634,11 +1654,6 @@ select::-ms-expand {
   background-image: none !important;
   pointer-events: none;
   color-scheme: only light;
-}
-
-.site-float-logo.is-hidden {
-  opacity: 0;
-  pointer-events: none;
 }
 
 @media (min-width: 768px) {
@@ -1703,7 +1718,6 @@ select::-ms-expand {
 .site-footer-inner > :not(.white-surface-fill),
 .site-footer-row > :not(.white-surface-fill),
 .site-column > :not(.white-surface-fill):not(.site-header),
-.site-float-track > :not(.white-surface-fill):not(.site-float-logo),
 .product-card > :not(.white-surface-fill),
 .home-new-in-head > :not(.white-surface-fill),
 .home-new-in-card > :not(.white-surface-fill),
@@ -1713,7 +1727,6 @@ select::-ms-expand {
 }
 
 .site-column,
-.site-float-track,
 .site-main,
 .site-page,
 .new-page,
@@ -1782,11 +1795,22 @@ select::-ms-expand {
   margin-right: 0;
   padding: 0;
   border: 0;
-  box-shadow: none;
+  box-shadow: none !important;
   appearance: none;
   -webkit-appearance: none;
-  background: transparent;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color-scheme: only light !important;
+  forced-color-adjust: none !important;
   cursor: pointer;
+}
+
+.site-menubar-toggle::before,
+.site-menubar-toggle::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
 }
 
 /* Device-pixel bars — 2 device px each, integer tops. JPEG crop skips Force Dark. */
@@ -2673,4 +2697,31 @@ html[data-promo="off"] .site-promo {
   .site-promo-title {
     font-size: 48px;
   }
+}
+
+/* Last-win: gray-injection / Force Dark must not paint chips on chrome or captions. */
+button.site-menubar-toggle,
+.site-menubar-toggle,
+.site-menubar-toggle *,
+a.site-footer-link,
+.site-footer-link,
+.site-footer-copy-line,
+.site-footer-copy-plus,
+.site-footer-nav,
+.site-footer-copy,
+p.site-type,
+.product-card p,
+.product-card .site-type,
+.product-price,
+.pdp-store,
+.pdp-name,
+.pdp-note,
+.pdp-price {
+  background-color: transparent !important;
+}
+
+button.site-menubar-toggle,
+.site-menubar-toggle {
+  background: none !important;
+  background-image: none !important;
 }

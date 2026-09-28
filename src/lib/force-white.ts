@@ -37,6 +37,7 @@ export const forceWhiteStyle = {
 export const forceInkStyle = {
   color: "#111111",
   WebkitTextFillColor: "transparent",
+  backgroundColor: "transparent",
   backgroundImage: FORCE_INK_IMAGE,
   backgroundRepeat: "repeat",
   backgroundSize: "8px 8px",
