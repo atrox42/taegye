@@ -538,9 +538,11 @@ button {
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .pdp-gallery-track::-webkit-scrollbar {
@@ -553,6 +555,7 @@ button {
   position: relative;
   flex: 0 0 100%;
   width: 100%;
+  min-width: 100%;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
