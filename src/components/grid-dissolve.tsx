@@ -283,12 +283,12 @@ function holdProgress(hold: number) {
   return hold;
 }
 
-function buildTiles(): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
+function buildTiles(images: HTMLImageElement[]): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
   const tiles: Tile[] = [];
   const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   let card = 0;
-  for (const layout of visibleGridImages()) {
+  for (const layout of images) {
     const draw = primedDrawImage(layout);
     const box = snapBox(layout);
     boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
@@ -458,11 +458,11 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       const id = href.split("/").pop();
       if (id) preloadUrl(`/products/stand-${id}.webp`);
 
-      document.documentElement.classList.add("is-dissolving");
-      document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
-
       const visibles = visibleGridImages();
       for (const img of visibles) primedDrawImage(img);
+
+      document.documentElement.classList.add("is-dissolving");
+      document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
 
       const sourcesReady = () =>
         visibles.every((img) => {
@@ -503,7 +503,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       };
 
       const kick = () => {
-        const built = buildTiles();
+        const built = buildTiles(visibles);
         publishBoxes(built.boxes);
         publishTiles(built.tiles);
         run(built.tiles);
