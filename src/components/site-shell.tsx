@@ -22,10 +22,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <WhiteSurfaceFill />
             {children}
           </main>
-          <FloatLogo />
         </div>
         <SiteFooter />
       </div>
+      <FloatLogo />
       <div className="site-splash" role="presentation" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element -- first-paint white raster */}
         <img src={WHITE_BITMAP_SRC} alt="" className="site-splash-bitmap" />
