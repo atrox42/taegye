@@ -110,6 +110,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             style={forceInkStyle}
           >
             Store
+            <span className="pdp-store-chevron" aria-hidden />
           </a>
         </div>
       </div>
