@@ -313,6 +313,135 @@ async function runBrowser() {
       console.log("ok  mobile one-port PDP: KRW 38,000");
     });
 
+    const PDP_PATHS = [
+      "/new/purple",
+      "/new/silver",
+      "/new/white",
+      "/new/one-port-purple",
+      "/new/one-port-black",
+      "/new/one-port-white",
+    ];
+    const STORE_HREF = "https://smartstore.naver.com/taegye";
+
+    async function assertPdpImageNotStore(page, label) {
+      const report = await page.evaluate((storeHref) => {
+        const box = (el) => {
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return { x: r.x, y: r.y, w: r.width, h: r.height };
+        };
+        const hit = (x, y) => {
+          const el = document.elementFromPoint(x, y);
+          const a = el && el.closest("a");
+          return {
+            tag: el ? el.tagName : "none",
+            cls: el ? String(el.className).slice(0, 80) : "",
+            href: a ? a.href : null,
+          };
+        };
+        const stages = [...document.querySelectorAll(".pdp-stage")]
+          .map((node) => ({ node, r: node.getBoundingClientRect() }))
+          .filter((item) => item.r.width > 80 && item.r.height > 80)
+          .sort((a, b) => b.r.height - a.r.height);
+        const hero = stages[0];
+        if (!hero) return { error: "no visible pdp-stage" };
+        const r = hero.r;
+        const pts = [
+          ["center", r.x + r.width / 2, r.y + r.height / 2],
+          ["tl", r.x + 12, r.y + 12],
+          ["tr", r.x + r.width - 12, r.y + 12],
+          ["bl", r.x + 12, r.y + r.height - 12],
+          ["br", r.x + r.width - 12, r.y + r.height - 12],
+        ];
+        const store = document.querySelector("a.pdp-store");
+        const sr = store && store.getBoundingClientRect();
+        const overlaps =
+          !!sr &&
+          sr.width > 0 &&
+          sr.height > 0 &&
+          sr.left < r.right &&
+          sr.right > r.left &&
+          sr.top < r.bottom &&
+          sr.bottom > r.top;
+        const storeAncestors = [...document.querySelectorAll(`a[href="${storeHref}"]`)].map((a) => ({
+          cls: String(a.className),
+          href: a.href,
+        }));
+        const storeHit =
+          sr && sr.width > 0 && sr.height > 0
+            ? hit(sr.x + Math.min(sr.width / 2, 20), sr.y + sr.height / 2)
+            : { tag: "none", cls: "", href: null };
+        return {
+          error: null,
+          photo: {
+            x: Math.round(r.x),
+            y: Math.round(r.y),
+            w: Math.round(r.width),
+            h: Math.round(r.height),
+          },
+          storeHref: store ? store.getAttribute("href") : null,
+          storeAbs: store ? store.href : null,
+          storeBox: sr
+            ? {
+                x: Math.round(sr.x),
+                y: Math.round(sr.y),
+                w: Math.round(sr.width),
+                h: Math.round(sr.height),
+              }
+            : null,
+          overlaps,
+          hits: pts.map(([name, x, y]) => ({ name, ...hit(x, y) })),
+          storeHit,
+          storeLinkCount: storeAncestors.length,
+          photoWrapped: !!hero.node.closest("a"),
+        };
+      }, STORE_HREF);
+      assert.ok(!report.error, `${label}: ${report.error}`);
+      assert.equal(report.photoWrapped, false, `${label}: photo must not be inside an <a>`);
+      assert.equal(report.storeAbs, STORE_HREF, `${label}: Store href ${report.storeAbs}`);
+      assert.equal(report.overlaps, false, `${label}: Store overlay on photo ${JSON.stringify(report)}`);
+      assert.ok(
+        report.storeBox && report.storeBox.w > 20 && report.storeBox.w < 160,
+        `${label}: Store hit box should be text-sized, got ${JSON.stringify(report.storeBox)}`,
+      );
+      for (const point of report.hits) {
+        assert.ok(
+          !point.href || !/smartstore/i.test(point.href),
+          `${label}: ${point.name} hit Store ${JSON.stringify(point)}`,
+        );
+      }
+      assert.ok(
+        report.storeHit && /smartstore/i.test(report.storeHit.href || ""),
+        `${label}: Store button must still hit Smart Store, got ${JSON.stringify(report.storeHit)}`,
+      );
+
+      const before = page.url();
+      await page.mouse.click(
+        report.photo.x + report.photo.w / 2,
+        report.photo.y + report.photo.h / 2,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const after = page.url();
+      assert.ok(!/smartstore/i.test(after), `${label}: image click navigated to ${after}`);
+      assert.equal(new URL(after).pathname, new URL(before).pathname, `${label}: image click left PDP, ${after}`);
+      return report;
+    }
+
+    for (const path of PDP_PATHS) {
+      await withPage(browser, MOBILE, path, async (page) => {
+        const report = await assertPdpImageNotStore(page, `mobile ${path}`);
+        console.log(
+          `ok  mobile ${path}: image click stays on PDP; Store ${report.storeBox.w}×${report.storeBox.h}`,
+        );
+      });
+      await withPage(browser, DESKTOP, path, async (page) => {
+        const report = await assertPdpImageNotStore(page, `desktop ${path}`);
+        console.log(
+          `ok  desktop ${path}: image click stays on PDP; Store ${report.storeBox.w}×${report.storeBox.h}`,
+        );
+      });
+    }
+
     await withPage(browser, MOBILE, "/new/white", async (page) => {
       const report = await page.evaluate(() => {
         const photo =

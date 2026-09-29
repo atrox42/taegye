@@ -816,6 +816,10 @@ button {
 .pdp-store {
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
   line-height: 22px;
   white-space: nowrap;
 }
@@ -1017,7 +1021,7 @@ button {
 
   .pdp-rail-copy {
     grid-column: 1;
-    pointer-events: auto;
+    pointer-events: none;
   }
 
   .pdp-rail-buy {
@@ -1025,7 +1029,16 @@ button {
     margin-top: 0;
     align-items: flex-end;
     text-align: right;
+    pointer-events: none;
+  }
+
+  .pdp-rail-copy > *,
+  .pdp-rail-buy > * {
     pointer-events: auto;
+  }
+
+  .pdp-rail-buy .pdp-store {
+    align-self: flex-end;
   }
 
   .pdp-atelier .pdp-price,
