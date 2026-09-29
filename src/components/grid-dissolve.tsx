@@ -156,12 +156,23 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       const held = holdState();
       if (held) {
         try {
+          busy.current = true;
+          dest.current = href;
           document.documentElement.classList.add("is-dissolving");
           const overlay = ensureOverlay();
           setOverlayOpacity(overlay, held.hold);
           publishOpacity(held.hold, held.phase);
           if (held.phase === "reveal") {
             goNow(href, router);
+            void waitForPath(href)
+              .then(() => {
+                const live = ensureOverlay();
+                setOverlayOpacity(live, held.hold);
+                publishOpacity(held.hold, "reveal");
+              })
+              .catch(() => {
+                removeOverlay();
+              });
             return true;
           }
           return true;
