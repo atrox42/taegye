@@ -1601,7 +1601,7 @@ select::-ms-expand {
   isolation: isolate;
   z-index: 1;
   width: 100%;
-  padding: 4.5rem var(--site-gutter) 6.5rem;
+  padding: 4.5rem var(--site-gutter) 1.5rem;
   background-color: transparent !important;
   background-image: none !important;
   color-scheme: only light !important;
@@ -1662,7 +1662,7 @@ select::-ms-expand {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1.25;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background-color: transparent !important;
   background-image: none !important;
@@ -2624,7 +2624,9 @@ html[data-intro="done"] .site-splash {
   font-synthesis: none;
 }
 
-html[data-promo="off"] .site-promo {
+html[data-promo="off"] .site-promo,
+html:not([data-promo="on"]) .site-promo,
+html:not([data-promo="on"]) .site-promo-dim-bitmap {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
