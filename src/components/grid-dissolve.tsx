@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -15,17 +15,18 @@ import { NEW_PRODUCTS } from "@/lib/site";
 
 const COVER_MS = 360;
 const REVEAL_MS = 360;
+const SAFETY_MS = COVER_MS + REVEAL_MS + 1200;
 const SESSION_KEY = "taegye-dissolve";
-const PLATE_A = "#FAFAFA";
-const PLATE_B = "#F6F6F6";
+const PLATE = "#FFFFFF";
 
 type DissolveApi = {
-  start: (href: string) => void;
+  start: (href: string) => boolean;
 };
 
 const DissolveContext = createContext<DissolveApi>({
   start: (href: string) => {
     window.location.assign(href);
+    return true;
   },
 });
 
@@ -35,7 +36,6 @@ type Block = {
   w: number;
   h: number;
   order: number;
-  gray: string;
 };
 
 type HoldState = {
@@ -59,9 +59,9 @@ function viewportSize() {
 }
 
 function buildBlocks(vw: number, vh: number): Block[] {
-  const size = vw < 768 ? 32 : 44;
-  const cols = Math.max(8, Math.ceil(vw / size));
-  const rows = Math.max(8, Math.ceil(vh / size));
+  const size = vw < 768 ? 72 : 96;
+  const cols = Math.max(4, Math.ceil(vw / size));
+  const rows = Math.max(4, Math.ceil(vh / size));
   const blocks: Block[] = [];
   for (let r = 0; r < rows; r += 1) {
     for (let c = 0; c < cols; c += 1) {
@@ -74,7 +74,6 @@ function buildBlocks(vw: number, vh: number): Block[] {
         w: c === cols - 1 ? vw - x : size,
         h: r === rows - 1 ? vh - y : size,
         order: r + c + jitter * 0.72,
-        gray: ((r + c) & 1) === 0 ? PLATE_A : PLATE_B,
       });
     }
   }
@@ -99,7 +98,11 @@ function publishTiles(blocks: Block[], onFrom: number, onTo: number) {
   }));
 }
 
-function ensureCanvas() {
+function armCanvas(canvas: HTMLCanvasElement, capture: boolean) {
+  canvas.style.pointerEvents = capture ? "auto" : "none";
+}
+
+function ensureCanvas(capture: boolean) {
   let canvas = document.querySelector<HTMLCanvasElement>(".grid-dissolve-canvas");
   if (!canvas) {
     canvas = document.createElement("canvas");
@@ -113,11 +116,11 @@ function ensureCanvas() {
   canvas.height = Math.max(1, Math.round(h * dpr));
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
-  canvas.style.pointerEvents = "auto";
   canvas.style.backgroundColor = "transparent";
   canvas.style.zIndex = "90";
   canvas.style.colorScheme = "only light";
   canvas.style.setProperty("forced-color-adjust", "none");
+  armCanvas(canvas, capture);
   const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   if (ctx) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -134,6 +137,7 @@ function paint(ctx: CanvasRenderingContext2D, blocks: Block[], t: number, phase:
   ctx.imageSmoothingEnabled = false;
   ctx.globalCompositeOperation = "source-over";
   ctx.globalAlpha = 1;
+  ctx.fillStyle = PLATE;
 
   const cut = Math.round(t * blocks.length);
   const start = phase === "cover" ? 0 : cut;
@@ -141,7 +145,6 @@ function paint(ctx: CanvasRenderingContext2D, blocks: Block[], t: number, phase:
 
   for (let i = start; i < end; i += 1) {
     const block = blocks[i];
-    ctx.fillStyle = block.gray;
     ctx.fillRect(block.x, block.y, block.w, block.h);
   }
 
@@ -158,11 +161,11 @@ function paintIncremental(
   const dpr = canvasDpr();
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = PLATE;
   if (phase === "cover") {
     ctx.globalCompositeOperation = "source-over";
     for (let i = from; i < to; i += 1) {
       const block = blocks[i];
-      ctx.fillStyle = block.gray;
       ctx.fillRect(block.x, block.y, block.w, block.h);
     }
     publishTiles(blocks, 0, to);
@@ -180,11 +183,11 @@ function removeCanvas() {
   document.documentElement.classList.remove("is-dissolving");
 }
 
-function waitForPdp(ms = 1600) {
+function waitForPath(href: string, ms = 1600) {
   const begun = performance.now();
   return new Promise<void>((resolve) => {
     const tick = () => {
-      if (document.querySelector(".pdp") || performance.now() - begun > ms) {
+      if (window.location.pathname === href || performance.now() - begun > ms) {
         resolve();
         return;
       }
@@ -194,27 +197,73 @@ function waitForPdp(ms = 1600) {
   });
 }
 
+function goNow(href: string, router: { push: (url: string) => void }) {
+  try {
+    router.push(href);
+  } catch {
+    window.location.assign(href);
+  }
+}
+
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const busy = useRef(false);
+  const dest = useRef<string | null>(null);
   const raf = useRef(0);
-  const blocksRef = useRef<Block[]>([]);
+  const safety = useRef(0);
+
+  const clearTimers = useCallback(() => {
+    cancelAnimationFrame(raf.current);
+    raf.current = 0;
+    window.clearTimeout(safety.current);
+    safety.current = 0;
+  }, []);
 
   const reset = useCallback(() => {
-    cancelAnimationFrame(raf.current);
+    clearTimers();
     busy.current = false;
-    blocksRef.current = [];
+    dest.current = null;
     removeCanvas();
-  }, []);
+  }, [clearTimers]);
 
   const start = useCallback(
     (href: string) => {
-      if (busy.current) return;
       if (href.startsWith("http") || href.startsWith("//")) {
         window.location.assign(href);
-        return;
+        return true;
       }
+
+      const held = holdState();
+      if (held) {
+        try {
+          document.documentElement.classList.add("is-dissolving");
+          const { ctx, canvas } = ensureCanvas(false);
+          const { w, h } = viewportSize();
+          const blocks = buildBlocks(w, h);
+          if (!ctx) return false;
+          if (held.phase === "reveal") {
+            paint(ctx, blocks, 1, "cover");
+            goNow(href, router);
+            void waitForPath(href).then(() => {
+              const next = ensureCanvas(false);
+              if (next.ctx) paint(next.ctx, blocks, held.hold, "reveal");
+            });
+            return true;
+          }
+          paint(ctx, blocks, held.hold, "cover");
+          armCanvas(canvas, false);
+          return true;
+        } catch {
+          removeCanvas();
+          return false;
+        }
+      }
+
+      if (busy.current) return true;
+
       busy.current = true;
+      dest.current = href;
       try {
         sessionStorage.setItem(SESSION_KEY, "1");
       } catch {
@@ -227,75 +276,80 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         /* ignore */
       }
 
-      document.documentElement.classList.add("is-dissolving");
-      const { ctx } = ensureCanvas();
-      const { w, h } = viewportSize();
-      const blocks = buildBlocks(w, h);
-      blocksRef.current = blocks;
+      safety.current = window.setTimeout(() => {
+        if (dest.current === href && window.location.pathname !== href) {
+          window.location.assign(href);
+        }
+        reset();
+      }, SAFETY_MS);
 
-      if (!ctx) {
-        router.push(href);
-        window.setTimeout(reset, 400);
-        return;
-      }
+      try {
+        document.documentElement.classList.add("is-dissolving");
+        const { ctx } = ensureCanvas(true);
+        const { w, h } = viewportSize();
+        const blocks = buildBlocks(w, h);
 
-      const held = holdState();
-      if (held) {
-        if (held.phase === "reveal") {
+        if (!ctx) {
+          goNow(href, router);
+          reset();
+          return true;
+        }
+
+        const finishCover = () => {
           paint(ctx, blocks, 1, "cover");
-          router.push(href);
-          void waitForPdp().then(() => {
-            const next = ensureCanvas();
-            if (next.ctx) paint(next.ctx, blocks, held.hold, "reveal");
-          });
-          return;
-        }
-        paint(ctx, blocks, held.hold, "cover");
-        return;
-      }
-
-      paint(ctx, blocks, 0, "cover");
-      let last = 0;
-      const begun = performance.now();
-      const tickCover = (now: number) => {
-        const t = Math.min(1, (now - begun) / COVER_MS);
-        const next = Math.round(t * blocks.length);
-        if (next !== last) {
-          paintIncremental(ctx, blocks, last, next, "cover");
-          last = next;
-        }
-        if (t < 1) {
-          raf.current = requestAnimationFrame(tickCover);
-          return;
-        }
-        paint(ctx, blocks, 1, "cover");
-        router.push(href);
-        void waitForPdp().then(() => {
-          const live = ensureCanvas();
-          if (!live.ctx) {
-            reset();
-            return;
-          }
-          paint(live.ctx, blocks, 0, "reveal");
-          let cleared = 0;
-          const revealStart = performance.now();
-          const tickReveal = (stamp: number) => {
-            const u = Math.min(1, (stamp - revealStart) / REVEAL_MS);
-            const nextCleared = Math.round(u * blocks.length);
-            if (nextCleared !== cleared) {
-              paintIncremental(live.ctx!, blocks, cleared, nextCleared, "reveal");
-              cleared = nextCleared;
-            }
-            if (u < 1) {
-              raf.current = requestAnimationFrame(tickReveal);
+          goNow(href, router);
+          void waitForPath(href).then(() => {
+            if (!busy.current || dest.current !== href) return;
+            const live = ensureCanvas(true);
+            if (!live.ctx) {
+              reset();
               return;
             }
-            reset();
-          };
-          raf.current = requestAnimationFrame(tickReveal);
-        });
-      };
-      raf.current = requestAnimationFrame(tickCover);
+            paint(live.ctx, blocks, 0, "reveal");
+            let cleared = 0;
+            const revealStart = performance.now();
+            const tickReveal = (stamp: number) => {
+              if (!busy.current || dest.current !== href) return;
+              const u = Math.min(1, (stamp - revealStart) / REVEAL_MS);
+              const nextCleared = Math.round(u * blocks.length);
+              if (nextCleared !== cleared) {
+                paintIncremental(live.ctx!, blocks, cleared, nextCleared, "reveal");
+                cleared = nextCleared;
+              }
+              if (u < 1) {
+                raf.current = requestAnimationFrame(tickReveal);
+                return;
+              }
+              reset();
+            };
+            raf.current = requestAnimationFrame(tickReveal);
+          });
+        };
+
+        paint(ctx, blocks, 0, "cover");
+        let last = 0;
+        const begun = performance.now();
+        const tickCover = (now: number) => {
+          if (!busy.current || dest.current !== href) return;
+          const t = Math.min(1, (now - begun) / COVER_MS);
+          const next = Math.round(t * blocks.length);
+          if (next !== last) {
+            paintIncremental(ctx, blocks, last, next, "cover");
+            last = next;
+          }
+          if (t < 1) {
+            raf.current = requestAnimationFrame(tickCover);
+            return;
+          }
+          finishCover();
+        };
+        raf.current = requestAnimationFrame(tickCover);
+        return true;
+      } catch {
+        goNow(href, router);
+        reset();
+        return true;
+      }
     },
     [reset, router],
   );
@@ -311,16 +365,28 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
   }, [router]);
 
   useEffect(() => {
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) reset();
-    };
+    if (busy.current && dest.current && pathname === dest.current) return;
+    if (busy.current && dest.current && pathname !== dest.current) {
+      reset();
+      return;
+    }
+    if (!busy.current) removeCanvas();
+  }, [pathname, reset]);
+
+  useEffect(() => {
+    const onPageShow = () => reset();
     const onPop = () => reset();
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && !busy.current) removeCanvas();
+    };
     window.addEventListener("pageshow", onPageShow);
     window.addEventListener("popstate", onPop);
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       window.removeEventListener("pageshow", onPageShow);
       window.removeEventListener("popstate", onPop);
-      cancelAnimationFrame(raf.current);
+      document.removeEventListener("visibilitychange", onVisible);
+      reset();
     };
   }, [reset]);
 

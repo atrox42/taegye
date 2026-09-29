@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, type MouseEvent, type PointerEvent } from "react";
+import { type MouseEvent } from "react";
 
 import { useGridDissolve } from "@/components/grid-dissolve";
 import { forceInkStyle } from "@/lib/force-white";
@@ -13,51 +13,27 @@ type ProductCardProps = {
   priority?: boolean;
 };
 
-const TAP_SLOP_PX = 12;
-
 export function ProductCard({ product, priority = false }: ProductCardProps) {
   const dissolve = useGridDissolve();
   const href = `/new/${product.id}`;
-  const tap = useRef<{ x: number; y: number; id: number } | null>(null);
-
-  const begin = () => {
-    dissolve.start(href);
-  };
 
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
       return;
     }
-    event.preventDefault();
-    begin();
-  };
-
-  const onPointerDown = (event: PointerEvent<HTMLAnchorElement>) => {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-    tap.current = { x: event.clientX, y: event.clientY, id: event.pointerId };
-  };
-
-  const onPointerUp = (event: PointerEvent<HTMLAnchorElement>) => {
-    const start = tap.current;
-    tap.current = null;
-    if (!start || start.id !== event.pointerId) return;
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > TAP_SLOP_PX) return;
-    event.preventDefault();
-    begin();
-  };
-
-  const onPointerCancel = () => {
-    tap.current = null;
+    let handled = false;
+    try {
+      handled = dissolve.start(href);
+    } catch {
+      handled = false;
+    }
+    if (handled) event.preventDefault();
   };
 
   return (
     <Link
       href={href}
       onClick={onClick}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerCancel}
       className="product-card relative block no-underline hover:no-underline"
     >
       <div className="product-stage relative aspect-square overflow-hidden">
