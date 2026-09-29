@@ -323,15 +323,24 @@ html::-webkit-scrollbar {
 }
 
 html::-webkit-scrollbar-button,
+html::-webkit-scrollbar-button:single-button,
+html::-webkit-scrollbar-button:double-button,
 html::-webkit-scrollbar-button:start:decrement,
 html::-webkit-scrollbar-button:end:increment,
+html::-webkit-scrollbar-button:vertical:start,
+html::-webkit-scrollbar-button:vertical:end,
 html::-webkit-scrollbar-button:vertical:start:decrement,
 html::-webkit-scrollbar-button:vertical:end:increment,
+html::-webkit-scrollbar-button:vertical:start:increment,
+html::-webkit-scrollbar-button:vertical:end:decrement,
 html::-webkit-scrollbar-button:horizontal:start:decrement,
 html::-webkit-scrollbar-button:horizontal:end:increment {
-  display: none;
-  width: 0;
-  height: 0;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
 }
 
 html::-webkit-scrollbar-track,
