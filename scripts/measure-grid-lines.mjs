@@ -98,7 +98,8 @@ try {
           const i = (y * w + x) * 4;
           return [data[i], data[i + 1], data[i + 2], data[i + 3]];
         };
-        const ink = (p) => p[3] >= 200 && p[0] < 48 && p[1] < 48 && p[2] < 48;
+        const ink = (p) => p[3] >= 200 && p[0] < 80 && p[1] < 80 && p[2] < 80;
+        const visible = (p) => p[3] >= 200 && p[0] < 170 && p[1] < 170 && p[2] < 170;
         const longest = (count, pick) => {
           let best = 0;
           let i = 0;

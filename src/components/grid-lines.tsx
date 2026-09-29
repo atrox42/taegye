@@ -43,16 +43,18 @@ export function GridLines({
       const rect = grid.getBoundingClientRect();
       const wrap = canvas.offsetParent instanceof HTMLElement ? canvas.offsetParent : grid.parentElement;
       const wrapRect = wrap?.getBoundingClientRect() ?? rect;
-      const cssW = Math.max(1, rect.width);
-      const cssH = Math.max(1, rect.height);
-      const w = Math.max(1, Math.round(cssW * dpr));
-      const h = Math.max(1, Math.round(cssH * dpr));
+      const originDevX = Math.round(rect.left * dpr);
+      const originDevY = Math.round(rect.top * dpr);
+      const farDevX = Math.round(rect.right * dpr);
+      const farDevY = Math.round(rect.bottom * dpr);
+      const w = Math.max(1, farDevX - originDevX);
+      const h = Math.max(1, farDevY - originDevY);
 
       canvas.style.display = "block";
-      canvas.style.left = `${rect.left - wrapRect.left}px`;
-      canvas.style.top = `${rect.top - wrapRect.top}px`;
-      canvas.style.width = `${cssW}px`;
-      canvas.style.height = `${cssH}px`;
+      canvas.style.left = `${originDevX / dpr - wrapRect.left}px`;
+      canvas.style.top = `${originDevY / dpr - wrapRect.top}px`;
+      canvas.style.width = `${w / dpr}px`;
+      canvas.style.height = `${h / dpr}px`;
       if (canvas.width !== w) canvas.width = w;
       if (canvas.height !== h) canvas.height = h;
 
@@ -66,10 +68,10 @@ export function GridLines({
       const ys = new Set<number>([0, h - 1]);
       for (const item of grid.querySelectorAll(":scope > .new-grid-item")) {
         const box = item.getBoundingClientRect();
-        xs.add((box.left - rect.left) * dpr);
-        xs.add((box.right - rect.left) * dpr);
-        ys.add((box.top - rect.top) * dpr);
-        ys.add((box.bottom - rect.top) * dpr);
+        xs.add(Math.round(box.left * dpr) - originDevX);
+        xs.add(Math.round(box.right * dpr) - originDevX);
+        ys.add(Math.round(box.top * dpr) - originDevY);
+        ys.add(Math.round(box.bottom * dpr) - originDevY);
       }
 
       for (const x of collapseDevice(xs, w - 1)) ctx.fillRect(x, 0, 1, h);
