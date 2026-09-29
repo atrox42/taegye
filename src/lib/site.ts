@@ -165,6 +165,8 @@ export type NewProduct = {
 
 export const STAND_PRICE_SILVER = "KRW 103,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
+/** Placeholder until a One Port price is confirmed. */
+export const ONE_PORT_PRICE = STAND_PRICE_COLOR;
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
@@ -203,6 +205,17 @@ export const STAND_NOTE = {
   ],
 } as const;
 
+export const ONE_PORT_NOTE = {
+  en: [
+    "A glass vessel for a living plant.",
+    "Keep in indirect light. Water sparingly.",
+  ],
+  kr: [
+    "식물을 담는 원 포트.",
+    "직사광선을 피하고, 물은 적게 주세요.",
+  ],
+} as const;
+
 export function productColorLabel(product: NewProduct) {
   const parts = product.name.split(", ");
   return parts[1] ?? product.finish.replace(/ finish$/i, "");
@@ -210,6 +223,10 @@ export function productColorLabel(product: NewProduct) {
 
 export function productFamilyLabel(product: NewProduct) {
   return product.name.split(", ")[0] ?? product.name;
+}
+
+export function productNote(product: NewProduct) {
+  return product.category === "one-port" ? ONE_PORT_NOTE : STAND_NOTE;
 }
 
 /**
@@ -229,7 +246,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — silver, purple, black, green, white. */
+/** /new catalog — Modular Stand colors, then One Port Purple / Black / White. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -291,10 +308,51 @@ export const NEW_PRODUCTS: NewProduct[] = [
     emptyAlt: "TAEGYE modular stand in white",
     mossAlt: "TAEGYE modular stand in white with moss",
   },
+  {
+    id: "one-port-purple",
+    category: "one-port",
+    name: "One Port, Purple",
+    nameKr: "원 포트, 퍼플",
+    finish: "Purple finish",
+    price: ONE_PORT_PRICE,
+    emptySrc: "/products/one-port-purple.png",
+    mossSrc: "/products/one-port-purple-plant.png",
+    emptyAlt: "TAEGYE one port in purple",
+    mossAlt: "TAEGYE one port in purple with plant",
+  },
+  {
+    id: "one-port-black",
+    category: "one-port",
+    name: "One Port, Black",
+    nameKr: "원 포트, 블랙",
+    finish: "Black finish",
+    price: ONE_PORT_PRICE,
+    emptySrc: "/products/one-port-black.png",
+    mossSrc: "/products/one-port-black-plant.png",
+    emptyAlt: "TAEGYE one port in black",
+    mossAlt: "TAEGYE one port in black with plant",
+  },
+  {
+    id: "one-port-white",
+    category: "one-port",
+    name: "One Port, White",
+    nameKr: "원 포트, 화이트",
+    finish: "White finish",
+    price: ONE_PORT_PRICE,
+    emptySrc: "/products/one-port-white.png",
+    mossSrc: "/products/one-port-white-plant.png",
+    emptyAlt: "TAEGYE one port in white",
+    mossAlt: "TAEGYE one port in white with plant",
+  },
 ];
 
 export function getNewProduct(id: string) {
   return NEW_PRODUCTS.find((product) => product.id === id);
+}
+
+export function productsInFamily(product: NewProduct) {
+  const family = productFamilyLabel(product);
+  return NEW_PRODUCTS.filter((item) => productFamilyLabel(item) === family);
 }
 
 export const FAQ_ITEMS = [
