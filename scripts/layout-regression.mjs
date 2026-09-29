@@ -89,14 +89,21 @@ async function enableForcedDark(page) {
 async function withPromo(browser, viewport, dark, fn) {
   const page = await browser.newPage();
   await page.setViewport(viewport);
-  if (dark) await enableForcedDark(page);
   await page.goto(`${BASE}/?intro=skip&promo=hold`, {
-    waitUntil: "networkidle0",
-    timeout: 45000,
+    waitUntil: "load",
+    timeout: 60000,
   });
+  if (dark) await enableForcedDark(page);
   await pageReady(page);
-  await page.waitForSelector(".site-promo-card");
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await page.waitForSelector(".site-promo-card", { timeout: 20000 });
+  await page.waitForFunction(
+    () => {
+      const title = document.querySelector(".site-promo-title canvas");
+      return title instanceof HTMLCanvasElement && title.width > 4;
+    },
+    { timeout: 15000 },
+  );
+  await new Promise((resolve) => setTimeout(resolve, 300));
   try {
     return await fn(page);
   } finally {

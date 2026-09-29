@@ -63,15 +63,16 @@ export function CanvasText({
           `${tracking}px`;
       }
       const metrics = measurer.measureText(display);
-      const textW = Math.ceil(metrics.width + 2);
-      const textH = Math.ceil(Math.max(lineHeight, fontSize) + 2);
+      const textW = Math.max(1, Math.ceil(metrics.width + 2));
+      const textH = Math.max(1, Math.ceil(Math.max(lineHeight, fontSize) + 2));
+      const minH = parseFloat(style.minHeight);
       const cssW =
         fit === "fill"
-          ? Math.max(textW, parent?.clientWidth || wrap.clientWidth || textW)
+          ? Math.max(textW, wrap.clientWidth || parent?.clientWidth || textW)
           : textW;
       const cssH =
         fit === "fill"
-          ? Math.max(textH, parent?.clientHeight || wrap.clientHeight || textH)
+          ? Math.max(textH, Number.isFinite(minH) && minH > 0 ? minH : textH)
           : textH;
       canvas.style.width = `${cssW}px`;
       canvas.style.height = `${cssH}px`;

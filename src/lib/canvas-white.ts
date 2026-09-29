@@ -65,11 +65,14 @@ export function bindColorCanvas(
   canvas: HTMLCanvasElement,
   measure: () => { width: number; height: number },
   color: string,
+  pinCssSize?: boolean,
 ) {
-  const pinCssSize = canvas.id !== PAGE_WHITE_CANVAS_ID && !canvas.classList.contains("canvas-white-fixed");
+  const pin =
+    pinCssSize ??
+    (canvas.id !== PAGE_WHITE_CANVAS_ID && !canvas.classList.contains("canvas-white-fixed"));
   const paint = () => {
     const { width, height } = measure();
-    paintOpaqueColor(canvas, width, height, color, pinCssSize);
+    paintOpaqueColor(canvas, width, height, color, pin);
   };
   paint();
   const parent = canvas.parentElement;

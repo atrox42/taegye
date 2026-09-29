@@ -2961,15 +2961,20 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 .site-promo-cta-plate {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
 
+.site-promo-purple,
+.site-promo-cta-fill {
+  z-index: 0;
+}
+
 .site-promo-canvas-text {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3014,6 +3019,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   border: 0;
   border-bottom: 0;
   box-shadow: none;
+  overflow: hidden;
   background-color: var(--brand-main) !important;
   background-image: var(--brand-main-image) !important;
   background-size: 100% 100% !important;
@@ -3106,7 +3112,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   padding: 0;
   font-family: var(--font-pretendard);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: var(--tracking-copy-kr);
   line-height: 1.5;
   white-space: nowrap;
@@ -3136,6 +3142,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   justify-content: center;
   width: 100%;
   min-height: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   overflow: hidden;
   border: 0;
@@ -3163,13 +3170,14 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 
 .site-promo-cta-label {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+  height: 100%;
   min-height: 2.75rem;
-  padding: 0.55rem 0.75rem;
+  padding: 0;
   font-family: var(--font-pretendard);
   font-size: 13px;
   font-weight: 500;

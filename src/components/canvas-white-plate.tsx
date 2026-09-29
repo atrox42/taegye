@@ -64,7 +64,7 @@ export function CanvasColorPlate({
         height: parent?.clientHeight ?? 0,
       };
     };
-    return bindColorCanvas(canvas, measure, color);
+    return bindColorCanvas(canvas, measure, color, false);
   }, [color]);
 
   return (
