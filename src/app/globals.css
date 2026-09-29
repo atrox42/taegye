@@ -8,11 +8,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), var(--font-noto-sans-kr), ui-sans-serif, system-ui,
-    sans-serif;
+  --font-sans: "Pretendard Variable", Pretendard, var(--font-geist-sans),
+    var(--font-noto-sans-kr), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-geist-sans), var(--font-noto-sans-kr), ui-sans-serif, system-ui,
-    sans-serif;
+  --font-heading: "Pretendard Variable", Pretendard, var(--font-geist-sans),
+    var(--font-noto-sans-kr), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -79,6 +79,8 @@
   --brand-sub: #6F5C82;
   --brand-main-image: url("/purple-574667.jpg");
   --brand-sub-image: url("/purple-6F5C82.jpg");
+  --font-pretendard: "Pretendard Variable", Pretendard, var(--font-noto-sans-kr),
+    ui-sans-serif, system-ui, sans-serif;
   --line-e5-image: url("/line-e5.jpg");
   --background: #ffffff;
   --foreground: #111111;
@@ -2490,6 +2492,8 @@ html[data-intro="done"] .site-splash {
   transition: none;
   background-color: transparent !important;
   background-image: none !important;
+  font-family: var(--font-pretendard);
+  font-synthesis: none;
 }
 
 html[data-promo="off"] .site-promo {
@@ -2628,8 +2632,9 @@ html[data-promo="off"] .site-promo {
 
 .site-promo-eyebrow,
 .site-promo-title {
-  font-family: var(--font-splash), "Roboto Condensed", "Arial Narrow", sans-serif;
+  font-family: var(--font-pretendard);
   text-transform: uppercase;
+  font-synthesis: none;
 }
 
 .site-promo-eyebrow {
@@ -2639,7 +2644,8 @@ html[data-promo="off"] .site-promo {
   min-height: 0;
   padding: 0;
   font-size: 11px;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
 }
 
 .site-promo-title {
@@ -2649,8 +2655,9 @@ html[data-promo="off"] .site-promo {
   margin-top: 0;
   min-height: 0;
   font-size: 42px;
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.06em;
+  letter-spacing: -0.03em;
 }
 
 .site-promo-copy {
@@ -2669,7 +2676,9 @@ html[data-promo="off"] .site-promo {
   margin-top: 0;
   min-height: 0;
   padding: 0;
+  font-family: var(--font-pretendard);
   font-size: 13px;
+  font-weight: 400;
   letter-spacing: var(--tracking-copy-kr);
   line-height: 1.5;
   white-space: nowrap;
@@ -2733,8 +2742,9 @@ html[data-promo="off"] .site-promo {
   width: 100%;
   min-height: 2.75rem;
   padding: 0.55rem 0.75rem;
-  font-family: var(--font-noto-sans-kr), sans-serif;
+  font-family: var(--font-pretendard);
   font-size: 13px;
+  font-weight: 500;
   letter-spacing: var(--tracking-copy-kr);
   text-transform: none;
 }
@@ -2764,7 +2774,9 @@ html[data-promo="off"] .site-promo {
   border: 0;
   background-color: transparent !important;
   cursor: pointer;
+  font-family: var(--font-pretendard);
   font-size: 13px;
+  font-weight: 400;
   letter-spacing: var(--tracking-copy-kr);
   white-space: nowrap;
 }
@@ -2799,6 +2811,8 @@ html[data-promo="off"] .site-promo {
   .site-promo-title {
     margin-top: 0;
     font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     min-height: 0;
   }
 }
@@ -2810,6 +2824,8 @@ html[data-promo="off"] .site-promo {
 
   .site-promo-title {
     font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
 }
 
