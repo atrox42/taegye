@@ -2184,6 +2184,7 @@ select::-ms-expand {
 .site-menu > :not(.canvas-white-fill),
 .site-nav > :not(.canvas-white-fill),
 .site-promo-card > :not(.canvas-white-fill),
+.site-promo-strip > :not(.canvas-white-fill),
 .site-splash > :not(.canvas-white-fill) {
   position: relative;
   z-index: 1;
@@ -3206,10 +3207,55 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   text-transform: none;
 }
 
-.site-promo-strip,
-.site-promo-strip-btn,
+.site-promo-strip {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.42rem 1rem;
+  overflow: hidden;
+  border: 0;
+  border-top: 0;
+  box-shadow: none;
+  background-color: transparent !important;
+  background-image: none !important;
+  color-scheme: only light;
+  forced-color-adjust: none;
+}
+
+.site-promo-strip-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.925rem;
+  padding: 0.2rem 0;
+  border: 0;
+  background-color: transparent !important;
+  background-image: none !important;
+  cursor: pointer;
+  font-family: var(--font-pretendard);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: var(--tracking-copy-kr);
+  white-space: nowrap;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
 .site-promo-strip-close {
-  display: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+  flex-shrink: 0;
+  min-width: 5.5rem;
+  min-height: 1.925rem;
+  padding: 0.525rem 0.25rem 0.525rem 1rem;
+  font-size: 13px;
 }
 
 @media (max-width: 400px) {
