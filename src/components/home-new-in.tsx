@@ -20,6 +20,7 @@ const FEATURED = HOME_NEW_IN.map((item) => {
 export function HomeNewIn() {
   return (
     <section className="home-new-in" aria-label="New In" style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
       <div className="home-new-in-head">
         <WhiteSurfaceFill />
         <h2 className="home-new-in-title site-type" style={forceInkStyle}>
@@ -38,6 +39,7 @@ export function HomeNewIn() {
           >
             <WhiteSurfaceFill />
             <Link href={`/new/${item.product.id}`} className="home-new-in-visual">
+              <WhiteSurfaceFill />
               {/* eslint-disable-next-line @next/next/no-img-element -- product photo stays photographic under Force Dark */}
               <img
                 src={item.product.mossSrc}

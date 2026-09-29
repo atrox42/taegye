@@ -70,6 +70,7 @@ export function SiteHeader() {
 
   return (
     <header className={cn("site-header pointer-events-none fixed z-50", open && "is-open")}>
+      <CanvasWhitePlate />
       {mobile ? (
         <div className="site-menubar pointer-events-auto" style={forceWhiteStyle}>
           <CanvasWhitePlate />
