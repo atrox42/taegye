@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { BrandLogo } from "@/components/brand-logo";
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { forceWhiteStyle } from "@/lib/force-white";
 import {
   COPYRIGHT,
@@ -20,11 +20,9 @@ export function SiteFooter() {
 
   return (
     <footer className="site-footer" style={forceWhiteStyle}>
-      <WhiteSurfaceFill />
+      <CanvasWhitePlate />
       <div className="site-footer-inner site-gutter">
-        <WhiteSurfaceFill />
         <div className="site-footer-row">
-          <WhiteSurfaceFill />
           <div className="site-footer-brand">
             <a href="/" className="site-footer-logo" aria-label={SITE_NAME}>
               <BrandLogo width={FOOTER_LOGO_DISPLAY.width} height={FOOTER_LOGO_DISPLAY.height} />

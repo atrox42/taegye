@@ -1,6 +1,6 @@
 /**
- * Android Force Dark inverts solid `background-color` (and often CSS gradients).
- * Real raster files + <img> nodes are much harder for OEM auto-dark to invert.
+ * Android Force Dark inverts CSS `#ffffff` and grainy white JPEGs.
+ * Opaque 2D canvas pixels are left alone (verified by the dissolve sweep on-device).
  */
 export const WHITE_BITMAP_SRC = "/bg-white.jpg";
 /** Tiny grainy tile for covering <img> fills — small intrinsic size so a footer plate cannot paint over the catalog. */
@@ -31,11 +31,10 @@ export const FORCE_PURPLE_IMAGE = `url("${BRAND_MAIN_JPG}")`;
 export const FORCE_PURPLE_LIGHT_IMAGE = `url("${BRAND_SUB_JPG}")`;
 export const FORCE_WHITE_CLIP_IMAGE = `url("${WHITE_BITMAP_SRC}")`;
 
+/** Surfaces with a canvas plate must not paint CSS/JPEG white over it. */
 export const forceWhiteStyle = {
-  backgroundColor: "#ffffff",
-  backgroundImage: FORCE_WHITE_IMAGE,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
+  backgroundColor: "transparent",
+  backgroundImage: "none",
   color: "#111111",
   colorScheme: "only light",
 } as const;

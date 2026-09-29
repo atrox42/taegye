@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
+import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { InkBars, InkClose, InkHairline } from "@/components/ink-icons";
-import { forceWhiteStyle, PANEL_BITMAP_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import { forceWhiteStyle } from "@/lib/force-white";
 import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, STORE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -71,13 +72,7 @@ export function SiteHeader() {
     <header className={cn("site-header pointer-events-none fixed z-50", open && "is-open")}>
       {mobile ? (
         <div className="site-menubar pointer-events-auto" style={forceWhiteStyle}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-          <img
-            src={WHITE_BITMAP_SRC}
-            alt=""
-            aria-hidden
-            className="site-menubar-bitmap"
-          />
+          <CanvasWhitePlate />
           <button
             type="button"
             className="site-menubar-toggle"
@@ -95,14 +90,9 @@ export function SiteHeader() {
         <div
           id={panelId}
           className="site-menu is-open"
-          style={{
-            ...forceWhiteStyle,
-            backgroundColor: "#fafafa",
-            backgroundImage: `url("${PANEL_BITMAP_SRC}"), url("${WHITE_BITMAP_SRC}")`,
-          }}
+          style={forceWhiteStyle}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-          <img src={PANEL_BITMAP_SRC} alt="" aria-hidden className="site-menu-bitmap" />
+          <CanvasWhitePlate />
           <nav aria-label="Mobile" className="site-menu-nav">
             <InkHairline />
             <Link href="/" className="site-menu-row" onClick={closeMenu}>
@@ -162,13 +152,7 @@ export function SiteHeader() {
         className="site-nav pointer-events-auto relative flex w-full items-center justify-between"
         style={forceWhiteStyle}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts next/image wrappers */}
-        <img
-          src={WHITE_BITMAP_SRC}
-          alt=""
-          aria-hidden
-          className="site-nav-bitmap pointer-events-none absolute inset-0 h-full w-full object-cover"
-        />
+        <CanvasWhitePlate />
         <DesktopNavLinks pathname={pathname} />
       </nav>
     </header>

@@ -8,7 +8,6 @@ import {
   forceWhiteClipStyle,
   forceWhiteStyle,
   PURPLE_6F5C82_PNG_SRC,
-  WHITE_BITMAP_SRC,
 } from "@/lib/force-white";
 import { HOME_NEW_IN, getNewProduct } from "@/lib/site";
 
@@ -21,8 +20,6 @@ const FEATURED = HOME_NEW_IN.map((item) => {
 export function HomeNewIn() {
   return (
     <section className="home-new-in" aria-label="New In" style={forceWhiteStyle}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-      <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="home-new-in-bitmap" />
       <div className="home-new-in-head">
         <WhiteSurfaceFill />
         <h2 className="home-new-in-title site-type" style={forceInkStyle}>

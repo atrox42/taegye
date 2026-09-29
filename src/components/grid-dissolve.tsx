@@ -11,8 +11,8 @@ import {
   type ReactNode,
 } from "react";
 
-import { WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { NEW_PRODUCTS } from "@/lib/site";
+import { paintOpaqueWhite } from "@/lib/canvas-white";
 
 const COVER_MS = 350;
 const REVEAL_MS = 350;
@@ -76,10 +76,8 @@ function ensureOverlay() {
     overlay = document.createElement("div");
     overlay.className = OVERLAY_CLASS;
     overlay.setAttribute("aria-hidden", "true");
-    const plate = document.createElement("img");
+    const plate = document.createElement("canvas");
     plate.className = "grid-dissolve-plate";
-    plate.src = WHITE_BITMAP_SRC;
-    plate.alt = "";
     overlay.appendChild(plate);
     document.body.appendChild(overlay);
   }
@@ -87,6 +85,10 @@ function ensureOverlay() {
   overlay.style.setProperty("forced-color-adjust", "none");
   overlay.style.colorScheme = "only light";
   overlay.style.zIndex = "90";
+  const plate = overlay.querySelector("canvas");
+  if (plate instanceof HTMLCanvasElement) {
+    paintOpaqueWhite(plate, window.innerWidth, window.innerHeight);
+  }
   return overlay;
 }
 

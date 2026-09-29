@@ -1,3 +1,4 @@
+import { CanvasLogo } from "@/components/canvas-logo";
 import { LOGO_DISPLAY, LOGO_SRC, SITE_NAME } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -8,10 +9,9 @@ type BrandLogoProps = {
   height?: number;
 };
 
-/** Exact wordmark artwork, sized to fit inside a 135×48 CSS px box by default. */
+/** Transparent black PNG drawn on canvas so OEM Force Dark cannot grey the mark. */
 export function BrandLogo({
   className,
-  priority = false,
   width,
   height,
 }: BrandLogoProps) {
@@ -19,26 +19,13 @@ export function BrandLogo({
   const maxHeight = height ?? LOGO_DISPLAY.height;
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- raster brand mark with CSS size cap
-    <img
+    <CanvasLogo
       src={LOGO_SRC}
       alt={SITE_NAME}
-      width={598}
-      height={384}
-      decoding={priority ? "sync" : "async"}
-      fetchPriority={priority ? "high" : "auto"}
-      className={cn(
-        "brand-logo h-auto w-auto object-contain object-left",
-        className
-      )}
-      style={{
-        maxWidth,
-        maxHeight,
-        height: maxHeight,
-        width: "auto",
-        backgroundColor: "transparent",
-        filter: "none",
-      }}
+      width={maxWidth}
+      height={maxHeight}
+      align="left"
+      className={cn("brand-logo", className)}
     />
   );
 }
