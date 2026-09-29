@@ -98,11 +98,7 @@ function publishTiles(blocks: Block[], onFrom: number, onTo: number) {
   }));
 }
 
-function armCanvas(canvas: HTMLCanvasElement, capture: boolean) {
-  canvas.style.pointerEvents = capture ? "auto" : "none";
-}
-
-function ensureCanvas(capture: boolean) {
+function ensureCanvas() {
   let canvas = document.querySelector<HTMLCanvasElement>(".grid-dissolve-canvas");
   if (!canvas) {
     canvas = document.createElement("canvas");
@@ -119,14 +115,23 @@ function ensureCanvas(capture: boolean) {
   canvas.style.backgroundColor = "transparent";
   canvas.style.zIndex = "90";
   canvas.style.colorScheme = "only light";
+  canvas.style.pointerEvents = "none";
   canvas.style.setProperty("forced-color-adjust", "none");
-  armCanvas(canvas, capture);
   const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   if (ctx) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
   }
   return { canvas, ctx, dpr, w, h };
+}
+
+function paintBlock(ctx: CanvasRenderingContext2D, block: Block | undefined, clear: boolean) {
+  if (!block) return;
+  if (clear) {
+    ctx.clearRect(block.x, block.y, block.w, block.h);
+    return;
+  }
+  ctx.fillRect(block.x, block.y, block.w, block.h);
 }
 
 function paint(ctx: CanvasRenderingContext2D, blocks: Block[], t: number, phase: "cover" | "reveal") {
@@ -139,13 +144,13 @@ function paint(ctx: CanvasRenderingContext2D, blocks: Block[], t: number, phase:
   ctx.globalAlpha = 1;
   ctx.fillStyle = PLATE;
 
-  const cut = Math.round(t * blocks.length);
+  const progress = Number.isFinite(t) ? Math.min(1, Math.max(0, t)) : 0;
+  const cut = Math.round(progress * blocks.length);
   const start = phase === "cover" ? 0 : cut;
   const end = phase === "cover" ? cut : blocks.length;
 
   for (let i = start; i < end; i += 1) {
-    const block = blocks[i];
-    ctx.fillRect(block.x, block.y, block.w, block.h);
+    paintBlock(ctx, blocks[i], false);
   }
 
   publishTiles(blocks, start, end);
@@ -162,20 +167,21 @@ function paintIncremental(
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = PLATE;
+  const start = Math.max(0, Math.min(blocks.length, Math.floor(from) || 0));
+  const end = Math.max(start, Math.min(blocks.length, Math.ceil(to) || 0));
   if (phase === "cover") {
     ctx.globalCompositeOperation = "source-over";
-    for (let i = from; i < to; i += 1) {
-      const block = blocks[i];
-      ctx.fillRect(block.x, block.y, block.w, block.h);
+    for (let i = start; i < end; i += 1) {
+      paintBlock(ctx, blocks[i], false);
     }
-    publishTiles(blocks, 0, to);
-    return;
+    publishTiles(blocks, 0, end);
+    return end;
   }
-  for (let i = from; i < to; i += 1) {
-    const block = blocks[i];
-    ctx.clearRect(block.x, block.y, block.w, block.h);
+  for (let i = start; i < end; i += 1) {
+    paintBlock(ctx, blocks[i], true);
   }
-  publishTiles(blocks, to, blocks.length);
+  publishTiles(blocks, end, blocks.length);
+  return end;
 }
 
 function removeCanvas() {
@@ -238,21 +244,24 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       if (held) {
         try {
           document.documentElement.classList.add("is-dissolving");
-          const { ctx, canvas } = ensureCanvas(false);
+          const { ctx } = ensureCanvas();
           const { w, h } = viewportSize();
           const blocks = buildBlocks(w, h);
           if (!ctx) return false;
           if (held.phase === "reveal") {
             paint(ctx, blocks, 1, "cover");
             goNow(href, router);
-            void waitForPath(href).then(() => {
-              const next = ensureCanvas(false);
-              if (next.ctx) paint(next.ctx, blocks, held.hold, "reveal");
-            });
+            void waitForPath(href)
+              .then(() => {
+                const next = ensureCanvas();
+                if (next.ctx) paint(next.ctx, blocks, held.hold, "reveal");
+              })
+              .catch(() => {
+                removeCanvas();
+              });
             return true;
           }
           paint(ctx, blocks, held.hold, "cover");
-          armCanvas(canvas, false);
           return true;
         } catch {
           removeCanvas();
@@ -260,7 +269,9 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      if (busy.current) return true;
+      if (busy.current) {
+        reset();
+      }
 
       busy.current = true;
       dest.current = href;
@@ -283,72 +294,93 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         reset();
       }, SAFETY_MS);
 
+      const failAway = () => {
+        goNow(href, router);
+        reset();
+        return true;
+      };
+
       try {
         document.documentElement.classList.add("is-dissolving");
-        const { ctx } = ensureCanvas(true);
+        const { ctx } = ensureCanvas();
         const { w, h } = viewportSize();
         const blocks = buildBlocks(w, h);
 
-        if (!ctx) {
-          goNow(href, router);
-          reset();
-          return true;
+        if (!ctx || blocks.length === 0) {
+          return failAway();
         }
 
         const finishCover = () => {
-          paint(ctx, blocks, 1, "cover");
+          try {
+            paint(ctx, blocks, 1, "cover");
+          } catch {
+            /* still navigate */
+          }
           goNow(href, router);
-          void waitForPath(href).then(() => {
-            if (!busy.current || dest.current !== href) return;
-            const live = ensureCanvas(true);
-            if (!live.ctx) {
-              reset();
-              return;
-            }
-            paint(live.ctx, blocks, 0, "reveal");
-            let cleared = 0;
-            const revealStart = performance.now();
-            const tickReveal = (stamp: number) => {
+          void waitForPath(href)
+            .then(() => {
               if (!busy.current || dest.current !== href) return;
-              const u = Math.min(1, (stamp - revealStart) / REVEAL_MS);
-              const nextCleared = Math.round(u * blocks.length);
-              if (nextCleared !== cleared) {
-                paintIncremental(live.ctx!, blocks, cleared, nextCleared, "reveal");
-                cleared = nextCleared;
-              }
-              if (u < 1) {
-                raf.current = requestAnimationFrame(tickReveal);
+              const live = ensureCanvas();
+              if (!live.ctx) {
+                reset();
                 return;
               }
+              try {
+                paint(live.ctx, blocks, 0, "reveal");
+              } catch {
+                reset();
+                return;
+              }
+              let cleared = 0;
+              const revealStart = performance.now();
+              const tickReveal = (stamp: number) => {
+                try {
+                  if (!busy.current || dest.current !== href) return;
+                  const u = Math.min(1, (stamp - revealStart) / REVEAL_MS);
+                  const nextCleared = Math.round(u * blocks.length);
+                  if (nextCleared !== cleared) {
+                    cleared = paintIncremental(live.ctx!, blocks, cleared, nextCleared, "reveal");
+                  }
+                  if (u < 1) {
+                    raf.current = requestAnimationFrame(tickReveal);
+                    return;
+                  }
+                  reset();
+                } catch {
+                  reset();
+                }
+              };
+              raf.current = requestAnimationFrame(tickReveal);
+            })
+            .catch(() => {
               reset();
-            };
-            raf.current = requestAnimationFrame(tickReveal);
-          });
+            });
         };
 
         paint(ctx, blocks, 0, "cover");
         let last = 0;
         const begun = performance.now();
         const tickCover = (now: number) => {
-          if (!busy.current || dest.current !== href) return;
-          const t = Math.min(1, (now - begun) / COVER_MS);
-          const next = Math.round(t * blocks.length);
-          if (next !== last) {
-            paintIncremental(ctx, blocks, last, next, "cover");
-            last = next;
+          try {
+            if (!busy.current || dest.current !== href) return;
+            const t = Math.min(1, (now - begun) / COVER_MS);
+            const next = Math.round(t * blocks.length);
+            if (next !== last) {
+              last = paintIncremental(ctx, blocks, last, next, "cover");
+            }
+            if (t < 1) {
+              raf.current = requestAnimationFrame(tickCover);
+              return;
+            }
+            finishCover();
+          } catch {
+            failAway();
           }
-          if (t < 1) {
-            raf.current = requestAnimationFrame(tickCover);
-            return;
-          }
-          finishCover();
         };
         raf.current = requestAnimationFrame(tickCover);
         return true;
       } catch {
-        goNow(href, router);
-        reset();
-        return true;
+        return failAway();
       }
     },
     [reset, router],

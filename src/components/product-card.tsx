@@ -27,7 +27,12 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
     } catch {
       handled = false;
     }
-    if (handled) event.preventDefault();
+    if (handled) {
+      event.preventDefault();
+      window.setTimeout(() => {
+        if (window.location.pathname !== href) window.location.assign(href);
+      }, 2400);
+    }
   };
 
   return (
