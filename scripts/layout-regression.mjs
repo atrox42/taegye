@@ -59,6 +59,51 @@ async function withPage(browser, viewport, path, fn) {
   }
 }
 
+function srgbToLin(c) {
+  const s = c / 255;
+  return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+}
+
+function relativeLuminance(rgb) {
+  return 0.2126 * srgbToLin(rgb[0]) + 0.7152 * srgbToLin(rgb[1]) + 0.0722 * srgbToLin(rgb[2]);
+}
+
+function contrastRatio(a, b) {
+  const l1 = relativeLuminance(a);
+  const l2 = relativeLuminance(b);
+  const hi = Math.max(l1, l2);
+  const lo = Math.min(l1, l2);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+async function enableForcedDark(page) {
+  await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }]);
+  const cdp = await page.createCDPSession();
+  try {
+    await cdp.send("Emulation.setAutoDarkModeOverride", { enabled: true });
+  } catch {
+    /* older chrome */
+  }
+}
+
+async function withPromo(browser, viewport, dark, fn) {
+  const page = await browser.newPage();
+  await page.setViewport(viewport);
+  if (dark) await enableForcedDark(page);
+  await page.goto(`${BASE}/?intro=skip&promo=hold`, {
+    waitUntil: "networkidle0",
+    timeout: 45000,
+  });
+  await pageReady(page);
+  await page.waitForSelector(".site-promo-card");
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  try {
+    return await fn(page);
+  } finally {
+    await page.close();
+  }
+}
+
 async function runBrowser() {
   let puppeteer;
   try {
@@ -599,6 +644,105 @@ async function runBrowser() {
     await withPage(browser, DESKTOP_FHD, "/?scales=1.25,1,0.4&layout=0", (page) =>
       assertDesktopScatter(page, "desktop 1920×1080"),
     );
+
+    async function assertPromo(page, label) {
+      const report = await page.evaluate(() => {
+        const sampleCanvas = (sel, xRatio, yRatio) => {
+          const canvas = document.querySelector(sel);
+          if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 2) return null;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return null;
+          const x = Math.max(0, Math.min(canvas.width - 1, Math.round(canvas.width * xRatio)));
+          const y = Math.max(0, Math.min(canvas.height - 1, Math.round(canvas.height * yRatio)));
+          const d = ctx.getImageData(x, y, 1, 1).data;
+          return [d[0], d[1], d[2], d[3]];
+        };
+        const brightest = (sel) => {
+          const canvas = document.querySelector(sel);
+          if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 2) return null;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return null;
+          const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let best = [0, 0, 0, 0];
+          let score = -1;
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] < 200) continue;
+            const s = data[i] + data[i + 1] + data[i + 2];
+            if (s > score) {
+              score = s;
+              best = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+            }
+          }
+          return score < 0 ? null : best;
+        };
+        const x = document.querySelector(".site-promo-x");
+        const xr = x ? x.getBoundingClientRect() : null;
+        return {
+          strip: Boolean(document.querySelector(".site-promo-strip")),
+          stripBtns: document.querySelectorAll(".site-promo-strip-btn").length,
+          dimTag: document.querySelector(".site-promo-dim")?.tagName || null,
+          xW: xr ? xr.width : 0,
+          xH: xr ? xr.height : 0,
+          purple: sampleCanvas(".site-promo-purple-fill", 0.5, 0.5),
+          ctaPlate: sampleCanvas(".site-promo-cta-plate", 0.5, 0.5),
+          title: brightest(".site-promo-title canvas"),
+          cta: brightest(".site-promo-cta-label canvas"),
+          line: brightest(".site-promo-line canvas"),
+          eyebrow: brightest(".site-promo-eyebrow canvas"),
+          open: Boolean(document.querySelector(".site-promo-card")),
+        };
+      });
+      assert.equal(report.strip, false, `${label}: strip should be gone`);
+      assert.equal(report.stripBtns, 0, `${label}: strip buttons`);
+      assert.equal(report.dimTag, "DIV", `${label}: dim must not be a button`);
+      assert.ok(report.xW >= 44 && report.xH >= 44, `${label}: X hit ${report.xW}×${report.xH}`);
+      assert.ok(report.title, `${label}: title canvas empty`);
+      assert.ok(report.cta, `${label}: cta canvas empty`);
+      assert.ok(report.purple, `${label}: purple plate empty`);
+      assert.ok(report.ctaPlate, `${label}: cta plate empty`);
+      const titleContrast = contrastRatio(report.title.slice(0, 3), report.purple.slice(0, 3));
+      const ctaContrast = contrastRatio(report.cta.slice(0, 3), report.ctaPlate.slice(0, 3));
+      const lineContrast = contrastRatio(report.line.slice(0, 3), report.purple.slice(0, 3));
+      assert.ok(
+        titleContrast >= 4.5,
+        `${label}: title contrast ${titleContrast.toFixed(2)} title=${report.title} purple=${report.purple}`,
+      );
+      assert.ok(
+        ctaContrast >= 4.5,
+        `${label}: cta contrast ${ctaContrast.toFixed(2)} cta=${report.cta} plate=${report.ctaPlate}`,
+      );
+      assert.ok(
+        lineContrast >= 4.5,
+        `${label}: line contrast ${lineContrast.toFixed(2)} line=${report.line} purple=${report.purple}`,
+      );
+      assert.ok(report.title[0] >= 240 && report.title[1] >= 240 && report.title[2] >= 240, `${label}: title not white ${report.title}`);
+
+      await page.$eval(".site-promo-dim", (el) => {
+        el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      });
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      assert.ok(await page.$(".site-promo-card"), `${label}: backdrop tap closed promo`);
+      await page.keyboard.press("Escape");
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      assert.ok(await page.$(".site-promo-card"), `${label}: Escape closed promo`);
+      await page.click(".site-promo-x");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      assert.equal(await page.$(".site-promo-card"), null, `${label}: X should close promo`);
+      return { titleContrast, ctaContrast, lineContrast };
+    }
+
+    for (const [name, vp, dark] of [
+      ["mobile 412 forced-dark", MOBILE, true],
+      ["mobile 360 forced-dark", MOBILE_360, true],
+      ["mobile 412 light", MOBILE, false],
+    ]) {
+      await withPromo(browser, vp, dark, async (page) => {
+        const ratios = await assertPromo(page, name);
+        console.log(
+          `ok  promo ${name}: X-only dismiss; title ${ratios.titleContrast.toFixed(2)}:1 CTA ${ratios.ctaContrast.toFixed(2)}:1`,
+        );
+      });
+    }
   } finally {
     await browser.close();
   }
