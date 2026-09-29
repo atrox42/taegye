@@ -2017,7 +2017,7 @@ select::-ms-expand {
 .new-subnav > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-page > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-main > :not(.white-surface-fill):not(.canvas-white-fill),
-.site-shell > :not(.white-surface-fill):not(.canvas-white-fill):not(.canvas-white-fixed),
+.site-shell > :not(.white-surface-fill):not(.canvas-white-fill):not(.canvas-white-fixed):not(.site-splash),
 .home-hero > :not(.white-surface-fill):not(.canvas-white-fill),
 .home-new-in > :not(.white-surface-fill):not(.canvas-white-fill),
 .home-new-in-visual > :not(.white-surface-fill):not(.canvas-white-fill),
@@ -2632,7 +2632,7 @@ select::-ms-expand {
 }
 
 .site-splash {
-  position: fixed;
+  position: fixed !important;
   inset: 0;
   z-index: 80;
   display: flex;
