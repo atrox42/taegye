@@ -1195,12 +1195,14 @@ button {
   display: grid;
   position: relative;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
+  gap: var(--grid-hairline);
+  padding: var(--grid-hairline);
   border: 0 !important;
   outline: none;
   box-shadow: none;
-  background-color: transparent !important;
+  background-color: var(--grid-line) !important;
   background-image: none !important;
+  forced-color-adjust: none;
 }
 
 .new-grid-item {
@@ -1219,9 +1221,8 @@ button {
 
 .new-grid::before,
 .new-grid-item::after {
-  pointer-events: none;
-  box-sizing: border-box;
-  forced-color-adjust: none;
+  content: none !important;
+  display: none !important;
 }
 
 .new-grid::before {
@@ -3085,10 +3086,9 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   }
 }
 
-/* Last-win: the catalog ul stays transparent so the wrap canvas plate shows
-   in the implicit empty cell. Cells keep their own covering plates. */
+/* Last-win: the catalog ul is the 1px ink gap; cells keep covering plates. */
 .new-grid {
-  background-color: transparent !important;
+  background-color: var(--grid-line) !important;
   background-image: none !important;
 }
 

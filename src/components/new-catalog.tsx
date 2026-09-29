@@ -25,7 +25,8 @@ function isNewCategory(value: string | null): value is NewCategoryId {
 
 type CatalogEntry =
   | { type: "product"; product: NewProduct }
-  | { type: "texture"; src: string };
+  | { type: "texture"; src: string }
+  | { type: "filler" };
 
 function catalogEntries(
   products: NewProduct[],
@@ -93,6 +94,20 @@ export function NewCatalog() {
   }, [products.length, searchParams]);
 
   const entries = useMemo(() => catalogEntries(products, placement), [products, placement]);
+  const [cols, setCols] = useState(2);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setCols(mq.matches ? 4 : 2);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  const cells = useMemo(() => {
+    const extra = (cols - (entries.length % cols)) % cols;
+    return extra ? [...entries, ...Array.from({ length: extra }, () => ({ type: "filler" as const }))] : entries;
+  }, [entries, cols]);
 
   return (
     <>
@@ -120,11 +135,15 @@ export function NewCatalog() {
         <div className="new-grid-wrap" style={forceWhiteStyle}>
           <WhiteSurfaceFill />
           <ul className={cn("new-grid", placement && "is-placed")}>
-            {entries.map((entry, index) =>
+            {cells.map((entry, index) =>
               entry.type === "texture" ? (
                 <li key="grid-texture" className="new-grid-item new-grid-item-texture">
                   {/* eslint-disable-next-line @next/next/no-img-element -- full-bleed raster tile */}
                   <img src={entry.src} alt="" aria-hidden className="new-grid-texture-media" />
+                </li>
+              ) : entry.type === "filler" ? (
+                <li key={`grid-filler-${index}`} className="new-grid-item new-grid-item-filler" aria-hidden>
+                  <WhiteSurfaceFill />
                 </li>
               ) : (
                 <li key={entry.product.id} className="new-grid-item" style={forceWhiteStyle}>
