@@ -11,14 +11,13 @@ import {
   type ReactNode,
 } from "react";
 
-import { GRID_TEXTURE_SRCS, NEW_PRODUCTS } from "@/lib/site";
+import { NEW_PRODUCTS } from "@/lib/site";
 
-const DURATION_MS = 660;
-const STEPS = 6;
+const COVER_MS = 360;
+const REVEAL_MS = 360;
 const SESSION_KEY = "taegye-dissolve";
 const PLATE_A = "#FAFAFA";
 const PLATE_B = "#F6F6F6";
-const opaqueCache = new Map<string, { sx: number; sy: number; sw: number; sh: number } | null>();
 
 type DissolveApi = {
   start: (href: string) => void;
@@ -27,315 +26,77 @@ type DissolveApi = {
 const DissolveContext = createContext<DissolveApi>({
   start: (href: string) => {
     window.location.assign(href);
-    return;
   },
 });
 
-type Tile = {
-  img: HTMLImageElement;
-  layout: HTMLImageElement;
-  box: { x: number; y: number; w: number; h: number };
-  dx: number;
-  dy: number;
-  dw: number;
-  dh: number;
-  step: number;
+type Block = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  order: number;
   gray: string;
 };
 
-const drawCache = new Map<string, HTMLImageElement>();
+type HoldState = {
+  hold: number;
+  phase: "cover" | "reveal";
+};
 
-function rawUrl(img: HTMLImageElement) {
-  const src = img.currentSrc || img.src || "";
-  try {
-    const url = new URL(src, window.location.origin);
-    if (url.pathname.includes("/_next/image")) {
-      const inner = url.searchParams.get("url");
-      if (inner) return new URL(inner, window.location.origin).href;
-    }
-    return url.href;
-  } catch {
-    return src;
-  }
+type DissolveWindow = Window & {
+  __TAEGYE_DISSOLVE_HOLD?: number;
+  __TAEGYE_DISSOLVE_PHASE?: "cover" | "reveal";
+  __TAEGYE_DISSOLVE_TILES?: Array<{ x: number; y: number; w: number; h: number; on: boolean }>;
+};
+
+function canvasDpr() {
+  const raw = window.devicePixelRatio || 1;
+  return Math.min(window.innerWidth < 768 ? 1.25 : 1.5, raw);
 }
 
-function primedDrawImage(img: HTMLImageElement) {
-  const url = rawUrl(img);
-  let cached = drawCache.get(url);
-  if (!cached) {
-    cached = new Image();
-    cached.decoding = "async";
-    cached.src = url;
-    drawCache.set(url, cached);
-  }
-  if (cached.complete && cached.naturalWidth > 1) return cached;
-  return img;
+function viewportSize() {
+  return { w: window.innerWidth, h: window.innerHeight };
 }
 
-function preloadUrl(src: string) {
-  try {
-    const abs = new URL(src, window.location.origin).href;
-    if (drawCache.has(abs)) return drawCache.get(abs)!;
-    const img = new Image();
-    img.decoding = "async";
-    img.src = src;
-    drawCache.set(abs, img);
-    void (img.decode ? img.decode().catch(() => undefined) : Promise.resolve()).then(() => {
-      if (img.naturalWidth > 1) opaqueSource(img);
-    });
-    return img;
-  } catch {
-    return null;
-  }
-}
-
-function isShown(el: Element) {
-  let node: Element | null = el;
-  while (node && node !== document.documentElement) {
-    const style = window.getComputedStyle(node);
-    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) < 0.2) {
-      return false;
-    }
-    node = node.parentElement;
-  }
-  return true;
-}
-
-function visibleGridCells() {
-  return Array.from(document.querySelectorAll<HTMLElement>(".new-grid-item")).filter((cell) => {
-    if (!isShown(cell)) return false;
-    const r = cell.getBoundingClientRect();
-    return r.width > 4 && r.height > 4;
-  });
-}
-
-function imageForCell(cell: HTMLElement) {
-  const candidates = Array.from(cell.querySelectorAll<HTMLImageElement>("img")).filter((img) => {
-    if (img.classList.contains("white-surface-fill")) return false;
-    if (!isShown(img)) return false;
-    const r = img.getBoundingClientRect();
-    return r.width > 4 && r.height > 4 && img.naturalWidth > 0;
-  });
-  let picked: HTMLImageElement | null = null;
-  for (const img of candidates) {
-    if (img.closest(".product-moss") && Number(window.getComputedStyle(img.closest(".product-moss")!).opacity) < 0.8) {
-      continue;
-    }
-    if (!picked) {
-      picked = img;
-      continue;
-    }
-    const preferMoss = img.closest(".product-moss") && Number(window.getComputedStyle(img.closest(".product-moss")!).opacity) >= 0.8;
-    if (preferMoss) picked = img;
-  }
-  return picked;
-}
-
-function cellInnerBox(cell: HTMLElement) {
-  const r = cell.getBoundingClientRect();
-  const cs = window.getComputedStyle(cell);
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const round = (n: number) => Math.round(n * dpr) / dpr;
-  const left = r.left + (parseFloat(cs.borderLeftWidth) || 0);
-  const top = r.top + (parseFloat(cs.borderTopWidth) || 0);
-  const right = r.right - (parseFloat(cs.borderRightWidth) || 0);
-  const bottom = r.bottom - (parseFloat(cs.borderBottomWidth) || 0);
-  const x = round(left);
-  const y = round(top);
-  return { x, y, w: Math.max(1, round(right) - x), h: Math.max(1, round(bottom) - y) };
-}
-
-function snapBox(img: HTMLImageElement) {
-  const r = img.getBoundingClientRect();
-  const nw = img.naturalWidth;
-  const nh = img.naturalHeight;
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const round = (n: number) => Math.round(n * dpr) / dpr;
-  if (window.getComputedStyle(img).objectFit === "cover") {
-    const x = round(r.left);
-    const y = round(r.top);
-    return { x, y, w: round(r.left + r.width) - x, h: round(r.top + r.height) - y, nw, nh };
-  }
-  const scale = Math.min(r.width / nw, r.height / nh);
-  const w = nw * scale;
-  const h = nh * scale;
-  const x = round(r.left + (r.width - w) / 2);
-  const y = round(r.top + (r.height - h) / 2);
-  return { x, y, w: round(r.left + (r.width + w) / 2) - x, h: round(r.top + (r.height + h) / 2) - y, nw, nh };
-}
-
-function opaqueSource(img: HTMLImageElement) {
-  const url = rawUrl(img);
-  const hit = opaqueCache.get(url);
-  if (hit !== undefined) return hit;
-  const nw = img.naturalWidth;
-  const nh = img.naturalHeight;
-  const full = { sx: 0, sy: 0, sw: nw, sh: nh };
-  if (nw < 2 || nh < 2) {
-    opaqueCache.set(url, full);
-    return full;
-  }
-  try {
-    const canvas = document.createElement("canvas");
-    canvas.width = nw;
-    canvas.height = nh;
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) {
-      opaqueCache.set(url, full);
-      return full;
-    }
-    ctx.drawImage(img, 0, 0);
-    const data = ctx.getImageData(0, 0, nw, nh).data;
-    let minX = nw;
-    let minY = nh;
-    let maxX = 0;
-    let maxY = 0;
-    const step = nw > 400 ? 4 : 2;
-    for (let y = 0; y < nh; y += step) {
-      for (let x = 0; x < nw; x += step) {
-        if (data[(y * nw + x) * 4 + 3] > 16) {
-          if (x < minX) minX = x;
-          if (y < minY) minY = y;
-          if (x > maxX) maxX = x;
-          if (y > maxY) maxY = y;
-        }
-      }
-    }
-    if (maxX < minX) {
-      opaqueCache.set(url, null);
-      return null;
-    }
-    const box = {
-      sx: Math.max(0, minX - 2),
-      sy: Math.max(0, minY - 2),
-      sw: Math.min(nw, maxX + 3) - Math.max(0, minX - 2),
-      sh: Math.min(nh, maxY + 3) - Math.max(0, minY - 2),
-    };
-    opaqueCache.set(url, box);
-    return box;
-  } catch {
-    opaqueCache.set(url, full);
-    return full;
-  }
-}
-
-type Cell = { r: number; c: number; r2: number; c2: number };
-
-function cellArea(cell: Cell) {
-  return (cell.r2 - cell.r + 1) * (cell.c2 - cell.c + 1);
-}
-
-function canJoin(a: Cell, b: Cell) {
-  const union: Cell = {
-    r: Math.min(a.r, b.r),
-    c: Math.min(a.c, b.c),
-    r2: Math.max(a.r2, b.r2),
-    c2: Math.max(a.c2, b.c2),
-  };
-  return cellArea(a) + cellArea(b) === cellArea(union);
-}
-
-function chunkRects(w: number, h: number, dpr: number) {
-  const cols = 3;
-  const W = Math.max(cols, Math.round(w * dpr));
-  const H = Math.max(2, Math.round(h * dpr));
-  const rows = H * 10 >= W * 9 ? 3 : 2;
-  const xs = Array.from({ length: cols + 1 }, (_, i) => Math.round((W * i) / cols));
-  const ys = Array.from({ length: rows + 1 }, (_, i) => Math.round((H * i) / rows));
-  xs[0] = 0;
-  ys[0] = 0;
-  xs[cols] = W;
-  ys[rows] = H;
-
-  const pieces: Cell[] = [];
+function buildBlocks(vw: number, vh: number): Block[] {
+  const size = vw < 768 ? 32 : 44;
+  const cols = Math.max(8, Math.ceil(vw / size));
+  const rows = Math.max(8, Math.ceil(vh / size));
+  const blocks: Block[] = [];
   for (let r = 0; r < rows; r += 1) {
     for (let c = 0; c < cols; c += 1) {
-      pieces.push({ r, c, r2: r, c2: c });
-    }
-  }
-
-  const target = Math.min(pieces.length, 5 + Math.floor(Math.random() * 3));
-  let guard = 32;
-  while (pieces.length > target && guard-- > 0) {
-    const pairs: Array<[number, number]> = [];
-    for (let i = 0; i < pieces.length; i += 1) {
-      for (let j = i + 1; j < pieces.length; j += 1) {
-        if (canJoin(pieces[i], pieces[j])) pairs.push([i, j]);
-      }
-    }
-    if (pairs.length === 0) break;
-    const [i, j] = pairs[Math.floor(Math.random() * pairs.length)];
-    const a = pieces[i];
-    const b = pieces[j];
-    const merged: Cell = {
-      r: Math.min(a.r, b.r),
-      c: Math.min(a.c, b.c),
-      r2: Math.max(a.r2, b.r2),
-      c2: Math.max(a.c2, b.c2),
-    };
-    pieces.splice(j, 1);
-    pieces.splice(i, 1);
-    pieces.push(merged);
-  }
-
-  return pieces.map((piece) => ({
-    x: xs[piece.c] / dpr,
-    y: ys[piece.r] / dpr,
-    w: (xs[piece.c2 + 1] - xs[piece.c]) / dpr,
-    h: (ys[piece.r2 + 1] - ys[piece.r]) / dpr,
-  }));
-}
-
-function currentStep(t: number) {
-  if (t <= 0) return 0;
-  if (t >= 1) return STEPS + 1;
-  return Math.min(STEPS, Math.floor(t * STEPS) + 1);
-}
-
-function holdProgress(hold: number) {
-  if (hold > 1) return hold / DURATION_MS;
-  return hold;
-}
-
-function buildTiles(
-  cells: HTMLElement[],
-  images: Map<HTMLElement, HTMLImageElement | null>,
-): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
-  const tiles: Tile[] = [];
-  const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  let card = 0;
-  for (const cell of cells) {
-    const layout = images.get(cell) ?? imageForCell(cell);
-    const box = cellInnerBox(cell);
-    boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
-    const photo = layout ? snapBox(layout) : box;
-    const draw = layout ? primedDrawImage(layout) : new Image();
-    const raw = chunkRects(box.w, box.h, dpr);
-    const order = raw.map((_, i) => i);
-    for (let i = order.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const swap = order[i];
-      order[i] = order[j];
-      order[j] = swap;
-    }
-    const offset = card % STEPS;
-    card += 1;
-    raw.forEach((piece, index) => {
-      tiles.push({
-        img: draw,
-        layout: layout ?? draw,
-        box: { x: photo.x, y: photo.y, w: photo.w, h: photo.h },
-        dx: box.x + piece.x,
-        dy: box.y + piece.y,
-        dw: piece.w,
-        dh: piece.h,
-        step: 1 + ((order[index] + offset) % STEPS),
-        gray: Math.random() < 0.5 ? PLATE_A : PLATE_B,
+      const x = c * size;
+      const y = r * size;
+      const jitter = ((((r * 73856093) ^ (c * 19349663)) >>> 0) % 1000) / 1000;
+      blocks.push({
+        x,
+        y,
+        w: c === cols - 1 ? vw - x : size,
+        h: r === rows - 1 ? vh - y : size,
+        order: r + c + jitter * 0.72,
+        gray: ((r + c) & 1) === 0 ? PLATE_A : PLATE_B,
       });
-    });
+    }
   }
-  return { tiles, boxes };
+  blocks.sort((a, b) => a.order - b.order);
+  return blocks;
+}
+
+function holdState(): HoldState | null {
+  const hold = Number((window as DissolveWindow).__TAEGYE_DISSOLVE_HOLD);
+  if (!Number.isFinite(hold)) return null;
+  const phase = (window as DissolveWindow).__TAEGYE_DISSOLVE_PHASE === "reveal" ? "reveal" : "cover";
+  return { hold: Math.min(1, Math.max(0, hold)), phase };
+}
+
+function publishTiles(blocks: Block[], onFrom: number, onTo: number) {
+  (window as DissolveWindow).__TAEGYE_DISSOLVE_TILES = blocks.map((block, index) => ({
+    x: block.x,
+    y: block.y,
+    w: block.w,
+    h: block.h,
+    on: index >= onFrom && index < onTo,
+  }));
 }
 
 function ensureCanvas() {
@@ -346,107 +107,103 @@ function ensureCanvas() {
     canvas.setAttribute("aria-hidden", "true");
     document.body.appendChild(canvas);
   }
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const w = document.documentElement.clientWidth;
-  const h = document.documentElement.clientHeight;
-  canvas.width = Math.round(w * dpr);
-  canvas.height = Math.round(h * dpr);
+  const dpr = canvasDpr();
+  const { w, h } = viewportSize();
+  canvas.width = Math.max(1, Math.round(w * dpr));
+  canvas.height = Math.max(1, Math.round(h * dpr));
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
   canvas.style.pointerEvents = "auto";
   canvas.style.backgroundColor = "transparent";
+  canvas.style.zIndex = "90";
+  canvas.style.colorScheme = "only light";
+  canvas.style.setProperty("forced-color-adjust", "none");
   const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   if (ctx) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
+    ctx.imageSmoothingEnabled = false;
   }
-  return { canvas, ctx, dpr };
+  return { canvas, ctx, dpr, w, h };
 }
 
-function drawFull(ctx: CanvasRenderingContext2D, tile: Tile) {
-  const nw = tile.img.naturalWidth;
-  const nh = tile.img.naturalHeight;
-  if (nw < 1 || nh < 1) return;
-  ctx.globalAlpha = 1;
-  ctx.globalCompositeOperation = "source-over";
-  ctx.drawImage(tile.img, 0, 0, nw, nh, tile.box.x, tile.box.y, tile.box.w, tile.box.h);
-}
-
-function paint(ctx: CanvasRenderingContext2D, tiles: Tile[], t: number) {
+function paint(ctx: CanvasRenderingContext2D, blocks: Block[], t: number, phase: "cover" | "reveal") {
+  const dpr = canvasDpr();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.globalCompositeOperation = "source-over";
-  ctx.globalAlpha = 1;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
-  const seen = new Set<HTMLImageElement>();
-  for (const tile of tiles) {
-    if (seen.has(tile.layout)) continue;
-    seen.add(tile.layout);
-    drawFull(ctx, tile);
-  }
-
-  if (t <= 0) return;
-
-  const step = currentStep(t);
-  ctx.save();
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.fillStyle = "#000000";
-  for (const tile of tiles) {
-    if (tile.step > step) continue;
-    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
-  }
-  ctx.restore();
-
+  ctx.imageSmoothingEnabled = false;
   ctx.globalCompositeOperation = "source-over";
   ctx.globalAlpha = 1;
-  for (const tile of tiles) {
-    if (tile.step !== step) continue;
-    ctx.fillStyle = tile.gray;
-    ctx.fillRect(tile.dx, tile.dy, tile.dw, tile.dh);
+
+  const cut = Math.round(t * blocks.length);
+  const start = phase === "cover" ? 0 : cut;
+  const end = phase === "cover" ? cut : blocks.length;
+
+  for (let i = start; i < end; i += 1) {
+    const block = blocks[i];
+    ctx.fillStyle = block.gray;
+    ctx.fillRect(block.x, block.y, block.w, block.h);
   }
+
+  publishTiles(blocks, start, end);
+}
+
+function paintIncremental(
+  ctx: CanvasRenderingContext2D,
+  blocks: Block[],
+  from: number,
+  to: number,
+  phase: "cover" | "reveal",
+) {
+  const dpr = canvasDpr();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  if (phase === "cover") {
+    ctx.globalCompositeOperation = "source-over";
+    for (let i = from; i < to; i += 1) {
+      const block = blocks[i];
+      ctx.fillStyle = block.gray;
+      ctx.fillRect(block.x, block.y, block.w, block.h);
+    }
+    publishTiles(blocks, 0, to);
+    return;
+  }
+  for (let i = from; i < to; i += 1) {
+    const block = blocks[i];
+    ctx.clearRect(block.x, block.y, block.w, block.h);
+  }
+  publishTiles(blocks, to, blocks.length);
 }
 
 function removeCanvas() {
   document.querySelectorAll(".grid-dissolve-canvas").forEach((node) => node.remove());
   document.documentElement.classList.remove("is-dissolving");
-  document.querySelector(".new-grid")?.classList.remove("is-dissolve-lock");
 }
 
-function publishBoxes(boxes: Array<{ x: number; y: number; w: number; h: number }>) {
-  (
-    window as Window & {
-      __TAEGYE_DISSOLVE_BOXES?: Array<{ x: number; y: number; w: number; h: number }>;
-    }
-  ).__TAEGYE_DISSOLVE_BOXES = boxes;
-}
-
-function publishTiles(tiles: Tile[]) {
-  (
-    window as Window & {
-      __TAEGYE_DISSOLVE_TILES?: Array<{ x: number; y: number; w: number; h: number; step: number }>;
-    }
-  ).__TAEGYE_DISSOLVE_TILES = tiles.map((tile) => ({
-    x: tile.dx,
-    y: tile.dy,
-    w: tile.dw,
-    h: tile.dh,
-    step: tile.step,
-  }));
+function waitForPdp(ms = 1600) {
+  const begun = performance.now();
+  return new Promise<void>((resolve) => {
+    const tick = () => {
+      if (document.querySelector(".pdp") || performance.now() - begun > ms) {
+        resolve();
+        return;
+      }
+      window.requestAnimationFrame(tick);
+    };
+    tick();
+  });
 }
 
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const busy = useRef(false);
   const raf = useRef(0);
+  const blocksRef = useRef<Block[]>([]);
 
   const reset = useCallback(() => {
     cancelAnimationFrame(raf.current);
     busy.current = false;
+    blocksRef.current = [];
     removeCanvas();
   }, []);
 
@@ -464,100 +221,93 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
         /* ignore */
       }
 
-      const go = () => {
-        router.push(href);
-        window.setTimeout(reset, 900);
-      };
-
       try {
         router.prefetch(href);
       } catch {
         /* ignore */
       }
-      const id = href.split("/").pop();
-      if (id) preloadUrl(`/products/stand-${id}.webp`);
-
-      const cells = visibleGridCells();
-      const cellImages = new Map(cells.map((cell) => [cell, imageForCell(cell)] as const));
-      const visibles = [...cellImages.values()].filter((img): img is HTMLImageElement => !!img);
-      for (const img of visibles) primedDrawImage(img);
 
       document.documentElement.classList.add("is-dissolving");
-      document.querySelector(".new-grid")?.classList.add("is-dissolve-lock");
+      const { ctx } = ensureCanvas();
+      const { w, h } = viewportSize();
+      const blocks = buildBlocks(w, h);
+      blocksRef.current = blocks;
 
-      const sourcesReady = () =>
-        visibles.every((img) => {
-          const draw = primedDrawImage(img);
-          return draw.complete && draw.naturalWidth > 1;
-        });
-
-      const run = (tiles: Tile[]) => {
-        const { ctx } = ensureCanvas();
-        if (!ctx) {
-          window.setTimeout(go, DURATION_MS);
-          return;
-        }
-
-        const hold = Number((window as Window & { __TAEGYE_DISSOLVE_HOLD?: number }).__TAEGYE_DISSOLVE_HOLD);
-        if (Number.isFinite(hold)) {
-          paint(ctx, tiles, Math.min(1, Math.max(0, holdProgress(hold))));
-          return;
-        }
-
-        if (tiles.length === 0) {
-          window.setTimeout(go, DURATION_MS);
-          return;
-        }
-
-        paint(ctx, tiles, 0);
-        const begun = performance.now();
-        const tick = (now: number) => {
-          const t = (now - begun) / DURATION_MS;
-          paint(ctx, tiles, Math.min(1, t));
-          if (t < 1) {
-            raf.current = requestAnimationFrame(tick);
-          } else {
-            go();
-          }
-        };
-        raf.current = requestAnimationFrame(tick);
-      };
-
-      const kick = () => {
-        const built = buildTiles(cells, cellImages);
-        publishBoxes(built.boxes);
-        publishTiles(built.tiles);
-        run(built.tiles);
-      };
-
-      if (sourcesReady()) {
-        kick();
+      if (!ctx) {
+        router.push(href);
+        window.setTimeout(reset, 400);
         return;
       }
 
-      void Promise.all(
-        visibles.map((img) => {
-          const draw = primedDrawImage(img);
-          return draw.decode ? draw.decode().catch(() => undefined) : Promise.resolve();
-        }),
-      ).then(() => {
-        kick();
-      });
+      const held = holdState();
+      if (held) {
+        if (held.phase === "reveal") {
+          paint(ctx, blocks, 1, "cover");
+          router.push(href);
+          void waitForPdp().then(() => {
+            const next = ensureCanvas();
+            if (next.ctx) paint(next.ctx, blocks, held.hold, "reveal");
+          });
+          return;
+        }
+        paint(ctx, blocks, held.hold, "cover");
+        return;
+      }
+
+      paint(ctx, blocks, 0, "cover");
+      let last = 0;
+      const begun = performance.now();
+      const tickCover = (now: number) => {
+        const t = Math.min(1, (now - begun) / COVER_MS);
+        const next = Math.round(t * blocks.length);
+        if (next !== last) {
+          paintIncremental(ctx, blocks, last, next, "cover");
+          last = next;
+        }
+        if (t < 1) {
+          raf.current = requestAnimationFrame(tickCover);
+          return;
+        }
+        paint(ctx, blocks, 1, "cover");
+        router.push(href);
+        void waitForPdp().then(() => {
+          const live = ensureCanvas();
+          if (!live.ctx) {
+            reset();
+            return;
+          }
+          paint(live.ctx, blocks, 0, "reveal");
+          let cleared = 0;
+          const revealStart = performance.now();
+          const tickReveal = (stamp: number) => {
+            const u = Math.min(1, (stamp - revealStart) / REVEAL_MS);
+            const nextCleared = Math.round(u * blocks.length);
+            if (nextCleared !== cleared) {
+              paintIncremental(live.ctx!, blocks, cleared, nextCleared, "reveal");
+              cleared = nextCleared;
+            }
+            if (u < 1) {
+              raf.current = requestAnimationFrame(tickReveal);
+              return;
+            }
+            reset();
+          };
+          raf.current = requestAnimationFrame(tickReveal);
+        });
+      };
+      raf.current = requestAnimationFrame(tickCover);
     },
     [reset, router],
   );
 
   useEffect(() => {
     for (const product of NEW_PRODUCTS) {
-      preloadUrl(product.emptySrc);
-      preloadUrl(product.mossSrc);
       try {
         router.prefetch(`/new/${product.id}`);
       } catch {
         /* ignore */
       }
     }
-    for (const src of GRID_TEXTURE_SRCS) preloadUrl(src);
   }, [router]);
 
   useEffect(() => {
