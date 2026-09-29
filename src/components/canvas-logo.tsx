@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-import { CANVAS_WHITE } from "@/lib/canvas-white";
 import { cn } from "@/lib/utils";
 
 type CanvasLogoProps = {
@@ -16,7 +15,7 @@ type CanvasLogoProps = {
 
 /**
  * Draw the transparent black PNG onto a canvas so OEM Force Dark cannot grey the mark.
- * The PNG stays the source; pixels become canvas ink.
+ * Alpha canvas — no opaque rectangle whose right/bottom edge can read as a grid line.
  */
 export function CanvasLogo({
   src,
@@ -41,18 +40,21 @@ export function CanvasLogo({
       canvas.height = Math.max(1, Math.round(height * dpr));
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      const ctx = canvas.getContext("2d", { alpha: false });
+      const ctx = canvas.getContext("2d", { alpha: true });
       if (!ctx) return;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = CANVAS_WHITE;
-      ctx.fillRect(0, 0, width, height);
-      const scale = Math.min(width / img.naturalWidth, height / img.naturalHeight);
+      const pad = 1;
+      const innerW = Math.max(1, width - pad * 2);
+      const innerH = Math.max(1, height - pad * 2);
+      const scale = Math.min(innerW / img.naturalWidth, innerH / img.naturalHeight);
       const dw = img.naturalWidth * scale;
       const dh = img.naturalHeight * scale;
-      const dx = align === "center" ? (width - dw) / 2 : 0;
-      const dy = (height - dh) / 2;
+      const dx = pad + (align === "center" ? (innerW - dw) / 2 : 0);
+      const dy = pad + (innerH - dh) / 2;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, dx, dy, dw, dh);

@@ -20,6 +20,21 @@ export function IntroSplashController() {
   useEffect(() => {
     const root = document.documentElement;
     const splash = document.querySelector(".site-splash");
+    const home = window.location.pathname === "/";
+    let stored = false;
+    try {
+      stored = sessionStorage.getItem(STORAGE_KEY) === "1";
+    } catch {
+      stored = false;
+    }
+    const skip = queryFlag("intro", "skip") || queryFlag("promo", "hold") || (!shouldHold() && stored);
+
+    if (!home || (skip && !shouldHold())) {
+      root.dataset.intro = "done";
+      window.dispatchEvent(new Event("taegye:intro-done"));
+      return;
+    }
+
     if (root.dataset.intro === "done") {
       window.dispatchEvent(new Event("taegye:intro-done"));
       return;

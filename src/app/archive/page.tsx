@@ -15,11 +15,11 @@ export default function ArchivePage() {
       <h1 className="site-gutter py-4 text-[11px] font-normal tracking-[var(--tracking-label-lg)]">
         Archive
       </h1>
-      <div className="grid grid-cols-2 gap-0">
+      <div className="new-grid archive-grid">
         {Array.from({ length: 4 }, (_, i) => (
           <div
             key={i}
-            className="aspect-[4/5] min-h-[42vh] border-r border-b border-[#111111] even:border-r-0 sm:min-h-[50vh]"
+            className="new-grid-item aspect-[4/5] min-h-[42vh] sm:min-h-[50vh]"
           >
             <ImageSlot label={`Archive image slot ${i + 1}`} />
           </div>
