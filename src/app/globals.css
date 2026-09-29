@@ -291,21 +291,25 @@ body,
   overscroll-behavior-y: none;
 }
 
-.site-shell {
-  overflow-x: hidden;
-}
-
-/* Classic Windows scrollbars take width. Keep the scroller on html from
-   first paint so the bar never appears later and shoves the layout. */
+/* Document scroll lives on html. overflow-x:hidden on html+body+shell
+   made nested scrollports and blocked touch/wheel after #76. clip does
+   not compute overflow-y to auto. Reserve the Windows gutter only on
+   fine-pointer desktops so mobile is not locked. */
 html {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  scrollbar-gutter: stable;
+  overflow-x: clip;
+  overflow-y: auto;
 }
 
-body {
-  overflow-x: hidden;
-  overflow-y: visible;
+body,
+.site-shell {
+  overflow: visible;
+}
+
+@media (hover: hover) and (pointer: fine), (min-width: 768px) {
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
 }
 
 .site-shell,
@@ -696,7 +700,30 @@ button {
 }
 
 .pdp-store {
+  display: inline-flex;
+  align-items: center;
   line-height: 22px;
+  white-space: nowrap;
+}
+
+.pdp-store-chevron {
+  display: inline-block;
+  width: 6px;
+  height: 10px;
+  margin-left: 6px;
+  flex: 0 0 auto;
+  background-color: #111111;
+  background-image: url("/ink-111.jpg");
+  background-repeat: repeat;
+  background-size: 8px 8px;
+  color: #111111;
+  forced-color-adjust: none;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 10'><path d='M1 1.2L4.8 5 1 8.8' fill='none' stroke='black' stroke-width='1'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 10'><path d='M1 1.2L4.8 5 1 8.8' fill='none' stroke='black' stroke-width='1'/></svg>");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .pdp-rail .pdp-note,
@@ -1010,7 +1037,8 @@ html.is-dissolving .new-grid-texture-media,
 }
 
 .pdp-store {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin-top: 2.25rem;
 }
 
