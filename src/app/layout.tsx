@@ -82,7 +82,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         <style
           dangerouslySetInnerHTML={{
-            __html: `@media (min-width:768px){:root{--hero-clip-w:230px;--hero-clip-h:130px}.home-hero{position:relative!important;display:block!important;width:100%!important;height:100lvh!important;min-height:100lvh!important;max-height:100lvh!important;overflow:hidden}.home-hero-clip{position:absolute!important;opacity:1;width:calc(var(--hero-clip-w)*var(--hero-scale,1))!important;height:calc(var(--hero-clip-h)*var(--hero-scale,1));max-width:none;right:auto;bottom:auto}.home-hero-clip-a{top:19%;left:12%}.home-hero-clip-b{top:28%;left:71%}.home-hero-clip-c{top:56%;left:39%}}`,
+            __html: `@media (max-width:767.98px){.home-hero{height:100svh!important;min-height:100svh!important;max-height:100svh!important;padding-top:0!important;padding-bottom:0!important;justify-content:center;align-items:center}}@media (min-width:768px){:root{--hero-clip-w:230px;--hero-clip-h:130px}.home-hero{position:relative!important;display:block!important;width:100%!important;height:100lvh!important;min-height:100lvh!important;max-height:100lvh!important;overflow:hidden}.home-hero-clip{position:absolute!important;opacity:1;width:calc(var(--hero-clip-w)*var(--hero-scale,1))!important;height:calc(var(--hero-clip-h)*var(--hero-scale,1));max-width:none;right:auto;bottom:auto}.home-hero-clip-a{top:19%;left:12%}.home-hero-clip-b{top:28%;left:71%}.home-hero-clip-c{top:56%;left:39%}}`,
           }}
         />
         <script

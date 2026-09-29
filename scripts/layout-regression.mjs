@@ -13,6 +13,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const MOBILE = { width: 412, height: 915, deviceScaleFactor: 2.75 };
+const MOBILE_360 = { width: 360, height: 780, deviceScaleFactor: 2 };
 const DESKTOP = { width: 1440, height: 900, deviceScaleFactor: 1 };
 const DESKTOP_FHD = { width: 1920, height: 1080, deviceScaleFactor: 1 };
 const BASE = (process.env.BASE_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
@@ -100,10 +101,18 @@ async function runBrowser() {
         assert.equal(clip.position, "relative");
         assert.ok(Math.abs(clip.x - (412 - 138) / 2) <= 4, `clip should be centered, x=${clip.x}`);
       }
-      assert.ok(Math.abs(hero.h - 915) <= 2, `hero should be 100lvh, got ${hero.h}`);
+      assert.ok(Math.abs(hero.h - 915) <= 2, `hero should be 100svh, got ${hero.h}`);
       assert.equal(hero.overflow, "hidden");
       assert.equal(hero.justify, "center");
       assert.equal(hero.align, "center");
+      const stackTop = Math.min(...clips.map((c) => c.y));
+      const stackBottom = Math.max(...clips.map((c) => c.y + c.h));
+      const stackMid = (stackTop + stackBottom) / 2;
+      const viewMid = 915 / 2;
+      assert.ok(
+        Math.abs(stackMid - viewMid) <= 2,
+        `mobile stack center ${stackMid} should match viewport center ${viewMid}`,
+      );
       const logo = await page.$eval(".site-float-logo", (node) => {
         const s = getComputedStyle(node);
         const r = node.getBoundingClientRect();
@@ -121,7 +130,30 @@ async function runBrowser() {
       assert.equal(logo.hidden, false);
       assert.ok(logo.opacity > 0.5, "float logo visible at home top");
       assert.ok(logo.y + logo.h > 800, `float logo should sit near the bottom, y=${logo.y}`);
-      console.log("ok  mobile home: three equal 138px loops, 100lvh, floating logo");
+      console.log("ok  mobile home: three equal 138px loops, 100svh, centered, floating logo");
+    });
+
+    await withPage(browser, MOBILE_360, "/", async (page) => {
+      const clips = await page.$$eval(".home-hero-clip", (nodes) =>
+        nodes.map((node) => {
+          const r = node.getBoundingClientRect();
+          return { x: r.x, y: r.y, w: r.width, h: r.height };
+        }),
+      );
+      assert.equal(clips.length, 3);
+      for (const clip of clips) {
+        assert.ok(Math.abs(clip.w - 138) <= 2, `360 clip width ${clip.w}`);
+        assert.ok(Math.abs(clip.h - 78) <= 2, `360 clip height ${clip.h}`);
+        assert.ok(Math.abs(clip.x - (360 - 138) / 2) <= 4, `360 clip x=${clip.x}`);
+      }
+      const stackTop = Math.min(...clips.map((c) => c.y));
+      const stackBottom = Math.max(...clips.map((c) => c.y + c.h));
+      const stackMid = (stackTop + stackBottom) / 2;
+      assert.ok(
+        Math.abs(stackMid - 780 / 2) <= 2,
+        `360 stack center ${stackMid} should match 390`,
+      );
+      console.log("ok  mobile 360×780: stack centered in the viewport");
     });
 
     await withPage(browser, MOBILE, "/new", async (page) => {
