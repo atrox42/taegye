@@ -13,9 +13,12 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     <GridDissolveProvider>
     <div className="site-shell relative z-[1] flex min-h-lvh flex-col" style={forceWhiteStyle}>
       <WhiteBitmapLayer />
+      <CanvasWhitePlate />
       <div className="site-column relative z-[1] flex min-h-lvh flex-1 flex-col">
+        <CanvasWhitePlate />
         <SiteHeader />
         <main className="site-main relative flex-1">
+          <CanvasWhitePlate />
           {children}
         </main>
         <FloatLogo />

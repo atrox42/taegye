@@ -64,7 +64,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
       </PdpReveal>
 
-      <div className="pdp-rails">
+      <div className="pdp-rails" style={forceWhiteStyle}>
+        <WhiteSurfaceFill />
         <div className="pdp-rail pdp-rail-copy">
           <h1 className="site-type pdp-name">{product.name}</h1>
           <p lang="en" className="site-type pdp-note" style={forceInkStyle}>

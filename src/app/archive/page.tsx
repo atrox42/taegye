@@ -19,7 +19,7 @@ export default function ArchivePage() {
         {Array.from({ length: 4 }, (_, i) => (
           <div
             key={i}
-            className="aspect-[4/5] min-h-[42vh] border-r border-b border-white even:border-r-0 sm:min-h-[50vh]"
+            className="aspect-[4/5] min-h-[42vh] border-r border-b border-[#111111] even:border-r-0 sm:min-h-[50vh]"
           >
             <ImageSlot label={`Archive image slot ${i + 1}`} />
           </div>

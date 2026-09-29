@@ -82,11 +82,11 @@
   --font-pretendard: "Pretendard Variable", Pretendard, var(--font-noto-sans-kr),
     ui-sans-serif, system-ui, sans-serif;
   --line-e5-image: url("/line-e5.jpg");
-  --background: #ffffff;
+  --background: transparent;
   --foreground: #111111;
-  --card: #ffffff;
+  --card: transparent;
   --card-foreground: #111111;
-  --popover: #ffffff;
+  --popover: transparent;
   --popover-foreground: #111111;
   --primary: #111111;
   --primary-foreground: #ffffff;
@@ -106,7 +106,7 @@
   --chart-4: #444444;
   --chart-5: #222222;
   --radius: 0.625rem;
-  --sidebar: #ffffff;
+  --sidebar: transparent;
   --sidebar-foreground: #111111;
   --sidebar-primary: #111111;
   --sidebar-primary-foreground: #ffffff;
@@ -128,11 +128,11 @@ body,
   body,
   .dark {
     color-scheme: only light;
-    --background: #ffffff;
+    --background: transparent;
     --foreground: #111111;
-    --card: #ffffff;
+    --card: transparent;
     --card-foreground: #111111;
-    --popover: #ffffff;
+    --popover: transparent;
     --popover-foreground: #111111;
     --primary: #111111;
     --primary-foreground: #ffffff;
@@ -146,7 +146,7 @@ body,
     --border: #ebebeb;
     --input: #ebebeb;
     --ring: #bbbbbb;
-    --sidebar: #ffffff;
+    --sidebar: transparent;
     --sidebar-foreground: #111111;
     --sidebar-primary: #111111;
     --sidebar-primary-foreground: #ffffff;
@@ -164,12 +164,12 @@ body,
   html {
     @apply font-sans;
     color-scheme: only light;
-    background-color: #ffffff;
+    background-color: transparent;
   }
   body {
     @apply text-neutral-900 antialiased;
     color-scheme: only light;
-    background-color: #ffffff;
+    background-color: transparent;
     color: #111111;
     font-size: 13px;
     letter-spacing: var(--tracking-body);
@@ -218,7 +218,7 @@ html,
 body,
 #__next,
 #root {
-  background-color: #ffffff !important;
+  background-color: transparent !important;
   background-image: none !important;
   color: #111111 !important;
   color-scheme: only light !important;
@@ -227,6 +227,13 @@ body,
 
 .site-shell,
 .site-column,
+.site-main,
+.home-hero,
+.home-new-in,
+.pdp-rails,
+.pdp-rail,
+.home-new-in-visual,
+.home-new-in-grid,
 .site-footer,
 .site-footer-inner,
 .site-header,
@@ -1508,7 +1515,6 @@ select::-ms-expand {
   top: 0;
   left: 0;
   right: 0;
-  isolation: isolate;
   z-index: 50;
 }
 
@@ -1931,12 +1937,19 @@ select::-ms-expand {
 .pdp-atelier > :not(.white-surface-fill):not(.canvas-white-fill):not(.pdp-rail):not(.pdp-rails):not(.pdp-gallery):not(.pdp-gallery-slide):not(.pdp-gallery-track),
 .pdp-hero > :not(.white-surface-fill):not(.canvas-white-fill),
 .pdp-visual > :not(.white-surface-fill):not(.canvas-white-fill),
+.pdp-rails > :not(.white-surface-fill):not(.canvas-white-fill),
+.pdp-rail > :not(.white-surface-fill):not(.canvas-white-fill),
 .new-page > :not(.white-surface-fill):not(.canvas-white-fill),
 .new-grid > :not(.white-surface-fill):not(.canvas-white-fill),
 .new-grid-item > :not(.white-surface-fill):not(.canvas-white-fill),
 .new-subnav > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-page > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-main > :not(.white-surface-fill):not(.canvas-white-fill),
+.site-shell > :not(.white-surface-fill):not(.canvas-white-fill):not(.canvas-white-fixed),
+.home-hero > :not(.white-surface-fill):not(.canvas-white-fill),
+.home-new-in > :not(.white-surface-fill):not(.canvas-white-fill),
+.home-new-in-visual > :not(.white-surface-fill):not(.canvas-white-fill),
+.home-new-in-grid > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-footer > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-footer-inner > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-footer-row > :not(.white-surface-fill):not(.canvas-white-fill),
@@ -1945,6 +1958,7 @@ select::-ms-expand {
 .home-new-in-head > :not(.white-surface-fill):not(.canvas-white-fill),
 .home-new-in-card > :not(.white-surface-fill):not(.canvas-white-fill),
 .home-new-in-caption > :not(.white-surface-fill):not(.canvas-white-fill),
+.site-header > :not(.canvas-white-fill),
 .site-menubar > :not(.canvas-white-fill),
 .site-menu > :not(.canvas-white-fill),
 .site-nav > :not(.canvas-white-fill),
@@ -1957,6 +1971,12 @@ select::-ms-expand {
 .site-column,
 .site-main,
 .site-page,
+.site-shell,
+.home-hero,
+.home-new-in,
+.home-new-in-visual,
+.pdp-rails,
+.pdp-rail,
 .new-page,
 .new-grid,
 .new-grid-item,
@@ -2142,7 +2162,13 @@ select::-ms-expand {
 
 .site-menu {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100lvh;
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -2152,8 +2178,8 @@ select::-ms-expand {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(-6px);
-  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+  transform: none;
+  transition: opacity 180ms ease, visibility 180ms ease;
 }
 
 .site-menu.is-open {
@@ -2362,7 +2388,7 @@ select::-ms-expand {
   body,
   #__next,
   #root {
-    background-color: #ffffff !important;
+    background-color: transparent !important;
     background-image: none !important;
     color: #111111 !important;
     color-scheme: only light !important;

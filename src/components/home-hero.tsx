@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
 import {
   parseHeroScales,
@@ -84,6 +85,7 @@ export function HomeHero({ scales }: { scales: HeroScaleTriple }) {
       data-hero-mobile-equal="1"
       style={forceWhiteStyle}
     >
+      <WhiteSurfaceFill />
       {HERO_CLIPS.map((clip, index) => {
         const scale = scales[index];
         const slot = slots?.[index];
