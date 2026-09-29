@@ -96,10 +96,16 @@ async function withPromo(browser, viewport, dark, fn) {
   if (dark) await enableForcedDark(page);
   await pageReady(page);
   await page.waitForSelector(".site-promo-card", { timeout: 20000 });
-  await page.waitForFunction(
+      await page.waitForFunction(
     () => {
       const title = document.querySelector(".site-promo-title canvas");
-      return title instanceof HTMLCanvasElement && title.width > 4;
+      const strip = document.querySelector(".site-promo-strip-btn canvas");
+      return (
+        title instanceof HTMLCanvasElement &&
+        title.width > 4 &&
+        strip instanceof HTMLCanvasElement &&
+        strip.width > 4
+      );
     },
     { timeout: 15000 },
   );
@@ -694,6 +700,24 @@ async function runBrowser() {
           }
           return score < 0 ? null : best;
         };
+        const darkest = (sel) => {
+          const canvas = document.querySelector(sel);
+          if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 2) return null;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return null;
+          const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let best = [255, 255, 255, 0];
+          let score = Infinity;
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] < 200) continue;
+            const s = data[i] + data[i + 1] + data[i + 2];
+            if (s < score) {
+              score = s;
+              best = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+            }
+          }
+          return score === Infinity ? null : best;
+        };
         const x = document.querySelector(".site-promo-x");
         const xr = x ? x.getBoundingClientRect() : null;
         return {
@@ -708,20 +732,30 @@ async function runBrowser() {
           cta: brightest(".site-promo-cta-label canvas"),
           line: brightest(".site-promo-line canvas"),
           eyebrow: brightest(".site-promo-eyebrow canvas"),
+          stripInk: darkest(".site-promo-strip-btn canvas"),
+          stripPlate: sampleCanvas(".site-promo-strip .canvas-white-fill", 0.5, 0.5),
+          hideLabel: document.querySelector(".site-promo-strip-btn .sr-only")?.textContent || "",
+          closeLabel:
+            document.querySelector(".site-promo-strip-close .sr-only")?.textContent || "",
           open: Boolean(document.querySelector(".site-promo-card")),
         };
       });
-      assert.equal(report.strip, false, `${label}: strip should be gone`);
-      assert.equal(report.stripBtns, 0, `${label}: strip buttons`);
+      assert.equal(report.strip, true, `${label}: hide-today / close strip missing`);
+      assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
+      assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
+      assert.equal(report.closeLabel, "닫기", `${label}: close label`);
       assert.equal(report.dimTag, "DIV", `${label}: dim must not be a button`);
       assert.ok(report.xW >= 44 && report.xH >= 44, `${label}: X hit ${report.xW}×${report.xH}`);
       assert.ok(report.title, `${label}: title canvas empty`);
       assert.ok(report.cta, `${label}: cta canvas empty`);
       assert.ok(report.purple, `${label}: purple plate empty`);
       assert.ok(report.ctaPlate, `${label}: cta plate empty`);
+      assert.ok(report.stripInk, `${label}: strip ink canvas empty`);
+      assert.ok(report.stripPlate, `${label}: strip white plate empty`);
       const titleContrast = contrastRatio(report.title.slice(0, 3), report.purple.slice(0, 3));
       const ctaContrast = contrastRatio(report.cta.slice(0, 3), report.ctaPlate.slice(0, 3));
       const lineContrast = contrastRatio(report.line.slice(0, 3), report.purple.slice(0, 3));
+      const stripContrast = contrastRatio(report.stripInk.slice(0, 3), report.stripPlate.slice(0, 3));
       assert.ok(
         titleContrast >= 4.5,
         `${label}: title contrast ${titleContrast.toFixed(2)} title=${report.title} purple=${report.purple}`,
@@ -734,7 +768,19 @@ async function runBrowser() {
         lineContrast >= 4.5,
         `${label}: line contrast ${lineContrast.toFixed(2)} line=${report.line} purple=${report.purple}`,
       );
+      assert.ok(
+        stripContrast >= 4.5,
+        `${label}: strip contrast ${stripContrast.toFixed(2)} ink=${report.stripInk} plate=${report.stripPlate}`,
+      );
       assert.ok(report.title[0] >= 240 && report.title[1] >= 240 && report.title[2] >= 240, `${label}: title not white ${report.title}`);
+      assert.ok(
+        report.stripInk[0] <= 30 && report.stripInk[1] <= 30 && report.stripInk[2] <= 30,
+        `${label}: strip ink must stay near-black, got ${report.stripInk}`,
+      );
+      assert.ok(
+        report.stripPlate[0] >= 240 && report.stripPlate[1] >= 240 && report.stripPlate[2] >= 240,
+        `${label}: strip plate must stay white, got ${report.stripPlate}`,
+      );
 
       await page.$eval(".site-promo-dim", (el) => {
         el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
@@ -747,7 +793,24 @@ async function runBrowser() {
       await page.click(".site-promo-x");
       await new Promise((resolve) => setTimeout(resolve, 250));
       assert.equal(await page.$(".site-promo-card"), null, `${label}: X should close promo`);
-      return { titleContrast, ctaContrast, lineContrast };
+      return { titleContrast, ctaContrast, lineContrast, stripContrast };
+    }
+
+    async function assertPromoActions(page, label) {
+      const before = await page.evaluate(() => ({
+        hideUntil: window.localStorage.getItem("taegye-promo-hide-until"),
+        closed: window.sessionStorage.getItem("taegye-promo-closed"),
+      }));
+      assert.equal(before.hideUntil, null, `${label}: hide-until should start empty`);
+      await page.click(".site-promo-strip-close");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      assert.equal(await page.$(".site-promo-card"), null, `${label}: 닫기 should close promo`);
+      const afterClose = await page.evaluate(() => ({
+        hideUntil: window.localStorage.getItem("taegye-promo-hide-until"),
+        closed: window.sessionStorage.getItem("taegye-promo-closed"),
+      }));
+      assert.equal(afterClose.closed, "1", `${label}: 닫기 should mark the session`);
+      assert.equal(afterClose.hideUntil, null, `${label}: 닫기 must not hide today`);
     }
 
     for (const [name, vp, dark] of [
@@ -758,10 +821,28 @@ async function runBrowser() {
       await withPromo(browser, vp, dark, async (page) => {
         const ratios = await assertPromo(page, name);
         console.log(
-          `ok  promo ${name}: X-only dismiss; title ${ratios.titleContrast.toFixed(2)}:1 CTA ${ratios.ctaContrast.toFixed(2)}:1`,
+          `ok  promo ${name}: strip+X; title ${ratios.titleContrast.toFixed(2)}:1 CTA ${ratios.ctaContrast.toFixed(2)}:1 strip ${ratios.stripContrast.toFixed(2)}:1`,
         );
       });
     }
+
+    await withPromo(browser, MOBILE, false, async (page) => {
+      await assertPromoActions(page, "mobile 412 close");
+      console.log("ok  promo 닫기 closes for the session only");
+    });
+    await withPromo(browser, MOBILE, false, async (page) => {
+      await page.click(".site-promo-strip-btn:not(.site-promo-strip-close)");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      assert.equal(await page.$(".site-promo-card"), null, "hide-today should close promo");
+      const stored = await page.evaluate(() => ({
+        hideUntil: Number(window.localStorage.getItem("taegye-promo-hide-until") || "0"),
+        closed: window.sessionStorage.getItem("taegye-promo-closed"),
+      }));
+      assert.equal(stored.closed, "1", "hide-today should mark the session");
+      assert.ok(stored.hideUntil > Date.now(), `hide-today until ${stored.hideUntil}`);
+      assert.ok(stored.hideUntil <= Date.now() + 24 * 60 * 60 * 1000 + 1000, "hide-today window");
+      console.log("ok  promo 오늘 하루 보지 않기 stores hide-until");
+    });
 
     async function withSplash(browser, viewport, fn) {
       const page = await browser.newPage();

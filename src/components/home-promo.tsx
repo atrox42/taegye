@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useId, useState } from "react";
 
-import { CanvasColorPlate } from "@/components/canvas-white-plate";
+import { CanvasColorPlate, CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { CanvasText } from "@/components/canvas-text";
 import { CanvasX } from "@/components/canvas-x";
 import {
@@ -17,7 +17,9 @@ import {
 } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
+export const PROMO_HIDE_KEY = "taegye-promo-hide-until";
 export const PROMO_SESSION_KEY = "taegye-promo-closed";
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 function forceHold() {
   return new URLSearchParams(window.location.search).get("promo") === "hold";
@@ -25,6 +27,15 @@ function forceHold() {
 
 function querySkip() {
   return new URLSearchParams(window.location.search).get("promo") === "skip";
+}
+
+function hiddenForToday() {
+  try {
+    const until = Number(window.localStorage.getItem(PROMO_HIDE_KEY) || "0");
+    return until > Date.now();
+  } catch {
+    return false;
+  }
 }
 
 function closedThisSession() {
@@ -45,12 +56,13 @@ export function HomePromo() {
   /** Do not SSR the dim PNG. A stuck overlay would tint the whole home page. */
   const [open, setOpen] = useState(false);
 
-  const hide = () => {
+  const hide = (today: boolean) => {
     setPromoFlag(false);
     setOpen(false);
     document.documentElement.classList.remove("is-promo-open");
     try {
       window.sessionStorage.setItem(PROMO_SESSION_KEY, "1");
+      if (today) window.localStorage.setItem(PROMO_HIDE_KEY, String(Date.now() + DAY_MS));
     } catch {
       /* ignore */
     }
@@ -61,7 +73,7 @@ export function HomePromo() {
       HOME_PROMO.enabled &&
       pathname === "/" &&
       !querySkip() &&
-      (forceHold() || !closedThisSession());
+      (forceHold() || !(hiddenForToday() || closedThisSession()));
     setPromoFlag(show);
     setOpen(show);
     document.documentElement.classList.toggle("is-promo-open", show);
@@ -86,7 +98,7 @@ export function HomePromo() {
             type="button"
             className="site-promo-x"
             aria-label="Close"
-            onClick={hide}
+            onClick={() => hide(false)}
           >
             <CanvasX />
           </button>
@@ -103,6 +115,23 @@ export function HomePromo() {
               </span>
             </a>
           </div>
+        </div>
+        <div className="site-promo-strip">
+          <CanvasWhitePlate />
+          <button
+            type="button"
+            className="site-promo-strip-btn"
+            onClick={() => hide(true)}
+          >
+            <CanvasText text={HOME_PROMO.hideTodayLabel} fill="#111111" />
+          </button>
+          <button
+            type="button"
+            className="site-promo-strip-btn site-promo-strip-close"
+            onClick={() => hide(false)}
+          >
+            <CanvasText text={HOME_PROMO.closeLabel} fill="#111111" />
+          </button>
         </div>
       </div>
     </div>
