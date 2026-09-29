@@ -101,34 +101,48 @@ function isShown(el: Element) {
   return true;
 }
 
-function visibleGridImages() {
-  const candidates = Array.from(document.querySelectorAll<HTMLImageElement>(".new-grid img")).filter((img) => {
+function visibleGridCells() {
+  return Array.from(document.querySelectorAll<HTMLElement>(".new-grid-item")).filter((cell) => {
+    if (!isShown(cell)) return false;
+    const r = cell.getBoundingClientRect();
+    return r.width > 4 && r.height > 4;
+  });
+}
+
+function imageForCell(cell: HTMLElement) {
+  const candidates = Array.from(cell.querySelectorAll<HTMLImageElement>("img")).filter((img) => {
     if (img.classList.contains("white-surface-fill")) return false;
     if (!isShown(img)) return false;
     const r = img.getBoundingClientRect();
     return r.width > 4 && r.height > 4 && img.naturalWidth > 0;
   });
-
-  const picked = new Map<Element, HTMLImageElement>();
-  const loose: HTMLImageElement[] = [];
+  let picked: HTMLImageElement | null = null;
   for (const img of candidates) {
-    const card = img.closest(".product-card");
-    if (!card) {
-      loose.push(img);
-      continue;
-    }
     if (img.closest(".product-moss") && Number(window.getComputedStyle(img.closest(".product-moss")!).opacity) < 0.8) {
       continue;
     }
-    const prev = picked.get(card);
-    if (!prev) {
-      picked.set(card, img);
+    if (!picked) {
+      picked = img;
       continue;
     }
     const preferMoss = img.closest(".product-moss") && Number(window.getComputedStyle(img.closest(".product-moss")!).opacity) >= 0.8;
-    if (preferMoss) picked.set(card, img);
+    if (preferMoss) picked = img;
   }
-  return [...picked.values(), ...loose];
+  return picked;
+}
+
+function cellInnerBox(cell: HTMLElement) {
+  const r = cell.getBoundingClientRect();
+  const cs = window.getComputedStyle(cell);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const round = (n: number) => Math.round(n * dpr) / dpr;
+  const left = r.left + (parseFloat(cs.borderLeftWidth) || 0);
+  const top = r.top + (parseFloat(cs.borderTopWidth) || 0);
+  const right = r.right - (parseFloat(cs.borderRightWidth) || 0);
+  const bottom = r.bottom - (parseFloat(cs.borderBottomWidth) || 0);
+  const x = round(left);
+  const y = round(top);
+  return { x, y, w: Math.max(1, round(right) - x), h: Math.max(1, round(bottom) - y) };
 }
 
 function snapBox(img: HTMLImageElement) {
@@ -283,15 +297,20 @@ function holdProgress(hold: number) {
   return hold;
 }
 
-function buildTiles(images: HTMLImageElement[]): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
+function buildTiles(
+  cells: HTMLElement[],
+  images: Map<HTMLElement, HTMLImageElement | null>,
+): { tiles: Tile[]; boxes: Array<{ x: number; y: number; w: number; h: number }> } {
   const tiles: Tile[] = [];
   const boxes: Array<{ x: number; y: number; w: number; h: number }> = [];
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   let card = 0;
-  for (const layout of images) {
-    const draw = primedDrawImage(layout);
-    const box = snapBox(layout);
+  for (const cell of cells) {
+    const layout = images.get(cell) ?? imageForCell(cell);
+    const box = cellInnerBox(cell);
     boxes.push({ x: box.x, y: box.y, w: box.w, h: box.h });
+    const photo = layout ? snapBox(layout) : box;
+    const draw = layout ? primedDrawImage(layout) : new Image();
     const raw = chunkRects(box.w, box.h, dpr);
     const order = raw.map((_, i) => i);
     for (let i = order.length - 1; i > 0; i -= 1) {
@@ -305,8 +324,8 @@ function buildTiles(images: HTMLImageElement[]): { tiles: Tile[]; boxes: Array<{
     raw.forEach((piece, index) => {
       tiles.push({
         img: draw,
-        layout,
-        box: { x: box.x, y: box.y, w: box.w, h: box.h },
+        layout: layout ?? draw,
+        box: { x: photo.x, y: photo.y, w: photo.w, h: photo.h },
         dx: box.x + piece.x,
         dy: box.y + piece.y,
         dw: piece.w,
@@ -458,7 +477,9 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       const id = href.split("/").pop();
       if (id) preloadUrl(`/products/stand-${id}.webp`);
 
-      const visibles = visibleGridImages();
+      const cells = visibleGridCells();
+      const cellImages = new Map(cells.map((cell) => [cell, imageForCell(cell)] as const));
+      const visibles = [...cellImages.values()].filter((img): img is HTMLImageElement => !!img);
       for (const img of visibles) primedDrawImage(img);
 
       document.documentElement.classList.add("is-dissolving");
@@ -503,7 +524,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       };
 
       const kick = () => {
-        const built = buildTiles(visibles);
+        const built = buildTiles(cells, cellImages);
         publishBoxes(built.boxes);
         publishTiles(built.tiles);
         run(built.tiles);
