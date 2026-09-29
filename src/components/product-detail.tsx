@@ -5,10 +5,10 @@ import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
 import { forceInkStyle } from "@/lib/force-white";
 import {
-  NEW_PRODUCTS,
-  STAND_NOTE,
   STORE_URL,
   productColorLabel,
+  productNote,
+  productsInFamily,
   type NewProduct,
 } from "@/lib/site";
 
@@ -35,7 +35,7 @@ function ProductHero({
           alt={alt}
           fill
           priority={priority}
-          unoptimized={src.includes("/products/stand-")}
+          unoptimized={src.includes("/products/stand-") || src.includes("/products/one-port-")}
           sizes="(min-width: 768px) 58vw, 100vw"
           className="object-contain object-center"
         />
@@ -45,7 +45,7 @@ function ProductHero({
 }
 
 export function ProductDetail({ product }: ProductDetailProps) {
-  const [blurbOne, blurbTwo] = STAND_NOTE.en;
+  const [blurbOne, blurbTwo] = productNote(product).en;
   const emptyHero = (
     <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
   );
@@ -74,7 +74,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {product.price}
           </p>
           <div className="pdp-swatches" role="list" aria-label="Color">
-            {NEW_PRODUCTS.map((item) => {
+            {productsInFamily(product).map((item) => {
               const label = productColorLabel(item);
               const current = item.id === product.id;
               const className = `pdp-swatch${current ? " is-current" : ""}`;
