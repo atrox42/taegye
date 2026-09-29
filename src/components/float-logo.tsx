@@ -13,7 +13,7 @@ function isChromeOpen() {
   const splashOpen =
     !introDone &&
     !desktop &&
-    Boolean(splash) &&
+    splash instanceof HTMLElement &&
     getComputedStyle(splash).display !== "none";
   return Boolean(
     splashOpen ||
