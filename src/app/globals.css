@@ -298,6 +298,8 @@ body,
 html {
   overflow-x: clip;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #000000 transparent;
 }
 
 body,
@@ -310,6 +312,43 @@ body,
     overflow-y: scroll;
     scrollbar-gutter: stable;
   }
+}
+
+/* Minimal black document bar. Raster thumb so Force Dark stays black.
+   Buttons/arrows off. Width matches scrollbar-width:thin from first paint
+   so the desktop gutter does not jump. */
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-button,
+html::-webkit-scrollbar-button:start:decrement,
+html::-webkit-scrollbar-button:end:increment,
+html::-webkit-scrollbar-button:vertical:start:decrement,
+html::-webkit-scrollbar-button:vertical:end:increment,
+html::-webkit-scrollbar-button:horizontal:start:decrement,
+html::-webkit-scrollbar-button:horizontal:end:increment {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+html::-webkit-scrollbar-track,
+html::-webkit-scrollbar-track-piece,
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #000000;
+  background-image: url("/ink-111.jpg");
+  background-repeat: repeat;
+  background-size: 8px 8px;
+  border: 0;
+  border-radius: 0;
+  forced-color-adjust: none;
+  color-scheme: only light;
 }
 
 .site-shell,
