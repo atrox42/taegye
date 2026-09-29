@@ -14,6 +14,7 @@ const SKIP = "intro=skip&promo=skip&scales=1.25,1,0.4&layout=0";
 
 const VIEWS = [
   { name: "pc", width: 1440, height: 900, deviceScaleFactor: 1 },
+  { name: "fhd", width: 1920, height: 1080, deviceScaleFactor: 1 },
   { name: "mobile", width: 412, height: 915, deviceScaleFactor: 2.75 },
 ];
 

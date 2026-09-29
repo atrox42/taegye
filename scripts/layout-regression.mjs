@@ -14,6 +14,7 @@ const require = createRequire(import.meta.url);
 
 const MOBILE = { width: 412, height: 915, deviceScaleFactor: 2.75 };
 const DESKTOP = { width: 1440, height: 900, deviceScaleFactor: 1 };
+const DESKTOP_FHD = { width: 1920, height: 1080, deviceScaleFactor: 1 };
 const BASE = (process.env.BASE_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 const SKIP = "intro=skip&promo=skip";
 
@@ -261,7 +262,7 @@ async function runBrowser() {
       console.log("ok  desktop PDP: original raster, no float logo");
     });
 
-    await withPage(browser, DESKTOP, "/?scales=1.25,1,0.4&layout=0", async (page) => {
+    async function assertDesktopScatter(page, label) {
       const clips = await page.$$eval(".home-hero-clip", (nodes) =>
         nodes.map((node) => {
           const r = node.getBoundingClientRect();
@@ -278,21 +279,36 @@ async function runBrowser() {
       assert.equal(clips.length, 3);
       assert.ok(
         clips.every((clip) => clip.position === "absolute"),
-        `desktop clips must be absolute scatter, got ${clips.map((c) => c.position)}`,
+        `${label}: desktop clips must be absolute scatter, got ${clips.map((c) => c.position)}`,
       );
       assert.ok(
         clips.every((clip) => clip.w < 400),
-        `desktop clips should stay scaled, got ${clips.map((c) => c.w)}`,
+        `${label}: desktop clips should stay scaled, got ${clips.map((c) => c.w)}`,
       );
       const widths = clips.map((c) => c.w).sort((a, b) => a - b);
-      assert.ok(Math.abs(widths[0] - 92) <= 2, `0.4× clip ${widths[0]}`);
-      assert.ok(Math.abs(widths[1] - 230) <= 2, `1× clip ${widths[1]}`);
-      assert.ok(Math.abs(widths[2] - 288) <= 2, `1.25× clip ${widths[2]}`);
+      assert.ok(Math.abs(widths[0] - 92) <= 2, `${label}: 0.4× clip ${widths[0]}`);
+      assert.ok(Math.abs(widths[1] - 230) <= 2, `${label}: 1× clip ${widths[1]}`);
+      assert.ok(Math.abs(widths[2] - 288) <= 2, `${label}: 1.25× clip ${widths[2]}`);
       const xs = new Set(clips.map((c) => c.x));
       const ys = new Set(clips.map((c) => c.y));
-      assert.ok(xs.size > 1 && ys.size > 1, `desktop clips must be scattered, got ${JSON.stringify(clips)}`);
-      console.log("ok  desktop home: 1.25/1/0.4 scatter");
-    });
+      assert.ok(
+        xs.size > 1 && ys.size > 1,
+        `${label}: desktop clips must be scattered, got ${JSON.stringify(clips)}`,
+      );
+      const piled = clips.filter((clip) => clip.x < 40 && clip.y < 80);
+      assert.ok(
+        piled.length < 2,
+        `${label}: clips must not pile in the top-left, got ${JSON.stringify(clips)}`,
+      );
+      console.log(`ok  ${label}: 1.25/1/0.4 scatter`);
+    }
+
+    await withPage(browser, DESKTOP, "/?scales=1.25,1,0.4&layout=0", (page) =>
+      assertDesktopScatter(page, "desktop 1440×900"),
+    );
+    await withPage(browser, DESKTOP_FHD, "/?scales=1.25,1,0.4&layout=0", (page) =>
+      assertDesktopScatter(page, "desktop 1920×1080"),
+    );
   } finally {
     await browser.close();
   }

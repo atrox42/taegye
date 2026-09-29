@@ -65,6 +65,10 @@ export function placeScaledClips(
   const padBottom = 24;
   const gap = 12;
 
+  if (vw < 200 || vh < 200) {
+    return scales.map((_, index) => preset?.[index] ?? { top: "19%", left: "12%" });
+  }
+
   const boxes = scales.map((scale, index) => {
     const w = baseW * scale;
     const h = baseH * scale;
