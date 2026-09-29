@@ -1229,7 +1229,22 @@ button {
   position: absolute;
   inset: 0;
   z-index: 4;
-  box-shadow: inset 0 0 0 var(--grid-hairline) var(--grid-line);
+  background-image:
+    linear-gradient(var(--grid-line), var(--grid-line)),
+    linear-gradient(var(--grid-line), var(--grid-line)),
+    linear-gradient(var(--grid-line), var(--grid-line)),
+    linear-gradient(var(--grid-line), var(--grid-line));
+  background-repeat: no-repeat;
+  background-size:
+    100% var(--grid-hairline),
+    100% var(--grid-hairline),
+    var(--grid-hairline) 100%,
+    var(--grid-hairline) 100%;
+  background-position:
+    top left,
+    bottom left,
+    top left,
+    top right;
 }
 
 .new-grid-item::after {
@@ -1237,21 +1252,30 @@ button {
   position: absolute;
   inset: 0;
   z-index: 4;
-  border: 0;
-  border-right: var(--grid-hairline) solid var(--grid-line);
-  border-bottom: var(--grid-hairline) solid var(--grid-line);
+  border: 0 !important;
+  background-image:
+    linear-gradient(var(--grid-line), var(--grid-line)),
+    linear-gradient(var(--grid-line), var(--grid-line));
+  background-repeat: no-repeat;
+  background-size: var(--grid-hairline) 100%, 100% var(--grid-hairline);
+  background-position: right top, left bottom;
 }
 
 .new-grid-item:nth-child(2n)::after {
-  border-right: 0;
+  background-size: 0 0, 100% var(--grid-hairline);
 }
 
 .new-grid-item:last-child::after {
-  border-bottom: 0;
+  background-size: var(--grid-hairline) 100%, 0 0;
 }
 
 .new-grid-item:nth-last-child(2):nth-child(odd):has(+ .new-grid-item:last-child:nth-child(even))::after {
-  border-bottom: 0;
+  background-size: var(--grid-hairline) 100%, 0 0;
+}
+
+.new-grid-item:last-child:nth-child(2n)::after,
+.new-grid-item:nth-last-child(2):nth-child(odd):has(+ .new-grid-item:last-child:nth-child(even)):nth-child(2n)::after {
+  background-size: 0 0, 0 0;
 }
 
 @media (min-width: 768px) {
@@ -1298,18 +1322,21 @@ button {
   }
 
   .new-grid-item:nth-child(2n)::after {
-    border-right: var(--grid-hairline) solid var(--grid-line);
+    background-size: var(--grid-hairline) 100%, 100% var(--grid-hairline);
   }
 
   .new-grid-item:nth-child(4n)::after {
-    border-right: 0;
+    background-size: 0 0, 100% var(--grid-hairline);
   }
 
   .new-grid-item:nth-child(4n + 1):nth-last-child(-n + 4)::after,
   .new-grid-item:nth-child(4n + 2):nth-last-child(-n + 3)::after,
-  .new-grid-item:nth-child(4n + 3):nth-last-child(-n + 2)::after,
+  .new-grid-item:nth-child(4n + 3):nth-last-child(-n + 2)::after {
+    background-size: var(--grid-hairline) 100%, 0 0;
+  }
+
   .new-grid-item:nth-child(4n):last-child::after {
-    border-bottom: 0;
+    background-size: 0 0, 0 0;
   }
 
   .archive-grid {
@@ -1317,11 +1344,15 @@ button {
   }
 
   .archive-grid .new-grid-item:nth-child(2n)::after {
-    border-right: 0;
+    background-size: 0 0, 100% var(--grid-hairline);
   }
 
   .archive-grid .new-grid-item:nth-last-child(-n + 2)::after {
-    border-bottom: 0;
+    background-size: var(--grid-hairline) 100%, 0 0;
+  }
+
+  .archive-grid .new-grid-item:nth-last-child(-n + 2):nth-child(2n)::after {
+    background-size: 0 0, 0 0;
   }
 }
 
@@ -2061,7 +2092,6 @@ select::-ms-expand {
 }
 
 .product-card,
-.new-grid-item,
 .pdp-hero,
 .pdp-stage,
 .site-promo-card,
