@@ -132,6 +132,35 @@ async function runBrowser() {
       assert.ok(logo.y + logo.h > 800, `float logo should sit near the bottom, y=${logo.y}`);
       console.log("ok  mobile home: three equal 138px loops, 100svh, centered, floating logo");
 
+      const maxScroll = await page.evaluate(
+        () => document.documentElement.scrollHeight - window.innerHeight,
+      );
+      await page.evaluate((y) => window.scrollTo(0, y), Math.round(maxScroll / 2));
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const mid = await page.evaluate(() => {
+        const mark = document.querySelector(".site-float-logo");
+        const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
+        const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
+        const r = mark?.getBoundingClientRect();
+        const s = mark ? getComputedStyle(mark) : null;
+        const overlap = (a, b) => a && b && a.bottom > b.top && a.top < b.bottom;
+        return {
+          position: s?.position,
+          hidden: mark?.classList.contains("is-hidden"),
+          opacity: s ? Number(s.opacity) : 0,
+          y: r?.y ?? null,
+          h: r?.height ?? null,
+          overlapsCta: overlap(r, cta),
+          overlapsCopy: overlap(r, copy),
+        };
+      });
+      assert.equal(mid.position, "fixed");
+      assert.equal(mid.hidden, false);
+      assert.ok(mid.opacity > 0.5, "float logo visible at home mid");
+      assert.equal(mid.overlapsCta, false, "logo must not cover View product at mid scroll");
+      assert.equal(mid.overlapsCopy, false, "logo must not cover copyright at mid scroll");
+      console.log("ok  mobile home mid: floating logo still fixed, no overlap");
+
       await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
       await new Promise((resolve) => setTimeout(resolve, 250));
       const bottom = await page.evaluate(() => {
@@ -142,20 +171,34 @@ async function runBrowser() {
         const mark = document.querySelector(".site-float-logo")?.getBoundingClientRect();
         const h = window.innerHeight;
         return {
+          ctaBottom: cta?.bottom ?? null,
+          logoTop: mark?.top ?? null,
+          logoBottom: mark?.bottom ?? null,
+          copyTop: copy?.top ?? null,
           ctaToFooter: cta && footer ? footer.top - cta.bottom : null,
+          ctaToLogo: cta && mark ? mark.top - cta.bottom : null,
+          logoToCopy: mark && copy ? copy.top - mark.bottom : null,
           footerContentToPage: nav ? h - nav.bottom : null,
           logoFromBottom: mark ? h - mark.bottom : null,
           internal: copy && nav ? nav.top - copy.bottom : null,
         };
       });
-      assert.ok(bottom.ctaToFooter >= 50, `home CTA→footer ${bottom.ctaToFooter}`);
+      assert.ok(bottom.ctaToFooter >= 80, `home CTA→footer ${bottom.ctaToFooter}`);
       assert.ok(bottom.footerContentToPage >= 34, `home footer→page ${bottom.footerContentToPage}`);
-      assert.ok(bottom.logoFromBottom >= 42, `home logo from bottom ${bottom.logoFromBottom}`);
+      assert.ok(bottom.logoFromBottom >= 88, `home logo from bottom ${bottom.logoFromBottom}`);
+      assert.ok(
+        bottom.ctaToLogo >= 12,
+        `button must sit above the logo with a gap, got ${bottom.ctaToLogo} (cta ${bottom.ctaBottom} logo ${bottom.logoTop})`,
+      );
+      assert.ok(
+        bottom.logoToCopy >= 12,
+        `logo must sit above the copyright line with a gap, got ${bottom.logoToCopy} (logo ${bottom.logoBottom} copy ${bottom.copyTop})`,
+      );
       assert.ok(
         bottom.ctaToFooter > bottom.internal,
         `CTA gap ${bottom.ctaToFooter} should exceed footer internal ${bottom.internal}`,
       );
-      console.log("ok  mobile home bottom: CTA/footer/logo have breathing room");
+      console.log("ok  mobile home bottom: button → logo → copyright, no overlap");
     });
 
     await withPage(browser, MOBILE_360, "/", async (page) => {
@@ -179,6 +222,21 @@ async function runBrowser() {
         `360 stack center ${stackMid} should match 390`,
       );
       console.log("ok  mobile 360×780: stack centered in the viewport");
+
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const bottom360 = await page.evaluate(() => {
+        const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
+        const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
+        const mark = document.querySelector(".site-float-logo")?.getBoundingClientRect();
+        return {
+          ctaToLogo: cta && mark ? mark.top - cta.bottom : null,
+          logoToCopy: mark && copy ? copy.top - mark.bottom : null,
+        };
+      });
+      assert.ok(bottom360.ctaToLogo >= 12, `360 button→logo ${bottom360.ctaToLogo}`);
+      assert.ok(bottom360.logoToCopy >= 12, `360 logo→copyright ${bottom360.logoToCopy}`);
+      console.log("ok  mobile 360×780 bottom: button → logo → copyright");
     });
 
     await withPage(browser, MOBILE, "/new", async (page) => {
