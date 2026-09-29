@@ -2891,7 +2891,8 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   border: 0;
   background: transparent !important;
   background-image: none !important;
-  cursor: pointer;
+  pointer-events: auto;
+  cursor: default;
 }
 
 .site-promo-dim-bitmap {
@@ -2933,12 +2934,14 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 
 .site-promo-x {
   position: absolute;
-  top: 0.35rem;
-  right: 0.35rem;
-  z-index: 2;
+  top: 0.2rem;
+  right: 0.2rem;
+  z-index: 3;
   display: flex;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -2947,9 +2950,58 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   cursor: pointer;
 }
 
-.site-promo-x .site-ink-x {
+.site-promo-x-mark {
+  display: block;
   width: 18px;
   height: 18px;
+  pointer-events: none;
+}
+
+.site-promo-purple-fill,
+.site-promo-cta-plate {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.site-promo-purple,
+.site-promo-cta-fill {
+  z-index: 0;
+}
+
+.site-promo-canvas-text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  background: none !important;
+  background-image: none !important;
+  font-family: var(--font-pretendard);
+}
+
+.site-promo-canvas-text canvas {
+  display: block;
+  max-width: 100%;
+  pointer-events: none;
+}
+
+.site-promo .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .site-promo-visual {
@@ -2967,6 +3019,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   border: 0;
   border-bottom: 0;
   box-shadow: none;
+  overflow: hidden;
   background-color: var(--brand-main) !important;
   background-image: var(--brand-main-image) !important;
   background-size: 100% 100% !important;
@@ -3059,7 +3112,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   padding: 0;
   font-family: var(--font-pretendard);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: var(--tracking-copy-kr);
   line-height: 1.5;
   white-space: nowrap;
@@ -3089,6 +3142,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   justify-content: center;
   width: 100%;
   min-height: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   overflow: hidden;
   border: 0;
@@ -3116,13 +3170,14 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 
 .site-promo-cta-label {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+  height: 100%;
   min-height: 2.75rem;
-  padding: 0.55rem 0.75rem;
+  padding: 0;
   font-family: var(--font-pretendard);
   font-size: 13px;
   font-weight: 500;
@@ -3130,47 +3185,10 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   text-transform: none;
 }
 
-.site-promo-strip {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  padding: 0.42rem 1rem;
-  border: 0;
-  border-top: 0;
-  box-shadow: none;
-  background-color: transparent !important;
-  background-image: none !important;
-}
-
-.site-promo-strip-btn {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.925rem;
-  padding: 0.2rem 0;
-  border: 0;
-  background-color: transparent !important;
-  cursor: pointer;
-  font-family: var(--font-pretendard);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: var(--tracking-copy-kr);
-  white-space: nowrap;
-}
-
+.site-promo-strip,
+.site-promo-strip-btn,
 .site-promo-strip-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
-  flex-shrink: 0;
-  min-width: 5.5rem;
-  min-height: 1.925rem;
-  padding: 0.525rem 0.25rem 0.525rem 1rem;
-  font-size: 13px;
+  display: none !important;
 }
 
 @media (max-width: 400px) {

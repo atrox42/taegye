@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import {
+  bindColorCanvas,
   bindWhiteCanvas,
   PAGE_WHITE_CANVAS_ID,
   viewportCssSize,
@@ -39,6 +40,38 @@ export function CanvasWhitePlate({ mode = "fill", className }: CanvasWhitePlateP
       ref={ref}
       aria-hidden
       className={cn(mode === "fixed" ? "canvas-white-fixed" : "canvas-white-fill", className)}
+    />
+  );
+}
+
+/** Opaque color canvas plate. OEM Force Dark does not recolor canvas pixels. */
+export function CanvasColorPlate({
+  color,
+  className,
+}: {
+  color: string;
+  className?: string;
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const measure = () => {
+      const parent = canvas.parentElement;
+      return {
+        width: parent?.clientWidth ?? 0,
+        height: parent?.clientHeight ?? 0,
+      };
+    };
+    return bindColorCanvas(canvas, measure, color, false);
+  }, [color]);
+
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden
+      className={cn("canvas-white-fill", className)}
     />
   );
 }

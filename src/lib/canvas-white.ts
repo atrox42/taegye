@@ -25,10 +25,11 @@ export function viewportCssSize() {
   };
 }
 
-export function paintOpaqueWhite(
+export function paintOpaqueColor(
   canvas: HTMLCanvasElement,
   cssWidth: number,
   cssHeight: number,
+  color: string,
   pinCssSize = true,
 ) {
   const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -47,18 +48,31 @@ export function paintOpaqueWhite(
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = "source-over";
-  ctx.fillStyle = CANVAS_WHITE;
+  ctx.fillStyle = color;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-export function bindWhiteCanvas(
+export function paintOpaqueWhite(
+  canvas: HTMLCanvasElement,
+  cssWidth: number,
+  cssHeight: number,
+  pinCssSize = true,
+) {
+  paintOpaqueColor(canvas, cssWidth, cssHeight, CANVAS_WHITE, pinCssSize);
+}
+
+export function bindColorCanvas(
   canvas: HTMLCanvasElement,
   measure: () => { width: number; height: number },
+  color: string,
+  pinCssSize?: boolean,
 ) {
-  const pinCssSize = canvas.id !== PAGE_WHITE_CANVAS_ID && !canvas.classList.contains("canvas-white-fixed");
+  const pin =
+    pinCssSize ??
+    (canvas.id !== PAGE_WHITE_CANVAS_ID && !canvas.classList.contains("canvas-white-fixed"));
   const paint = () => {
     const { width, height } = measure();
-    paintOpaqueWhite(canvas, width, height, pinCssSize);
+    paintOpaqueColor(canvas, width, height, color, pin);
   };
   paint();
   const parent = canvas.parentElement;
@@ -75,3 +89,11 @@ export function bindWhiteCanvas(
     vv?.removeEventListener("resize", paint);
   };
 }
+
+export function bindWhiteCanvas(
+  canvas: HTMLCanvasElement,
+  measure: () => { width: number; height: number },
+) {
+  return bindColorCanvas(canvas, measure, CANVAS_WHITE);
+}
+
