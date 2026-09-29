@@ -131,6 +131,31 @@ async function runBrowser() {
       assert.ok(logo.opacity > 0.5, "float logo visible at home top");
       assert.ok(logo.y + logo.h > 800, `float logo should sit near the bottom, y=${logo.y}`);
       console.log("ok  mobile home: three equal 138px loops, 100svh, centered, floating logo");
+
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const bottom = await page.evaluate(() => {
+        const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
+        const footer = document.querySelector(".site-footer")?.getBoundingClientRect();
+        const nav = document.querySelector(".site-footer-nav")?.getBoundingClientRect();
+        const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
+        const mark = document.querySelector(".site-float-logo")?.getBoundingClientRect();
+        const h = window.innerHeight;
+        return {
+          ctaToFooter: cta && footer ? footer.top - cta.bottom : null,
+          footerContentToPage: nav ? h - nav.bottom : null,
+          logoFromBottom: mark ? h - mark.bottom : null,
+          internal: copy && nav ? nav.top - copy.bottom : null,
+        };
+      });
+      assert.ok(bottom.ctaToFooter >= 50, `home CTA→footer ${bottom.ctaToFooter}`);
+      assert.ok(bottom.footerContentToPage >= 34, `home footer→page ${bottom.footerContentToPage}`);
+      assert.ok(bottom.logoFromBottom >= 42, `home logo from bottom ${bottom.logoFromBottom}`);
+      assert.ok(
+        bottom.ctaToFooter > bottom.internal,
+        `CTA gap ${bottom.ctaToFooter} should exceed footer internal ${bottom.internal}`,
+      );
+      console.log("ok  mobile home bottom: CTA/footer/logo have breathing room");
     });
 
     await withPage(browser, MOBILE_360, "/", async (page) => {
