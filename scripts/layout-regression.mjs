@@ -249,16 +249,20 @@ async function runBrowser() {
           internal: copy && nav ? nav.top - copy.bottom : null,
         };
       });
-      assert.ok(bottom.ctaToFooter >= 80, `home CTA→footer ${bottom.ctaToFooter}`);
+      assert.ok(bottom.ctaToFooter >= 105, `home CTA→footer ${bottom.ctaToFooter}`);
       assert.ok(bottom.footerContentToPage >= 34, `home footer→page ${bottom.footerContentToPage}`);
       assert.ok(bottom.logoFromBottom >= 88, `home logo from bottom ${bottom.logoFromBottom}`);
       assert.ok(
-        bottom.ctaToLogo >= 12,
-        `button must sit above the logo with a gap, got ${bottom.ctaToLogo} (cta ${bottom.ctaBottom} logo ${bottom.logoTop})`,
+        Math.abs(bottom.ctaToLogo - 50.4) <= 2,
+        `button→logo should be ~50.4px (double 25.2), got ${bottom.ctaToLogo}`,
       );
       assert.ok(
-        bottom.logoToCopy >= 12,
-        `logo must sit above the copyright line with a gap, got ${bottom.logoToCopy} (logo ${bottom.logoBottom} copy ${bottom.copyTop})`,
+        Math.abs(bottom.logoToCopy - 19.8) <= 1,
+        `logo→copyright must stay ~19.8px, got ${bottom.logoToCopy}`,
+      );
+      assert.ok(
+        Math.abs(bottom.logoFromBottom - 92) <= 1,
+        `logo bottom offset must stay 92px, got ${bottom.logoFromBottom}`,
       );
       assert.ok(
         bottom.ctaToFooter > bottom.internal,
@@ -295,13 +299,21 @@ async function runBrowser() {
         const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
         const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
         const mark = document.querySelector(".site-float-logo")?.getBoundingClientRect();
+        const h = window.innerHeight;
         return {
           ctaToLogo: cta && mark ? mark.top - cta.bottom : null,
           logoToCopy: mark && copy ? copy.top - mark.bottom : null,
+          logoFromBottom: mark ? h - mark.bottom : null,
         };
       });
-      assert.ok(bottom360.ctaToLogo >= 12, `360 button→logo ${bottom360.ctaToLogo}`);
-      assert.ok(bottom360.logoToCopy >= 12, `360 logo→copyright ${bottom360.logoToCopy}`);
+      assert.ok(
+        Math.abs(bottom360.ctaToLogo - 50.4) <= 2,
+        `360 button→logo should be ~50.4px, got ${bottom360.ctaToLogo}`,
+      );
+      assert.ok(
+        Math.abs(bottom360.logoFromBottom - 92) <= 1,
+        `360 logo bottom offset must stay 92px, got ${bottom360.logoFromBottom}`,
+      );
       console.log("ok  mobile 360×780 bottom: button → logo → copyright");
     });
 
