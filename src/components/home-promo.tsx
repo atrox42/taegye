@@ -53,11 +53,13 @@ function setPromoFlag(on: boolean) {
 export function HomePromo() {
   const pathname = usePathname();
   const titleId = useId();
-  const [dismissed, setDismissed] = useState(false);
+  /** Do not SSR the dim PNG. A stuck overlay would tint the whole home page. */
+  const [open, setOpen] = useState(false);
 
   const hide = (today: boolean) => {
     setPromoFlag(false);
-    setDismissed(true);
+    setOpen(false);
+    document.documentElement.classList.remove("is-promo-open");
     try {
       window.sessionStorage.setItem(PROMO_SESSION_KEY, "1");
       if (today) window.localStorage.setItem(PROMO_HIDE_KEY, String(Date.now() + DAY_MS));
@@ -67,17 +69,15 @@ export function HomePromo() {
   };
 
   useLayoutEffect(() => {
-    if (!HOME_PROMO.enabled || pathname !== "/" || querySkip()) {
-      setPromoFlag(false);
-      return;
-    }
-    if ((hiddenForToday() || closedThisSession()) && !forceHold()) {
-      setPromoFlag(false);
-      setDismissed(true);
-      return;
-    }
-    setPromoFlag(true);
-    document.documentElement.classList.add("is-promo-open");
+    const show =
+      HOME_PROMO.enabled &&
+      pathname === "/" &&
+      !querySkip() &&
+      (forceHold() || !(hiddenForToday() || closedThisSession()));
+    setPromoFlag(show);
+    setOpen(show);
+    document.documentElement.classList.toggle("is-promo-open", show);
+    if (!show) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") hide(false);
     };
@@ -88,7 +88,7 @@ export function HomePromo() {
     };
   }, [pathname]);
 
-  if (!HOME_PROMO.enabled || pathname !== "/" || dismissed) return null;
+  if (!open) return null;
 
   return (
     <div className="site-promo" role="presentation">
