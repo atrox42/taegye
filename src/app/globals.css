@@ -2827,19 +2827,40 @@ html[data-intro="done"] .site-splash {
   align-items: center;
   justify-content: center;
   font-family: var(--font-splash), "Roboto Condensed", "Arial Narrow", sans-serif;
-  font-size: 23px;
+  font-size: 18.4px;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.064em;
   line-height: 1.1;
   text-align: center;
   text-transform: uppercase;
-  color: #111111 !important;
+  color: #000000;
+}
+
+.site-splash-line {
+  position: relative;
+  display: block;
+}
+
+.site-splash-ink {
+  color: #000000 !important;
   -webkit-text-fill-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
+  background-image: url("/ink-111.jpg") !important;
   background-repeat: repeat !important;
   background-size: 8px 8px !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
+}
+
+.site-splash-line.is-painted .site-splash-ink {
+  visibility: hidden;
+}
+
+.site-splash-type {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 @media (min-width: 768px) {
