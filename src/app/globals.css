@@ -2007,7 +2007,7 @@ select::-ms-expand {
    Product pages and /new keep the default 24px bottom. */
 @media (max-width: 767.98px) {
   .home-new-in {
-    padding-bottom: 5.5rem; /* 88px CTA → footer */
+    padding-bottom: calc(5.5rem + 25.2px); /* 88px + extra 25.2 → CTA→logo ~50.4 */
   }
 
   .site-shell:has(.home-hero) .site-footer-inner {
