@@ -23,9 +23,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <CanvasWhitePlate />
           {children}
         </main>
-        <FloatLogo />
         <SiteFooter />
       </div>
+      <FloatLogo />
       <div className="site-splash" role="presentation" aria-hidden>
         <CanvasWhitePlate />
         <p className="site-splash-copy" style={forceInkStyle}>

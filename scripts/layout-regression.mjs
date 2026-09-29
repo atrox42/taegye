@@ -103,28 +103,67 @@ async function runBrowser() {
       assert.equal(hero.overflow, "hidden");
       assert.equal(hero.justify, "center");
       assert.equal(hero.align, "center");
-      const logo = await page.$eval(".site-float-logo", (node) => ({
-        position: getComputedStyle(node).position,
-        display: getComputedStyle(node).display,
-      }));
-      assert.equal(logo.position, "relative");
-      assert.notEqual(logo.display, "none");
-      console.log("ok  mobile home: three equal 138px loops, 100lvh, in-flow logo");
-    });
-
-    await withPage(browser, MOBILE, "/new", async (page) => {
       const logo = await page.$eval(".site-float-logo", (node) => {
         const s = getComputedStyle(node);
+        const r = node.getBoundingClientRect();
         return {
           position: s.position,
           display: s.display,
-          opacity: s.opacity,
+          opacity: Number(s.opacity),
+          y: r.y,
+          h: r.height,
+          hidden: node.classList.contains("is-hidden"),
         };
       });
-      assert.equal(logo.position, "relative");
+      assert.equal(logo.position, "fixed");
       assert.notEqual(logo.display, "none");
-      assert.ok(Number(logo.opacity) > 0.5, "float logo visible on /new");
-      console.log("ok  mobile /new: in-flow footer logo");
+      assert.equal(logo.hidden, false);
+      assert.ok(logo.opacity > 0.5, "float logo visible at home top");
+      assert.ok(logo.y + logo.h > 800, `float logo should sit near the bottom, y=${logo.y}`);
+      console.log("ok  mobile home: three equal 138px loops, 100lvh, floating logo");
+    });
+
+    await withPage(browser, MOBILE, "/new", async (page) => {
+      const measure = () =>
+        page.evaluate(() => {
+          const logo = document.querySelector(".site-float-logo");
+          const footer = document.querySelector(".site-footer");
+          if (!logo || !footer) return null;
+          const lr = logo.getBoundingClientRect();
+          const fr = footer.getBoundingClientRect();
+          const s = getComputedStyle(logo);
+          return {
+            position: s.position,
+            display: s.display,
+            opacity: Number(s.opacity),
+            hidden: logo.classList.contains("is-hidden"),
+            logoTop: Math.round(lr.top),
+            logoBottom: Math.round(lr.bottom),
+            footerTop: Math.round(fr.top),
+            footerBottom: Math.round(fr.bottom),
+          };
+        });
+
+      const top = await measure();
+      assert.ok(top);
+      assert.equal(top.position, "fixed");
+      assert.notEqual(top.display, "none");
+      assert.equal(top.hidden, false);
+      assert.ok(top.opacity > 0.5, "float logo visible at /new top");
+      assert.ok(top.logoBottom > 800, `logo should sit near the bottom, bottom=${top.logoBottom}`);
+
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const bottom = await measure();
+      assert.ok(bottom);
+      assert.equal(bottom.position, "fixed");
+      assert.equal(bottom.hidden, false);
+      assert.ok(bottom.opacity > 0.5, "float logo must not disappear at the footer");
+      assert.ok(
+        bottom.logoBottom > bottom.footerTop && bottom.logoTop < bottom.footerBottom,
+        `logo should straddle the footer edge, logo=${bottom.logoTop}-${bottom.logoBottom} footer=${bottom.footerTop}-${bottom.footerBottom}`,
+      );
+      console.log("ok  mobile /new: floating logo stays visible and straddles the footer");
     });
 
     await withPage(browser, MOBILE, "/new/white", async (page) => {
@@ -185,8 +224,12 @@ async function runBrowser() {
       const logo = await page.$eval(".site-float-logo", (node) => ({
         display: getComputedStyle(node).display,
         position: getComputedStyle(node).position,
+        hidden: node.classList.contains("is-hidden"),
+        opacity: Number(getComputedStyle(node).opacity),
       }));
-      assert.equal(logo.position, "relative");
+      assert.equal(logo.position, "fixed");
+      assert.equal(logo.hidden, false);
+      assert.ok(logo.opacity > 0.5, "float logo stays visible on PDP");
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 
