@@ -47,6 +47,8 @@ async function withPage(browser, viewport, path, fn) {
     timeout: 45000,
   });
   await pageReady(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await new Promise((resolve) => setTimeout(resolve, 200));
   try {
     return await fn(page);
   } finally {
@@ -165,15 +167,41 @@ async function runBrowser() {
         /white-mobile/.test(report.src),
         `mobile PDP should serve the bright raster, got ${report.src}`,
       );
+      const logo = await page.$eval(".site-float-logo", (node) => ({
+        hidden: node.classList.contains("is-hidden"),
+        opacity: getComputedStyle(node).opacity,
+        position: getComputedStyle(node).position,
+      }));
+      assert.equal(logo.position, "fixed");
+      assert.equal(logo.hidden, false, "float logo should show on PDP until the footer overlaps it");
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 
     await withPage(browser, DESKTOP, "/new/white", async (page) => {
-      const src = await page.$eval(".pdp-reveal img, .pdp-hero img", (img) => img.currentSrc);
+      const src = await page.$eval(".pdp-reveal img, .pdp-hero-empty img", (img) => img.currentSrc);
       assert.ok(/stand-white\.webp/.test(src), `desktop should keep original raster, got ${src}`);
       assert.ok(!/mobile/.test(src), `desktop must not use mobile raster, got ${src}`);
       const logo = await page.$eval(".site-float-logo", (node) => getComputedStyle(node).display);
       assert.equal(logo, "none");
+      const overlay = await page.evaluate(() => {
+        const stages = [...document.querySelectorAll(".pdp-stage")];
+        const hero = stages
+          .map((node) => ({ node, r: node.getBoundingClientRect() }))
+          .filter((item) => item.r.width > 200 && item.r.height > 200)
+          .sort((a, b) => b.r.height - a.r.height)[0];
+        if (!hero) return { error: "no desktop stage", h: 0, hitCanvas: false, hit: "none" };
+        const r = hero.r;
+        const el = document.elementFromPoint(r.x + r.width / 2, r.y + r.height * 0.2);
+        return {
+          error: null,
+          h: r.height,
+          hitCanvas: el instanceof HTMLCanvasElement,
+          hit: el ? `${el.tagName}.${String(el.className).slice(0, 60)}` : "none",
+        };
+      });
+      assert.ok(!overlay.error, overlay.error);
+      assert.ok(overlay.h > 400, `desktop hero too short: ${overlay.h}`);
+      assert.equal(overlay.hitCanvas, false, `desktop canvas over product: ${overlay.hit}`);
       console.log("ok  desktop PDP: original raster, no float logo");
     });
 

@@ -19,7 +19,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <div className="site-column relative z-[1] flex min-h-lvh flex-1 flex-col">
         <CanvasWhitePlate />
         <SiteHeader />
-        <main className="site-main relative flex-1">
+        <main className="site-main relative flex-[1_1_auto]">
           <CanvasWhitePlate />
           {children}
         </main>

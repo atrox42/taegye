@@ -9,10 +9,12 @@ import { SITE_NAME } from "@/lib/site";
 function isChromeOpen() {
   const introDone = document.documentElement.dataset.intro === "done";
   const desktop = window.matchMedia("(min-width: 768px)").matches;
+  const splash = document.querySelector(".site-splash");
   const splashOpen =
     !introDone &&
     !desktop &&
-    Boolean(document.querySelector(".site-splash:not(.is-out)"));
+    Boolean(splash) &&
+    getComputedStyle(splash).display !== "none";
   return Boolean(
     splashOpen ||
       document.querySelector(".site-promo") ||
@@ -28,31 +30,28 @@ export function FloatLogo() {
     const logo = logoRef.current;
     if (!logo) return;
 
-    let footerInView = false;
+    let overFooter = false;
     const syncHide = () => {
-      logo.classList.toggle("is-hidden", isChromeOpen() || footerInView);
+      const el = logoRef.current;
+      const footer = document.querySelector(".site-footer");
+      if (el && footer) {
+        const lr = el.getBoundingClientRect();
+        const fr = footer.getBoundingClientRect();
+        overFooter = fr.top < lr.bottom - 4 && fr.bottom > lr.top + 4;
+      }
+      logo.classList.toggle("is-hidden", isChromeOpen() || overFooter);
     };
 
     syncHide();
     const mo = new MutationObserver(syncHide);
     mo.observe(document.documentElement, { attributes: true, subtree: true, childList: true });
-
-    const footer = document.querySelector(".site-footer");
-    let io: IntersectionObserver | undefined;
-    if (footer) {
-      io = new IntersectionObserver(
-        ([entry]) => {
-          footerInView = Boolean(entry?.isIntersecting);
-          syncHide();
-        },
-        { threshold: 0.35 },
-      );
-      io.observe(footer);
-    }
+    window.addEventListener("scroll", syncHide, { passive: true });
+    window.addEventListener("resize", syncHide, { passive: true });
 
     return () => {
       mo.disconnect();
-      io?.disconnect();
+      window.removeEventListener("scroll", syncHide);
+      window.removeEventListener("resize", syncHide);
     };
   }, []);
 

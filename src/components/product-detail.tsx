@@ -77,8 +77,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         />
       </PdpReveal>
 
-      <div className="pdp-rails" style={forceWhiteStyle}>
-        <WhiteSurfaceFill />
+      <div className="pdp-rails">
         <div className="pdp-rail pdp-rail-copy">
           <h1 className="site-type pdp-name">{product.name}</h1>
           <p lang="en" className="site-type pdp-note" style={forceInkStyle}>
