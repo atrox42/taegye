@@ -10,6 +10,9 @@ import {
   type ReactNode,
 } from "react";
 
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { forceWhiteStyle } from "@/lib/force-white";
+
 type PdpGalleryProps = {
   empty: ReactNode;
   moss: ReactNode;
@@ -69,7 +72,8 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
   };
 
   return (
-    <div className="pdp-gallery">
+    <div className="pdp-gallery" style={forceWhiteStyle}>
+      <WhiteSurfaceFill className="pdp-gallery-plate" />
       <div
         ref={trackRef}
         className="pdp-gallery-track"
@@ -77,10 +81,12 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
         onPointerDown={onPointerDown}
         onClick={onTrackClick}
       >
-        <div className="pdp-gallery-slide">
+        <div className="pdp-gallery-slide" style={forceWhiteStyle}>
+          <WhiteSurfaceFill />
           {empty}
         </div>
-        <div className="pdp-gallery-slide">
+        <div className="pdp-gallery-slide" style={forceWhiteStyle}>
+          <WhiteSurfaceFill />
           {moss}
         </div>
       </div>

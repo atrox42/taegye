@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 
 import { StoreMention } from "@/components/store-mention";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { FAQ_ITEMS } from "@/lib/site";
+import { forceWhiteStyle } from "@/lib/force-white";
 
 export const metadata: Metadata = {
   title: "Faq",
@@ -9,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function FaqPage() {
   return (
-    <article className="site-page text-page site-gutter">
+    <article className="site-page text-page site-gutter" style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
       <h1 className="text-page-title site-type">Faq</h1>
       <div className="faq-body text-page-body">
         {FAQ_ITEMS.map((item) => (

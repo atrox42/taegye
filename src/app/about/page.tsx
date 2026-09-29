@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { ABOUT } from "@/lib/site";
+import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { forceWhiteStyle } from "@/lib/force-white";
 
 export const metadata: Metadata = {
   title: "About",
@@ -27,7 +29,8 @@ function AboutParagraph({
 
 export default function AboutPage() {
   return (
-    <article className="site-page text-page site-gutter">
+    <article className="site-page text-page site-gutter" style={forceWhiteStyle}>
+      <WhiteSurfaceFill />
       <h1 className="text-page-title site-type">About</h1>
       <div className="about-langs text-page-body">
         <div className="about-stack">
