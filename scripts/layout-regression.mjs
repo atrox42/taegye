@@ -13,22 +13,23 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const MOBILE = { width: 412, height: 915, deviceScaleFactor: 2.75 };
-const DESKTOP = { width: 1280, height: 800, deviceScaleFactor: 1 };
+const DESKTOP = { width: 1440, height: 900, deviceScaleFactor: 1 };
 const BASE = (process.env.BASE_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 const SKIP = "intro=skip&promo=skip";
 
-function mobileClipBox(viewportWidth, gutter = 0) {
-  const w = Math.max(0, viewportWidth - gutter * 2);
+function mobileClipBox(scale = 1, viewportWidth = 412, gutter = 16) {
+  const baseW = 138;
+  const rawW = baseW * scale;
+  const maxW = Math.max(0, viewportWidth - gutter * 2);
+  const w = Math.min(rawW, maxW);
   return { width: w, height: w * (130 / 230) };
 }
 
 function assertMath() {
-  const box = mobileClipBox(412);
-  assert.equal(box.width, 412);
-  assert.ok(Math.abs(box.height - 412 * (130 / 230)) < 0.01);
-  const three = box.height * 3;
-  assert.ok(three > 600, "three equal full-width clips should fill most of the first screen");
-  console.log("ok  math: mobile clips equal and full-width");
+  const box = mobileClipBox(1, 412);
+  assert.equal(box.width, 138);
+  assert.ok(Math.abs(box.height - 78) < 0.01);
+  console.log("ok  math: mobile clips are equal 138×78");
 }
 
 async function pageReady(page) {
@@ -82,45 +83,48 @@ async function runBrowser() {
             y: r.y,
             w: r.width,
             h: r.height,
-            width: s.width,
             position: s.position,
           };
         }),
       );
+      const hero = await page.$eval(".home-hero", (node) => {
+        const r = node.getBoundingClientRect();
+        const s = getComputedStyle(node);
+        return { h: r.height, overflow: s.overflow, justify: s.justifyContent, align: s.alignItems };
+      });
       assert.equal(clips.length, 3, "home has three hero clips");
       for (const clip of clips) {
-        assert.ok(clip.w >= 400, `clip width ${clip.w} must fill the mobile viewport, not 138px`);
-        assert.ok(Math.abs(clip.w - 412) <= 4, `clip width ${clip.w} should be ~412`);
+        assert.ok(Math.abs(clip.w - 138) <= 2, `mobile clip width ${clip.w} should be 138px, not full viewport`);
+        assert.ok(Math.abs(clip.h - 78) <= 2, `mobile clip height ${clip.h} should be 78px`);
         assert.equal(clip.position, "relative");
+        assert.ok(Math.abs(clip.x - (412 - 138) / 2) <= 4, `clip should be centered, x=${clip.x}`);
       }
-      assert.ok(
-        Math.abs(clips[0].w - clips[1].w) <= 1 && Math.abs(clips[1].w - clips[2].w) <= 1,
-        "clips are 1:1:1",
-      );
-      assert.ok(clips[0].y < 80, `first clip top ${clips[0].y} should sit under the nav, not mid-viewport`);
-      assert.ok(clips[0].y >= 0, "first clip should not sit in a large empty gap");
-      console.log("ok  mobile home: equal full-width clips, no top gap");
+      assert.ok(Math.abs(hero.h - 915) <= 2, `hero should be 100lvh, got ${hero.h}`);
+      assert.equal(hero.overflow, "hidden");
+      assert.equal(hero.justify, "center");
+      assert.equal(hero.align, "center");
+      const logo = await page.$eval(".site-float-logo", (node) => ({
+        position: getComputedStyle(node).position,
+        display: getComputedStyle(node).display,
+      }));
+      assert.equal(logo.position, "relative");
+      assert.notEqual(logo.display, "none");
+      console.log("ok  mobile home: three equal 138px loops, 100lvh, in-flow logo");
     });
 
     await withPage(browser, MOBILE, "/new", async (page) => {
       const logo = await page.$eval(".site-float-logo", (node) => {
         const s = getComputedStyle(node);
-        const r = node.getBoundingClientRect();
         return {
           position: s.position,
           display: s.display,
           opacity: s.opacity,
-          y: r.y,
-          h: r.height,
-          hidden: node.classList.contains("is-hidden"),
         };
       });
-      assert.equal(logo.position, "fixed");
+      assert.equal(logo.position, "relative");
       assert.notEqual(logo.display, "none");
-      assert.equal(logo.hidden, false);
       assert.ok(Number(logo.opacity) > 0.5, "float logo visible on /new");
-      assert.ok(logo.y + logo.h > 800, `float logo should sit near the bottom, y=${logo.y}`);
-      console.log("ok  mobile /new: floating footer logo is fixed at the bottom");
+      console.log("ok  mobile /new: in-flow footer logo");
     });
 
     await withPage(browser, MOBILE, "/new/white", async (page) => {
@@ -179,12 +183,10 @@ async function runBrowser() {
         `mobile PDP should serve the bright raster, got ${report.src}`,
       );
       const logo = await page.$eval(".site-float-logo", (node) => ({
-        hidden: node.classList.contains("is-hidden"),
-        opacity: getComputedStyle(node).opacity,
+        display: getComputedStyle(node).display,
         position: getComputedStyle(node).position,
       }));
-      assert.equal(logo.position, "fixed");
-      assert.equal(logo.hidden, false, "float logo should show on PDP until the footer overlaps it");
+      assert.equal(logo.position, "relative");
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 
@@ -216,12 +218,37 @@ async function runBrowser() {
       console.log("ok  desktop PDP: original raster, no float logo");
     });
 
-    await withPage(browser, DESKTOP, "/", async (page) => {
+    await withPage(browser, DESKTOP, "/?scales=1.25,1,0.4&layout=0", async (page) => {
       const clips = await page.$$eval(".home-hero-clip", (nodes) =>
-        nodes.map((node) => node.getBoundingClientRect().width),
+        nodes.map((node) => {
+          const r = node.getBoundingClientRect();
+          const s = getComputedStyle(node);
+          return {
+            x: Math.round(r.x),
+            y: Math.round(r.y),
+            w: Math.round(r.width),
+            h: Math.round(r.height),
+            position: s.position,
+          };
+        }),
       );
-      assert.ok(clips.every((w) => w < 400), `desktop clips should stay scaled, got ${clips}`);
-      console.log("ok  desktop home: clips are not a full-width stack");
+      assert.equal(clips.length, 3);
+      assert.ok(
+        clips.every((clip) => clip.position === "absolute"),
+        `desktop clips must be absolute scatter, got ${clips.map((c) => c.position)}`,
+      );
+      assert.ok(
+        clips.every((clip) => clip.w < 400),
+        `desktop clips should stay scaled, got ${clips.map((c) => c.w)}`,
+      );
+      const widths = clips.map((c) => c.w).sort((a, b) => a - b);
+      assert.ok(Math.abs(widths[0] - 92) <= 2, `0.4× clip ${widths[0]}`);
+      assert.ok(Math.abs(widths[1] - 230) <= 2, `1× clip ${widths[1]}`);
+      assert.ok(Math.abs(widths[2] - 288) <= 2, `1.25× clip ${widths[2]}`);
+      const xs = new Set(clips.map((c) => c.x));
+      const ys = new Set(clips.map((c) => c.y));
+      assert.ok(xs.size > 1 && ys.size > 1, `desktop clips must be scattered, got ${JSON.stringify(clips)}`);
+      console.log("ok  desktop home: 1.25/1/0.4 scatter");
     });
   } finally {
     await browser.close();

@@ -19,13 +19,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <div className="site-column relative z-[1] flex min-h-lvh flex-1 flex-col">
         <CanvasWhitePlate />
         <SiteHeader />
-        <main className="site-main relative flex-[1_1_auto]">
+        <main className="site-main relative flex-1">
           <CanvasWhitePlate />
           {children}
         </main>
+        <FloatLogo />
         <SiteFooter />
       </div>
-      <FloatLogo />
       <div className="site-splash" role="presentation" aria-hidden>
         <CanvasWhitePlate />
         <p className="site-splash-copy" style={forceInkStyle}>

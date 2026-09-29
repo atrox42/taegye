@@ -354,18 +354,6 @@ html {
   scrollbar-color: #000000 transparent;
 }
 
-@media (max-width: 767px) {
-  html {
-    scroll-snap-type: y proximity;
-    scroll-padding-bottom: 0;
-  }
-
-  .home-hero {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
-  }
-}
-
 body,
 .site-shell {
   overflow: visible;
@@ -1662,7 +1650,6 @@ select::-ms-expand {
 
 .site-main {
   padding-top: var(--site-nav-offset);
-  flex: 1 1 auto;
 }
 
 .home-hero {
@@ -1671,16 +1658,16 @@ select::-ms-expand {
   z-index: 0;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 0;
   width: 100%;
   margin-top: calc(var(--site-nav-offset) * -1);
   padding-top: var(--site-nav-offset);
-  height: auto;
+  height: 100lvh;
   min-height: 100lvh;
-  max-height: none;
-  overflow: visible;
+  max-height: 100lvh;
+  overflow: hidden;
   background-color: transparent !important;
   background-image: none !important;
   color-scheme: only light !important;
@@ -1701,46 +1688,27 @@ select::-ms-expand {
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  align-self: stretch;
-  width: 100%;
-  max-width: none;
+  width: var(--hero-clip-w);
   aspect-ratio: 230 / 130;
   height: auto;
+  max-width: calc(100vw - 2 * var(--site-gutter));
   overflow: hidden;
-}
-
-.home-hero[data-hero-mobile-equal="1"] .home-hero-clip {
-  width: 100% !important;
-  max-width: none !important;
-  left: auto !important;
-  right: auto !important;
-  top: auto !important;
 }
 
 @media (min-width: 768px) {
   .home-hero {
     display: block;
     padding-top: 0;
-    height: 100lvh;
-    min-height: 100lvh;
-    max-height: 100lvh;
-    overflow: hidden;
-    align-items: center;
-    justify-content: center;
   }
 
-  .home-hero-clip,
-  .home-hero[data-hero-mobile-equal="1"] .home-hero-clip {
+  .home-hero-clip {
     position: absolute;
-    width: calc(var(--hero-clip-w) * var(--hero-scale, 1)) !important;
+    width: calc(var(--hero-clip-w) * var(--hero-scale, 1));
     height: calc(var(--hero-clip-h) * var(--hero-scale, 1));
-    max-width: none !important;
+    max-width: none;
     aspect-ratio: auto;
     opacity: 0;
     transition: opacity 280ms ease;
-    align-self: auto;
-    left: auto;
-    top: auto;
   }
 
   .home-hero.is-placed .home-hero-clip {
@@ -1761,7 +1729,7 @@ select::-ms-expand {
   isolation: isolate;
   z-index: 1;
   width: 100%;
-  padding: 4.5rem var(--site-gutter) 0.75rem;
+  padding: 4.5rem var(--site-gutter) 1.5rem;
   background-color: transparent !important;
   background-image: none !important;
   color-scheme: only light !important;
@@ -1939,34 +1907,37 @@ select::-ms-expand {
 }
 
 .site-float-dock {
-  display: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 auto;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.site-float-dock > :not(.white-surface-fill):not(.canvas-white-fill) {
+  position: relative;
+  z-index: 1;
 }
 
 .site-float-logo {
-  position: fixed !important;
-  left: 0;
-  right: 0;
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  z-index: 35 !important;
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  z-index: 1;
   display: flex;
   width: 67px;
   height: 43px;
-  margin: 0 auto;
-  flex-shrink: 0;
-  overflow: visible;
+  margin: 1.25rem auto 0.85rem;
+  flex: 0 0 auto;
   background-color: transparent !important;
   background-image: none !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  outline: none !important;
+  box-shadow: none;
+  border: 0;
   transform: none;
   pointer-events: auto;
-  transition: opacity 150ms ease;
-}
-
-.site-float-logo.is-hidden {
-  opacity: 0;
-  pointer-events: none;
 }
 
 .site-float-logo-mark {
@@ -1974,12 +1945,9 @@ select::-ms-expand {
   width: 67px;
   height: 43px;
   object-fit: contain;
-  overflow: visible;
+  overflow: hidden;
   background-color: transparent !important;
   background-image: none !important;
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
   pointer-events: none;
   color-scheme: only light;
 }
@@ -2121,11 +2089,6 @@ select::-ms-expand {
 .new-subnav > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-page > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-main > :not(.white-surface-fill):not(.canvas-white-fill),
-.site-shell > :not(.white-surface-fill):not(.canvas-white-fill):not(.canvas-white-fixed):not(.site-splash):not(.site-float-logo),
-.home-hero > :not(.white-surface-fill):not(.canvas-white-fill),
-.home-new-in > :not(.white-surface-fill):not(.canvas-white-fill),
-.home-new-in-visual > :not(.white-surface-fill):not(.canvas-white-fill),
-.home-new-in-grid > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-footer > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-footer-inner > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-footer-row > :not(.white-surface-fill):not(.canvas-white-fill),
