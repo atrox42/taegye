@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
+import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
@@ -19,11 +19,13 @@ type ProductDetailProps = {
 
 function ProductHero({
   src,
+  mobileSrc,
   alt,
   priority = false,
   className,
 }: {
   src: string;
+  mobileSrc?: string;
   alt: string;
   priority?: boolean;
   className?: string;
@@ -31,17 +33,9 @@ function ProductHero({
   return (
     <div className={className ? `pdp-hero ${className}` : "pdp-hero"} style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <div className="pdp-stage relative aspect-square">
+      <div className="pdp-stage relative aspect-square overflow-hidden">
         <WhiteSurfaceFill />
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          priority={priority}
-          unoptimized={src.includes("/products/stand-") || src.includes("/products/one-port-")}
-          sizes="(min-width: 768px) 58vw, 100vw"
-          className="object-contain object-center"
-        />
+        <ProductPhoto src={src} mobileSrc={mobileSrc} alt={alt} fill priority={priority} />
       </div>
     </div>
   );
@@ -50,9 +44,22 @@ function ProductHero({
 export function ProductDetail({ product }: ProductDetailProps) {
   const [blurbOne, blurbTwo] = productNote(product).en;
   const emptyHero = (
-    <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
+    <ProductHero
+      src={product.emptySrc}
+      mobileSrc={product.emptySrcMobile}
+      alt={product.emptyAlt}
+      priority
+      className="pdp-hero-empty"
+    />
   );
-  const mossHero = <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss" />;
+  const mossHero = (
+    <ProductHero
+      src={product.mossSrc}
+      mobileSrc={product.mossSrcMobile}
+      alt={product.mossAlt}
+      className="pdp-hero-moss"
+    />
+  );
 
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
@@ -61,11 +68,16 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <PdpGallery empty={emptyHero} moss={mossHero} />
       </div>
       <PdpReveal>
-        <ProductHero src={product.emptySrc} alt={product.emptyAlt} priority className="pdp-hero-empty" />
+        <ProductHero
+          src={product.emptySrc}
+          mobileSrc={product.emptySrcMobile}
+          alt={product.emptyAlt}
+          priority
+          className="pdp-hero-empty"
+        />
       </PdpReveal>
 
-      <div className="pdp-rails" style={forceWhiteStyle}>
-        <WhiteSurfaceFill />
+      <div className="pdp-rails">
         <div className="pdp-rail pdp-rail-copy">
           <h1 className="site-type pdp-name">{product.name}</h1>
           <p lang="en" className="site-type pdp-note" style={forceInkStyle}>
@@ -119,7 +131,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </a>
         </div>
       </div>
-      <ProductHero src={product.mossSrc} alt={product.mossAlt} className="pdp-hero-moss pdp-desktop-moss" />
+      <ProductHero
+        src={product.mossSrc}
+        mobileSrc={product.mossSrcMobile}
+        alt={product.mossAlt}
+        className="pdp-hero-moss pdp-desktop-moss"
+      />
     </article>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import {
   forceInkStyle,
@@ -40,9 +41,9 @@ export function HomeNewIn() {
             <WhiteSurfaceFill />
             <Link href={`/new/${item.product.id}`} className="home-new-in-visual">
               <WhiteSurfaceFill />
-              {/* eslint-disable-next-line @next/next/no-img-element -- product photo stays photographic under Force Dark */}
-              <img
+              <ProductPhoto
                 src={item.product.mossSrc}
+                mobileSrc={item.product.mossSrcMobile}
                 alt={item.product.mossAlt}
                 width={1024}
                 height={1024}

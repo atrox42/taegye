@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { type MouseEvent } from "react";
 
 import { useGridDissolve } from "@/components/grid-dissolve";
+import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import type { NewProduct } from "@/lib/site";
@@ -47,26 +47,21 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       <div className="product-stage relative aspect-square overflow-hidden">
         <WhiteSurfaceFill />
         <div className="product-empty absolute inset-0">
-          <Image
+          <ProductPhoto
             src={product.emptySrc}
+            mobileSrc={product.emptySrcMobile}
             alt={product.emptyAlt}
             fill
             priority={priority}
-            unoptimized
-            sizes="(min-width: 768px) 25vw, 50vw"
-            className="object-contain object-center"
           />
         </div>
         <div className="product-moss absolute inset-0">
-          <Image
+          <ProductPhoto
             src={product.mossSrc}
+            mobileSrc={product.mossSrcMobile}
             alt=""
             fill
             priority={priority}
-            unoptimized
-            sizes="(min-width: 768px) 25vw, 50vw"
-            className="object-contain object-center"
-            aria-hidden
           />
         </div>
       </div>

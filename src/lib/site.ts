@@ -159,9 +159,15 @@ export type NewProduct = {
   price: string;
   emptySrc: string;
   mossSrc: string;
+  /** Brightened raster for max-width: 767px. Desktop keeps `emptySrc`. */
+  emptySrcMobile?: string;
+  mossSrcMobile?: string;
   emptyAlt: string;
   mossAlt: string;
 };
+
+/** Matches the site mobile / desktop split used by nav, PDP gallery, and float logo. */
+export const PRODUCT_MOBILE_MEDIA = "(max-width: 767px)";
 
 export const STAND_PRICE_SILVER = "KRW 103,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
@@ -257,6 +263,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: STAND_PRICE_SILVER,
     emptySrc: "/products/stand-silver.webp",
     mossSrc: "/products/stand-silver-moss.webp",
+    emptySrcMobile: "/products/stand-silver-mobile.webp",
+    mossSrcMobile: "/products/stand-silver-moss-mobile.webp",
     emptyAlt: "TAEGYE modular stand in frosted silver",
     mossAlt: "TAEGYE modular stand in frosted silver with moss",
   },
@@ -305,6 +313,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-white.webp",
     mossSrc: "/products/stand-white-moss.webp",
+    emptySrcMobile: "/products/stand-white-mobile.webp",
+    mossSrcMobile: "/products/stand-white-moss-mobile.webp",
     emptyAlt: "TAEGYE modular stand in white",
     mossAlt: "TAEGYE modular stand in white with moss",
   },
@@ -341,6 +351,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-white.png",
     mossSrc: "/products/one-port-white-plant.png",
+    emptySrcMobile: "/products/one-port-white-mobile.png",
+    mossSrcMobile: "/products/one-port-white-plant-mobile.png",
     emptyAlt: "TAEGYE one port in white",
     mossAlt: "TAEGYE one port in white with plant",
   },

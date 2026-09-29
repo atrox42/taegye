@@ -289,6 +289,8 @@ main,
 .pdp-stage img:not(.white-surface-fill),
 .pdp-hero .pdp-stage img:not(.white-surface-fill),
 .home-new-in-visual img:not(.white-surface-fill),
+.product-photo-fill,
+.product-photo-img,
 .site-float-logo,
 .site-float-logo-mark {
   background-color: transparent !important;
@@ -298,7 +300,34 @@ main,
 
 .product-empty,
 .product-moss {
-  z-index: 1;
+  z-index: 2;
+}
+
+.product-photo-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.product-photo-fill img,
+.product-photo-img {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 html,
@@ -653,7 +682,7 @@ button {
   min-height: 0;
   max-width: 100%;
   padding-top: 32px;
-  padding-bottom: 0.75rem;
+  padding-bottom: calc(0.75rem + var(--float-clearance));
   overflow: visible;
 }
 
@@ -661,6 +690,10 @@ button {
   position: relative;
   width: 100%;
   margin: 0 auto;
+}
+
+.pdp-stage {
+  overflow: hidden;
 }
 
 .pdp-gallery {
@@ -732,6 +765,10 @@ button {
   .pdp-atelier > .pdp-hero-moss,
   .pdp-desktop-moss {
     display: none !important;
+  }
+
+  .pdp-atelier {
+    min-height: calc(100lvh + var(--float-clearance));
   }
 }
 
@@ -982,6 +1019,12 @@ button {
     width: 100%;
     pointer-events: none;
     transform: none;
+    background: transparent !important;
+  }
+
+  .pdp-atelier > .pdp-rails > .white-surface-fill,
+  .pdp-atelier > .pdp-rails > .canvas-white-fill {
+    display: none !important;
   }
 
   .pdp-rail-copy {
@@ -1211,7 +1254,7 @@ button {
 }
 
 .new-page {
-  padding-bottom: 0.5rem;
+  padding-bottom: calc(1.25rem + var(--float-clearance));
 }
 
 .new-grid-item .product-card {
@@ -1390,7 +1433,6 @@ button {
   border: 0 !important;
   outline: none;
   box-shadow: none;
-  scroll-snap-align: end;
 }
 
 /* Windows paints a classic ▲/thumb/▼ chip when any footer box is scrollable.
@@ -1607,6 +1649,7 @@ select::-ms-expand {
   left: 0;
   right: 0;
   z-index: 50;
+  overflow: hidden;
 }
 
 .site-page,
@@ -1619,6 +1662,7 @@ select::-ms-expand {
 
 .site-main {
   padding-top: var(--site-nav-offset);
+  flex: 1 1 auto;
 }
 
 .home-hero {
@@ -1662,6 +1706,23 @@ select::-ms-expand {
   height: auto;
   max-width: calc(100vw - 2 * var(--site-gutter));
   overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .home-hero {
+    justify-content: flex-start;
+    align-items: stretch;
+    height: auto;
+    min-height: 100lvh;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .home-hero-clip {
+    width: 100%;
+    max-width: none;
+    align-self: stretch;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1765,14 +1826,22 @@ select::-ms-expand {
   background-image: none !important;
 }
 
-.home-new-in-visual img:not(.white-surface-fill) {
+.home-new-in-visual picture,
+.home-new-in-visual img:not(.white-surface-fill),
+.home-new-in-visual .product-photo-fill,
+.home-new-in-visual .product-photo-img {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center;
+}
+
+.home-new-in-visual .product-photo-fill {
+  position: relative;
+  inset: auto;
 }
 
 .home-new-in-visual .white-surface-fill {
@@ -1868,35 +1937,20 @@ select::-ms-expand {
 }
 
 .site-float-dock {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  flex: 0 0 auto;
-  overflow: visible;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  outline: none;
-  box-shadow: none;
-}
-
-.site-float-dock > :not(.white-surface-fill):not(.canvas-white-fill) {
-  position: relative;
-  z-index: 1;
+  display: none;
 }
 
 .site-float-logo {
-  position: relative;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  z-index: 1;
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 35 !important;
   display: flex;
   width: 67px;
   height: 43px;
-  margin: 0.85rem auto 0.4rem;
-  flex: 0 0 auto;
+  margin: 0 auto;
+  flex-shrink: 0;
   overflow: visible;
   background-color: transparent !important;
   background-image: none !important;
@@ -1905,6 +1959,12 @@ select::-ms-expand {
   outline: none !important;
   transform: none;
   pointer-events: auto;
+  transition: opacity 150ms ease;
+}
+
+.site-float-logo.is-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .site-float-logo-mark {
@@ -1964,6 +2024,8 @@ select::-ms-expand {
   display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   margin: 0;
   padding: 0;
   border: 0;
@@ -2013,10 +2075,19 @@ select::-ms-expand {
   z-index: 0;
   width: 100%;
   height: 100%;
-  max-width: none;
-  max-height: none;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: cover;
   pointer-events: none;
+}
+
+.product-stage > .white-surface-fill,
+.pdp-stage > .white-surface-fill,
+.pdp-hero > .white-surface-fill,
+.home-new-in-visual > .white-surface-fill,
+.pdp-gallery-slide > .white-surface-fill {
+  z-index: 0 !important;
+  overflow: hidden;
 }
 
 .site-shell-fill {
@@ -2048,7 +2119,7 @@ select::-ms-expand {
 .new-subnav > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-page > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-main > :not(.white-surface-fill):not(.canvas-white-fill),
-.site-shell > :not(.white-surface-fill):not(.canvas-white-fill):not(.canvas-white-fixed):not(.site-splash),
+.site-shell > :not(.white-surface-fill):not(.canvas-white-fill):not(.canvas-white-fixed):not(.site-splash):not(.site-float-logo),
 .home-hero > :not(.white-surface-fill):not(.canvas-white-fill),
 .home-new-in > :not(.white-surface-fill):not(.canvas-white-fill),
 .home-new-in-visual > :not(.white-surface-fill):not(.canvas-white-fill),
@@ -2439,6 +2510,13 @@ select::-ms-expand {
     background-image: none !important;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  .site-header {
+    overflow: hidden;
+  }
+
+  .site-nav {
     overflow: visible;
   }
 

@@ -1,4 +1,4 @@
-/** Desktop-only shuffle. Mobile always paints the 1× clip (138×78). */
+/** Desktop-only shuffle. Mobile paints three equal full-width clips. */
 export const HERO_SCALES = [1.25, 1, 0.4] as const;
 
 export type HeroScale = (typeof HERO_SCALES)[number];
@@ -25,16 +25,13 @@ export function parseHeroScales(raw: string | null): HeroScaleTriple | null {
   return parts as HeroScaleTriple;
 }
 
-export function mobileClipBox(scale: number, viewportWidth: number, gutter = 16) {
-  const baseW = 138;
-  const rawW = baseW * scale;
-  const maxW = Math.max(0, viewportWidth - gutter * 2);
-  const w = Math.min(rawW, maxW);
+export function mobileClipBox(_scale: number, viewportWidth: number, gutter = 0) {
+  const w = Math.max(0, viewportWidth - gutter * 2);
   return {
     width: w,
     height: w * (130 / 230),
-    clamped: rawW > maxW + 0.5,
-    effectiveScale: w / baseW,
+    clamped: true,
+    effectiveScale: w / 138,
   };
 }
 

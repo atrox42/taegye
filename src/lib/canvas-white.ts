@@ -39,6 +39,8 @@ export function paintOpaqueWhite(
   if (pinCssSize) {
     canvas.style.width = `${Math.max(0, cssWidth)}px`;
     canvas.style.height = `${Math.max(0, cssHeight)}px`;
+    canvas.style.maxWidth = "100%";
+    canvas.style.maxHeight = "100%";
   }
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) return;
