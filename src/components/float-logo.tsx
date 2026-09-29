@@ -2,18 +2,24 @@
 
 import Link from "next/link";
 
-import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceWhiteStyle } from "@/lib/force-white";
+import { CanvasLogo } from "@/components/canvas-logo";
+import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { SITE_NAME } from "@/lib/site";
 
-/** In-flow mobile mark above the footer. Transparent PNG stays ink under Force Dark. */
+/** In-flow mobile mark above the footer. Canvas ink stays black under Force Dark. */
 export function FloatLogo() {
   return (
-    <div className="site-float-dock" style={forceWhiteStyle}>
-      <WhiteSurfaceFill />
+    <div className="site-float-dock">
+      <CanvasWhitePlate />
       <Link href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS-mask fills */}
-        <img src="/logo-taegye.png" alt="" className="site-float-logo-mark" />
+        <CanvasLogo
+          src="/logo-taegye.png"
+          alt=""
+          width={67}
+          height={43}
+          align="center"
+          className="site-float-logo-mark"
+        />
       </Link>
     </div>
   );

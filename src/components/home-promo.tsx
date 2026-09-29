@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useLayoutEffect, useId, useState } from "react";
 
 import { InkClose } from "@/components/ink-icons";
+import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import {
   forceInkStyle,
   forcePurpleLightStyle,
@@ -13,7 +14,6 @@ import {
   DIM_BLACK_PNG_SRC,
   PURPLE_574667_PNG_SRC,
   PURPLE_6F5C82_PNG_SRC,
-  WHITE_BITMAP_SRC,
 } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
@@ -102,8 +102,7 @@ export function HomePromo() {
         aria-labelledby={titleId}
         style={forceWhiteStyle}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint */}
-        <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="site-promo-card-bitmap" />
+        <CanvasWhitePlate />
         <div className="site-promo-visual" style={forcePurpleStyle}>
           {/* eslint-disable-next-line @next/next/no-img-element -- exact #574667 PNG fill skips Force Dark invert */}
           <img src={PURPLE_574667_PNG_SRC} alt="" aria-hidden className="site-promo-purple" />

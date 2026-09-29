@@ -24,8 +24,8 @@ export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 /** Footer lockup — 20% smaller than the default. */
 export const FOOTER_LOGO_DISPLAY = { width: 108, height: 38 } as const;
 
-/** JPEG on a white plate — OEM Force Dark inverts transparent PNG chrome. */
-export const LOGO_SRC = "/logo-taegye.jpg";
+/** Transparent black PNG — drawn onto canvas so OEM Force Dark cannot grey it. */
+export const LOGO_SRC = "/logo-taegye.png";
 
 /** Home loops — intrinsic 230×130; CSS displays 138×78 on mobile. */
 export const HERO_CLIP = { width: 230, height: 130 } as const;

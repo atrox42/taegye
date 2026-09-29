@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 
-import { forceWhiteStyle, WHITE_BITMAP_SRC } from "@/lib/force-white";
+import { forceWhiteStyle } from "@/lib/force-white";
 import {
   parseHeroScales,
   placeScaledClips,
@@ -84,8 +84,6 @@ export function HomeHero({ scales }: { scales: HeroScaleTriple }) {
       data-hero-mobile-equal="1"
       style={forceWhiteStyle}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- OEM force-dark inverts CSS paint; raster stays white */}
-      <img src={WHITE_BITMAP_SRC} alt="" aria-hidden className="home-hero-bitmap" />
       {HERO_CLIPS.map((clip, index) => {
         const scale = scales[index];
         const slot = slots?.[index];
