@@ -11,13 +11,15 @@ import {
   type ReactNode,
 } from "react";
 
+import { WHITE_BITMAP_SRC } from "@/lib/force-white";
 import { NEW_PRODUCTS } from "@/lib/site";
 
-const COVER_MS = 360;
-const REVEAL_MS = 360;
+const COVER_MS = 350;
+const REVEAL_MS = 350;
+const REDUCE_MS = 120;
 const SAFETY_MS = COVER_MS + REVEAL_MS + 1200;
 const SESSION_KEY = "taegye-dissolve";
-const PLATE = "#FFFFFF";
+const OVERLAY_CLASS = "grid-dissolve-canvas";
 
 type DissolveApi = {
   start: (href: string) => boolean;
@@ -30,14 +32,6 @@ const DissolveContext = createContext<DissolveApi>({
   },
 });
 
-type Block = {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  order: number;
-};
-
 type HoldState = {
   hold: number;
   phase: "cover" | "reveal";
@@ -45,40 +39,28 @@ type HoldState = {
 
 type DissolveWindow = Window & {
   __TAEGYE_DISSOLVE_HOLD?: number;
+  __TAEGYE_DISSOLVE_OPACITY?: number;
   __TAEGYE_DISSOLVE_PHASE?: "cover" | "reveal";
-  __TAEGYE_DISSOLVE_TILES?: Array<{ x: number; y: number; w: number; h: number; on: boolean }>;
 };
 
-function canvasDpr() {
-  const raw = window.devicePixelRatio || 1;
-  return Math.min(window.innerWidth < 768 ? 1.25 : 1.5, raw);
+function prefersReduced() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function viewportSize() {
-  return { w: window.innerWidth, h: window.innerHeight };
+function phaseMs(full: number) {
+  return prefersReduced() ? REDUCE_MS : full;
 }
 
-function buildBlocks(vw: number, vh: number): Block[] {
-  const size = vw < 768 ? 52 : 68;
-  const cols = Math.max(4, Math.ceil(vw / size));
-  const rows = Math.max(4, Math.ceil(vh / size));
-  const blocks: Block[] = [];
-  for (let r = 0; r < rows; r += 1) {
-    for (let c = 0; c < cols; c += 1) {
-      const x = c * size;
-      const y = r * size;
-      const jitter = ((((r * 73856093) ^ (c * 19349663)) >>> 0) % 1000) / 1000;
-      blocks.push({
-        x,
-        y,
-        w: c === cols - 1 ? vw - x : size,
-        h: r === rows - 1 ? vh - y : size,
-        order: r + c + jitter * 0.72,
-      });
-    }
-  }
-  blocks.sort((a, b) => a.order - b.order);
-  return blocks;
+function easeInOut(t: number) {
+  const u = Math.min(1, Math.max(0, t));
+  return u < 0.5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2;
+}
+
+function publishOpacity(hold: number, phase: "cover" | "reveal") {
+  const value = Math.min(1, Math.max(0, hold));
+  const win = window as DissolveWindow;
+  win.__TAEGYE_DISSOLVE_OPACITY = value;
+  win.__TAEGYE_DISSOLVE_PHASE = phase;
 }
 
 function holdState(): HoldState | null {
@@ -88,105 +70,36 @@ function holdState(): HoldState | null {
   return { hold: Math.min(1, Math.max(0, hold)), phase };
 }
 
-function publishTiles(blocks: Block[], onFrom: number, onTo: number) {
-  (window as DissolveWindow).__TAEGYE_DISSOLVE_TILES = blocks.map((block, index) => ({
-    x: block.x,
-    y: block.y,
-    w: block.w,
-    h: block.h,
-    on: index >= onFrom && index < onTo,
-  }));
+function ensureOverlay() {
+  let overlay = document.querySelector<HTMLElement>(`.${OVERLAY_CLASS}`);
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.className = OVERLAY_CLASS;
+    overlay.setAttribute("aria-hidden", "true");
+    const plate = document.createElement("img");
+    plate.className = "grid-dissolve-plate";
+    plate.src = WHITE_BITMAP_SRC;
+    plate.alt = "";
+    overlay.appendChild(plate);
+    document.body.appendChild(overlay);
+  }
+  overlay.style.pointerEvents = "none";
+  overlay.style.setProperty("forced-color-adjust", "none");
+  overlay.style.colorScheme = "only light";
+  overlay.style.zIndex = "90";
+  return overlay;
 }
 
-function ensureCanvas() {
-  let canvas = document.querySelector<HTMLCanvasElement>(".grid-dissolve-canvas");
-  if (!canvas) {
-    canvas = document.createElement("canvas");
-    canvas.className = "grid-dissolve-canvas";
-    canvas.setAttribute("aria-hidden", "true");
-    document.body.appendChild(canvas);
-  }
-  const dpr = canvasDpr();
-  const { w, h } = viewportSize();
-  canvas.width = Math.max(1, Math.round(w * dpr));
-  canvas.height = Math.max(1, Math.round(h * dpr));
-  canvas.style.width = `${w}px`;
-  canvas.style.height = `${h}px`;
-  canvas.style.backgroundColor = "transparent";
-  canvas.style.zIndex = "90";
-  canvas.style.colorScheme = "only light";
-  canvas.style.pointerEvents = "none";
-  canvas.style.setProperty("forced-color-adjust", "none");
-  const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
-  if (ctx) {
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = false;
-  }
-  return { canvas, ctx, dpr, w, h };
+function setOverlayOpacity(overlay: HTMLElement, value: number) {
+  overlay.style.opacity = String(Math.min(1, Math.max(0, value)));
 }
 
-function paintBlock(ctx: CanvasRenderingContext2D, block: Block | undefined, clear: boolean) {
-  if (!block) return;
-  if (clear) {
-    ctx.clearRect(block.x, block.y, block.w, block.h);
-    return;
-  }
-  ctx.fillRect(block.x, block.y, block.w, block.h);
-}
-
-function paint(ctx: CanvasRenderingContext2D, blocks: Block[], t: number, phase: "cover" | "reveal") {
-  const dpr = canvasDpr();
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.imageSmoothingEnabled = false;
-  ctx.globalCompositeOperation = "source-over";
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = PLATE;
-
-  const progress = Number.isFinite(t) ? Math.min(1, Math.max(0, t)) : 0;
-  const cut = Math.round(progress * blocks.length);
-  const start = phase === "cover" ? 0 : cut;
-  const end = phase === "cover" ? cut : blocks.length;
-
-  for (let i = start; i < end; i += 1) {
-    paintBlock(ctx, blocks[i], false);
-  }
-
-  publishTiles(blocks, start, end);
-}
-
-function paintIncremental(
-  ctx: CanvasRenderingContext2D,
-  blocks: Block[],
-  from: number,
-  to: number,
-  phase: "cover" | "reveal",
-) {
-  const dpr = canvasDpr();
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = PLATE;
-  const start = Math.max(0, Math.min(blocks.length, Math.floor(from) || 0));
-  const end = Math.max(start, Math.min(blocks.length, Math.ceil(to) || 0));
-  if (phase === "cover") {
-    ctx.globalCompositeOperation = "source-over";
-    for (let i = start; i < end; i += 1) {
-      paintBlock(ctx, blocks[i], false);
-    }
-    publishTiles(blocks, 0, end);
-    return end;
-  }
-  for (let i = start; i < end; i += 1) {
-    paintBlock(ctx, blocks[i], true);
-  }
-  publishTiles(blocks, end, blocks.length);
-  return end;
-}
-
-function removeCanvas() {
-  document.querySelectorAll(".grid-dissolve-canvas").forEach((node) => node.remove());
+function removeOverlay() {
+  document.querySelectorAll(`.${OVERLAY_CLASS}`).forEach((node) => node.remove());
   document.documentElement.classList.remove("is-dissolving");
+  const win = window as DissolveWindow;
+  delete win.__TAEGYE_DISSOLVE_OPACITY;
+  delete win.__TAEGYE_DISSOLVE_PHASE;
 }
 
 function waitForPath(href: string, ms = 1600) {
@@ -230,7 +143,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
     clearTimers();
     busy.current = false;
     dest.current = null;
-    removeCanvas();
+    removeOverlay();
   }, [clearTimers]);
 
   const start = useCallback(
@@ -244,27 +157,16 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       if (held) {
         try {
           document.documentElement.classList.add("is-dissolving");
-          const { ctx } = ensureCanvas();
-          const { w, h } = viewportSize();
-          const blocks = buildBlocks(w, h);
-          if (!ctx) return false;
+          const overlay = ensureOverlay();
+          setOverlayOpacity(overlay, held.hold);
+          publishOpacity(held.hold, held.phase);
           if (held.phase === "reveal") {
-            paint(ctx, blocks, 1, "cover");
             goNow(href, router);
-            void waitForPath(href)
-              .then(() => {
-                const next = ensureCanvas();
-                if (next.ctx) paint(next.ctx, blocks, held.hold, "reveal");
-              })
-              .catch(() => {
-                removeCanvas();
-              });
             return true;
           }
-          paint(ctx, blocks, held.hold, "cover");
           return true;
         } catch {
-          removeCanvas();
+          removeOverlay();
           return false;
         }
       }
@@ -302,45 +204,29 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
 
       try {
         document.documentElement.classList.add("is-dissolving");
-        const { ctx } = ensureCanvas();
-        const { w, h } = viewportSize();
-        const blocks = buildBlocks(w, h);
-
-        if (!ctx || blocks.length === 0) {
-          return failAway();
-        }
+        const overlay = ensureOverlay();
+        setOverlayOpacity(overlay, 0);
+        publishOpacity(0, "cover");
 
         const finishCover = () => {
-          try {
-            paint(ctx, blocks, 1, "cover");
-          } catch {
-            /* still navigate */
-          }
+          setOverlayOpacity(overlay, 1);
+          publishOpacity(1, "cover");
           goNow(href, router);
           void waitForPath(href)
             .then(() => {
               if (!busy.current || dest.current !== href) return;
-              const live = ensureCanvas();
-              if (!live.ctx) {
-                reset();
-                return;
-              }
-              try {
-                paint(live.ctx, blocks, 0, "reveal");
-              } catch {
-                reset();
-                return;
-              }
-              let cleared = 0;
+              const live = ensureOverlay();
+              setOverlayOpacity(live, 1);
+              publishOpacity(1, "reveal");
+              const revealMs = phaseMs(REVEAL_MS);
               const revealStart = performance.now();
               const tickReveal = (stamp: number) => {
                 try {
                   if (!busy.current || dest.current !== href) return;
-                  const u = Math.min(1, (stamp - revealStart) / REVEAL_MS);
-                  const nextCleared = Math.round(u * blocks.length);
-                  if (nextCleared !== cleared) {
-                    cleared = paintIncremental(live.ctx!, blocks, cleared, nextCleared, "reveal");
-                  }
+                  const u = Math.min(1, (stamp - revealStart) / revealMs);
+                  const opacity = 1 - easeInOut(u);
+                  setOverlayOpacity(live, opacity);
+                  publishOpacity(opacity, "reveal");
                   if (u < 1) {
                     raf.current = requestAnimationFrame(tickReveal);
                     return;
@@ -357,17 +243,15 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
             });
         };
 
-        paint(ctx, blocks, 0, "cover");
-        let last = 0;
+        const coverMs = phaseMs(COVER_MS);
         const begun = performance.now();
         const tickCover = (now: number) => {
           try {
             if (!busy.current || dest.current !== href) return;
-            const t = Math.min(1, (now - begun) / COVER_MS);
-            const next = Math.round(t * blocks.length);
-            if (next !== last) {
-              last = paintIncremental(ctx, blocks, last, next, "cover");
-            }
+            const t = Math.min(1, (now - begun) / coverMs);
+            const opacity = easeInOut(t);
+            setOverlayOpacity(overlay, opacity);
+            publishOpacity(opacity, "cover");
             if (t < 1) {
               raf.current = requestAnimationFrame(tickCover);
               return;
@@ -402,14 +286,14 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
       reset();
       return;
     }
-    if (!busy.current) removeCanvas();
+    if (!busy.current) removeOverlay();
   }, [pathname, reset]);
 
   useEffect(() => {
     const onPageShow = () => reset();
     const onPop = () => reset();
     const onVisible = () => {
-      if (document.visibilityState === "visible" && !busy.current) removeCanvas();
+      if (document.visibilityState === "visible" && !busy.current) removeOverlay();
     };
     window.addEventListener("pageshow", onPageShow);
     window.addEventListener("popstate", onPop);

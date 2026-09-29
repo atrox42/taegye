@@ -846,7 +846,7 @@ button {
 .pdp-reveal.is-on {
   opacity: 1;
   transform: none;
-  transition: opacity 0.55s ease;
+  transition: opacity 350ms ease-in-out;
 }
 
 .grid-dissolve-canvas {
@@ -856,9 +856,27 @@ button {
   display: block;
   width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
   pointer-events: none !important;
-  background-color: transparent;
+  background-color: #ffffff;
+  background-image: url("/bg-white.jpg"), url("/bg-white.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   color-scheme: only light;
+  forced-color-adjust: none;
+}
+
+.grid-dissolve-plate {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none !important;
   forced-color-adjust: none;
 }
 
@@ -2477,6 +2495,10 @@ html[data-intro="done"] .site-splash {
 @media (prefers-reduced-motion: reduce) {
   .site-splash.is-out {
     transition: none;
+  }
+
+  .pdp-reveal.is-on {
+    transition: opacity 120ms ease-in-out;
   }
 }
 
