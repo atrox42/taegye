@@ -76,6 +76,20 @@ async function runBrowser() {
 
   try {
     await withPage(browser, MOBILE, "/", async (page) => {
+      const head = await page.evaluate(() => ({
+        viewport: document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "",
+        manifest: document.querySelector('link[rel="manifest"]')?.getAttribute("href") || "",
+        theme: [...document.querySelectorAll('meta[name="theme-color"]')].map((node) =>
+          (node.getAttribute("content") || "").toLowerCase(),
+        ),
+      }));
+      assert.match(head.viewport, /viewport-fit=cover/, `viewport ${head.viewport}`);
+      assert.match(head.manifest, /manifest\.webmanifest/, `manifest ${head.manifest}`);
+      assert.ok(
+        head.theme.some((color) => color === "#ffffff"),
+        `theme-color ${head.theme}`,
+      );
+
       const clips = await page.$$eval(".home-hero-clip", (nodes) =>
         nodes.map((node) => {
           const r = node.getBoundingClientRect();
