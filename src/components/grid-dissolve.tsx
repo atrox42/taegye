@@ -59,7 +59,7 @@ function viewportSize() {
 }
 
 function buildBlocks(vw: number, vh: number): Block[] {
-  const size = vw < 768 ? 72 : 96;
+  const size = vw < 768 ? 52 : 68;
   const cols = Math.max(4, Math.ceil(vw / size));
   const rows = Math.max(4, Math.ceil(vh / size));
   const blocks: Block[] = [];
