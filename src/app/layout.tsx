@@ -48,7 +48,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "only light",
-  themeColor: "#ffffff",
+  themeColor: "#FFFFFF",
+  viewportFit: "cover",
 };
 
 const rootPaint = {
@@ -68,8 +69,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <meta name="color-scheme" content="only light" />
         <meta name="supported-color-schemes" content="light" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#FFFFFF" />
         <meta name="format-detection" content="telephone=no, email=no, address=no" />
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="preload" href="/logo-taegye.png" as="image" />
         <link rel="preload" href="/ink-111.jpg" as="image" />
         <link rel="preload" href="/dim-black.png" as="image" />
