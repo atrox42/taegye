@@ -54,26 +54,51 @@ export const HERO_LAYOUT_PRESETS: HeroSlot[][] = [
 
 export function HomeHero({ scales }: { scales: HeroScaleTriple }) {
   const heroRef = useRef<HTMLElement>(null);
+  const layoutIndexRef = useRef<number | null>(null);
   const [slots, setSlots] = useState<HeroSlot[] | null>(null);
 
   useLayoutEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const resolved = parseHeroScales(params.get("scales")) ?? scales;
-    if (!window.matchMedia("(min-width: 768px)").matches) {
-      setSlots(null);
-      return;
-    }
-    const raw = params.get("layout");
-    const parsed = raw === null ? Number.NaN : Number(raw);
-    const index = Number.isInteger(parsed)
-      ? ((parsed % HERO_LAYOUT_PRESETS.length) + HERO_LAYOUT_PRESETS.length) %
-        HERO_LAYOUT_PRESETS.length
-      : Math.floor(Math.random() * HERO_LAYOUT_PRESETS.length);
-    const preset = HERO_LAYOUT_PRESETS.at(index) ?? HERO_LAYOUT_PRESETS[0];
-    const box = heroRef.current?.getBoundingClientRect();
-    const vw = box?.width ?? window.innerWidth;
-    const vh = box?.height ?? window.innerHeight;
-    setSlots(placeScaledClips(resolved, vw, vh, preset));
+    const desktopMq = window.matchMedia("(min-width: 768px)");
+
+    const resolveIndex = () => {
+      if (layoutIndexRef.current !== null) return layoutIndexRef.current;
+      const raw = new URLSearchParams(window.location.search).get("layout");
+      const parsed = raw === null ? Number.NaN : Number(raw);
+      const index = Number.isInteger(parsed)
+        ? ((parsed % HERO_LAYOUT_PRESETS.length) + HERO_LAYOUT_PRESETS.length) %
+          HERO_LAYOUT_PRESETS.length
+        : Math.floor(Math.random() * HERO_LAYOUT_PRESETS.length);
+      layoutIndexRef.current = index;
+      return index;
+    };
+
+    const place = () => {
+      const params = new URLSearchParams(window.location.search);
+      const resolved = parseHeroScales(params.get("scales")) ?? scales;
+      if (!desktopMq.matches) {
+        setSlots(null);
+        return;
+      }
+      const preset = HERO_LAYOUT_PRESETS.at(resolveIndex()) ?? HERO_LAYOUT_PRESETS[0];
+      const box = heroRef.current?.getBoundingClientRect();
+      // A 0×0 hero box would clamp every clip to pad (24,56) — the top-left pile.
+      const vw = box && box.width >= 200 ? box.width : window.innerWidth;
+      const vh = box && box.height >= 200 ? box.height : window.innerHeight;
+      if (vw < 200 || vh < 200) return;
+      setSlots(placeScaledClips(resolved, vw, vh, preset));
+    };
+
+    place();
+    const node = heroRef.current;
+    const ro = new ResizeObserver(place);
+    if (node) ro.observe(node);
+    window.addEventListener("resize", place);
+    desktopMq.addEventListener("change", place);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", place);
+      desktopMq.removeEventListener("change", place);
+    };
   }, [scales]);
 
   return (

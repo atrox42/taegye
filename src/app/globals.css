@@ -1698,21 +1698,35 @@ select::-ms-expand {
 @media (min-width: 768px) {
   .home-hero {
     display: block;
+    position: relative;
     padding-top: 0;
   }
 
-  .home-hero-clip {
+  .home-hero > .home-hero-clip {
     position: absolute;
     width: calc(var(--hero-clip-w) * var(--hero-scale, 1));
     height: calc(var(--hero-clip-h) * var(--hero-scale, 1));
     max-width: none;
     aspect-ratio: auto;
-    opacity: 0;
-    transition: opacity 280ms ease;
+    opacity: 1;
+    right: auto;
+    bottom: auto;
   }
 
-  .home-hero.is-placed .home-hero-clip {
-    opacity: 1;
+  /* Approved pre-PR 90 preset 0 — first paint must not pile clips at 0,0. */
+  .home-hero-clip-a {
+    top: 19%;
+    left: 12%;
+  }
+
+  .home-hero-clip-b {
+    top: 28%;
+    left: 71%;
+  }
+
+  .home-hero-clip-c {
+    top: 56%;
+    left: 39%;
   }
 }
 
