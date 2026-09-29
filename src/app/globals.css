@@ -70,6 +70,8 @@
   --tracking-nav-lg: 0.097em;
   --tracking-title: 0.104em;
   --tracking-footer: 0.034em;
+  --grid-line: #111111;
+  --grid-hairline: 1px;
   /* Gradient + data-URI + file. Force-dark often skips image paint. */
   --force-white-image: url("/bg-white.jpg"), url("/bg-white.png"),
     linear-gradient(#ffffff, #ffffff);
@@ -322,6 +324,18 @@ html {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #000000 transparent;
+}
+
+@media (max-width: 767px) {
+  html {
+    scroll-snap-type: y proximity;
+    scroll-padding-bottom: 0;
+  }
+
+  .home-hero {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
 }
 
 body,
@@ -640,7 +654,7 @@ button {
   min-height: 0;
   max-width: 100%;
   padding-top: 32px;
-  padding-bottom: 2.5rem;
+  padding-bottom: 0.75rem;
   overflow: visible;
 }
 
@@ -1179,9 +1193,12 @@ button {
 
 .new-grid {
   display: grid;
+  position: relative;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
-  border: 1px solid #111111;
+  border: 0 !important;
+  outline: none;
+  box-shadow: none;
   background-color: transparent !important;
   background-image: none !important;
 }
@@ -1189,28 +1206,52 @@ button {
 .new-grid-item {
   position: relative;
   padding: 0.95rem 0.85rem 1.05rem;
-  border-right: 1px solid #111111;
-  border-bottom: 1px solid #111111;
+  border: 0 !important;
 }
 
 .new-page {
-  padding-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
 }
 
 .new-grid-item .product-card {
   height: 100%;
 }
 
-.new-grid-item:nth-child(2n) {
-  border-right: none;
+.new-grid::before,
+.new-grid-item::after {
+  pointer-events: none;
+  box-sizing: border-box;
+  forced-color-adjust: none;
 }
 
-.new-grid-item:last-child {
-  border-bottom: none;
+.new-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  box-shadow: inset 0 0 0 var(--grid-hairline) var(--grid-line);
 }
 
-.new-grid-item:nth-last-child(2):nth-child(odd):has(+ .new-grid-item:last-child:nth-child(even)) {
-  border-bottom: none;
+.new-grid-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 0;
+  border-right: var(--grid-hairline) solid var(--grid-line);
+  border-bottom: var(--grid-hairline) solid var(--grid-line);
+}
+
+.new-grid-item:nth-child(2n)::after {
+  border-right: 0;
+}
+
+.new-grid-item:last-child::after {
+  border-bottom: 0;
+}
+
+.new-grid-item:nth-last-child(2):nth-child(odd):has(+ .new-grid-item:last-child:nth-child(even))::after {
+  border-bottom: 0;
 }
 
 @media (min-width: 768px) {
@@ -1219,7 +1260,7 @@ button {
   }
 
   .new-page {
-    padding-bottom: 2.5rem;
+    padding-bottom: 2rem;
   }
 
   .new-subnav {
@@ -1253,23 +1294,34 @@ button {
 
   .new-grid-item {
     padding: 1.5rem 1.25rem 2rem;
-    border-right: 1px solid #111111;
-    border-bottom: 1px solid #111111;
+    border: 0 !important;
   }
 
-  .new-grid-item:nth-child(2n) {
-    border-right: 1px solid #111111;
+  .new-grid-item:nth-child(2n)::after {
+    border-right: var(--grid-hairline) solid var(--grid-line);
   }
 
-  .new-grid-item:nth-child(4n) {
-    border-right: none;
+  .new-grid-item:nth-child(4n)::after {
+    border-right: 0;
   }
 
-  .new-grid-item:nth-child(4n + 1):nth-last-child(-n + 4),
-  .new-grid-item:nth-child(4n + 2):nth-last-child(-n + 3),
-  .new-grid-item:nth-child(4n + 3):nth-last-child(-n + 2),
-  .new-grid-item:nth-child(4n):last-child {
-    border-bottom: none;
+  .new-grid-item:nth-child(4n + 1):nth-last-child(-n + 4)::after,
+  .new-grid-item:nth-child(4n + 2):nth-last-child(-n + 3)::after,
+  .new-grid-item:nth-child(4n + 3):nth-last-child(-n + 2)::after,
+  .new-grid-item:nth-child(4n):last-child::after {
+    border-bottom: 0;
+  }
+
+  .archive-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archive-grid .new-grid-item:nth-child(2n)::after {
+    border-right: 0;
+  }
+
+  .archive-grid .new-grid-item:nth-last-child(-n + 2)::after {
+    border-bottom: 0;
   }
 }
 
@@ -1302,8 +1354,12 @@ button {
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  overflow: clip;
-  contain: paint;
+  overflow: visible;
+  contain: none;
+  border: 0 !important;
+  outline: none;
+  box-shadow: none;
+  scroll-snap-align: end;
 }
 
 /* Windows paints a classic ▲/thumb/▼ chip when any footer box is scrollable.
@@ -1324,7 +1380,7 @@ button {
   position: relative;
   z-index: 1;
   padding-top: 0;
-  padding-bottom: max(1.15rem, calc(0.85rem + env(safe-area-inset-bottom, 0px)));
+  padding-bottom: max(0.7rem, env(safe-area-inset-bottom, 0px));
 }
 
 .site-footer-row {
@@ -1457,6 +1513,10 @@ select::-ms-expand {
 
 .site-footer-logo {
   display: none;
+  overflow: visible;
+  border: 0 !important;
+  outline: none;
+  box-shadow: none;
   text-decoration: none !important;
   -webkit-text-fill-color: unset !important;
   background-image: none !important;
@@ -1607,7 +1667,7 @@ select::-ms-expand {
   isolation: isolate;
   z-index: 1;
   width: 100%;
-  padding: 4.5rem var(--site-gutter) 1.5rem;
+  padding: 4.5rem var(--site-gutter) 0.75rem;
   background-color: transparent !important;
   background-image: none !important;
   color-scheme: only light !important;
@@ -1782,8 +1842,12 @@ select::-ms-expand {
   justify-content: center;
   width: 100%;
   flex: 0 0 auto;
+  overflow: visible;
   background-color: transparent !important;
   background-image: none !important;
+  border: 0 !important;
+  outline: none;
+  box-shadow: none;
 }
 
 .site-float-dock > :not(.white-surface-fill):not(.canvas-white-fill) {
@@ -1800,12 +1864,14 @@ select::-ms-expand {
   display: flex;
   width: 67px;
   height: 43px;
-  margin: 1.25rem auto 0.85rem;
+  margin: 0.85rem auto 0.4rem;
   flex: 0 0 auto;
+  overflow: visible;
   background-color: transparent !important;
   background-image: none !important;
-  box-shadow: none;
-  border: 0;
+  box-shadow: none !important;
+  border: 0 !important;
+  outline: none !important;
   transform: none;
   pointer-events: auto;
 }
@@ -1815,9 +1881,12 @@ select::-ms-expand {
   width: 67px;
   height: 43px;
   object-fit: contain;
-  overflow: hidden;
+  overflow: visible;
   background-color: transparent !important;
   background-image: none !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
   pointer-events: none;
   color-scheme: only light;
 }
@@ -1885,6 +1954,9 @@ select::-ms-expand {
   display: block;
   background: transparent !important;
   background-image: none !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
   filter: none !important;
   mix-blend-mode: normal !important;
   opacity: 1 !important;
@@ -3032,4 +3104,21 @@ button.site-menubar-toggle,
   background-image: none !important;
   filter: none !important;
   mix-blend-mode: normal !important;
+  border: 0 !important;
+  outline: none !important;
+}
+
+.site-float-logo,
+.site-float-logo-mark,
+.site-footer-logo,
+.site-float-dock,
+.site-footer {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.new-grid,
+.new-grid-item {
+  border: 0 !important;
 }

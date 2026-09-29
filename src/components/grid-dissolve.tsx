@@ -124,6 +124,8 @@ function goNow(href: string, router: { push: (url: string) => void }) {
   } catch {
     window.location.assign(href);
   }
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
 }
 
 export function GridDissolveProvider({ children }: { children: ReactNode }) {
