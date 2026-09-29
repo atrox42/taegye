@@ -1194,8 +1194,8 @@ button {
   display: grid;
   position: relative;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--grid-hairline);
-  padding: var(--grid-hairline);
+  gap: 1px;
+  padding: 1px;
   border: 0 !important;
   outline: none;
   box-shadow: none;
