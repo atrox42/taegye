@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { GridLines } from "@/components/grid-lines";
 import { ProductCard } from "@/components/product-card";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import {
@@ -94,6 +95,7 @@ export function NewCatalog() {
   }, [products.length, searchParams]);
 
   const entries = useMemo(() => catalogEntries(products, placement), [products, placement]);
+  const gridRef = useRef<HTMLUListElement>(null);
   const [cols, setCols] = useState(2);
 
   useEffect(() => {
@@ -134,7 +136,7 @@ export function NewCatalog() {
       {products.length > 0 ? (
         <div className="new-grid-wrap" style={forceWhiteStyle}>
           <WhiteSurfaceFill />
-          <ul className={cn("new-grid", placement && "is-placed")}>
+          <ul ref={gridRef} className={cn("new-grid", placement && "is-placed")}>
             {cells.map((entry, index) =>
               entry.type === "texture" ? (
                 <li key="grid-texture" className="new-grid-item new-grid-item-texture">
@@ -153,6 +155,7 @@ export function NewCatalog() {
               ),
             )}
           </ul>
+          <GridLines gridRef={gridRef} revision={cells.length} />
         </div>
       ) : (
         <p className="site-type new-empty">coming soon</p>

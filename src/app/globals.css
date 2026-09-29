@@ -1216,9 +1216,21 @@ button {
   background-image: none !important;
 }
 
-.new-grid-wrap > :not(.white-surface-fill) {
+.new-grid-wrap > :not(.white-surface-fill):not(.canvas-white-fill):not(.new-grid-lines) {
   position: relative;
   z-index: 1;
+}
+
+.new-grid-lines {
+  display: none;
+  position: absolute;
+  inset: auto;
+  z-index: 5;
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .new-grid {
@@ -1345,6 +1357,18 @@ button {
 
   .new-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* PC lines come from the snapped canvas, not CSS gap + plate edges. */
+  .new-grid-wrap .new-grid {
+    gap: 0;
+    padding: 0;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  .new-grid-lines {
+    display: block;
   }
 
   .new-grid-item {
@@ -3141,10 +3165,19 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   }
 }
 
-/* Last-win: the catalog ul is the 1px ink gap; cells keep covering plates. */
+/* Last-win: mobile still uses the 1px ink gap; PC paints snapped canvas lines. */
 .new-grid {
   background-color: var(--grid-line) !important;
   background-image: none !important;
+}
+
+@media (min-width: 768px) {
+  .new-grid-wrap .new-grid {
+    gap: 0;
+    padding: 0;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
 }
 
 /* Last-win: gray-injection / Force Dark must not paint chips on chrome or captions. */

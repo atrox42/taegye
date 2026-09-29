@@ -303,6 +303,21 @@ async function runBrowser() {
       console.log(`ok  ${label}: 1.25/1/0.4 scatter`);
     }
 
+    await withPage(browser, DESKTOP, "/new?cat=all&tile=4&moss=1", async (page) => {
+      const grid = await page.$eval(".new-grid", (node) => {
+        const s = getComputedStyle(node);
+        return { gap: s.gap, padding: s.padding, bg: s.backgroundColor };
+      });
+      assert.equal(grid.gap, "0px", `desktop /new grid gap should be 0, got ${grid.gap}`);
+      const lines = await page.$eval(".new-grid-lines", (node) => ({
+        display: getComputedStyle(node).display,
+        painted: node.dataset.gridLines,
+      }));
+      assert.equal(lines.display, "block");
+      assert.equal(lines.painted, "1");
+      console.log("ok  desktop /new: snapped canvas grid lines, no CSS gap");
+    });
+
     await withPage(browser, DESKTOP, "/?scales=1.25,1,0.4&layout=0", (page) =>
       assertDesktopScatter(page, "desktop 1440×900"),
     );
