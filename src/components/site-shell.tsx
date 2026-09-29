@@ -6,8 +6,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { ScrollManager } from "@/components/scroll-manager";
+import { SplashCopy } from "@/components/splash-copy";
 import { WhiteBitmapLayer } from "@/components/white-bitmap-layer";
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceWhiteStyle } from "@/lib/force-white";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
@@ -28,10 +29,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <FloatLogo />
       <div className="site-splash" role="presentation" aria-hidden>
         <CanvasWhitePlate />
-        <p className="site-splash-copy" style={forceInkStyle}>
-          <span>ALL</span>
-          <span>TAEGYE-RIUM</span>
-        </p>
+        <SplashCopy />
       </div>
       <IntroSplashController />
       <HomePromo />

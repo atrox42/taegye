@@ -750,6 +750,74 @@ async function runBrowser() {
         );
       });
     }
+
+    async function withSplash(browser, viewport, fn) {
+      const page = await browser.newPage();
+      await page.setViewport(viewport);
+      await page.goto(`${BASE}/?intro=hold&promo=skip`, {
+        waitUntil: "load",
+        timeout: 60000,
+      });
+      await page.waitForSelector(".site-splash-copy");
+      await page.waitForFunction(
+        () => document.querySelector(".site-splash-line.is-painted"),
+        { timeout: 15000 },
+      );
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      try {
+        return await fn(page);
+      } finally {
+        await page.close();
+      }
+    }
+
+    for (const [name, vp] of [
+      ["mobile 412", MOBILE],
+      ["mobile 360", MOBILE_360],
+    ]) {
+      await withSplash(browser, vp, async (page) => {
+        const report = await page.evaluate(() => {
+          const copy = document.querySelector(".site-splash-copy");
+          const s = copy ? getComputedStyle(copy) : null;
+          const canvas = document.querySelector(".site-splash-type");
+          let ink = null;
+          if (canvas instanceof HTMLCanvasElement && canvas.width > 2) {
+            const ctx = canvas.getContext("2d");
+            const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let best = null;
+            let dark = 999;
+            for (let i = 0; i < data.length; i += 4) {
+              if (data[i + 3] < 200) continue;
+              const v = data[i] + data[i + 1] + data[i + 2];
+              if (v < dark) {
+                dark = v;
+                best = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+              }
+            }
+            ink = best;
+          }
+          return {
+            text: (copy?.textContent || "").replace(/\s+/g, " ").trim(),
+            fontSize: s?.fontSize || "",
+            letterSpacing: s?.letterSpacing || "",
+            splashDisplay: getComputedStyle(document.querySelector(".site-splash")).display,
+            painted: document.querySelectorAll(".site-splash-line.is-painted").length,
+            ink,
+          };
+        });
+        assert.match(report.text, /ALL/);
+        assert.match(report.text, /TAEGYE-RIUM/);
+        assert.equal(report.splashDisplay, "flex");
+        assert.equal(report.painted, 2);
+        const fs = parseFloat(report.fontSize);
+        const ls = parseFloat(report.letterSpacing);
+        assert.ok(Math.abs(fs - 18.4) < 0.05, `${name} font-size ${report.fontSize}`);
+        assert.ok(Math.abs(ls - 1.1776) < 0.05, `${name} letter-spacing ${report.letterSpacing}`);
+        assert.ok(report.ink, `${name}: no black canvas pixels`);
+        assert.ok(report.ink[0] <= 8 && report.ink[1] <= 8 && report.ink[2] <= 8, `${name}: not black ${report.ink}`);
+        console.log(`ok  splash ${name}: ${report.fontSize} / ${report.letterSpacing}, canvas black`);
+      });
+    }
   } finally {
     await browser.close();
   }
