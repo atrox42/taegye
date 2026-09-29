@@ -296,6 +296,23 @@ async function runBrowser() {
       console.log("ok  mobile /new: floating logo stays visible and straddles the footer");
     });
 
+    await withPage(browser, MOBILE, "/new?cat=one-port&moss=0", async (page) => {
+      const prices = await page.$$eval(".product-price", (nodes) =>
+        nodes.map((node) => (node.textContent || "").trim()),
+      );
+      assert.ok(prices.length >= 3, `one-port catalog cards ${prices.length}`);
+      for (const price of prices) {
+        assert.equal(price, "KRW 38,000", `one-port card ${price}`);
+      }
+      console.log("ok  mobile /new?cat=one-port: KRW 38,000");
+    });
+
+    await withPage(browser, MOBILE, "/new/one-port-purple", async (page) => {
+      const price = await page.$eval(".pdp-price", (node) => (node.textContent || "").trim());
+      assert.equal(price, "KRW 38,000", `one-port PDP ${price}`);
+      console.log("ok  mobile one-port PDP: KRW 38,000");
+    });
+
     await withPage(browser, MOBILE, "/new/white", async (page) => {
       const report = await page.evaluate(() => {
         const photo =
