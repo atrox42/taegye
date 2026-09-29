@@ -5,20 +5,41 @@ export const PAGE_WHITE_CANVAS_ID = "taegye-page-white";
 
 export function viewportCssSize() {
   const vv = window.visualViewport;
+  const gutter = Math.max(
+    0,
+    (document.documentElement?.offsetWidth ?? 0) - window.innerWidth,
+  );
   return {
-    width: Math.max(1, Math.round(vv?.width ?? window.innerWidth)),
-    height: Math.max(1, Math.round(vv?.height ?? window.innerHeight)),
+    width: Math.max(
+      1,
+      Math.round(vv?.width ?? window.innerWidth),
+      window.innerWidth,
+      document.documentElement?.clientWidth ?? 0,
+    ) + gutter + 24,
+    height: Math.max(
+      1,
+      Math.round(vv?.height ?? window.innerHeight),
+      window.innerHeight,
+      document.documentElement?.clientHeight ?? 0,
+    ) + 24,
   };
 }
 
-export function paintOpaqueWhite(canvas: HTMLCanvasElement, cssWidth: number, cssHeight: number) {
+export function paintOpaqueWhite(
+  canvas: HTMLCanvasElement,
+  cssWidth: number,
+  cssHeight: number,
+  pinCssSize = true,
+) {
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   const w = Math.max(1, Math.round(cssWidth * dpr));
   const h = Math.max(1, Math.round(cssHeight * dpr));
   if (canvas.width !== w) canvas.width = w;
   if (canvas.height !== h) canvas.height = h;
-  canvas.style.width = `${Math.max(0, cssWidth)}px`;
-  canvas.style.height = `${Math.max(0, cssHeight)}px`;
+  if (pinCssSize) {
+    canvas.style.width = `${Math.max(0, cssWidth)}px`;
+    canvas.style.height = `${Math.max(0, cssHeight)}px`;
+  }
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) return;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -32,9 +53,10 @@ export function bindWhiteCanvas(
   canvas: HTMLCanvasElement,
   measure: () => { width: number; height: number },
 ) {
+  const pinCssSize = canvas.id !== PAGE_WHITE_CANVAS_ID && !canvas.classList.contains("canvas-white-fixed");
   const paint = () => {
     const { width, height } = measure();
-    paintOpaqueWhite(canvas, width, height);
+    paintOpaqueWhite(canvas, width, height, pinCssSize);
   };
   paint();
   const parent = canvas.parentElement;

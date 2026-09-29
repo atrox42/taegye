@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light",
+  colorScheme: "only light",
   themeColor: "#ffffff",
 };
 
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full font-sans" style={{ ...rootPaint, color: "#111111" }}>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var c=document.getElementById("taegye-page-white");if(!(c&&c.getContext)){c=document.createElement("canvas");c.id="taegye-page-white";c.className="canvas-white-fixed";c.setAttribute("aria-hidden","true")}function paint(){var vv=window.visualViewport,d=Math.max(1,window.devicePixelRatio||1),w=Math.max(1,Math.round(vv&&vv.width||window.innerWidth)),h=Math.max(1,Math.round(vv&&vv.height||window.innerHeight));c.width=Math.max(1,Math.round(w*d));c.height=Math.max(1,Math.round(h*d));c.style.cssText="position:fixed;inset:0;width:"+w+"px;height:"+h+"px;z-index:0;pointer-events:none;background:transparent;opacity:1;filter:none;mix-blend-mode:normal";var x=c.getContext("2d",{alpha:false});if(!x)return;x.globalAlpha=1;x.fillStyle="#FFFFFF";x.fillRect(0,0,c.width,c.height)}paint();window.addEventListener("resize",paint,{passive:true});if(window.visualViewport)window.visualViewport.addEventListener("resize",paint);function mount(){if(!document.body)return;if(c.parentNode!==document.body)document.body.insertBefore(c,document.body.firstChild)}if(document.body)mount();else document.addEventListener("DOMContentLoaded",mount)}catch(e){}})()`,
+            __html: `(function(){try{var c=document.getElementById("taegye-page-white");if(!(c&&c.getContext)){c=document.createElement("canvas");c.id="taegye-page-white";c.className="canvas-white-fixed";c.setAttribute("aria-hidden","true")}function paint(){var d=Math.max(1,window.devicePixelRatio||1),vv=window.visualViewport,gutter=Math.max(0,(document.documentElement&&document.documentElement.offsetWidth||0)-window.innerWidth),w=Math.max(1,Math.round(vv&&vv.width||window.innerWidth),window.innerWidth)+gutter+24,h=Math.max(1,Math.round(vv&&vv.height||window.innerHeight),window.innerHeight)+24;c.width=Math.max(1,Math.round(w*d));c.height=Math.max(1,Math.round(h*d));c.style.cssText="position:fixed;top:0;left:0;width:100vw;height:100dvh;min-width:100%;min-height:100%;z-index:0;pointer-events:none;background:transparent;opacity:1;filter:none;mix-blend-mode:normal";var x=c.getContext("2d",{alpha:false});if(!x)return;x.globalAlpha=1;x.fillStyle="#FFFFFF";x.fillRect(0,0,c.width,c.height)}paint();window.addEventListener("resize",paint,{passive:true});if(window.visualViewport)window.visualViewport.addEventListener("resize",paint);function mount(){if(!document.body)return;if(c.parentNode!==document.body)document.body.insertBefore(c,document.body.firstChild)}if(document.body)mount();else document.addEventListener("DOMContentLoaded",mount)}catch(e){}})()`,
           }}
         />
         <SiteShell>{children}</SiteShell>
