@@ -171,8 +171,7 @@ export const PRODUCT_MOBILE_MEDIA = "(max-width: 767px)";
 
 export const STAND_PRICE_SILVER = "KRW 103,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
-/** Placeholder until a One Port price is confirmed. */
-export const ONE_PORT_PRICE = STAND_PRICE_COLOR;
+export const ONE_PORT_PRICE = "KRW 38,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
