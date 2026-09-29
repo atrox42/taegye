@@ -33,7 +33,7 @@ function ProductHero({
   return (
     <div className={className ? `pdp-hero ${className}` : "pdp-hero"} style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <div className="pdp-stage relative aspect-square overflow-hidden">
+      <div className="pdp-stage relative aspect-square overflow-hidden" data-pdp-photo="true">
         <WhiteSurfaceFill />
         <ProductPhoto src={src} mobileSrc={mobileSrc} alt={alt} fill priority={priority} />
       </div>
@@ -124,6 +124,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="site-type pdp-store no-underline hover:no-underline"
+            data-pdp-store="true"
             style={forceInkStyle}
           >
             Store
