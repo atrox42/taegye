@@ -75,9 +75,10 @@
     linear-gradient(#ffffff, #ffffff);
   --ink-111-image: url("/ink-111.jpg");
   --white-clip-image: url("/bg-white.jpg");
-  --purple-574667-image: url("/purple-574667.jpg");
-  --purple-6F5C82-image: url("/purple-6F5C82.jpg");
-  --purple-463854-image: url("/purple-463854.jpg");
+  --brand-main: #574667;
+  --brand-sub: #6F5C82;
+  --brand-main-image: url("/purple-574667.jpg");
+  --brand-sub-image: url("/purple-6F5C82.jpg");
   --line-e5-image: url("/line-e5.jpg");
   --background: #ffffff;
   --foreground: #111111;
@@ -1678,8 +1679,8 @@ select::-ms-expand {
   padding: 0.8rem 1rem;
   overflow: hidden;
   border: 0;
-  background-color: #6F5C82 !important;
-  background-image: var(--purple-6F5C82-image) !important;
+  background-color: var(--brand-sub) !important;
+  background-image: var(--brand-sub-image) !important;
   background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
   background-clip: border-box !important;
@@ -2581,8 +2582,8 @@ html[data-promo="off"] .site-promo {
   border: 0;
   border-bottom: 0;
   box-shadow: none;
-  background-color: #574667 !important;
-  background-image: var(--purple-574667-image) !important;
+  background-color: var(--brand-main) !important;
+  background-image: var(--brand-main-image) !important;
   background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
   text-align: center;
@@ -2692,15 +2693,17 @@ html[data-promo="off"] .site-promo {
 }
 
 .site-promo-cta-face {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   min-height: 2.75rem;
   padding: 0;
+  overflow: hidden;
   border: 0;
-  background-color: #463854 !important;
-  background-image: var(--purple-463854-image) !important;
+  background-color: var(--brand-sub) !important;
+  background-image: var(--brand-sub-image) !important;
   background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
   background-clip: border-box !important;
@@ -2710,7 +2713,20 @@ html[data-promo="off"] .site-promo {
   forced-color-adjust: none;
 }
 
+.site-promo-cta-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  forced-color-adjust: none;
+}
+
 .site-promo-cta-label {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;

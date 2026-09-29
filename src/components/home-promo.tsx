@@ -6,12 +6,13 @@ import { useLayoutEffect, useId, useState } from "react";
 import { InkClose } from "@/components/ink-icons";
 import {
   forceInkStyle,
-  forcePurpleDarkStyle,
+  forcePurpleLightStyle,
   forcePurpleStyle,
   forceWhiteClipStyle,
   forceWhiteStyle,
   DIM_BLACK_PNG_SRC,
   PURPLE_574667_PNG_SRC,
+  PURPLE_6F5C82_PNG_SRC,
   WHITE_BITMAP_SRC,
 } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
@@ -120,7 +121,9 @@ export function HomePromo() {
               {HOME_PROMO.line}
             </p>
             <a href={HOME_PROMO.href} target="_blank" rel="noopener noreferrer" className="site-promo-cta">
-              <span className="site-promo-cta-face" style={forcePurpleDarkStyle}>
+              <span className="site-promo-cta-face" style={forcePurpleLightStyle}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- exact #6F5C82 PNG fill skips Force Dark invert */}
+                <img src={PURPLE_6F5C82_PNG_SRC} alt="" aria-hidden className="site-promo-cta-fill" />
                 <span className="site-promo-white site-promo-cta-label" style={forceWhiteClipStyle}>
                   {HOME_PROMO.cta}
                 </span>
