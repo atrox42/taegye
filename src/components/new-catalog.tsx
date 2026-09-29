@@ -117,21 +117,24 @@ export function NewCatalog() {
       </nav>
 
       {products.length > 0 ? (
-        <ul className={cn("new-grid", placement && "is-placed")} style={forceWhiteStyle}>
-          {entries.map((entry, index) =>
-            entry.type === "texture" ? (
-              <li key="grid-texture" className="new-grid-item new-grid-item-texture">
-                {/* eslint-disable-next-line @next/next/no-img-element -- full-bleed raster tile */}
-                <img src={entry.src} alt="" aria-hidden className="new-grid-texture-media" />
-              </li>
-            ) : (
-              <li key={entry.product.id} className="new-grid-item" style={forceWhiteStyle}>
-                <WhiteSurfaceFill />
-                <ProductCard product={entry.product} priority={index < 4} />
-              </li>
-            ),
-          )}
-        </ul>
+        <div className="new-grid-wrap" style={forceWhiteStyle}>
+          <WhiteSurfaceFill />
+          <ul className={cn("new-grid", placement && "is-placed")}>
+            {entries.map((entry, index) =>
+              entry.type === "texture" ? (
+                <li key="grid-texture" className="new-grid-item new-grid-item-texture">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- full-bleed raster tile */}
+                  <img src={entry.src} alt="" aria-hidden className="new-grid-texture-media" />
+                </li>
+              ) : (
+                <li key={entry.product.id} className="new-grid-item" style={forceWhiteStyle}>
+                  <WhiteSurfaceFill />
+                  <ProductCard product={entry.product} priority={index < 4} />
+                </li>
+              ),
+            )}
+          </ul>
+        </div>
       ) : (
         <p className="site-type new-empty">coming soon</p>
       )}

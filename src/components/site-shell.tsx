@@ -14,6 +14,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     <div className="site-shell relative z-0 flex min-h-lvh flex-col" style={forceWhiteStyle}>
       <WhiteBitmapLayer />
       <div className="site-column relative z-[1] flex min-h-lvh flex-1 flex-col" style={forceWhiteStyle}>
+        <WhiteSurfaceFill />
         <SiteHeader />
         <main className="site-main relative flex-1" style={forceWhiteStyle}>
           <WhiteSurfaceFill />

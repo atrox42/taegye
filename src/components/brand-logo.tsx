@@ -36,7 +36,7 @@ export function BrandLogo({
         maxHeight,
         height: maxHeight,
         width: "auto",
-        backgroundColor: "#ffffff",
+        backgroundColor: "transparent",
         filter: "none",
       }}
     />

@@ -232,6 +232,7 @@ main,
 .site-page,
 .new-page,
 .new-grid,
+.new-grid-wrap,
 .new-grid-item,
 .new-subnav,
 .product-card,
@@ -246,7 +247,8 @@ main,
 .site-nav,
 .site-menubar,
 .site-menu,
-.site-splash {
+.site-splash,
+.site-float-dock {
   background-color: #ffffff !important;
   background-image: var(--force-white-image) !important;
   background-repeat: no-repeat !important;
@@ -1149,12 +1151,26 @@ button {
   -webkit-text-fill-color: #999999 !important;
 }
 
-/* Windowpane: 1px outer frame on all sides + shared internal lines. */
+.new-grid-wrap {
+  position: relative;
+  background-color: #ffffff !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+.new-grid-wrap > :not(.white-surface-fill) {
+  position: relative;
+  z-index: 1;
+}
+
 .new-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
   border: 1px solid #111111;
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 .new-grid-item {
@@ -1753,6 +1769,23 @@ select::-ms-expand {
   min-height: 0;
 }
 
+.site-float-dock {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 auto;
+  background-color: #ffffff !important;
+  background-image: var(--force-white-image) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+.site-float-dock > :not(.white-surface-fill) {
+  position: relative;
+  z-index: 1;
+}
+
 .site-float-logo {
   position: relative;
   left: auto;
@@ -1786,7 +1819,8 @@ select::-ms-expand {
 
 @media (min-width: 768px) {
   .home-new-in,
-  .site-float-logo {
+  .site-float-logo,
+  .site-float-dock {
     display: none !important;
   }
 }
@@ -1844,6 +1878,7 @@ select::-ms-expand {
 .pdp-hero > :not(.white-surface-fill),
 .pdp-visual > :not(.white-surface-fill),
 .new-page > :not(.white-surface-fill),
+.new-grid > :not(.white-surface-fill),
 .new-grid-item > :not(.white-surface-fill),
 .new-subnav > :not(.white-surface-fill),
 .site-page > :not(.white-surface-fill),
@@ -1865,6 +1900,7 @@ select::-ms-expand {
 .site-page,
 .new-page,
 .new-grid,
+.new-grid-item,
 .new-subnav,
 .product-card,
 .site-footer,
@@ -2300,7 +2336,8 @@ select::-ms-expand {
   .pdp-stage,
   .pdp-gallery,
   .pdp-gallery-slide,
-  .site-nav {
+  .site-nav,
+  .site-float-dock {
     background-color: #ffffff !important;
     background-image: var(--force-white-image) !important;
     background-repeat: no-repeat !important;
@@ -2868,6 +2905,13 @@ html[data-promo="off"] .site-promo {
     font-weight: 700;
     letter-spacing: -0.03em;
   }
+}
+
+/* Last-win: the catalog ul stays transparent so the wrap JPEG shows in the
+   implicit empty cell. Cells keep their own covering plates. */
+.new-grid {
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 /* Last-win: gray-injection / Force Dark must not paint chips on chrome or captions. */
