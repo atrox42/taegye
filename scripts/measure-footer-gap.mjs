@@ -70,6 +70,8 @@ try {
         copy,
         logo,
         gapCtaToFooter: cta && footer ? Math.round((footer.y - cta.bottom) * 10) / 10 : null,
+        gapCtaToLogo: cta && logo ? Math.round((logo.y - cta.bottom) * 10) / 10 : null,
+        gapLogoToCopy: logo && copy ? Math.round((copy.y - logo.bottom) * 10) / 10 : null,
         gapFooterContentToPage: nav ? Math.round((pageH - nav.bottom) * 10) / 10 : null,
         gapFooterBoxToPage: footer ? Math.round((pageH - footer.bottom) * 10) / 10 : null,
         logoFromViewportBottom: logo ? Math.round((pageH - logo.bottom) * 10) / 10 : null,
@@ -101,7 +103,7 @@ try {
     report.views[view.name].catalogTop = catalog;
     await page.close();
     console.log(
-      `${view.name}: cta→footer=${data.gapCtaToFooter} footerContent→page=${data.gapFooterContentToPage} logoFromBottom=${data.logoFromViewportBottom} internal=${data.footerInternalGap}`,
+      `${view.name}: cta→footer=${data.gapCtaToFooter} cta→logo=${data.gapCtaToLogo} logo→copy=${data.gapLogoToCopy} logoFromBottom=${data.logoFromViewportBottom} internal=${data.footerInternalGap}`,
     );
   }
 } finally {
