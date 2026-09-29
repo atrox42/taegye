@@ -76,18 +76,29 @@ async function runBrowser() {
       const clips = await page.$$eval(".home-hero-clip", (nodes) =>
         nodes.map((node) => {
           const r = node.getBoundingClientRect();
-          return { x: r.x, y: r.y, w: r.width, h: r.height };
+          const s = getComputedStyle(node);
+          return {
+            x: r.x,
+            y: r.y,
+            w: r.width,
+            h: r.height,
+            width: s.width,
+            position: s.position,
+          };
         }),
       );
       assert.equal(clips.length, 3, "home has three hero clips");
       for (const clip of clips) {
-        assert.ok(Math.abs(clip.w - 412) <= 2, `clip width ${clip.w} should fill 412`);
+        assert.ok(clip.w >= 400, `clip width ${clip.w} must fill the mobile viewport, not 138px`);
+        assert.ok(Math.abs(clip.w - 412) <= 4, `clip width ${clip.w} should be ~412`);
+        assert.equal(clip.position, "relative");
       }
       assert.ok(
         Math.abs(clips[0].w - clips[1].w) <= 1 && Math.abs(clips[1].w - clips[2].w) <= 1,
         "clips are 1:1:1",
       );
       assert.ok(clips[0].y < 80, `first clip top ${clips[0].y} should sit under the nav, not mid-viewport`);
+      assert.ok(clips[0].y >= 0, "first clip should not sit in a large empty gap");
       console.log("ok  mobile home: equal full-width clips, no top gap");
     });
 

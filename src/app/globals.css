@@ -1671,16 +1671,16 @@ select::-ms-expand {
   z-index: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 0;
   width: 100%;
   margin-top: calc(var(--site-nav-offset) * -1);
   padding-top: var(--site-nav-offset);
-  height: 100lvh;
+  height: auto;
   min-height: 100lvh;
-  max-height: 100lvh;
-  overflow: hidden;
+  max-height: none;
+  overflow: visible;
   background-color: transparent !important;
   background-image: none !important;
   color-scheme: only light !important;
@@ -1701,44 +1701,46 @@ select::-ms-expand {
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  width: var(--hero-clip-w);
+  align-self: stretch;
+  width: 100%;
+  max-width: none;
   aspect-ratio: 230 / 130;
   height: auto;
-  max-width: calc(100vw - 2 * var(--site-gutter));
   overflow: hidden;
 }
 
-@media (max-width: 767px) {
-  .home-hero {
-    justify-content: flex-start;
-    align-items: stretch;
-    height: auto;
-    min-height: 100lvh;
-    max-height: none;
-    overflow: visible;
-  }
-
-  .home-hero-clip {
-    width: 100%;
-    max-width: none;
-    align-self: stretch;
-  }
+.home-hero[data-hero-mobile-equal="1"] .home-hero-clip {
+  width: 100% !important;
+  max-width: none !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
 }
 
 @media (min-width: 768px) {
   .home-hero {
     display: block;
     padding-top: 0;
+    height: 100lvh;
+    min-height: 100lvh;
+    max-height: 100lvh;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
   }
 
-  .home-hero-clip {
+  .home-hero-clip,
+  .home-hero[data-hero-mobile-equal="1"] .home-hero-clip {
     position: absolute;
-    width: calc(var(--hero-clip-w) * var(--hero-scale, 1));
+    width: calc(var(--hero-clip-w) * var(--hero-scale, 1)) !important;
     height: calc(var(--hero-clip-h) * var(--hero-scale, 1));
-    max-width: none;
+    max-width: none !important;
     aspect-ratio: auto;
     opacity: 0;
     transition: opacity 280ms ease;
+    align-self: auto;
+    left: auto;
+    top: auto;
   }
 
   .home-hero.is-placed .home-hero-clip {
