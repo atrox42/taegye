@@ -14,7 +14,9 @@ function scrollWindowToTop() {
 }
 
 function syncHairline() {
-  document.documentElement.style.setProperty("--grid-hairline", "1px");
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  document.documentElement.style.setProperty("--grid-dpr", String(dpr));
+  document.documentElement.style.setProperty("--grid-hairline", `${1 / dpr}px`);
 }
 
 /** Device-pixel hairlines + PDP always opens at scroll 0. */
