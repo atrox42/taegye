@@ -1720,6 +1720,19 @@ select::-ms-expand {
   overflow: hidden;
 }
 
+/* Mobile: center the 138×78 stack in the stable small viewport (svh).
+   padding-top was shifting flex-center below the visible midpoint, and
+   100lvh tracks the large viewport so the stack jumped with the toolbar. */
+@media (max-width: 767.98px) {
+  .home-hero {
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
 @media (min-width: 768px) {
   .home-hero {
     display: block;
