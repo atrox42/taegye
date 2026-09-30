@@ -2002,21 +2002,22 @@ select::-ms-expand {
   pointer-events: none;
 }
 
-/* Mobile home + PDP: park the float mark in the band above the © line
-   (logo centered, 92px from the bottom, ~19.8px above copyright).
-   /new keeps the default 24px bottom. */
+/* Mobile home, PDP, and /new: park the float mark in the band above the © line
+   (logo centered, 92px from the bottom, ~19.8px above copyright). */
 @media (max-width: 767.98px) {
   .home-new-in {
     padding-bottom: calc(5.5rem + 25.2px); /* 88px + extra 25.2 → CTA→logo ~50.4 */
   }
 
   .site-shell:has(.home-hero) .site-footer-inner,
-  .site-shell:has(.pdp) .site-footer-inner {
+  .site-shell:has(.pdp) .site-footer-inner,
+  .site-shell:has(.new-page) .site-footer-inner {
     padding-bottom: 2.25rem;
   }
 
   .site-shell:has(.home-hero) .site-float-logo,
-  .site-shell:has(.pdp) .site-float-logo {
+  .site-shell:has(.pdp) .site-float-logo,
+  .site-shell:has(.new-page) .site-float-logo {
     bottom: calc(92px + env(safe-area-inset-bottom, 0px));
   }
 }

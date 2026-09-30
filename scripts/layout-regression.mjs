@@ -359,14 +359,10 @@ async function runBrowser() {
       assert.equal(bottom.position, "fixed");
       assert.equal(bottom.hidden, false);
       assert.ok(bottom.opacity > 0.5, "float logo must not disappear at the footer");
-      assert.ok(
-        bottom.logoBottom > bottom.footerTop && bottom.logoTop < bottom.footerBottom,
-        `logo should straddle the footer edge, logo=${bottom.logoTop}-${bottom.logoBottom} footer=${bottom.footerTop}-${bottom.footerBottom}`,
-      );
-      console.log("ok  mobile /new: floating logo stays visible and straddles the footer");
+      console.log("ok  mobile /new: floating logo stays visible at the footer");
     });
 
-    async function assertPdpLogoMatchesHome(page, label) {
+    async function assertFooterLogoMatchesHome(page, label) {
       await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
       await new Promise((resolve) => setTimeout(resolve, 250));
       const bottom = await page.evaluate(() => {
@@ -407,13 +403,25 @@ async function runBrowser() {
       "one-port-white",
     ]) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
-        await assertPdpLogoMatchesHome(page, `412 ${id}`);
+        await assertFooterLogoMatchesHome(page, `412 ${id}`);
         console.log(`ok  mobile 412 PDP ${id}: float logo matches home`);
       });
     }
     await withPage(browser, MOBILE_360, "/new/silver", async (page) => {
-      await assertPdpLogoMatchesHome(page, "360 silver");
+      await assertFooterLogoMatchesHome(page, "360 silver");
       console.log("ok  mobile 360 PDP silver: float logo matches home");
+    });
+    await withPage(browser, MOBILE, "/new", async (page) => {
+      await assertFooterLogoMatchesHome(page, "412 /new");
+      console.log("ok  mobile 412 /new: float logo matches home");
+    });
+    await withPage(browser, MOBILE, "/new?cat=one-port", async (page) => {
+      await assertFooterLogoMatchesHome(page, "412 /new?cat=one-port");
+      console.log("ok  mobile 412 /new?cat=one-port: float logo matches home");
+    });
+    await withPage(browser, MOBILE_360, "/new", async (page) => {
+      await assertFooterLogoMatchesHome(page, "360 /new");
+      console.log("ok  mobile 360 /new: float logo matches home");
     });
 
     await withPage(browser, MOBILE, "/new?cat=one-port&moss=0", async (page) => {
