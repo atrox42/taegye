@@ -366,6 +366,56 @@ async function runBrowser() {
       console.log("ok  mobile /new: floating logo stays visible and straddles the footer");
     });
 
+    async function assertPdpLogoMatchesHome(page, label) {
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const bottom = await page.evaluate(() => {
+        const logo = document.querySelector(".site-float-logo")?.getBoundingClientRect();
+        const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
+        const h = window.innerHeight;
+        const w = window.innerWidth;
+        return {
+          w: logo?.width ?? null,
+          h: logo?.height ?? null,
+          x: logo?.x ?? null,
+          logoFromBottom: logo ? h - logo.bottom : null,
+          logoToCopy: logo && copy ? copy.top - logo.bottom : null,
+          centerOff: logo ? logo.x + logo.width / 2 - w / 2 : null,
+        };
+      });
+      assert.ok(Math.abs((bottom.w ?? 0) - 67) <= 1, `${label}: logo width ${bottom.w}`);
+      assert.ok(Math.abs((bottom.h ?? 0) - 43) <= 1, `${label}: logo height ${bottom.h}`);
+      assert.ok(Math.abs(bottom.centerOff ?? 99) <= 2, `${label}: logo not centered, off=${bottom.centerOff}`);
+      assert.ok(
+        Math.abs((bottom.logoFromBottom ?? 0) - 92) <= 1,
+        `${label}: logo from bottom ${bottom.logoFromBottom}`,
+      );
+      assert.ok(
+        Math.abs((bottom.logoToCopy ?? 0) - 19.8) <= 1,
+        `${label}: logo→copyright ${bottom.logoToCopy}`,
+      );
+    }
+
+    for (const id of [
+      "silver",
+      "purple",
+      "black",
+      "green",
+      "white",
+      "one-port-purple",
+      "one-port-black",
+      "one-port-white",
+    ]) {
+      await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
+        await assertPdpLogoMatchesHome(page, `412 ${id}`);
+        console.log(`ok  mobile 412 PDP ${id}: float logo matches home`);
+      });
+    }
+    await withPage(browser, MOBILE_360, "/new/silver", async (page) => {
+      await assertPdpLogoMatchesHome(page, "360 silver");
+      console.log("ok  mobile 360 PDP silver: float logo matches home");
+    });
+
     await withPage(browser, MOBILE, "/new?cat=one-port&moss=0", async (page) => {
       const prices = await page.$$eval(".product-price", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
