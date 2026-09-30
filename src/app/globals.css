@@ -2881,6 +2881,13 @@ html[data-intro="done"] .site-splash {
   }
 }
 
+html.is-promo-open,
+html.is-promo-open body {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none;
+}
+
 .site-promo {
   position: fixed;
   inset: 0;
@@ -2892,6 +2899,8 @@ html[data-intro="done"] .site-splash {
   opacity: 1;
   visibility: visible;
   transition: none;
+  touch-action: none;
+  overscroll-behavior: none;
   background-color: transparent !important;
   background-image: none !important;
   font-family: var(--font-pretendard);

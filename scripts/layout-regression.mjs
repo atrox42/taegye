@@ -826,6 +826,90 @@ async function runBrowser() {
       });
     }
 
+    async function assertPromoScrollLock(page, label) {
+      const before = await page.evaluate(() => {
+        const box = (sel) => {
+          const el = document.querySelector(sel);
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return { y: r.y, h: r.height };
+        };
+        return {
+          y: window.scrollY,
+          hero: box(".home-hero"),
+          newIn: box(".home-new-in-title"),
+          card: box(".site-promo-card"),
+          bodyPos: getComputedStyle(document.body).position,
+        };
+      });
+      assert.equal(before.bodyPos, "fixed", `${label}: body should be fixed while promo open`);
+      assert.ok(before.hero, `${label}: missing hero`);
+      assert.ok(before.card, `${label}: missing card`);
+      await page.mouse.move(200, 80);
+      await page.mouse.wheel({ deltaY: 700 });
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      const vp = page.viewport();
+      await page.touchscreen.touchStart(vp.width / 2, 120);
+      await page.touchscreen.touchMove(vp.width / 2, 20);
+      await page.touchscreen.touchEnd();
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      await page.evaluate(() => window.scrollTo(0, 800));
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      const after = await page.evaluate(() => {
+        const box = (sel) => {
+          const el = document.querySelector(sel);
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return { y: r.y, h: r.height };
+        };
+        return {
+          y: window.scrollY,
+          hero: box(".home-hero"),
+          newIn: box(".home-new-in-title"),
+          card: box(".site-promo-card"),
+        };
+      });
+      assert.ok(
+        Math.abs(after.hero.y - before.hero.y) <= 1,
+        `${label}: hero moved ${before.hero.y} → ${after.hero.y}`,
+      );
+      assert.ok(
+        Math.abs(after.card.y - before.card.y) <= 1,
+        `${label}: card moved ${before.card.y} → ${after.card.y}`,
+      );
+      assert.ok(
+        Math.abs((after.newIn?.y ?? 0) - (before.newIn?.y ?? 0)) <= 1,
+        `${label}: New In moved ${before.newIn?.y} → ${after.newIn?.y}`,
+      );
+      await page.click(".site-promo-x");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const restored = await page.evaluate(() => ({
+        y: window.scrollY,
+        pos: getComputedStyle(document.body).position,
+        open: Boolean(document.querySelector(".site-promo-card")),
+      }));
+      assert.equal(restored.open, false, `${label}: promo still open`);
+      assert.notEqual(restored.pos, "fixed", `${label}: body still fixed after close`);
+      assert.ok(
+        Math.abs(restored.y - before.y) <= 2,
+        `${label}: scroll restored ${restored.y} vs ${before.y}`,
+      );
+      await page.evaluate(() => window.scrollTo(0, 400));
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      const canScroll = await page.evaluate(() => window.scrollY);
+      assert.ok(canScroll >= 300, `${label}: page should scroll after close, got ${canScroll}`);
+    }
+
+    for (const [name, vp] of [
+      ["mobile 412", MOBILE],
+      ["mobile 360", MOBILE_360],
+    ]) {
+      await withPromo(browser, vp, false, async (page) => {
+        await assertPromoScrollLock(page, name);
+        console.log(`ok  promo ${name}: background stays pinned while open`);
+      });
+    }
+
     await withPromo(browser, MOBILE, false, async (page) => {
       await assertPromoActions(page, "mobile 412 close");
       console.log("ok  promo 닫기 closes for the session only");
