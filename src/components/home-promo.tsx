@@ -50,6 +50,67 @@ function setPromoFlag(on: boolean) {
   document.documentElement.dataset.promo = on ? "on" : "off";
 }
 
+/** Freeze the page behind the promo. overflow:hidden on html is not enough
+ *  (first-paint CSS forces overflow-y:auto !important; Samsung/Android
+ *  still pan the document under a position:fixed overlay). */
+let promoScrollY = 0;
+let promoLocked = false;
+let stopPromoScroll: (() => void) | null = null;
+
+function lockPage() {
+  if (promoLocked || typeof document === "undefined") return;
+  promoLocked = true;
+  promoScrollY = window.scrollY || window.pageYOffset || 0;
+  const html = document.documentElement;
+  const body = document.body;
+  html.classList.add("is-promo-open");
+  html.style.setProperty("overflow", "hidden", "important");
+  html.style.setProperty("overflow-y", "hidden", "important");
+  html.style.setProperty("overscroll-behavior", "none");
+  html.style.setProperty("touch-action", "none");
+  body.style.position = "fixed";
+  body.style.top = `-${promoScrollY}px`;
+  body.style.left = "0";
+  body.style.right = "0";
+  body.style.width = "100%";
+  body.style.overflow = "hidden";
+  const block = (event: Event) => {
+    event.preventDefault();
+  };
+  const pin = () => {
+    if (window.scrollY !== 0) window.scrollTo(0, 0);
+  };
+  window.addEventListener("wheel", block, { passive: false, capture: true });
+  window.addEventListener("touchmove", block, { passive: false, capture: true });
+  window.addEventListener("scroll", pin, { passive: true, capture: true });
+  stopPromoScroll = () => {
+    window.removeEventListener("wheel", block, { capture: true });
+    window.removeEventListener("touchmove", block, { capture: true });
+    window.removeEventListener("scroll", pin, { capture: true });
+  };
+}
+
+function unlockPage() {
+  if (!promoLocked || typeof document === "undefined") return;
+  promoLocked = false;
+  stopPromoScroll?.();
+  stopPromoScroll = null;
+  const html = document.documentElement;
+  const body = document.body;
+  html.classList.remove("is-promo-open");
+  html.style.removeProperty("overflow");
+  html.style.removeProperty("overflow-y");
+  html.style.removeProperty("overscroll-behavior");
+  html.style.removeProperty("touch-action");
+  body.style.position = "";
+  body.style.top = "";
+  body.style.left = "";
+  body.style.right = "";
+  body.style.width = "";
+  body.style.overflow = "";
+  window.scrollTo(0, promoScrollY);
+}
+
 export function HomePromo() {
   const pathname = usePathname();
   const titleId = useId();
@@ -59,7 +120,7 @@ export function HomePromo() {
   const hide = (today: boolean) => {
     setPromoFlag(false);
     setOpen(false);
-    document.documentElement.classList.remove("is-promo-open");
+    unlockPage();
     try {
       window.sessionStorage.setItem(PROMO_SESSION_KEY, "1");
       if (today) window.localStorage.setItem(PROMO_HIDE_KEY, String(Date.now() + DAY_MS));
@@ -76,9 +137,10 @@ export function HomePromo() {
       (forceHold() || !(hiddenForToday() || closedThisSession()));
     setPromoFlag(show);
     setOpen(show);
-    document.documentElement.classList.toggle("is-promo-open", show);
+    if (show) lockPage();
+    else unlockPage();
     return () => {
-      document.documentElement.classList.remove("is-promo-open");
+      unlockPage();
     };
   }, [pathname]);
 
