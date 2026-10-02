@@ -16,9 +16,12 @@ type ProductCardProps = {
 
 export function ProductCard({ product, priority = false }: ProductCardProps) {
   const dissolve = useGridDissolve();
-  const href = `/new/${product.id}`;
+  const listedOnly = product.listedOnly === true;
+  const href = listedOnly ? null : `/new/${product.id}`;
+  const still = listedOnly || !product.mossSrc;
 
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!href) return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
       return;
     }
@@ -36,13 +39,8 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
     }
   };
 
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="product-card relative block no-underline hover:no-underline"
-      style={forceWhiteStyle}
-    >
+  const body = (
+    <>
       <WhiteSurfaceFill />
       <div className="product-stage relative aspect-square overflow-hidden">
         <WhiteSurfaceFill />
@@ -55,24 +53,44 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             priority={priority}
           />
         </div>
-        <div className="product-moss absolute inset-0">
-          <ProductPhoto
-            src={product.mossSrc}
-            mobileSrc={product.mossSrcMobile}
-            alt=""
-            fill
-            priority={priority}
-          />
-        </div>
+        {product.mossSrc ? (
+          <div className="product-moss absolute inset-0">
+            <ProductPhoto
+              src={product.mossSrc}
+              mobileSrc={product.mossSrcMobile}
+              alt=""
+              fill
+              priority={priority}
+            />
+          </div>
+        ) : null}
       </div>
       <div className="product-caption mt-3 text-left">
         <p className="site-type" style={forceInkStyle}>
           {product.name}
         </p>
-        <p className="site-type product-price mt-0.5" style={forceInkStyle}>
-          {product.price}
-        </p>
+        {product.price ? (
+          <p className="site-type product-price mt-0.5" style={forceInkStyle}>
+            {product.price}
+          </p>
+        ) : null}
       </div>
+    </>
+  );
+
+  const className = `product-card relative block no-underline hover:no-underline${still ? " is-still" : ""}`;
+
+  if (!href) {
+    return (
+      <div className={className} style={forceWhiteStyle}>
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <Link href={href} onClick={onClick} className={className} style={forceWhiteStyle}>
+      {body}
     </Link>
   );
 }

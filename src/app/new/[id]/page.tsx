@@ -9,20 +9,20 @@ type ProductPageProps = {
 };
 
 export function generateStaticParams() {
-  return NEW_PRODUCTS.map((product) => ({ id: product.id }));
+  return NEW_PRODUCTS.filter((product) => !product.listedOnly).map((product) => ({ id: product.id }));
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
   const product = getNewProduct(id);
-  if (!product) return { title: "Product" };
+  if (!product || product.listedOnly) return { title: "Product" };
   return { title: product.name };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
   const product = getNewProduct(id);
-  if (!product) notFound();
+  if (!product || product.listedOnly) notFound();
 
   return <ProductDetail product={product} />;
 }
