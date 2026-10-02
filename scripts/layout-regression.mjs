@@ -490,15 +490,22 @@ async function runBrowser() {
         });
         return cards;
       });
-      assert.equal(report.length, 1, `cascade cards ${report.length}`);
-      assert.equal(report[0].name, "Cascade, Purple");
-      assert.equal(report[0].price, "KRW 207,000");
-      assert.equal(report[0].tag, "DIV", "cascade must not be a link");
-      assert.equal(report[0].href, null);
-      assert.equal(report[0].still, true);
-      assert.equal(report[0].moss, false, "cascade must not have a hover image");
+      assert.equal(report.length, 3, `cascade cards ${report.length}`);
+      assert.deepEqual(
+        report.map((card) => card.name),
+        ["Cascade, Purple", "Cascade, Silver", "Cascade, Black"],
+      );
+      for (const card of report) {
+        assert.equal(card.price, "KRW 207,000", `${card.name} price`);
+        assert.equal(card.tag, "DIV", `${card.name} must not be a link`);
+        assert.equal(card.href, null);
+        assert.equal(card.still, true);
+        assert.equal(card.moss, false, `${card.name} must not have a hover image`);
+      }
       assert.equal(report[0].src, "/products/cascade-purple.png");
-      console.log("ok  mobile /new?cat=cascade: Cascade, Purple, priced, no PDP");
+      assert.equal(report[1].src, "/products/cascade-silver.png");
+      assert.equal(report[2].src, "/products/cascade-black.png");
+      console.log("ok  mobile /new?cat=cascade: Purple, Silver, Black, priced, no PDP");
     });
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
@@ -543,18 +550,33 @@ async function runBrowser() {
         nodes.map((node) => (node.textContent || "").trim()),
       );
       const iDotWhite = names.indexOf("Dot Port, White");
-      const iCascade = names.indexOf("Cascade, Purple");
+      const iPurple = names.indexOf("Cascade, Purple");
+      const iSilver = names.indexOf("Cascade, Silver");
+      const iBlack = names.indexOf("Cascade, Black");
       const i100 = names.indexOf("Drain Tower 100");
       const i160 = names.indexOf("Drain Tower 160");
       const i230 = names.indexOf("Drain Tower 230");
       assert.ok(
-        iDotWhite >= 0 && iCascade === iDotWhite + 1 && i100 === iCascade + 1 && i160 === i100 + 1 && i230 === i160 + 1,
-        `All order Dot Port → Cascade → Drain Tower, got ${names}`,
+        iDotWhite >= 0 &&
+          iPurple === iDotWhite + 1 &&
+          iSilver === iPurple + 1 &&
+          iBlack === iSilver + 1 &&
+          i100 === iBlack + 1 &&
+          i160 === i100 + 1 &&
+          i230 === i160 + 1,
+        `All order Dot Port → Cascade Purple/Silver/Black → Drain Tower, got ${names}`,
       );
-      console.log("ok  mobile /new All: Cascade before Drain Tower 100, 160, 230");
+      console.log("ok  mobile /new All: Cascade Purple, Silver, Black before Drain Tower");
     });
 
-    for (const id of ["drain-tower-100", "drain-tower-160", "drain-tower-230", "cascade-purple"]) {
+    for (const id of [
+      "drain-tower-100",
+      "drain-tower-160",
+      "drain-tower-230",
+      "cascade-purple",
+      "cascade-silver",
+      "cascade-black",
+    ]) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
         const missing = await page.evaluate(() => {
           const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
