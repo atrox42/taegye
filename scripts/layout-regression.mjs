@@ -432,14 +432,64 @@ async function runBrowser() {
       for (const price of prices) {
         assert.equal(price, "KRW 38,000", `one-port card ${price}`);
       }
-      console.log("ok  mobile /new?cat=one-port: KRW 38,000");
+      const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
+        nodes.map((node) => (node.textContent || "").trim()),
+      );
+      assert.deepEqual(names, ["Dot Port, Purple", "Dot Port, Black", "Dot Port, White"]);
+      console.log("ok  mobile /new?cat=one-port: KRW 38,000, Dot Port names");
     });
 
     await withPage(browser, MOBILE, "/new/one-port-purple", async (page) => {
       const price = await page.$eval(".pdp-price", (node) => (node.textContent || "").trim());
       assert.equal(price, "KRW 38,000", `one-port PDP ${price}`);
-      console.log("ok  mobile one-port PDP: KRW 38,000");
+      const name = await page.$eval(".pdp-name", (node) => (node.textContent || "").trim());
+      assert.equal(name, "Dot Port, Purple");
+      const title = await page.title();
+      assert.match(title, /Dot Port, Purple/);
+      console.log("ok  mobile one-port PDP: KRW 38,000, Dot Port title");
     });
+
+    await withPage(browser, MOBILE, "/new", async (page) => {
+      const tabs = await page.evaluate(() =>
+        [...document.querySelectorAll(".new-subnav-item")].map((node) => ({
+          label: (node.textContent || "").trim(),
+          href: node.getAttribute("href") || "",
+        })),
+      );
+      assert.deepEqual(
+        tabs.map((tab) => tab.label),
+        ["All", "Wall-kit", "Dot-port", "Drain Tower", "Cascade"],
+      );
+      assert.deepEqual(
+        tabs.map((tab) => tab.href),
+        ["/new", "/new?cat=wall-kit", "/new?cat=one-port", "/new?cat=drain-tower", "/new?cat=cascade"],
+      );
+      console.log("ok  mobile /new tabs: Dot-port, Drain Tower, Cascade");
+    });
+
+    for (const cat of ["drain-tower", "cascade"]) {
+      await withPage(browser, MOBILE, `/new?cat=${cat}`, async (page) => {
+        const empty = await page.$eval(".new-empty", (node) => (node.textContent || "").trim());
+        assert.equal(empty, "coming soon", `${cat} empty`);
+        console.log(`ok  mobile /new?cat=${cat}: coming soon`);
+      });
+    }
+
+    for (const path of ["/new", "/new?cat=one-port", "/new/one-port-purple", "/new/one-port-black", "/new/one-port-white"]) {
+      await withPage(browser, MOBILE, path, async (page) => {
+        const leak = await page.evaluate(() => {
+          const text = `${document.title}\n${document.body.innerText}`;
+          const alts = [...document.querySelectorAll("img[alt]")].map((img) => img.getAttribute("alt") || "");
+          return { text, alts };
+        });
+        assert.equal(/One Port|One-port/i.test(leak.text), false, `${path} visible One Port: ${leak.text}`);
+        assert.ok(
+          leak.alts.every((alt) => !/one port/i.test(alt)),
+          `${path} alt One Port: ${leak.alts}`,
+        );
+        console.log(`ok  ${path}: no visible One Port`);
+      });
+    }
 
     const PDP_PATHS = [
       "/new/purple",

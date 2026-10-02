@@ -141,8 +141,9 @@ export const ABOUT = {
 export const NEW_CATEGORIES = [
   { id: "all", label: "All" },
   { id: "wall-kit", label: "Wall-kit" },
-  { id: "one-port", label: "One-port" },
-  { id: "etc", label: "Etc" },
+  { id: "one-port", label: "Dot-port" },
+  { id: "drain-tower", label: "Drain Tower" },
+  { id: "cascade", label: "Cascade" },
 ] as const;
 
 export type NewCategoryId = (typeof NEW_CATEGORIES)[number]["id"];
@@ -251,7 +252,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — Modular Stand colors, then One Port Purple / Black / White. */
+/** /new catalog — Modular Stand colors, then Dot Port Purple / Black / White. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -320,40 +321,40 @@ export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "one-port-purple",
     category: "one-port",
-    name: "One Port, Purple",
-    nameKr: "원 포트, 퍼플",
+    name: "Dot Port, Purple",
+    nameKr: "닷 포트, 퍼플",
     finish: "Purple finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-purple.png",
     mossSrc: "/products/one-port-purple-plant.png",
-    emptyAlt: "TAEGYE one port in purple",
-    mossAlt: "TAEGYE one port in purple with plant",
+    emptyAlt: "TAEGYE dot port in purple",
+    mossAlt: "TAEGYE dot port in purple with plant",
   },
   {
     id: "one-port-black",
     category: "one-port",
-    name: "One Port, Black",
-    nameKr: "원 포트, 블랙",
+    name: "Dot Port, Black",
+    nameKr: "닷 포트, 블랙",
     finish: "Black finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-black.png",
     mossSrc: "/products/one-port-black-plant.png",
-    emptyAlt: "TAEGYE one port in black",
-    mossAlt: "TAEGYE one port in black with plant",
+    emptyAlt: "TAEGYE dot port in black",
+    mossAlt: "TAEGYE dot port in black with plant",
   },
   {
     id: "one-port-white",
     category: "one-port",
-    name: "One Port, White",
-    nameKr: "원 포트, 화이트",
+    name: "Dot Port, White",
+    nameKr: "닷 포트, 화이트",
     finish: "White finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-white.png",
     mossSrc: "/products/one-port-white-plant.png",
     emptySrcMobile: "/products/one-port-white-mobile.png",
     mossSrcMobile: "/products/one-port-white-plant-mobile.png",
-    emptyAlt: "TAEGYE one port in white",
-    mossAlt: "TAEGYE one port in white with plant",
+    emptyAlt: "TAEGYE dot port in white",
+    mossAlt: "TAEGYE dot port in white with plant",
   },
 ];
 
