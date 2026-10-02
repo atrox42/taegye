@@ -17,7 +17,7 @@ import {
   type NewCategoryId,
   type NewProduct,
 } from "@/lib/site";
-import { forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import { cn } from "@/lib/utils";
 
 function isNewCategory(value: string | null): value is NewCategoryId {
@@ -51,6 +51,32 @@ function catalogEntries(
   return entries;
 }
 
+type CatalogSort = "default" | "name" | "price-desc" | "price-asc";
+
+const SORT_OPTIONS: { id: CatalogSort; label: string }[] = [
+  { id: "name", label: "Name" },
+  { id: "price-desc", label: "Price: High to Low" },
+  { id: "price-asc", label: "Price: Low to High" },
+];
+
+function priceValue(product: NewProduct) {
+  const value = Number((product.price || "").replace(/[^\d.]/g, ""));
+  return Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+}
+
+function sortCatalog(products: NewProduct[], sort: CatalogSort) {
+  if (sort === "default") return products;
+  const next = [...products];
+  if (sort === "name") {
+    next.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sort === "price-desc") {
+    next.sort((a, b) => priceValue(b) - priceValue(a) || a.name.localeCompare(b.name));
+  } else {
+    next.sort((a, b) => priceValue(a) - priceValue(b) || a.name.localeCompare(b.name));
+  }
+  return next;
+}
+
 function pickTextureSlot(productCount: number, requested?: number) {
   const maxSlot = Math.min(GRID_TEXTURE_SLOT_MAX, productCount + 1);
   const minSlot = Math.min(GRID_TEXTURE_SLOT_MIN, maxSlot);
@@ -66,11 +92,30 @@ export function NewCatalog() {
   const raw = searchParams.get("cat");
   const active: NewCategoryId = isNewCategory(raw) ? raw : DEFAULT_NEW_CATEGORY;
   const [placement, setPlacement] = useState<{ slot: number; src: string } | null>(null);
+  const [sort, setSort] = useState<CatalogSort>("default");
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
 
   const products = useMemo(() => {
-    if (active === "all") return NEW_PRODUCTS;
-    return NEW_PRODUCTS.filter((product) => product.category === active);
+    const list = active === "all" ? NEW_PRODUCTS : NEW_PRODUCTS.filter((product) => product.category === active);
+    return sortCatalog(list, sort);
+  }, [active, sort]);
+
+  useEffect(() => {
+    setSort("default");
+    setSortOpen(false);
   }, [active]);
+
+  useEffect(() => {
+    if (!sortOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [sortOpen]);
 
   useEffect(() => {
     if (active === "all") {
@@ -119,22 +164,57 @@ export function NewCatalog() {
     <>
       <nav aria-label="Product categories" className="new-subnav" style={forceWhiteStyle}>
         <WhiteSurfaceFill />
-        {NEW_CATEGORIES.map((category) => {
-          const isActive = category.id === active;
-          const href =
-            category.id === DEFAULT_NEW_CATEGORY ? "/new" : `/new?cat=${category.id}`;
-          return (
-            <Link
-              key={category.id}
-              href={href}
-              scroll={false}
-              className={`site-type new-subnav-item${isActive ? " is-active" : ""}`}
-              aria-current={isActive ? "page" : undefined}
-            >
-              {category.label}
-            </Link>
-          );
-        })}
+        <div className="new-subnav-tabs">
+          {NEW_CATEGORIES.map((category) => {
+            const isActive = category.id === active;
+            const href =
+              category.id === DEFAULT_NEW_CATEGORY ? "/new" : `/new?cat=${category.id}`;
+            return (
+              <Link
+                key={category.id}
+                href={href}
+                scroll={false}
+                className={`site-type new-subnav-item${isActive ? " is-active" : ""}`}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {category.label}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="new-sort" ref={sortRef}>
+          <button
+            type="button"
+            className={`site-type new-sort-trigger${sort !== "default" || sortOpen ? " is-active" : ""}`}
+            aria-expanded={sortOpen}
+            aria-haspopup="listbox"
+            aria-label="Sort"
+            onClick={() => setSortOpen((value) => !value)}
+          >
+            Sort
+          </button>
+          {sortOpen ? (
+            <div className="new-sort-menu" role="listbox" aria-label="Sort" style={forceWhiteStyle}>
+              <WhiteSurfaceFill />
+              {SORT_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="option"
+                  aria-selected={sort === option.id}
+                  className={`site-type new-sort-option${sort === option.id ? " is-active" : ""}`}
+                  style={forceInkStyle}
+                  onClick={() => {
+                    setSort(option.id === sort ? "default" : option.id);
+                    setSortOpen(false);
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </nav>
 
       {products.length > 0 ? (

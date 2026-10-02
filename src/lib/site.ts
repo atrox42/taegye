@@ -238,7 +238,9 @@ export function productFamilyLabel(product: NewProduct) {
 }
 
 export function productNote(product: NewProduct) {
-  return product.category === "one-port" ? ONE_PORT_NOTE : STAND_NOTE;
+  if (product.category === "one-port") return ONE_PORT_NOTE;
+  if (product.category === "wall-kit") return STAND_NOTE;
+  return null;
 }
 
 /**
@@ -371,7 +373,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-purple.png",
     emptyAlt: "TAEGYE Cascade, Purple",
-    listedOnly: true,
   },
   {
     id: "cascade-silver",
@@ -382,7 +383,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-silver.png",
     emptyAlt: "TAEGYE Cascade, Silver",
-    listedOnly: true,
   },
   {
     id: "cascade-black",
@@ -393,7 +393,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-black.png",
     emptyAlt: "TAEGYE Cascade, Black",
-    listedOnly: true,
   },
   {
     id: "drain-tower-100",
@@ -404,7 +403,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: DRAIN_TOWER_PRICE_100,
     emptySrc: "/products/drain-tower-100.png",
     emptyAlt: "TAEGYE Drain Tower 100",
-    listedOnly: true,
   },
   {
     id: "drain-tower-160",
@@ -415,7 +413,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: DRAIN_TOWER_PRICE_160,
     emptySrc: "/products/drain-tower-160.png",
     emptyAlt: "TAEGYE Drain Tower 160",
-    listedOnly: true,
   },
   {
     id: "drain-tower-230",
@@ -426,7 +423,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: DRAIN_TOWER_PRICE_230,
     emptySrc: "/products/drain-tower-230.png",
     emptyAlt: "TAEGYE Drain Tower 230",
-    listedOnly: true,
   },
 ];
 

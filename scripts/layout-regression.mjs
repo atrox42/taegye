@@ -495,19 +495,20 @@ async function runBrowser() {
         report.map((card) => card.name),
         ["Cascade, Purple", "Cascade, Silver", "Cascade, Black"],
       );
-      for (const card of report) {
+      const hrefs = ["/new/cascade-purple", "/new/cascade-silver", "/new/cascade-black"];
+      report.forEach((card, index) => {
         assert.equal(card.price, "KRW 207,000", `${card.name} price`);
-        assert.equal(card.tag, "DIV", `${card.name} must not be a link`);
-        assert.equal(card.href, null);
+        assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
+        assert.equal(card.href, hrefs[index]);
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
-      }
+      });
       assert.equal(report[0].src, "/products/cascade-purple.png");
       assert.equal(report[1].src, "/products/cascade-silver.png");
       assert.equal(report[2].src, "/products/cascade-black.png");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "cascade tab keeps moss tile");
-      console.log("ok  mobile /new?cat=cascade: Purple, Silver, Black, priced, no PDP");
+      console.log("ok  mobile /new?cat=cascade: Purple, Silver, Black, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
@@ -531,12 +532,13 @@ async function runBrowser() {
         report.map((card) => card.name),
         ["Drain Tower 100", "Drain Tower 160", "Drain Tower 230"],
       );
-      for (const card of report) {
-        assert.equal(card.tag, "DIV", `${card.name} must not be a link`);
-        assert.equal(card.href, null);
+      const hrefs = ["/new/drain-tower-100", "/new/drain-tower-160", "/new/drain-tower-230"];
+      report.forEach((card, index) => {
+        assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
+        assert.equal(card.href, hrefs[index]);
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
-      }
+      });
       assert.deepEqual(
         report.map((card) => card.price),
         ["KRW 8,000", "KRW 15,000", "KRW 23,000"],
@@ -544,7 +546,7 @@ async function runBrowser() {
       assert.equal(report[0].src, "/products/drain-tower-100.png");
       assert.equal(report[1].src, "/products/drain-tower-160.png");
       assert.equal(report[2].src, "/products/drain-tower-230.png");
-      console.log("ok  mobile /new?cat=drain-tower: 100, 160, 230, priced, no PDP");
+      console.log("ok  mobile /new?cat=drain-tower: 100, 160, 230, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -575,23 +577,103 @@ async function runBrowser() {
       console.log("ok  mobile /new All: Cascade Purple, Silver, Black before Drain Tower, no moss tile");
     });
 
-    for (const id of [
-      "drain-tower-100",
-      "drain-tower-160",
-      "drain-tower-230",
-      "cascade-purple",
-      "cascade-silver",
-      "cascade-black",
-    ]) {
+    const listed = [
+      ["cascade-purple", "Cascade, Purple", "KRW 207,000"],
+      ["cascade-silver", "Cascade, Silver", "KRW 207,000"],
+      ["cascade-black", "Cascade, Black", "KRW 207,000"],
+      ["drain-tower-100", "Drain Tower 100", "KRW 8,000"],
+      ["drain-tower-160", "Drain Tower 160", "KRW 15,000"],
+      ["drain-tower-230", "Drain Tower 230", "KRW 23,000"],
+    ];
+    for (const [id, name, price] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
-        const missing = await page.evaluate(() => {
-          const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
-          return { status, path: location.pathname };
-        });
-        assert.notEqual(missing.status, "pdp", `listed-only ${id} must not render a PDP`);
-        console.log(`ok  /new/${id}: no product detail`);
+        const report = await page.evaluate(() => ({
+          name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+          price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
+          note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
+          swatches: document.querySelectorAll(".pdp-swatch").length,
+          store: document.querySelector("[data-pdp-store]")?.getAttribute("href") || "",
+          img: document.querySelector(".pdp-hero-empty img")?.getAttribute("src") || "",
+        }));
+        assert.equal(report.name, name, `${id} name`);
+        assert.equal(report.price, price, `${id} price`);
+        assert.equal(report.note, null, `${id} must not invent a note`);
+        assert.equal(report.swatches, 0, `${id} must not invent swatches`);
+        assert.equal(report.store, "https://smartstore.naver.com/taegye", `${id} store`);
+        assert.equal(report.img, `/products/${id}.png`, `${id} image`);
+        console.log(`ok  /new/${id}: PDP ${name} ${price}`);
       });
     }
+
+    await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
+      const sortNames = async () =>
+        page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
+          nodes.map((node) => (node.textContent || "").trim()),
+        );
+      const clickSort = async (label) => {
+        await page.click(".new-sort-trigger");
+        await page.waitForSelector(".new-sort-menu");
+        await page.evaluate((text) => {
+          const button = [...document.querySelectorAll(".new-sort-option")].find(
+            (node) => (node.textContent || "").trim() === text,
+          );
+          if (!(button instanceof HTMLElement)) throw new Error(`missing sort ${text}`);
+          button.click();
+        }, label);
+      };
+      const row = await page.evaluate(() => {
+        const nav = document.querySelector(".new-subnav");
+        const tabs = document.querySelector(".new-subnav-tabs");
+        const sort = document.querySelector(".new-sort");
+        if (!nav || !tabs || !sort) return null;
+        const n = nav.getBoundingClientRect();
+        const t = tabs.getBoundingClientRect();
+        const s = sort.getBoundingClientRect();
+        return {
+          navH: +n.height.toFixed(1),
+          tabsRight: +t.right.toFixed(1),
+          sortLeft: +s.left.toFixed(1),
+          sortRight: +s.right.toFixed(1),
+          navRight: +n.right.toFixed(1),
+        };
+      });
+      assert.ok(row && row.navH <= 22, `412 sort row height ${row?.navH}`);
+      assert.ok(row && row.tabsRight <= row.sortLeft - 4, `412 tabs overlap sort ${JSON.stringify(row)}`);
+      assert.ok(row && row.sortRight <= row.navRight + 1, `412 sort overflow ${JSON.stringify(row)}`);
+      await clickSort("Name");
+      const byName = await sortNames();
+      const named = [...byName].sort((a, b) => a.localeCompare(b));
+      assert.deepEqual(byName, named, `Name sort ${byName}`);
+      await clickSort("Price: High to Low");
+      const high = await sortNames();
+      assert.equal(high[0], "Cascade, Black");
+      assert.equal(high[high.length - 1], "Drain Tower 100");
+      await clickSort("Price: Low to High");
+      const low = await sortNames();
+      assert.equal(low[0], "Drain Tower 100");
+      assert.equal(low[low.length - 1], "Cascade, Silver");
+      console.log("ok  mobile /new sort: Name, High to Low, Low to High");
+    });
+
+    await withPage(browser, MOBILE_360, "/new?moss=0", async (page) => {
+      const row = await page.evaluate(() => {
+        const nav = document.querySelector(".new-subnav");
+        const tabs = document.querySelector(".new-subnav-tabs");
+        const sort = document.querySelector(".new-sort");
+        if (!nav || !tabs || !sort) return null;
+        const n = nav.getBoundingClientRect();
+        const t = tabs.getBoundingClientRect();
+        const s = sort.getBoundingClientRect();
+        return {
+          navH: +n.height.toFixed(1),
+          tabsRight: +t.right.toFixed(1),
+          sortLeft: +s.left.toFixed(1),
+        };
+      });
+      assert.ok(row && row.navH <= 22, `360 sort row height ${row?.navH}`);
+      assert.ok(row && row.tabsRight <= row.sortLeft - 2, `360 tabs overlap sort ${JSON.stringify(row)}`);
+      console.log("ok  mobile 360 /new: sort stays on one row");
+    });
 
     for (const path of ["/new", "/new?cat=one-port", "/new/one-port-purple", "/new/one-port-black", "/new/one-port-white"]) {
       await withPage(browser, MOBILE, path, async (page) => {
