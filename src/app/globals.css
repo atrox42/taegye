@@ -3049,7 +3049,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   gap: 14px;
   min-height: 0;
   margin: 0;
-  padding: 45px 1.6rem;
+  padding: 45px 1.6rem 31.5px; /* bottom 45→31.5, ~30% less under 쿠폰 받기 */
   border: 0;
   border-bottom: 0;
   box-shadow: none;
@@ -3277,7 +3277,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 
   .site-promo-visual {
     min-height: 0;
-    padding: 36px 1.15rem;
+    padding: 36px 1.15rem 25.2px; /* bottom 36→25.2, ~30% less under 쿠폰 받기 */
     gap: 14px;
   }
 

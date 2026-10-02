@@ -796,6 +796,12 @@ async function runBrowser() {
           closeLabel:
             document.querySelector(".site-promo-strip-close .sr-only")?.textContent || "",
           open: Boolean(document.querySelector(".site-promo-card")),
+          ctaToPurple: (() => {
+            const cta = document.querySelector(".site-promo-cta")?.getBoundingClientRect();
+            const visual = document.querySelector(".site-promo-visual")?.getBoundingClientRect();
+            return cta && visual ? visual.bottom - cta.bottom : null;
+          })(),
+          vw: window.innerWidth,
         };
       });
       assert.equal(report.strip, true, `${label}: hide-today / close strip missing`);
@@ -804,6 +810,11 @@ async function runBrowser() {
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
       assert.equal(report.dimTag, "DIV", `${label}: dim must not be a button`);
       assert.ok(report.xW >= 44 && report.xH >= 44, `${label}: X hit ${report.xW}×${report.xH}`);
+      const expectedPad = report.vw <= 400 ? 25.2 : 31.5;
+      assert.ok(
+        Math.abs((report.ctaToPurple ?? 0) - expectedPad) <= 1,
+        `${label}: CTA→purple should be ~${expectedPad}px, got ${report.ctaToPurple}`,
+      );
       assert.ok(report.title, `${label}: title canvas empty`);
       assert.ok(report.cta, `${label}: cta canvas empty`);
       assert.ok(report.purple, `${label}: purple plate empty`);
