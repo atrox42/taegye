@@ -175,6 +175,9 @@ export const PRODUCT_MOBILE_MEDIA = "(max-width: 767px)";
 export const STAND_PRICE_SILVER = "KRW 103,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
 export const ONE_PORT_PRICE = "KRW 38,000";
+export const DRAIN_TOWER_PRICE_100 = "KRW 8,000";
+export const DRAIN_TOWER_PRICE_160 = "KRW 15,000";
+export const DRAIN_TOWER_PRICE_230 = "KRW 23,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
@@ -364,6 +367,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Drain Tower 100",
     nameKr: "드레인 타워 100",
     finish: "Black",
+    price: DRAIN_TOWER_PRICE_100,
     emptySrc: "/products/drain-tower-100.png",
     emptyAlt: "TAEGYE Drain Tower 100",
     listedOnly: true,
@@ -374,6 +378,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Drain Tower 160",
     nameKr: "드레인 타워 160",
     finish: "Black",
+    price: DRAIN_TOWER_PRICE_160,
     emptySrc: "/products/drain-tower-160.png",
     emptyAlt: "TAEGYE Drain Tower 160",
     listedOnly: true,
@@ -384,6 +389,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: "Drain Tower 230",
     nameKr: "드레인 타워 230",
     finish: "Black",
+    price: DRAIN_TOWER_PRICE_230,
     emptySrc: "/products/drain-tower-230.png",
     emptyAlt: "TAEGYE Drain Tower 230",
     listedOnly: true,
