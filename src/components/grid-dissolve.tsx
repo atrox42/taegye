@@ -287,6 +287,7 @@ export function GridDissolveProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     for (const product of NEW_PRODUCTS) {
+      if (product.listedOnly) continue;
       try {
         router.prefetch(`/new/${product.id}`);
       } catch {

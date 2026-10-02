@@ -205,6 +205,14 @@ body,
   .product-card:hover .product-moss {
     opacity: 1;
   }
+
+  .product-card.is-still:hover .product-empty {
+    opacity: 1;
+  }
+
+  .product-card.is-still:hover .product-moss {
+    opacity: 0;
+  }
 }
 
 /* Unlayered. Never use the `background` shorthand — it wipes background-image. */

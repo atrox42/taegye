@@ -54,9 +54,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
   );
   const mossHero = (
     <ProductHero
-      src={product.mossSrc}
+      src={product.mossSrc ?? product.emptySrc}
       mobileSrc={product.mossSrcMobile}
-      alt={product.mossAlt}
+      alt={product.mossAlt ?? product.emptyAlt}
       className="pdp-hero-moss"
     />
   );
@@ -133,9 +133,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </div>
       </div>
       <ProductHero
-        src={product.mossSrc}
+        src={product.mossSrc ?? product.emptySrc}
         mobileSrc={product.mossSrcMobile}
-        alt={product.mossAlt}
+        alt={product.mossAlt ?? product.emptyAlt}
         className="pdp-hero-moss pdp-desktop-moss"
       />
     </article>

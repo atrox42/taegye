@@ -42,9 +42,9 @@ export function HomeNewIn() {
             <Link href={`/new/${item.product.id}`} className="home-new-in-visual">
               <WhiteSurfaceFill />
               <ProductPhoto
-                src={item.product.mossSrc}
+                src={item.product.mossSrc ?? item.product.emptySrc}
                 mobileSrc={item.product.mossSrcMobile}
-                alt={item.product.mossAlt}
+                alt={item.product.mossAlt ?? item.product.emptyAlt}
                 width={1024}
                 height={1024}
               />

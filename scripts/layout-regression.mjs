@@ -467,13 +467,55 @@ async function runBrowser() {
       console.log("ok  mobile /new tabs: Dot-port, Drain Tower, Cascade");
     });
 
-    for (const cat of ["drain-tower", "cascade"]) {
-      await withPage(browser, MOBILE, `/new?cat=${cat}`, async (page) => {
-        const empty = await page.$eval(".new-empty", (node) => (node.textContent || "").trim());
-        assert.equal(empty, "coming soon", `${cat} empty`);
-        console.log(`ok  mobile /new?cat=${cat}: coming soon`);
+    await withPage(browser, MOBILE, "/new?cat=cascade", async (page) => {
+      const empty = await page.$eval(".new-empty", (node) => (node.textContent || "").trim());
+      assert.equal(empty, "coming soon", "cascade empty");
+      console.log("ok  mobile /new?cat=cascade: coming soon");
+    });
+
+    await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
+      const report = await page.evaluate(() => {
+        const card = document.querySelector(".product-card");
+        const img = card?.querySelector(".product-empty img");
+        return {
+          count: document.querySelectorAll(".product-card").length,
+          name: card?.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
+          price: card?.querySelector(".product-price")?.textContent?.trim() || null,
+          tag: card?.tagName || "",
+          href: card?.getAttribute("href"),
+          still: Boolean(card?.classList.contains("is-still")),
+          src: img?.getAttribute("src") || "",
+          moss: Boolean(card?.querySelector(".product-moss")),
+        };
       });
-    }
+      assert.equal(report.count, 1, `drain-tower cards ${report.count}`);
+      assert.equal(report.name, "Drain Tower 100");
+      assert.equal(report.price, null, `drain-tower should have no price, got ${report.price}`);
+      assert.equal(report.tag, "DIV", "drain-tower card must not be a link");
+      assert.equal(report.href, null);
+      assert.equal(report.still, true);
+      assert.equal(report.src, "/products/drain-tower-100.png");
+      assert.equal(report.moss, false, "drain-tower must not have a hover image");
+      console.log("ok  mobile /new?cat=drain-tower: Drain Tower 100, no price, no PDP");
+    });
+
+    await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
+      const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
+        nodes.map((node) => (node.textContent || "").trim()),
+      );
+      assert.ok(names.includes("Drain Tower 100"), `All missing Drain Tower 100: ${names}`);
+      console.log("ok  mobile /new All: Drain Tower 100 listed");
+    });
+
+    await withPage(browser, MOBILE, "/new/drain-tower-100", async (page) => {
+      const missing = await page.evaluate(() => {
+        const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
+        const heading = (document.querySelector("h1")?.textContent || "").trim();
+        return { status, heading, path: location.pathname };
+      });
+      assert.notEqual(missing.status, "pdp", "listed-only drain tower must not render a PDP");
+      console.log("ok  /new/drain-tower-100: no product detail");
+    });
 
     for (const path of ["/new", "/new?cat=one-port", "/new/one-port-purple", "/new/one-port-black", "/new/one-port-white"]) {
       await withPage(browser, MOBILE, path, async (page) => {

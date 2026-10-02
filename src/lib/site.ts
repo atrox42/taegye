@@ -157,14 +157,16 @@ export type NewProduct = {
   name: string;
   nameKr: string;
   finish: string;
-  price: string;
+  price?: string;
   emptySrc: string;
-  mossSrc: string;
+  mossSrc?: string;
   /** Brightened raster for max-width: 767px. Desktop keeps `emptySrc`. */
   emptySrcMobile?: string;
   mossSrcMobile?: string;
   emptyAlt: string;
-  mossAlt: string;
+  mossAlt?: string;
+  /** Catalog card only — no `/new/[id]` page and no click-through. */
+  listedOnly?: boolean;
 };
 
 /** Matches the site mobile / desktop split used by nav, PDP gallery, and float logo. */
@@ -252,7 +254,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — Modular Stand colors, then Dot Port Purple / Black / White. */
+/** /new catalog — Modular Stand colors, Dot Port colors, then Drain Tower 100. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -355,6 +357,16 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossSrcMobile: "/products/one-port-white-plant-mobile.png",
     emptyAlt: "TAEGYE dot port in white",
     mossAlt: "TAEGYE dot port in white with plant",
+  },
+  {
+    id: "drain-tower-100",
+    category: "drain-tower",
+    name: "Drain Tower 100",
+    nameKr: "드레인 타워 100",
+    finish: "Black",
+    emptySrc: "/products/drain-tower-100.png",
+    emptyAlt: "TAEGYE Drain Tower 100",
+    listedOnly: true,
   },
 ];
 
