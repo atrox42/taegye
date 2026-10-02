@@ -378,6 +378,16 @@ export const NEW_PRODUCTS: NewProduct[] = [
     emptyAlt: "TAEGYE Drain Tower 160",
     listedOnly: true,
   },
+  {
+    id: "drain-tower-230",
+    category: "drain-tower",
+    name: "Drain Tower 230",
+    nameKr: "드레인 타워 230",
+    finish: "Black",
+    emptySrc: "/products/drain-tower-230.png",
+    emptyAlt: "TAEGYE Drain Tower 230",
+    listedOnly: true,
+  },
 ];
 
 export function getNewProduct(id: string) {
