@@ -142,8 +142,8 @@ export const NEW_CATEGORIES = [
   { id: "all", label: "All" },
   { id: "wall-kit", label: "Wall-kit" },
   { id: "one-port", label: "Dot-port" },
-  { id: "drain-tower", label: "Drain Tower" },
   { id: "cascade", label: "Cascade" },
+  { id: "drain-tower", label: "Drain Tower" },
 ] as const;
 
 export type NewCategoryId = (typeof NEW_CATEGORIES)[number]["id"];
@@ -178,6 +178,7 @@ export const ONE_PORT_PRICE = "KRW 38,000";
 export const DRAIN_TOWER_PRICE_100 = "KRW 8,000";
 export const DRAIN_TOWER_PRICE_160 = "KRW 15,000";
 export const DRAIN_TOWER_PRICE_230 = "KRW 23,000";
+export const CASCADE_PRICE_PURPLE = "KRW 207,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
@@ -257,7 +258,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — Modular Stand colors, Dot Port colors, then Drain Tower 100. */
+/** /new catalog — Modular Stand, Dot Port, Cascade, then Drain Tower. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -360,6 +361,17 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossSrcMobile: "/products/one-port-white-plant-mobile.png",
     emptyAlt: "TAEGYE dot port in white",
     mossAlt: "TAEGYE dot port in white with plant",
+  },
+  {
+    id: "cascade-purple",
+    category: "cascade",
+    name: "Cascade, Purple",
+    nameKr: "캐스케이드, 퍼플",
+    finish: "Purple finish",
+    price: CASCADE_PRICE_PURPLE,
+    emptySrc: "/products/cascade-purple.png",
+    emptyAlt: "TAEGYE Cascade, Purple",
+    listedOnly: true,
   },
   {
     id: "drain-tower-100",

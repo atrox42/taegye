@@ -458,19 +458,47 @@ async function runBrowser() {
       );
       assert.deepEqual(
         tabs.map((tab) => tab.label),
-        ["All", "Wall-kit", "Dot-port", "Drain Tower", "Cascade"],
+        ["All", "Wall-kit", "Dot-port", "Cascade", "Drain Tower"],
       );
       assert.deepEqual(
         tabs.map((tab) => tab.href),
-        ["/new", "/new?cat=wall-kit", "/new?cat=one-port", "/new?cat=drain-tower", "/new?cat=cascade"],
+        ["/new", "/new?cat=wall-kit", "/new?cat=one-port", "/new?cat=cascade", "/new?cat=drain-tower"],
       );
-      console.log("ok  mobile /new tabs: Dot-port, Drain Tower, Cascade");
+      await page.click(".site-menubar-toggle");
+      await page.waitForSelector(".site-menu.is-open");
+      await page.click('.site-menu-row[role="button"]');
+      const menu = await page.$$eval(".site-menu-subrow .site-menu-label", (nodes) =>
+        nodes.map((node) => (node.textContent || "").trim()),
+      );
+      assert.deepEqual(menu, ["All", "Wall-kit", "Dot-port", "Cascade", "Drain Tower"]);
+      console.log("ok  mobile /new tabs + Product menu: Cascade before Drain Tower");
     });
 
-    await withPage(browser, MOBILE, "/new?cat=cascade", async (page) => {
-      const empty = await page.$eval(".new-empty", (node) => (node.textContent || "").trim());
-      assert.equal(empty, "coming soon", "cascade empty");
-      console.log("ok  mobile /new?cat=cascade: coming soon");
+    await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
+      const report = await page.evaluate(() => {
+        const cards = [...document.querySelectorAll(".product-card")].map((card) => {
+          const img = card.querySelector(".product-empty img");
+          return {
+            name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
+            price: card.querySelector(".product-price")?.textContent?.trim() || null,
+            tag: card.tagName,
+            href: card.getAttribute("href"),
+            still: card.classList.contains("is-still"),
+            src: img?.getAttribute("src") || "",
+            moss: Boolean(card.querySelector(".product-moss")),
+          };
+        });
+        return cards;
+      });
+      assert.equal(report.length, 1, `cascade cards ${report.length}`);
+      assert.equal(report[0].name, "Cascade, Purple");
+      assert.equal(report[0].price, "KRW 207,000");
+      assert.equal(report[0].tag, "DIV", "cascade must not be a link");
+      assert.equal(report[0].href, null);
+      assert.equal(report[0].still, true);
+      assert.equal(report[0].moss, false, "cascade must not have a hover image");
+      assert.equal(report[0].src, "/products/cascade-purple.png");
+      console.log("ok  mobile /new?cat=cascade: Cascade, Purple, priced, no PDP");
     });
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
@@ -514,14 +542,19 @@ async function runBrowser() {
       const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
+      const iDotWhite = names.indexOf("Dot Port, White");
+      const iCascade = names.indexOf("Cascade, Purple");
       const i100 = names.indexOf("Drain Tower 100");
       const i160 = names.indexOf("Drain Tower 160");
       const i230 = names.indexOf("Drain Tower 230");
-      assert.ok(i100 >= 0 && i160 === i100 + 1 && i230 === i160 + 1, `All order 100, 160, 230, got ${names}`);
-      console.log("ok  mobile /new All: Drain Tower 100, 160, 230");
+      assert.ok(
+        iDotWhite >= 0 && iCascade === iDotWhite + 1 && i100 === iCascade + 1 && i160 === i100 + 1 && i230 === i160 + 1,
+        `All order Dot Port → Cascade → Drain Tower, got ${names}`,
+      );
+      console.log("ok  mobile /new All: Cascade before Drain Tower 100, 160, 230");
     });
 
-    for (const id of ["drain-tower-100", "drain-tower-160", "drain-tower-230"]) {
+    for (const id of ["drain-tower-100", "drain-tower-160", "drain-tower-230", "cascade-purple"]) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
         const missing = await page.evaluate(() => {
           const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
