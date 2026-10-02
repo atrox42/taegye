@@ -493,22 +493,23 @@ async function runBrowser() {
       assert.equal(report.length, 3, `cascade cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Cascade, Purple", "Cascade, Silver", "Cascade, Black"],
+        ["Cascade, Silver", "Cascade, Purple", "Cascade, Black"],
       );
-      const hrefs = ["/new/cascade-purple", "/new/cascade-silver", "/new/cascade-black"];
+      const hrefs = ["/new/cascade-silver", "/new/cascade-purple", "/new/cascade-black"];
+      const prices = ["KRW 223,000", "KRW 207,000", "KRW 207,000"];
       report.forEach((card, index) => {
-        assert.equal(card.price, "KRW 207,000", `${card.name} price`);
+        assert.equal(card.price, prices[index], `${card.name} price`);
         assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
         assert.equal(card.href, hrefs[index]);
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
       });
-      assert.equal(report[0].src, "/products/cascade-purple.png");
-      assert.equal(report[1].src, "/products/cascade-silver.png");
+      assert.equal(report[0].src, "/products/cascade-silver.png");
+      assert.equal(report[1].src, "/products/cascade-purple.png");
       assert.equal(report[2].src, "/products/cascade-black.png");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "cascade tab keeps moss tile");
-      console.log("ok  mobile /new?cat=cascade: Purple, Silver, Black, priced, linked");
+      console.log("ok  mobile /new?cat=cascade: Silver, Purple, Black, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
@@ -562,24 +563,24 @@ async function runBrowser() {
       const i230 = names.indexOf("Drain Tower 230");
       assert.ok(
         iDotWhite >= 0 &&
-          iPurple === iDotWhite + 1 &&
-          iSilver === iPurple + 1 &&
-          iBlack === iSilver + 1 &&
+          iSilver === iDotWhite + 1 &&
+          iPurple === iSilver + 1 &&
+          iBlack === iPurple + 1 &&
           i100 === iBlack + 1 &&
           i160 === i100 + 1 &&
           i230 === i160 + 1,
-        `All order Dot Port → Cascade Purple/Silver/Black → Drain Tower, got ${names}`,
+        `All order Dot Port → Cascade Silver/Purple/Black → Drain Tower, got ${names}`,
       );
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
       assert.equal(textures, 0, "All tab must not insert a moss tile");
       assert.equal(cards, 14, `All product cards ${cards}`);
-      console.log("ok  mobile /new All: Cascade Purple, Silver, Black before Drain Tower, no moss tile");
+      console.log("ok  mobile /new All: Cascade Silver, Purple, Black before Drain Tower, no moss tile");
     });
 
     const listed = [
+      ["cascade-silver", "Cascade, Silver", "KRW 223,000"],
       ["cascade-purple", "Cascade, Purple", "KRW 207,000"],
-      ["cascade-silver", "Cascade, Silver", "KRW 207,000"],
       ["cascade-black", "Cascade, Black", "KRW 207,000"],
       ["drain-tower-100", "Drain Tower 100", "KRW 8,000"],
       ["drain-tower-160", "Drain Tower 160", "KRW 15,000"],
@@ -646,7 +647,7 @@ async function runBrowser() {
       assert.deepEqual(byName, named, `Name sort ${byName}`);
       await clickSort("Price: High to Low");
       const high = await sortNames();
-      assert.equal(high[0], "Cascade, Black");
+      assert.equal(high[0], "Cascade, Silver");
       assert.equal(high[high.length - 1], "Drain Tower 100");
       await clickSort("Price: Low to High");
       const low = await sortNames();
