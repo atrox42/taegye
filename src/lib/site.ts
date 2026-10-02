@@ -179,6 +179,7 @@ export const DRAIN_TOWER_PRICE_100 = "KRW 8,000";
 export const DRAIN_TOWER_PRICE_160 = "KRW 15,000";
 export const DRAIN_TOWER_PRICE_230 = "KRW 23,000";
 export const CASCADE_PRICE_PURPLE = "KRW 207,000";
+export const CASCADE_PRICE_SILVER = "KRW 223,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
@@ -365,6 +366,16 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossAlt: "TAEGYE dot port in white with plant",
   },
   {
+    id: "cascade-silver",
+    category: "cascade",
+    name: "Cascade, Silver",
+    nameKr: "캐스케이드, 실버",
+    finish: "Silver finish",
+    price: CASCADE_PRICE_SILVER,
+    emptySrc: "/products/cascade-silver.png",
+    emptyAlt: "TAEGYE Cascade, Silver",
+  },
+  {
     id: "cascade-purple",
     category: "cascade",
     name: "Cascade, Purple",
@@ -373,16 +384,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-purple.png",
     emptyAlt: "TAEGYE Cascade, Purple",
-  },
-  {
-    id: "cascade-silver",
-    category: "cascade",
-    name: "Cascade, Silver",
-    nameKr: "캐스케이드, 실버",
-    finish: "Silver finish",
-    price: CASCADE_PRICE_PURPLE,
-    emptySrc: "/products/cascade-silver.png",
-    emptyAlt: "TAEGYE Cascade, Silver",
   },
   {
     id: "cascade-black",
