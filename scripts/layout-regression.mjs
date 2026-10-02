@@ -475,28 +475,35 @@ async function runBrowser() {
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
       const report = await page.evaluate(() => {
-        const card = document.querySelector(".product-card");
-        const img = card?.querySelector(".product-empty img");
-        return {
-          count: document.querySelectorAll(".product-card").length,
-          name: card?.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
-          price: card?.querySelector(".product-price")?.textContent?.trim() || null,
-          tag: card?.tagName || "",
-          href: card?.getAttribute("href"),
-          still: Boolean(card?.classList.contains("is-still")),
-          src: img?.getAttribute("src") || "",
-          moss: Boolean(card?.querySelector(".product-moss")),
-        };
+        const cards = [...document.querySelectorAll(".product-card")].map((card) => {
+          const img = card.querySelector(".product-empty img");
+          return {
+            name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
+            price: card.querySelector(".product-price")?.textContent?.trim() || null,
+            tag: card.tagName,
+            href: card.getAttribute("href"),
+            still: card.classList.contains("is-still"),
+            src: img?.getAttribute("src") || "",
+            moss: Boolean(card.querySelector(".product-moss")),
+          };
+        });
+        return cards;
       });
-      assert.equal(report.count, 1, `drain-tower cards ${report.count}`);
-      assert.equal(report.name, "Drain Tower 100");
-      assert.equal(report.price, null, `drain-tower should have no price, got ${report.price}`);
-      assert.equal(report.tag, "DIV", "drain-tower card must not be a link");
-      assert.equal(report.href, null);
-      assert.equal(report.still, true);
-      assert.equal(report.src, "/products/drain-tower-100.png");
-      assert.equal(report.moss, false, "drain-tower must not have a hover image");
-      console.log("ok  mobile /new?cat=drain-tower: Drain Tower 100, no price, no PDP");
+      assert.equal(report.length, 2, `drain-tower cards ${report.length}`);
+      assert.deepEqual(
+        report.map((card) => card.name),
+        ["Drain Tower 100", "Drain Tower 160"],
+      );
+      for (const card of report) {
+        assert.equal(card.price, null, `${card.name} should have no price`);
+        assert.equal(card.tag, "DIV", `${card.name} must not be a link`);
+        assert.equal(card.href, null);
+        assert.equal(card.still, true);
+        assert.equal(card.moss, false, `${card.name} must not have a hover image`);
+      }
+      assert.equal(report[0].src, "/products/drain-tower-100.png");
+      assert.equal(report[1].src, "/products/drain-tower-160.png");
+      console.log("ok  mobile /new?cat=drain-tower: 100 then 160, no price, no PDP");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -504,18 +511,23 @@ async function runBrowser() {
         nodes.map((node) => (node.textContent || "").trim()),
       );
       assert.ok(names.includes("Drain Tower 100"), `All missing Drain Tower 100: ${names}`);
-      console.log("ok  mobile /new All: Drain Tower 100 listed");
+      assert.ok(names.includes("Drain Tower 160"), `All missing Drain Tower 160: ${names}`);
+      const i100 = names.indexOf("Drain Tower 100");
+      const i160 = names.indexOf("Drain Tower 160");
+      assert.ok(i100 >= 0 && i160 === i100 + 1, `All order 100 then 160, got ${names}`);
+      console.log("ok  mobile /new All: Drain Tower 100 then 160");
     });
 
-    await withPage(browser, MOBILE, "/new/drain-tower-100", async (page) => {
-      const missing = await page.evaluate(() => {
-        const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
-        const heading = (document.querySelector("h1")?.textContent || "").trim();
-        return { status, heading, path: location.pathname };
+    for (const id of ["drain-tower-100", "drain-tower-160"]) {
+      await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
+        const missing = await page.evaluate(() => {
+          const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
+          return { status, path: location.pathname };
+        });
+        assert.notEqual(missing.status, "pdp", `listed-only ${id} must not render a PDP`);
+        console.log(`ok  /new/${id}: no product detail`);
       });
-      assert.notEqual(missing.status, "pdp", "listed-only drain tower must not render a PDP");
-      console.log("ok  /new/drain-tower-100: no product detail");
-    });
+    }
 
     for (const path of ["/new", "/new?cat=one-port", "/new/one-port-purple", "/new/one-port-black", "/new/one-port-white"]) {
       await withPage(browser, MOBILE, path, async (page) => {
