@@ -505,6 +505,8 @@ async function runBrowser() {
       assert.equal(report[0].src, "/products/cascade-purple.png");
       assert.equal(report[1].src, "/products/cascade-silver.png");
       assert.equal(report[2].src, "/products/cascade-black.png");
+      const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
+      assert.equal(textures, 1, "cascade tab keeps moss tile");
       console.log("ok  mobile /new?cat=cascade: Purple, Silver, Black, priced, no PDP");
     });
 
@@ -566,7 +568,11 @@ async function runBrowser() {
           i230 === i160 + 1,
         `All order Dot Port → Cascade Purple/Silver/Black → Drain Tower, got ${names}`,
       );
-      console.log("ok  mobile /new All: Cascade Purple, Silver, Black before Drain Tower");
+      const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
+      const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
+      assert.equal(textures, 0, "All tab must not insert a moss tile");
+      assert.equal(cards, 14, `All product cards ${cards}`);
+      console.log("ok  mobile /new All: Cascade Purple, Silver, Black before Drain Tower, no moss tile");
     });
 
     for (const id of [

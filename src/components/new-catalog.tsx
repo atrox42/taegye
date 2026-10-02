@@ -73,6 +73,10 @@ export function NewCatalog() {
   }, [active]);
 
   useEffect(() => {
+    if (active === "all") {
+      setPlacement(null);
+      return;
+    }
     const rawTile = searchParams.get("tile");
     const requested = rawTile === null ? Number.NaN : Number(rawTile);
     const slot = pickTextureSlot(products.length, Number.isInteger(requested) ? requested : undefined);
@@ -92,7 +96,7 @@ export function NewCatalog() {
         ? GRID_TEXTURE_SRCS[((moss - 1) % GRID_TEXTURE_SRCS.length + GRID_TEXTURE_SRCS.length) % GRID_TEXTURE_SRCS.length]
         : GRID_TEXTURE_SRCS[Math.floor(Math.random() * GRID_TEXTURE_SRCS.length)]);
     setPlacement({ slot, src });
-  }, [products.length, searchParams]);
+  }, [active, products.length, searchParams]);
 
   const entries = useMemo(() => catalogEntries(products, placement), [products, placement]);
   const gridRef = useRef<HTMLUListElement>(null);
