@@ -509,7 +509,7 @@ async function runBrowser() {
       assert.equal(report[2].src, "/products/cascade-black.png");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "cascade tab keeps moss tile");
-      console.log("ok  mobile /new?cat=cascade: Purple, Silver, Black, priced, linked");
+      console.log("ok  mobile /new?cat=cascade: Silver, Purple, Black, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
