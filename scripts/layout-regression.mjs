@@ -489,10 +489,10 @@ async function runBrowser() {
         });
         return cards;
       });
-      assert.equal(report.length, 2, `drain-tower cards ${report.length}`);
+      assert.equal(report.length, 3, `drain-tower cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Drain Tower 100", "Drain Tower 160"],
+        ["Drain Tower 100", "Drain Tower 160", "Drain Tower 230"],
       );
       for (const card of report) {
         assert.equal(card.price, null, `${card.name} should have no price`);
@@ -503,22 +503,22 @@ async function runBrowser() {
       }
       assert.equal(report[0].src, "/products/drain-tower-100.png");
       assert.equal(report[1].src, "/products/drain-tower-160.png");
-      console.log("ok  mobile /new?cat=drain-tower: 100 then 160, no price, no PDP");
+      assert.equal(report[2].src, "/products/drain-tower-230.png");
+      console.log("ok  mobile /new?cat=drain-tower: 100, 160, 230, no price, no PDP");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
       const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.ok(names.includes("Drain Tower 100"), `All missing Drain Tower 100: ${names}`);
-      assert.ok(names.includes("Drain Tower 160"), `All missing Drain Tower 160: ${names}`);
       const i100 = names.indexOf("Drain Tower 100");
       const i160 = names.indexOf("Drain Tower 160");
-      assert.ok(i100 >= 0 && i160 === i100 + 1, `All order 100 then 160, got ${names}`);
-      console.log("ok  mobile /new All: Drain Tower 100 then 160");
+      const i230 = names.indexOf("Drain Tower 230");
+      assert.ok(i100 >= 0 && i160 === i100 + 1 && i230 === i160 + 1, `All order 100, 160, 230, got ${names}`);
+      console.log("ok  mobile /new All: Drain Tower 100, 160, 230");
     });
 
-    for (const id of ["drain-tower-100", "drain-tower-160"]) {
+    for (const id of ["drain-tower-100", "drain-tower-160", "drain-tower-230"]) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
         const missing = await page.evaluate(() => {
           const status = document.querySelector(".pdp-name") ? "pdp" : "no-pdp";
