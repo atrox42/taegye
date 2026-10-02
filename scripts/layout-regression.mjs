@@ -495,16 +495,19 @@ async function runBrowser() {
         ["Drain Tower 100", "Drain Tower 160", "Drain Tower 230"],
       );
       for (const card of report) {
-        assert.equal(card.price, null, `${card.name} should have no price`);
         assert.equal(card.tag, "DIV", `${card.name} must not be a link`);
         assert.equal(card.href, null);
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
       }
+      assert.deepEqual(
+        report.map((card) => card.price),
+        ["KRW 8,000", "KRW 15,000", "KRW 23,000"],
+      );
       assert.equal(report[0].src, "/products/drain-tower-100.png");
       assert.equal(report[1].src, "/products/drain-tower-160.png");
       assert.equal(report[2].src, "/products/drain-tower-230.png");
-      console.log("ok  mobile /new?cat=drain-tower: 100, 160, 230, no price, no PDP");
+      console.log("ok  mobile /new?cat=drain-tower: 100, 160, 230, priced, no PDP");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
