@@ -542,6 +542,20 @@ button {
   margin: 0;
 }
 
+.faq-body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.faq-body .faq-item p.site-type-copy {
+  margin-top: 16px;
+}
+
+.faq-body .faq-item h2[lang="ko"] {
+  margin-top: 20px;
+}
+
 .text-page,
 .new-page,
 .site-page,
