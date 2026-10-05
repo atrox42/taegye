@@ -531,9 +531,9 @@ async function runBrowser() {
       assert.equal(report.length, 3, `drain-tower cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Drain Tower 100", "Drain Tower 160", "Drain Tower 230"],
+        ["Drain Tower 80", "Drain Tower 120", "Drain Tower 160"],
       );
-      const hrefs = ["/new/drain-tower-100", "/new/drain-tower-160", "/new/drain-tower-230"];
+      const hrefs = ["/new/drain-tower-80", "/new/drain-tower-120", "/new/drain-tower-160"];
       report.forEach((card, index) => {
         assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
         assert.equal(card.href, hrefs[index]);
@@ -542,12 +542,12 @@ async function runBrowser() {
       });
       assert.deepEqual(
         report.map((card) => card.price),
-        ["KRW 8,000", "KRW 15,000", "KRW 23,000"],
+        ["KRW 8,000", "KRW 10,000", "KRW 12,000"],
       );
       assert.equal(report[0].src, "/products/drain-tower-100.png");
       assert.equal(report[1].src, "/products/drain-tower-160.png");
       assert.equal(report[2].src, "/products/drain-tower-230.png");
-      console.log("ok  mobile /new?cat=drain-tower: 100, 160, 230, priced, linked");
+      console.log("ok  mobile /new?cat=drain-tower: 80, 120, 160, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -558,17 +558,17 @@ async function runBrowser() {
       const iPurple = names.indexOf("Cascade, Purple");
       const iSilver = names.indexOf("Cascade, Silver");
       const iBlack = names.indexOf("Cascade, Black");
-      const i100 = names.indexOf("Drain Tower 100");
+      const i80 = names.indexOf("Drain Tower 80");
+      const i120 = names.indexOf("Drain Tower 120");
       const i160 = names.indexOf("Drain Tower 160");
-      const i230 = names.indexOf("Drain Tower 230");
       assert.ok(
         iDotWhite >= 0 &&
           iSilver === iDotWhite + 1 &&
           iPurple === iSilver + 1 &&
           iBlack === iPurple + 1 &&
-          i100 === iBlack + 1 &&
-          i160 === i100 + 1 &&
-          i230 === i160 + 1,
+          i80 === iBlack + 1 &&
+          i120 === i80 + 1 &&
+          i160 === i120 + 1,
         `All order Dot Port → Cascade Silver/Purple/Black → Drain Tower, got ${names}`,
       );
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
@@ -579,14 +579,14 @@ async function runBrowser() {
     });
 
     const listed = [
-      ["cascade-silver", "Cascade, Silver", "KRW 223,000"],
-      ["cascade-purple", "Cascade, Purple", "KRW 207,000"],
-      ["cascade-black", "Cascade, Black", "KRW 207,000"],
-      ["drain-tower-100", "Drain Tower 100", "KRW 8,000"],
-      ["drain-tower-160", "Drain Tower 160", "KRW 15,000"],
-      ["drain-tower-230", "Drain Tower 230", "KRW 23,000"],
+      ["cascade-silver", "Cascade, Silver", "KRW 223,000", "/products/cascade-silver.png"],
+      ["cascade-purple", "Cascade, Purple", "KRW 207,000", "/products/cascade-purple.png"],
+      ["cascade-black", "Cascade, Black", "KRW 207,000", "/products/cascade-black.png"],
+      ["drain-tower-80", "Drain Tower 80", "KRW 8,000", "/products/drain-tower-100.png"],
+      ["drain-tower-120", "Drain Tower 120", "KRW 10,000", "/products/drain-tower-160.png"],
+      ["drain-tower-160", "Drain Tower 160", "KRW 12,000", "/products/drain-tower-230.png"],
     ];
-    for (const [id, name, price] of listed) {
+    for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
         const report = await page.evaluate(() => ({
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
@@ -595,14 +595,34 @@ async function runBrowser() {
           swatches: document.querySelectorAll(".pdp-swatch").length,
           store: document.querySelector("[data-pdp-store]")?.getAttribute("href") || "",
           img: document.querySelector(".pdp-hero-empty img")?.getAttribute("src") || "",
+          title: document.title,
         }));
         assert.equal(report.name, name, `${id} name`);
         assert.equal(report.price, price, `${id} price`);
         assert.equal(report.note, null, `${id} must not invent a note`);
         assert.equal(report.swatches, 0, `${id} must not invent swatches`);
         assert.equal(report.store, "https://smartstore.naver.com/taegye", `${id} store`);
-        assert.equal(report.img, `/products/${id}.png`, `${id} image`);
+        assert.equal(report.img, img, `${id} image`);
+        assert.ok(report.title.startsWith(name), `${id} title ${report.title}`);
         console.log(`ok  /new/${id}: PDP ${name} ${price}`);
+      });
+    }
+
+    const legacy = [
+      ["/new/drain-tower-100", "/new/drain-tower-80", "Drain Tower 80", "KRW 8,000"],
+      ["/new/drain-tower-230", "/new/drain-tower-160", "Drain Tower 160", "KRW 12,000"],
+    ];
+    for (const [from, to, name, price] of legacy) {
+      await withPage(browser, MOBILE, from, async (page) => {
+        const pathname = new URL(page.url()).pathname;
+        const report = await page.evaluate(() => ({
+          name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+          price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
+        }));
+        assert.equal(pathname, to, `${from} redirect path`);
+        assert.equal(report.name, name, `${from} redirect name`);
+        assert.equal(report.price, price, `${from} redirect price`);
+        console.log(`ok  ${from} → ${to}: ${name} ${price}`);
       });
     }
 
@@ -648,10 +668,10 @@ async function runBrowser() {
       await clickSort("Price: High to Low");
       const high = await sortNames();
       assert.equal(high[0], "Cascade, Silver");
-      assert.equal(high[high.length - 1], "Drain Tower 100");
+      assert.equal(high[high.length - 1], "Drain Tower 80");
       await clickSort("Price: Low to High");
       const low = await sortNames();
-      assert.equal(low[0], "Drain Tower 100");
+      assert.equal(low[0], "Drain Tower 80");
       assert.equal(low[low.length - 1], "Cascade, Silver");
       console.log("ok  mobile /new sort: Name, High to Low, Low to High");
     });
