@@ -1031,15 +1031,20 @@ async function runBrowser() {
         if (expected.right != null) assert.equal(closed.right, expected.right, `${label} closed right ${closed.right}`);
       }
       const type = await page.evaluate(() => {
-        const tab = document.querySelector(".new-subnav-item");
+        const current = document.querySelector('.new-subnav-item[aria-current="page"]');
+        const idle = [...document.querySelectorAll(".new-subnav-item")].find(
+          (node) => node.getAttribute("aria-current") !== "page",
+        );
         const sort = document.querySelector(".new-sort-trigger");
-        const ts = tab ? getComputedStyle(tab) : null;
+        const cs = current ? getComputedStyle(current) : null;
+        const is = idle ? getComputedStyle(idle) : null;
         const ss = sort ? getComputedStyle(sort) : null;
         return {
-          tabFs: ts?.fontSize || null,
-          tabLs: ts?.letterSpacing || null,
-          tabLh: ts?.lineHeight || null,
-          tabFw: ts?.fontWeight || null,
+          tabFs: is?.fontSize || null,
+          tabLs: is?.letterSpacing || null,
+          tabLh: is?.lineHeight || null,
+          idleFw: is?.fontWeight || null,
+          currentFw: cs?.fontWeight || null,
           sortFs: ss?.fontSize || null,
           sortLs: ss?.letterSpacing || null,
           sortLh: ss?.lineHeight || null,
@@ -1049,7 +1054,7 @@ async function runBrowser() {
       assert.equal(type.sortFs, type.tabFs, `${label} Sort font-size ${type.sortFs} vs tab ${type.tabFs}`);
       assert.equal(type.sortLs, type.tabLs, `${label} Sort letter-spacing ${type.sortLs} vs tab ${type.tabLs}`);
       assert.equal(type.sortLh, type.tabLh, `${label} Sort line-height ${type.sortLh} vs tab ${type.tabLh}`);
-      assert.equal(type.sortFw, type.tabFw, `${label} Sort font-weight ${type.sortFw} vs tab ${type.tabFw}`);
+      assert.equal(type.sortFw, type.idleFw, `${label} idle Sort weight ${type.sortFw} vs tab ${type.idleFw}`);
       await page.click(".new-sort-trigger");
       await page.waitForSelector(".new-sort-menu");
       const open = await triggerBox();
