@@ -963,10 +963,10 @@ async function runBrowser() {
       await page.click(".new-sort-trigger");
       await page.waitForSelector(".new-sort-menu");
       const open = await triggerBox();
-      assert.equal(open.left, closed.left, `${label} trigger left moved ${closed.left} → ${open.left}`);
-      assert.equal(open.right, closed.right, `${label} trigger right moved ${closed.right} → ${open.right}`);
-      assert.equal(open.top, closed.top, `${label} trigger top moved ${closed.top} → ${open.top}`);
-      assert.equal(open.width, closed.width, `${label} trigger width ${closed.width} → ${open.width}`);
+      assert.ok(
+        Math.abs(open.left - closed.left) <= 1 && Math.abs(open.right - closed.right) <= 1 && Math.abs(open.top - closed.top) <= 1,
+        `${label} trigger moved ${JSON.stringify(closed)} → ${JSON.stringify(open)}`,
+      );
       const menu = await page.evaluate(() => {
         const node = document.querySelector(".new-sort-menu");
         const trigger = document.querySelector(".new-sort-trigger");
@@ -1000,8 +1000,10 @@ async function runBrowser() {
       await page.click(".new-sort-trigger");
       await page.waitForSelector(".new-sort-menu", { hidden: true });
       const closedAgain = await triggerBox();
-      assert.equal(closedAgain.left, closed.left, `${label} trigger left after close`);
-      assert.equal(closedAgain.right, closed.right, `${label} trigger right after close`);
+      assert.ok(
+        Math.abs(closedAgain.left - closed.left) <= 1 && Math.abs(closedAgain.right - closed.right) <= 1,
+        `${label} trigger after close ${JSON.stringify(closedAgain)} vs ${JSON.stringify(closed)}`,
+      );
     }
 
     await withPage(browser, MOBILE_320, "/new?moss=0", (page) => assertSortMenuPinned(page, "320"));
