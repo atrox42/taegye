@@ -150,6 +150,23 @@ export function ProductDetail({ product }: ProductDetailProps) {
           className="pdp-hero-moss pdp-desktop-moss"
         />
       ) : null}
+      {product.category === "drain-tower" ? (
+        <div className="pdp-hero pdp-hero-guide" style={forceWhiteStyle}>
+          <WhiteSurfaceFill />
+          <div className="pdp-guide-stage" data-pdp-photo="true">
+            {/* eslint-disable-next-line @next/next/no-img-element -- assembly guide must stay the committed raster */}
+            <img
+              src="/products/drain-tower-guide.png"
+              alt="TAEGYE Drain Tower assembly guide"
+              width={950}
+              height={1656}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+            />
+          </div>
+        </div>
+      ) : null}
     </article>
   );
 }
