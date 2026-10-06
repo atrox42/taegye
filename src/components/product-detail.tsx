@@ -44,7 +44,8 @@ function ProductHero({
 export function ProductDetail({ product }: ProductDetailProps) {
   const note = productNote(product);
   const family = productsInFamily(product);
-  const showSwatches = product.category === "wall-kit" || product.category === "one-port";
+  const showSwatches =
+    product.category === "wall-kit" || product.category === "one-port" || product.category === "cascade";
   const mossSrc = product.mossSrc;
   const hasMoss = Boolean(mossSrc);
   const emptyHero = (
