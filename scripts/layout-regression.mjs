@@ -1020,6 +1020,77 @@ async function runBrowser() {
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 
+    const ABOUT_EN = [
+      [
+        "Structures where nature grows.",
+        "TAEGYE is a design brand creating structures where plants and moss can take root and grow.",
+        "We consider where roots settle, how water flows, and where moisture stays, designing the foundations of a small living world.",
+        "Forms found in rock, geological layers, and eroded landscapes inform our structures for planting and growth.",
+        "Through 3D design and digital fabrication, we create vertical walls and dimensional spaces where plants, moss, soil, and stone come together.",
+      ],
+      [
+        "TAEGYE’s products continue to change as nature settles in.",
+        "Plants grow and moss spreads, creating different landscapes within the same structure.",
+        "We create the structures where that change begins.",
+      ],
+    ];
+    const ABOUT_KR = [
+      [
+        "자연이 자라는 구조.",
+        "태계는 식물과 이끼가 뿌리내리고 자랄 수 있는 구조를 만드는 디자인 브랜드입니다.",
+        "뿌리가 머무는 자리, 물이 흐르는 길, 습기가 유지되는 공간을 생각하며 작은 세계의 기반을 설계합니다.",
+        "암석과 지층, 침식된 지형에서 발견한 형태를 식재와 성장을 위한 구조로 발전시킵니다.",
+        "3D 디자인과 디지털 제작을 통해 수직의 벽과 입체적인 공간을 만들고, 그 안에 식물과 이끼, 흙과 돌이 자리 잡습니다.",
+      ],
+      [
+        "태계의 제품은 자연이 자리 잡으면서 계속 변화합니다.",
+        "식물이 자라고 이끼가 번지며, 같은 구조 안에서도 서로 다른 풍경이 만들어집니다.",
+        "우리는 그 변화가 시작될 구조를 만듭니다.",
+      ],
+    ];
+
+    async function assertAbout(page, label) {
+      const report = await page.evaluate(() => {
+        const paras = [...document.querySelectorAll(".about-copy")].map((p) => ({
+          lang: p.getAttribute("lang"),
+          lines: [...p.querySelectorAll(".about-line")].map((s) => s.childNodes[0]?.textContent || ""),
+          first: (() => {
+            const line = p.querySelector(".about-line");
+            if (!line) return null;
+            const s = getComputedStyle(line);
+            return { fontSize: s.fontSize, fontWeight: s.fontWeight };
+          })(),
+        }));
+        return {
+          h1: document.querySelector(".text-page-title")?.textContent?.trim() || "",
+          paras,
+          pageOverflow: +(document.documentElement.scrollWidth - document.documentElement.clientWidth).toFixed(1),
+        };
+      });
+      assert.equal(report.h1, "About", `${label} h1`);
+      assert.equal(report.paras.length, 4, `${label} paragraph count`);
+      assert.deepEqual(
+        report.paras.map((p) => [p.lang, p.lines]),
+        [
+          ["en", ABOUT_EN[0]],
+          ["en", ABOUT_EN[1]],
+          ["ko", ABOUT_KR[0]],
+          ["ko", ABOUT_KR[1]],
+        ],
+        `${label} copy`,
+      );
+      const bodySize = label.startsWith("desktop") ? "11px" : "10px";
+      report.paras.forEach((p, i) => {
+        assert.equal(p.first?.fontSize, bodySize, `${label} p${i} first-line size`);
+        assert.equal(p.first?.fontWeight, "400", `${label} p${i} first-line weight`);
+      });
+      assert.ok(report.pageOverflow <= 0, `${label} overflow ${report.pageOverflow}`);
+      console.log(`ok  ${label}: About copy, no overflow`);
+    }
+
+    await withPage(browser, MOBILE, "/about", (page) => assertAbout(page, "mobile 412 /about"));
+    await withPage(browser, DESKTOP, "/about", (page) => assertAbout(page, "desktop 1440 /about"));
+
     await withPage(browser, DESKTOP, "/new/white", async (page) => {
       const src = await page.$eval(".pdp-reveal img, .pdp-hero-empty img", (img) => img.currentSrc);
       assert.ok(/stand-white\.webp/.test(src), `desktop should keep original raster, got ${src}`);
