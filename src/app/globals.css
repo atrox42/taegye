@@ -1230,6 +1230,28 @@ button {
   flex: 0 0 auto;
 }
 
+@media (max-width: 359.98px) {
+  .new-subnav-tabs {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .new-subnav-tabs::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .new-sort {
+    z-index: 2;
+  }
+}
+
 .new-sort-trigger,
 .new-sort-option {
   padding: 0 0 3px;

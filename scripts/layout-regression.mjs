@@ -745,7 +745,7 @@ async function runBrowser() {
       console.log("ok  mobile /new sort: Name, High to Low, Low to High");
     });
 
-    await withPage(browser, MOBILE_320, "/new?moss=0", async (page) => {
+    await withPage(browser, MOBILE_320, "/new?cat=mini-port&moss=0", async (page) => {
       const row = await page.evaluate(() => {
         const nav = document.querySelector(".new-subnav");
         const tabs = document.querySelector(".new-subnav-tabs");
@@ -754,18 +754,36 @@ async function runBrowser() {
         const n = nav.getBoundingClientRect();
         const t = tabs.getBoundingClientRect();
         const s = sort.getBoundingClientRect();
+        const overlapping = [...tabs.querySelectorAll(".new-subnav-item")]
+          .filter((node) => {
+            const r = node.getBoundingClientRect();
+            const left = Math.max(r.left, t.left);
+            const right = Math.min(r.right, t.right);
+            if (right - left < 0.5) return false;
+            return right > s.left + 0.5 && left < s.right - 0.5;
+          })
+          .map((node) => (node.textContent || "").trim());
         return {
           navH: +n.height.toFixed(1),
           tabsRight: +t.right.toFixed(1),
           sortLeft: +s.left.toFixed(1),
           sortRight: +s.right.toFixed(1),
           navRight: +n.right.toFixed(1),
+          visibleGap: +(s.left - t.right).toFixed(1),
+          overlapping,
+          pageOverflow: +(document.documentElement.scrollWidth - document.documentElement.clientWidth).toFixed(1),
         };
       });
       assert.ok(row && row.navH <= 24, `320 sort row height ${row?.navH}`);
-      assert.ok(row && row.tabsRight <= row.sortLeft - 2, `320 tabs overlap sort ${JSON.stringify(row)}`);
+      assert.deepEqual(row.overlapping, [], `320 visible tab overlaps Sort ${JSON.stringify(row)}`);
+      assert.ok(row && row.visibleGap >= 4, `320 visible tab/Sort gap ${JSON.stringify(row)}`);
       assert.ok(row && row.sortRight <= row.navRight + 1, `320 sort overflow ${JSON.stringify(row)}`);
-      console.log("ok  mobile 320 /new: tabs + Sort stay on one row");
+      assert.ok(row && row.pageOverflow <= 0, `320 page overflow ${row?.pageOverflow}`);
+      await page.click(".new-sort-trigger");
+      await page.waitForSelector(".new-sort-menu");
+      assert.ok(await page.$(".new-sort-menu"), "320 Sort dropdown missing");
+      await page.click(".new-sort-trigger");
+      console.log("ok  mobile 320 /new: tabs scroll, Sort stays clear");
     });
 
     await withPage(browser, MOBILE_360, "/new?moss=0", async (page) => {
