@@ -671,34 +671,31 @@ async function runBrowser() {
       console.log("ok  mini-port rasters: 1254 square, centered, ~70% object width");
     });
 
+    const ALL_DEFAULT_NAMES = [
+      "Modular Stand, Silver",
+      "Modular Stand, Purple",
+      "Modular Stand, Black",
+      "Modular Stand, Green",
+      "Modular Stand, White",
+      "Mini Port, Purple",
+      "Mini Port, Black",
+      "Mini Port, White",
+      "Dot Port, Purple",
+      "Dot Port, Black",
+      "Dot Port, White",
+      "Cascade, Silver",
+      "Cascade, Purple",
+      "Cascade, Black",
+      "Drain Tower 80",
+      "Drain Tower 40",
+      "Drain Tower 20",
+    ];
+
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
       const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      const iDotWhite = names.indexOf("Dot Port, White");
-      const iPurple = names.indexOf("Cascade, Purple");
-      const iSilver = names.indexOf("Cascade, Silver");
-      const iBlack = names.indexOf("Cascade, Black");
-      const i20 = names.indexOf("Drain Tower 20");
-      const i40 = names.indexOf("Drain Tower 40");
-      const i80 = names.indexOf("Drain Tower 80");
-      const iMiniPurple = names.indexOf("Mini Port, Purple");
-      const iMiniBlack = names.indexOf("Mini Port, Black");
-      const iMiniWhite = names.indexOf("Mini Port, White");
-      assert.ok(
-        iDotWhite >= 0 &&
-          iSilver === iDotWhite + 1 &&
-          iPurple === iSilver + 1 &&
-          iBlack === iPurple + 1 &&
-          i80 === iBlack + 1 &&
-          i40 === i80 + 1 &&
-          i20 === i40 + 1 &&
-          iMiniPurple === i20 + 1 &&
-          iMiniBlack === iMiniPurple + 1 &&
-          iMiniWhite === iMiniBlack + 1 &&
-          iMiniWhite === names.length - 1,
-        `All order Dot Port → Cascade → Drain Tower → Mini Port, got ${names}`,
-      );
+      assert.deepEqual(names, ALL_DEFAULT_NAMES, `All order ${names}`);
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
       assert.equal(textures, 0, "All tab must not insert a moss tile");
@@ -723,7 +720,15 @@ async function runBrowser() {
           ["Mini Port, White", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
         ],
       );
-      console.log("ok  mobile /new All: Mini Port last, no moss tile");
+      console.log("ok  mobile /new All: Wall-kit → Mini Port → Dot Port → Cascade → Drain Tower, no moss tile");
+    });
+
+    await withPage(browser, DESKTOP, "/new?moss=0", async (page) => {
+      const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
+        nodes.map((node) => (node.textContent || "").trim()),
+      );
+      assert.deepEqual(names, ALL_DEFAULT_NAMES, `1440 All order ${names}`);
+      console.log("ok  desktop /new All: Wall-kit → Mini Port → Dot Port → Cascade → Drain Tower");
     });
 
     const listed = [
