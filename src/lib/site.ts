@@ -176,9 +176,9 @@ export const PRODUCT_MOBILE_MEDIA = "(max-width: 767px)";
 export const STAND_PRICE_SILVER = "KRW 103,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
 export const ONE_PORT_PRICE = "KRW 38,000";
-export const DRAIN_TOWER_PRICE_80 = "KRW 8,000";
-export const DRAIN_TOWER_PRICE_120 = "KRW 10,000";
-export const DRAIN_TOWER_PRICE_160 = "KRW 12,000";
+export const DRAIN_TOWER_PRICE_20 = "KRW 8,000";
+export const DRAIN_TOWER_PRICE_40 = "KRW 10,000";
+export const DRAIN_TOWER_PRICE_80 = "KRW 12,000";
 export const MINI_PORT_PRICE = "KRW 63,000";
 export const CASCADE_PRICE_PURPLE = "KRW 207,000";
 export const CASCADE_PRICE_SILVER = "KRW 223,000";
@@ -398,34 +398,34 @@ export const NEW_PRODUCTS: NewProduct[] = [
     emptyAlt: "TAEGYE Cascade, Black",
   },
   {
+    id: "drain-tower-20",
+    category: "drain-tower",
+    name: "Drain Tower 20",
+    nameKr: "드레인 타워 20",
+    finish: "Black",
+    price: DRAIN_TOWER_PRICE_20,
+    emptySrc: "/products/drain-tower-20.png",
+    emptyAlt: "TAEGYE Drain Tower 20",
+  },
+  {
+    id: "drain-tower-40",
+    category: "drain-tower",
+    name: "Drain Tower 40",
+    nameKr: "드레인 타워 40",
+    finish: "Black",
+    price: DRAIN_TOWER_PRICE_40,
+    emptySrc: "/products/drain-tower-40.png",
+    emptyAlt: "TAEGYE Drain Tower 40",
+  },
+  {
     id: "drain-tower-80",
     category: "drain-tower",
     name: "Drain Tower 80",
     nameKr: "드레인 타워 80",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_80,
-    emptySrc: "/products/drain-tower-100.png",
+    emptySrc: "/products/drain-tower-80.png",
     emptyAlt: "TAEGYE Drain Tower 80",
-  },
-  {
-    id: "drain-tower-120",
-    category: "drain-tower",
-    name: "Drain Tower 120",
-    nameKr: "드레인 타워 120",
-    finish: "Black",
-    price: DRAIN_TOWER_PRICE_120,
-    emptySrc: "/products/drain-tower-160.png",
-    emptyAlt: "TAEGYE Drain Tower 120",
-  },
-  {
-    id: "drain-tower-160",
-    category: "drain-tower",
-    name: "Drain Tower 160",
-    nameKr: "드레인 타워 160",
-    finish: "Black",
-    price: DRAIN_TOWER_PRICE_160,
-    emptySrc: "/products/drain-tower-230.png",
-    emptyAlt: "TAEGYE Drain Tower 160",
   },
   {
     id: "mini-port-purple",
