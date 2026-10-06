@@ -459,11 +459,11 @@ async function runBrowser() {
       );
       assert.deepEqual(
         tabs.map((tab) => tab.label),
-        ["All", "Wall-kit", "Dot-port", "Mini-port", "Cascade", "Drain Tower"],
+        ["All", "Wall-kit", "Mini-port", "Dot-port", "Cascade", "Drain Tower"],
       );
       assert.deepEqual(
         tabs.map((tab) => tab.href),
-        ["/new", "/new?cat=wall-kit", "/new?cat=one-port", "/new?cat=mini-port", "/new?cat=cascade", "/new?cat=drain-tower"],
+        ["/new", "/new?cat=wall-kit", "/new?cat=mini-port", "/new?cat=one-port", "/new?cat=cascade", "/new?cat=drain-tower"],
       );
       await page.click(".site-menubar-toggle");
       await page.waitForSelector(".site-menu.is-open");
@@ -471,8 +471,8 @@ async function runBrowser() {
       const menu = await page.$$eval(".site-menu-subrow .site-menu-label", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(menu, ["All", "Wall-kit", "Dot-port", "Mini-port", "Cascade", "Drain Tower"]);
-      console.log("ok  mobile /new tabs + Product menu: Mini-port before Cascade, Drain Tower last");
+      assert.deepEqual(menu, ["All", "Wall-kit", "Mini-port", "Dot-port", "Cascade", "Drain Tower"]);
+      console.log("ok  mobile /new tabs + Product menu: Mini-port before Dot-port, Drain Tower last");
     });
 
     await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
