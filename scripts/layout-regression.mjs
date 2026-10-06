@@ -554,6 +554,7 @@ async function runBrowser() {
       const report = await page.evaluate(() => {
         const cards = [...document.querySelectorAll(".product-card")].map((card) => {
           const img = card.querySelector(".product-empty img");
+          const r = img?.getBoundingClientRect();
           return {
             name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
             price: card.querySelector(".product-price")?.textContent?.trim() || null,
@@ -562,6 +563,9 @@ async function runBrowser() {
             still: card.classList.contains("is-still"),
             src: img?.getAttribute("src") || "",
             moss: Boolean(card.querySelector(".product-moss")),
+            imgW: r ? +r.width.toFixed(1) : 0,
+            imgH: r ? +r.height.toFixed(1) : 0,
+            objectFit: img ? getComputedStyle(img).objectFit : "",
           };
         });
         return cards;
@@ -569,9 +573,9 @@ async function runBrowser() {
       assert.equal(report.length, 3, `drain-tower cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Drain Tower 20", "Drain Tower 40", "Drain Tower 80"],
+        ["Drain Tower 80", "Drain Tower 20", "Drain Tower 40"],
       );
-      const hrefs = ["/new/drain-tower-20", "/new/drain-tower-40", "/new/drain-tower-80"];
+      const hrefs = ["/new/drain-tower-80", "/new/drain-tower-20", "/new/drain-tower-40"];
       report.forEach((card, index) => {
         assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
         assert.equal(card.href, hrefs[index]);
@@ -580,12 +584,21 @@ async function runBrowser() {
       });
       assert.deepEqual(
         report.map((card) => card.price),
-        ["KRW 8,000", "KRW 10,000", "KRW 12,000"],
+        ["KRW 12,000", "KRW 8,000", "KRW 10,000"],
       );
-      assert.equal(report[0].src, "/products/drain-tower-20.png");
-      assert.equal(report[1].src, "/products/drain-tower-40.png");
-      assert.equal(report[2].src, "/products/drain-tower-80.png");
-      console.log("ok  mobile /new?cat=drain-tower: 20, 40, 80, priced, linked");
+      assert.equal(report[0].src, "/products/drain-tower-80.png");
+      assert.equal(report[1].src, "/products/drain-tower-20.png");
+      assert.equal(report[2].src, "/products/drain-tower-40.png");
+      const boxes = report.map((card) => `${card.imgW}x${card.imgH}`);
+      assert.ok(
+        report.every((card) => card.imgW > 0 && card.imgW === report[0].imgW && card.imgH === report[0].imgH),
+        `drain-tower image boxes must match, got ${boxes}`,
+      );
+      assert.ok(
+        report.every((card) => card.objectFit === "contain"),
+        `drain-tower object-fit contain, got ${report.map((card) => card.objectFit)}`,
+      );
+      console.log("ok  mobile /new?cat=drain-tower: 80, 20, 40, priced, linked, same image boxes");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -607,10 +620,10 @@ async function runBrowser() {
           iSilver === iDotWhite + 1 &&
           iPurple === iSilver + 1 &&
           iBlack === iPurple + 1 &&
-          i20 === iBlack + 1 &&
+          i80 === iBlack + 1 &&
+          i20 === i80 + 1 &&
           i40 === i20 + 1 &&
-          i80 === i40 + 1 &&
-          iMiniPurple === i80 + 1 &&
+          iMiniPurple === i40 + 1 &&
           iMiniBlack === iMiniPurple + 1 &&
           iMiniWhite === iMiniBlack + 1 &&
           iMiniWhite === names.length - 1,

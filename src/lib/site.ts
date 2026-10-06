@@ -402,6 +402,16 @@ export const NEW_PRODUCTS: NewProduct[] = [
     emptyAlt: "TAEGYE Cascade, Black",
   },
   {
+    id: "drain-tower-80",
+    category: "drain-tower",
+    name: "Drain Tower 80",
+    nameKr: "드레인 타워 80",
+    finish: "Black",
+    price: DRAIN_TOWER_PRICE_80,
+    emptySrc: "/products/drain-tower-80.png",
+    emptyAlt: "TAEGYE Drain Tower 80",
+  },
+  {
     id: "drain-tower-20",
     category: "drain-tower",
     name: "Drain Tower 20",
@@ -420,16 +430,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: DRAIN_TOWER_PRICE_40,
     emptySrc: "/products/drain-tower-40.png",
     emptyAlt: "TAEGYE Drain Tower 40",
-  },
-  {
-    id: "drain-tower-80",
-    category: "drain-tower",
-    name: "Drain Tower 80",
-    nameKr: "드레인 타워 80",
-    finish: "Black",
-    price: DRAIN_TOWER_PRICE_80,
-    emptySrc: "/products/drain-tower-80.png",
-    emptyAlt: "TAEGYE Drain Tower 80",
   },
   {
     id: "mini-port-purple",
