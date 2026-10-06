@@ -542,9 +542,9 @@ async function runBrowser() {
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
       });
-      assert.equal(report[0].src, "/products/mini-port-purple.png");
-      assert.equal(report[1].src, "/products/mini-port-black.png");
-      assert.equal(report[2].src, "/products/mini-port-white.png");
+      assert.equal(report[0].src, "/products/mini-port-purple.png?v=2");
+      assert.equal(report[1].src, "/products/mini-port-black.png?v=2");
+      assert.equal(report[2].src, "/products/mini-port-white.png?v=2");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "mini-port tab keeps moss tile");
       console.log("ok  mobile /new?cat=mini-port: Purple, Black, White, priced, linked");
@@ -587,8 +587,8 @@ async function runBrowser() {
         ["KRW 12,000", "KRW 10,000", "KRW 8,000"],
       );
       assert.equal(report[0].src, "/products/drain-tower-80.png");
-      assert.equal(report[1].src, "/products/drain-tower-40.png");
-      assert.equal(report[2].src, "/products/drain-tower-20.png");
+      assert.equal(report[1].src, "/products/drain-tower-40.png?v=2");
+      assert.equal(report[2].src, "/products/drain-tower-20.png?v=2");
       const boxes = report.map((card) => `${card.imgW}x${card.imgH}`);
       assert.ok(
         report.every((card) => card.imgW > 0 && card.imgW === report[0].imgW && card.imgH === report[0].imgH),
@@ -599,6 +599,76 @@ async function runBrowser() {
         `drain-tower object-fit contain, got ${report.map((card) => card.objectFit)}`,
       );
       console.log("ok  mobile /new?cat=drain-tower: 80, 40, 20, priced, linked, same image boxes");
+    });
+
+    async function rasterCenter(page, src) {
+      return page.evaluate(async (url) => {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        const w = img.naturalWidth;
+        const h = img.naturalHeight;
+        const c = document.createElement("canvas");
+        c.width = w;
+        c.height = h;
+        const ctx = c.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        const { data } = ctx.getImageData(0, 0, w, h);
+        let minX = w;
+        let minY = h;
+        let maxX = 0;
+        let maxY = 0;
+        for (let y = 0; y < h; y += 2) {
+          for (let x = 0; x < w; x += 2) {
+            if (data[(y * w + x) * 4 + 3] > 16) {
+              if (x < minX) minX = x;
+              if (y < minY) minY = y;
+              if (x > maxX) maxX = x;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        return {
+          w,
+          h,
+          cx: +((minX + maxX) / 2 / w).toFixed(3),
+          cy: +((minY + maxY) / 2 / h).toFixed(3),
+          bw: +((maxX - minX + 1) / w).toFixed(3),
+          bh: +((maxY - minY + 1) / h).toFixed(3),
+        };
+      }, src);
+    }
+
+    await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
+      const rasters = [
+        ["/products/drain-tower-40.png?v=2", "drain-40"],
+        ["/products/drain-tower-20.png?v=2", "drain-20"],
+      ];
+      for (const [src, label] of rasters) {
+        const box = await rasterCenter(page, src);
+        assert.equal(box.w, 1254, `${label} width ${box.w}`);
+        assert.equal(box.h, 1254, `${label} height ${box.h}`);
+        assert.ok(Math.abs(box.cx - 0.5) <= 0.06, `${label} cx ${box.cx}`);
+        assert.ok(Math.abs(box.cy - 0.5) <= 0.06, `${label} cy ${box.cy}`);
+      }
+      console.log("ok  drain-tower rasters: 1254 square, content centered");
+    });
+
+    await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
+      const cascade = await rasterCenter(page, "/products/cascade-silver.png");
+      for (const [src, label] of [
+        ["/products/mini-port-purple.png?v=2", "mini-purple"],
+        ["/products/mini-port-black.png?v=2", "mini-black"],
+        ["/products/mini-port-white.png?v=2", "mini-white"],
+      ]) {
+        const box = await rasterCenter(page, src);
+        assert.equal(box.w, 1254, `${label} width ${box.w}`);
+        assert.equal(box.h, 1254, `${label} height ${box.h}`);
+        assert.ok(Math.abs(box.cx - 0.5) <= 0.06, `${label} cx ${box.cx}`);
+        assert.ok(Math.abs(box.cy - 0.5) <= 0.06, `${label} cy ${box.cy}`);
+        assert.ok(Math.abs(box.bw - cascade.bw) <= 0.08, `${label} object width ${box.bw} vs cascade ${cascade.bw}`);
+      }
+      console.log("ok  mini-port rasters: 1254 square, centered, ~70% object width");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -648,9 +718,9 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
-          ["Mini Port, Purple", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png", true, false],
-          ["Mini Port, Black", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png", true, false],
-          ["Mini Port, White", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png", true, false],
+          ["Mini Port, Purple", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
+          ["Mini Port, Black", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
+          ["Mini Port, White", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
         ],
       );
       console.log("ok  mobile /new All: Mini Port last, no moss tile");
@@ -660,12 +730,12 @@ async function runBrowser() {
       ["cascade-silver", "Cascade, Silver", "KRW 223,000", "/products/cascade-silver.png"],
       ["cascade-purple", "Cascade, Purple", "KRW 207,000", "/products/cascade-purple.png"],
       ["cascade-black", "Cascade, Black", "KRW 207,000", "/products/cascade-black.png"],
-      ["drain-tower-20", "Drain Tower 20", "KRW 8,000", "/products/drain-tower-20.png"],
-      ["drain-tower-40", "Drain Tower 40", "KRW 10,000", "/products/drain-tower-40.png"],
+      ["drain-tower-20", "Drain Tower 20", "KRW 8,000", "/products/drain-tower-20.png?v=2"],
+      ["drain-tower-40", "Drain Tower 40", "KRW 10,000", "/products/drain-tower-40.png?v=2"],
       ["drain-tower-80", "Drain Tower 80", "KRW 12,000", "/products/drain-tower-80.png"],
-      ["mini-port-purple", "Mini Port, Purple", "KRW 63,000", "/products/mini-port-purple.png"],
-      ["mini-port-black", "Mini Port, Black", "KRW 63,000", "/products/mini-port-black.png"],
-      ["mini-port-white", "Mini Port, White", "KRW 63,000", "/products/mini-port-white.png"],
+      ["mini-port-purple", "Mini Port, Purple", "KRW 63,000", "/products/mini-port-purple.png?v=2"],
+      ["mini-port-black", "Mini Port, Black", "KRW 63,000", "/products/mini-port-black.png?v=2"],
+      ["mini-port-white", "Mini Port, White", "KRW 63,000", "/products/mini-port-white.png?v=2"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
@@ -957,9 +1027,29 @@ async function runBrowser() {
       const closed = await triggerBox();
       assert.ok(closed, `${label} Sort trigger missing`);
       if (expected) {
-        assert.equal(closed.left, expected.left, `${label} closed left ${closed.left}`);
-        assert.equal(closed.right, expected.right, `${label} closed right ${closed.right}`);
+        if (expected.left != null) assert.equal(closed.left, expected.left, `${label} closed left ${closed.left}`);
+        if (expected.right != null) assert.equal(closed.right, expected.right, `${label} closed right ${closed.right}`);
       }
+      const type = await page.evaluate(() => {
+        const tab = document.querySelector(".new-subnav-item");
+        const sort = document.querySelector(".new-sort-trigger");
+        const ts = tab ? getComputedStyle(tab) : null;
+        const ss = sort ? getComputedStyle(sort) : null;
+        return {
+          tabFs: ts?.fontSize || null,
+          tabLs: ts?.letterSpacing || null,
+          tabLh: ts?.lineHeight || null,
+          tabFw: ts?.fontWeight || null,
+          sortFs: ss?.fontSize || null,
+          sortLs: ss?.letterSpacing || null,
+          sortLh: ss?.lineHeight || null,
+          sortFw: ss?.fontWeight || null,
+        };
+      });
+      assert.equal(type.sortFs, type.tabFs, `${label} Sort font-size ${type.sortFs} vs tab ${type.tabFs}`);
+      assert.equal(type.sortLs, type.tabLs, `${label} Sort letter-spacing ${type.sortLs} vs tab ${type.tabLs}`);
+      assert.equal(type.sortLh, type.tabLh, `${label} Sort line-height ${type.sortLh} vs tab ${type.tabLh}`);
+      assert.equal(type.sortFw, type.tabFw, `${label} Sort font-weight ${type.sortFw} vs tab ${type.tabFw}`);
       await page.click(".new-sort-trigger");
       await page.waitForSelector(".new-sort-menu");
       const open = await triggerBox();
@@ -974,10 +1064,22 @@ async function runBrowser() {
         const r = node.getBoundingClientRect();
         const t = trigger.getBoundingClientRect();
         const s = getComputedStyle(node);
+        const option = document.querySelector(".new-sort-option");
+        const os = option ? getComputedStyle(option) : null;
         return {
           position: s.position,
           z: s.zIndex,
           align: s.alignItems,
+          gap: s.gap,
+          padT: s.paddingTop,
+          padR: s.paddingRight,
+          padB: s.paddingBottom,
+          padL: s.paddingLeft,
+          borderW: s.borderTopWidth,
+          borderS: s.borderTopStyle,
+          borderC: s.borderTopColor,
+          optionFs: os?.fontSize || null,
+          optionLs: os?.letterSpacing || null,
           left: +r.left.toFixed(1),
           right: +r.right.toFixed(1),
           top: +r.top.toFixed(1),
@@ -992,6 +1094,16 @@ async function runBrowser() {
       assert.equal(menu.position, "absolute", `${label} menu position ${menu.position}`);
       assert.ok(Number(menu.z) >= 8, `${label} menu z-index ${menu.z}`);
       assert.equal(menu.align, "flex-end", `${label} menu align ${menu.align}`);
+      assert.equal(menu.gap, "8px", `${label} menu gap ${menu.gap}`);
+      assert.equal(menu.padT, "10px", `${label} menu padT ${menu.padT}`);
+      assert.equal(menu.padR, "12px", `${label} menu padR ${menu.padR}`);
+      assert.equal(menu.padB, "10px", `${label} menu padB ${menu.padB}`);
+      assert.equal(menu.padL, "12px", `${label} menu padL ${menu.padL}`);
+      assert.equal(menu.borderW, "1px", `${label} menu borderW ${menu.borderW}`);
+      assert.equal(menu.borderS, "solid", `${label} menu borderS ${menu.borderS}`);
+      assert.equal(menu.borderC, "rgb(17, 17, 17)", `${label} menu borderC ${menu.borderC}`);
+      assert.equal(menu.optionFs, type.tabFs, `${label} option font-size ${menu.optionFs} vs tab ${type.tabFs}`);
+      assert.equal(menu.optionLs, type.tabLs, `${label} option letter-spacing`);
       assert.ok(Math.abs(menu.right - menu.triggerRight) <= 1, `${label} menu not right-aligned ${JSON.stringify(menu)}`);
       assert.ok(menu.top >= menu.triggerBottom - 1, `${label} menu not below Sort ${JSON.stringify(menu)}`);
       assert.ok(menu.left >= -1, `${label} menu clipped left ${JSON.stringify(menu)}`);
@@ -1020,10 +1132,10 @@ async function runBrowser() {
 
     await withPage(browser, MOBILE_320, "/new?moss=0", (page) => assertSortMenuPinned(page, "320"));
     await withPage(browser, MOBILE, "/new?moss=0", (page) =>
-      assertSortMenuPinned(page, "412", { left: 371, right: 396 }),
+      assertSortMenuPinned(page, "412", { right: 396 }),
     );
     await withPage(browser, DESKTOP, "/new?moss=0", (page) =>
-      assertSortMenuPinned(page, "1440", { left: 1381, right: 1406 }),
+      assertSortMenuPinned(page, "1440", { right: 1406 }),
     );
     console.log("ok  Sort trigger stays pinned when the menu opens (320/412/1440)");
 

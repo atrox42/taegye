@@ -418,7 +418,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "드레인 타워 40",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_40,
-    emptySrc: "/products/drain-tower-40.png",
+    emptySrc: "/products/drain-tower-40.png?v=2",
     emptyAlt: "TAEGYE Drain Tower 40",
   },
   {
@@ -428,7 +428,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "드레인 타워 20",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_20,
-    emptySrc: "/products/drain-tower-20.png",
+    emptySrc: "/products/drain-tower-20.png?v=2",
     emptyAlt: "TAEGYE Drain Tower 20",
   },
   {
@@ -438,7 +438,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "미니 포트, 퍼플",
     finish: "Purple finish",
     price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-purple.png",
+    emptySrc: "/products/mini-port-purple.png?v=2",
     emptyAlt: "TAEGYE Mini Port, Purple",
   },
   {
@@ -448,7 +448,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "미니 포트, 블랙",
     finish: "Black finish",
     price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-black.png",
+    emptySrc: "/products/mini-port-black.png?v=2",
     emptyAlt: "TAEGYE Mini Port, Black",
   },
   {
@@ -458,7 +458,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "미니 포트, 화이트",
     finish: "White finish",
     price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-white.png",
+    emptySrc: "/products/mini-port-white.png?v=2",
     emptyAlt: "TAEGYE Mini Port, White",
   },
 ];
