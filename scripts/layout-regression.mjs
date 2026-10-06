@@ -940,6 +940,93 @@ async function runBrowser() {
       console.log("ok  mobile /new sort: Name, High to Low, Low to High");
     });
 
+    async function assertSortMenuPinned(page, label, expected) {
+      const triggerBox = () =>
+        page.evaluate(() => {
+          const el = document.querySelector(".new-sort-trigger");
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return {
+            left: +r.left.toFixed(1),
+            right: +r.right.toFixed(1),
+            top: +r.top.toFixed(1),
+            bottom: +r.bottom.toFixed(1),
+            width: +r.width.toFixed(1),
+          };
+        });
+      const closed = await triggerBox();
+      assert.ok(closed, `${label} Sort trigger missing`);
+      if (expected) {
+        assert.equal(closed.left, expected.left, `${label} closed left ${closed.left}`);
+        assert.equal(closed.right, expected.right, `${label} closed right ${closed.right}`);
+      }
+      await page.click(".new-sort-trigger");
+      await page.waitForSelector(".new-sort-menu");
+      const open = await triggerBox();
+      assert.ok(
+        Math.abs(open.left - closed.left) <= 1 && Math.abs(open.right - closed.right) <= 1 && Math.abs(open.top - closed.top) <= 1,
+        `${label} trigger moved ${JSON.stringify(closed)} → ${JSON.stringify(open)}`,
+      );
+      const menu = await page.evaluate(() => {
+        const node = document.querySelector(".new-sort-menu");
+        const trigger = document.querySelector(".new-sort-trigger");
+        if (!node || !trigger) return null;
+        const r = node.getBoundingClientRect();
+        const t = trigger.getBoundingClientRect();
+        const s = getComputedStyle(node);
+        return {
+          position: s.position,
+          z: s.zIndex,
+          align: s.alignItems,
+          left: +r.left.toFixed(1),
+          right: +r.right.toFixed(1),
+          top: +r.top.toFixed(1),
+          bottom: +r.bottom.toFixed(1),
+          triggerRight: +t.right.toFixed(1),
+          triggerBottom: +t.bottom.toFixed(1),
+          vw: window.innerWidth,
+          vh: window.innerHeight,
+        };
+      });
+      assert.ok(menu, `${label} Sort menu missing`);
+      assert.equal(menu.position, "absolute", `${label} menu position ${menu.position}`);
+      assert.ok(Number(menu.z) >= 8, `${label} menu z-index ${menu.z}`);
+      assert.equal(menu.align, "flex-end", `${label} menu align ${menu.align}`);
+      assert.ok(Math.abs(menu.right - menu.triggerRight) <= 1, `${label} menu not right-aligned ${JSON.stringify(menu)}`);
+      assert.ok(menu.top >= menu.triggerBottom - 1, `${label} menu not below Sort ${JSON.stringify(menu)}`);
+      assert.ok(menu.left >= -1, `${label} menu clipped left ${JSON.stringify(menu)}`);
+      assert.ok(menu.right <= menu.vw + 1, `${label} menu clipped right ${JSON.stringify(menu)}`);
+      assert.ok(menu.bottom <= menu.vh + 1, `${label} menu clipped bottom ${JSON.stringify(menu)}`);
+      const hit = await page.evaluate(() => {
+        const node = document.querySelector(".new-sort-menu");
+        const option = document.querySelector(".new-sort-option");
+        if (!node || !option) return null;
+        const r = option.getBoundingClientRect();
+        const el = document.elementFromPoint(r.left + Math.min(12, r.width / 2), r.top + r.height / 2);
+        return el ? { tag: el.tagName, cls: String(el.className).slice(0, 80), text: (el.textContent || "").trim() } : null;
+      });
+      assert.ok(
+        hit && (hit.cls.includes("new-sort-option") || hit.cls.includes("new-sort-menu") || hit.text === "Name"),
+        `${label} menu covered by ${JSON.stringify(hit)}`,
+      );
+      await page.click(".new-sort-trigger");
+      await page.waitForSelector(".new-sort-menu", { hidden: true });
+      const closedAgain = await triggerBox();
+      assert.ok(
+        Math.abs(closedAgain.left - closed.left) <= 1 && Math.abs(closedAgain.right - closed.right) <= 1,
+        `${label} trigger after close ${JSON.stringify(closedAgain)} vs ${JSON.stringify(closed)}`,
+      );
+    }
+
+    await withPage(browser, MOBILE_320, "/new?moss=0", (page) => assertSortMenuPinned(page, "320"));
+    await withPage(browser, MOBILE, "/new?moss=0", (page) =>
+      assertSortMenuPinned(page, "412", { left: 371, right: 396 }),
+    );
+    await withPage(browser, DESKTOP, "/new?moss=0", (page) =>
+      assertSortMenuPinned(page, "1440", { left: 1381, right: 1406 }),
+    );
+    console.log("ok  Sort trigger stays pinned when the menu opens (320/412/1440)");
+
     await withPage(browser, MOBILE_320, "/new?cat=mini-port&moss=0", async (page) => {
       const row = await page.evaluate(() => {
         const nav = document.querySelector(".new-subnav");

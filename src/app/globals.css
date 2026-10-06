@@ -2316,7 +2316,7 @@ select::-ms-expand {
 .new-grid-item > :not(.white-surface-fill):not(.canvas-white-fill),
 .new-subnav > :not(.white-surface-fill):not(.canvas-white-fill),
 .new-subnav-tabs > :not(.white-surface-fill):not(.canvas-white-fill),
-.new-sort > :not(.white-surface-fill):not(.canvas-white-fill),
+.new-sort > :not(.white-surface-fill):not(.canvas-white-fill):not(.new-sort-menu),
 .new-sort-menu > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-page > :not(.white-surface-fill):not(.canvas-white-fill),
 .site-main > :not(.white-surface-fill):not(.canvas-white-fill),
@@ -2354,12 +2354,15 @@ select::-ms-expand {
 .new-subnav,
 .new-subnav-tabs,
 .new-sort,
-.new-sort-menu,
 .product-card,
 .site-footer,
 .site-footer-inner,
 .site-footer-row {
   position: relative;
+}
+
+.new-page > .new-subnav:not(.white-surface-fill):not(.canvas-white-fill) {
+  z-index: 8;
 }
 
 .product-card,
