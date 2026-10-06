@@ -2361,6 +2361,10 @@ select::-ms-expand {
   position: relative;
 }
 
+.new-page > .new-subnav:not(.white-surface-fill):not(.canvas-white-fill) {
+  z-index: 8;
+}
+
 .product-card,
 .pdp-hero,
 .pdp-stage,

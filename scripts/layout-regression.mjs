@@ -997,6 +997,18 @@ async function runBrowser() {
       assert.ok(menu.left >= -1, `${label} menu clipped left ${JSON.stringify(menu)}`);
       assert.ok(menu.right <= menu.vw + 1, `${label} menu clipped right ${JSON.stringify(menu)}`);
       assert.ok(menu.bottom <= menu.vh + 1, `${label} menu clipped bottom ${JSON.stringify(menu)}`);
+      const hit = await page.evaluate(() => {
+        const node = document.querySelector(".new-sort-menu");
+        const option = document.querySelector(".new-sort-option");
+        if (!node || !option) return null;
+        const r = option.getBoundingClientRect();
+        const el = document.elementFromPoint(r.left + Math.min(12, r.width / 2), r.top + r.height / 2);
+        return el ? { tag: el.tagName, cls: String(el.className).slice(0, 80), text: (el.textContent || "").trim() } : null;
+      });
+      assert.ok(
+        hit && (hit.cls.includes("new-sort-option") || hit.cls.includes("new-sort-menu") || hit.text === "Name"),
+        `${label} menu covered by ${JSON.stringify(hit)}`,
+      );
       await page.click(".new-sort-trigger");
       await page.waitForSelector(".new-sort-menu", { hidden: true });
       const closedAgain = await triggerBox();
