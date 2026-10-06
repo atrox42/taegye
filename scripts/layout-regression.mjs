@@ -573,9 +573,9 @@ async function runBrowser() {
       assert.equal(report.length, 3, `drain-tower cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Drain Tower 80", "Drain Tower 20", "Drain Tower 40"],
+        ["Drain Tower 80", "Drain Tower 40", "Drain Tower 20"],
       );
-      const hrefs = ["/new/drain-tower-80", "/new/drain-tower-20", "/new/drain-tower-40"];
+      const hrefs = ["/new/drain-tower-80", "/new/drain-tower-40", "/new/drain-tower-20"];
       report.forEach((card, index) => {
         assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
         assert.equal(card.href, hrefs[index]);
@@ -584,11 +584,11 @@ async function runBrowser() {
       });
       assert.deepEqual(
         report.map((card) => card.price),
-        ["KRW 12,000", "KRW 8,000", "KRW 10,000"],
+        ["KRW 12,000", "KRW 10,000", "KRW 8,000"],
       );
       assert.equal(report[0].src, "/products/drain-tower-80.png");
-      assert.equal(report[1].src, "/products/drain-tower-20.png");
-      assert.equal(report[2].src, "/products/drain-tower-40.png");
+      assert.equal(report[1].src, "/products/drain-tower-40.png");
+      assert.equal(report[2].src, "/products/drain-tower-20.png");
       const boxes = report.map((card) => `${card.imgW}x${card.imgH}`);
       assert.ok(
         report.every((card) => card.imgW > 0 && card.imgW === report[0].imgW && card.imgH === report[0].imgH),
@@ -598,7 +598,7 @@ async function runBrowser() {
         report.every((card) => card.objectFit === "contain"),
         `drain-tower object-fit contain, got ${report.map((card) => card.objectFit)}`,
       );
-      console.log("ok  mobile /new?cat=drain-tower: 80, 20, 40, priced, linked, same image boxes");
+      console.log("ok  mobile /new?cat=drain-tower: 80, 40, 20, priced, linked, same image boxes");
     });
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -621,9 +621,9 @@ async function runBrowser() {
           iPurple === iSilver + 1 &&
           iBlack === iPurple + 1 &&
           i80 === iBlack + 1 &&
-          i20 === i80 + 1 &&
-          i40 === i20 + 1 &&
-          iMiniPurple === i40 + 1 &&
+          i40 === i80 + 1 &&
+          i20 === i40 + 1 &&
+          iMiniPurple === i20 + 1 &&
           iMiniBlack === iMiniPurple + 1 &&
           iMiniWhite === iMiniBlack + 1 &&
           iMiniWhite === names.length - 1,
@@ -669,6 +669,13 @@ async function runBrowser() {
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
+        if (id.startsWith("drain-tower")) {
+          await page.evaluate(() => document.querySelector(".pdp-hero-guide")?.scrollIntoView({ block: "center" }));
+          await page.waitForFunction(() => {
+            const guide = document.querySelector(".pdp-hero-guide img");
+            return Boolean(guide && guide.complete && guide.naturalWidth > 0);
+          });
+        }
         const report = await page.evaluate(() => ({
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
@@ -677,6 +684,12 @@ async function runBrowser() {
           store: document.querySelector("[data-pdp-store]")?.getAttribute("href") || "",
           img: document.querySelector(".pdp-hero-empty img")?.getAttribute("src") || "",
           title: document.title,
+          guide: document.querySelector(".pdp-hero-guide img")?.getAttribute("src") || null,
+          guideW: document.querySelector(".pdp-hero-guide img")?.naturalWidth || 0,
+          guidePointer: document.querySelector(".pdp-guide-stage")
+            ? getComputedStyle(document.querySelector(".pdp-guide-stage")).pointerEvents
+            : null,
+          overflow: +(document.documentElement.scrollWidth - document.documentElement.clientWidth).toFixed(1),
         }));
         assert.equal(report.name, name, `${id} name`);
         assert.equal(report.price, price, `${id} price`);
@@ -685,9 +698,47 @@ async function runBrowser() {
         assert.equal(report.store, "https://smartstore.naver.com/taegye", `${id} store`);
         assert.equal(report.img, img, `${id} image`);
         assert.ok(report.title.startsWith(name), `${id} title ${report.title}`);
+        if (id.startsWith("drain-tower")) {
+          assert.equal(report.guide, "/products/drain-tower-guide.png", `${id} guide`);
+          assert.equal(report.guideW, 950, `${id} guide natural width`);
+          assert.equal(report.guidePointer, "none", `${id} guide clicks`);
+        } else {
+          assert.equal(report.guide, null, `${id} must not show Drain Tower guide`);
+        }
+        assert.ok(report.overflow <= 0, `${id} overflow ${report.overflow}`);
         console.log(`ok  /new/${id}: PDP ${name} ${price}`);
       });
     }
+
+    await withPage(browser, DESKTOP, "/new/drain-tower-80", async (page) => {
+      await page.evaluate(() => document.querySelector(".pdp-hero-guide")?.scrollIntoView({ block: "center" }));
+      await page.waitForFunction(() => {
+        const guide = document.querySelector(".pdp-hero-guide img");
+        return Boolean(guide && guide.complete && guide.naturalWidth > 0);
+      });
+      const report = await page.evaluate(() => {
+        const guide = document.querySelector(".pdp-hero-guide img");
+        const r = guide?.getBoundingClientRect();
+        const hero = [...document.querySelectorAll(".pdp-reveal .pdp-stage")].find((node) => node.getBoundingClientRect().width > 0);
+        return {
+          src: guide?.getAttribute("src") || "",
+          w: r ? +r.width.toFixed(1) : 0,
+          naturalWidth: guide?.naturalWidth || 0,
+          pointer: document.querySelector(".pdp-guide-stage")
+            ? getComputedStyle(document.querySelector(".pdp-guide-stage")).pointerEvents
+            : null,
+          heroW: hero ? +hero.getBoundingClientRect().width.toFixed(1) : 0,
+          overflow: +(document.documentElement.scrollWidth - document.documentElement.clientWidth).toFixed(1),
+        };
+      });
+      assert.equal(report.src, "/products/drain-tower-guide.png");
+      assert.equal(report.naturalWidth, 950);
+      assert.equal(report.pointer, "none");
+      assert.ok(report.w > 0, `desktop guide width ${report.w}`);
+      assert.equal(report.w, report.heroW, `desktop guide width ${report.w} vs hero ${report.heroW}`);
+      assert.ok(report.overflow <= 0, `desktop drain PDP overflow ${report.overflow}`);
+      console.log("ok  desktop /new/drain-tower-80: assembly guide matches hero width");
+    });
 
     const legacy = [
       ["/new/drain-tower-100", "/new/drain-tower-20", "Drain Tower 20", "KRW 8,000"],

@@ -296,6 +296,8 @@ main,
 .pdp-visual img:not(.white-surface-fill),
 .pdp-stage img:not(.white-surface-fill),
 .pdp-hero .pdp-stage img:not(.white-surface-fill),
+.pdp-guide-stage,
+.pdp-guide-stage img,
 .home-new-in-visual img:not(.white-surface-fill),
 .product-photo-fill,
 .product-photo-img,
@@ -706,6 +708,27 @@ button {
   overflow: hidden;
 }
 
+.pdp-guide-stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pdp-guide-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 .pdp-gallery {
   position: relative;
   width: 100%;
@@ -1008,11 +1031,13 @@ button {
   }
 
   .pdp-hero,
-  .pdp-atelier > .pdp-hero-moss {
+  .pdp-atelier > .pdp-hero-moss,
+  .pdp-atelier > .pdp-hero-guide {
     width: min(56vw, 720px);
   }
 
-  .pdp-atelier > .pdp-hero-moss {
+  .pdp-atelier > .pdp-hero-moss,
+  .pdp-atelier > .pdp-hero-guide {
     grid-column: 2;
     grid-row: 2;
     justify-self: center;
