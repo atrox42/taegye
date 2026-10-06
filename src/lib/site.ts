@@ -267,7 +267,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — Modular Stand, Dot Port, Mini Port, Cascade, then Drain Tower. */
+/** /new catalog — Modular Stand, Mini Port, Dot Port, Cascade, then Drain Tower. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -332,6 +332,36 @@ export const NEW_PRODUCTS: NewProduct[] = [
     mossSrcMobile: "/products/stand-white-moss-mobile.webp",
     emptyAlt: "TAEGYE modular stand in white",
     mossAlt: "TAEGYE modular stand in white with moss",
+  },
+  {
+    id: "mini-port-purple",
+    category: "mini-port",
+    name: "Mini Port, Purple",
+    nameKr: "미니 포트, 퍼플",
+    finish: "Purple finish",
+    price: MINI_PORT_PRICE,
+    emptySrc: "/products/mini-port-purple.png?v=2",
+    emptyAlt: "TAEGYE Mini Port, Purple",
+  },
+  {
+    id: "mini-port-black",
+    category: "mini-port",
+    name: "Mini Port, Black",
+    nameKr: "미니 포트, 블랙",
+    finish: "Black finish",
+    price: MINI_PORT_PRICE,
+    emptySrc: "/products/mini-port-black.png?v=2",
+    emptyAlt: "TAEGYE Mini Port, Black",
+  },
+  {
+    id: "mini-port-white",
+    category: "mini-port",
+    name: "Mini Port, White",
+    nameKr: "미니 포트, 화이트",
+    finish: "White finish",
+    price: MINI_PORT_PRICE,
+    emptySrc: "/products/mini-port-white.png?v=2",
+    emptyAlt: "TAEGYE Mini Port, White",
   },
   {
     id: "one-port-purple",
@@ -430,36 +460,6 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: DRAIN_TOWER_PRICE_20,
     emptySrc: "/products/drain-tower-20.png?v=2",
     emptyAlt: "TAEGYE Drain Tower 20",
-  },
-  {
-    id: "mini-port-purple",
-    category: "mini-port",
-    name: "Mini Port, Purple",
-    nameKr: "미니 포트, 퍼플",
-    finish: "Purple finish",
-    price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-purple.png?v=2",
-    emptyAlt: "TAEGYE Mini Port, Purple",
-  },
-  {
-    id: "mini-port-black",
-    category: "mini-port",
-    name: "Mini Port, Black",
-    nameKr: "미니 포트, 블랙",
-    finish: "Black finish",
-    price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-black.png?v=2",
-    emptyAlt: "TAEGYE Mini Port, Black",
-  },
-  {
-    id: "mini-port-white",
-    category: "mini-port",
-    name: "Mini Port, White",
-    nameKr: "미니 포트, 화이트",
-    finish: "White finish",
-    price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-white.png?v=2",
-    emptyAlt: "TAEGYE Mini Port, White",
   },
 ];
 
