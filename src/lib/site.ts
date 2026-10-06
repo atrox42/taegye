@@ -142,6 +142,7 @@ export const NEW_CATEGORIES = [
   { id: "all", label: "All" },
   { id: "wall-kit", label: "Wall-kit" },
   { id: "one-port", label: "Dot-port" },
+  { id: "mini-port", label: "Mini-port" },
   { id: "cascade", label: "Cascade" },
   { id: "drain-tower", label: "Drain Tower" },
 ] as const;
@@ -178,6 +179,7 @@ export const ONE_PORT_PRICE = "KRW 38,000";
 export const DRAIN_TOWER_PRICE_80 = "KRW 8,000";
 export const DRAIN_TOWER_PRICE_120 = "KRW 10,000";
 export const DRAIN_TOWER_PRICE_160 = "KRW 12,000";
+export const MINI_PORT_PRICE = "KRW 63,000";
 export const CASCADE_PRICE_PURPLE = "KRW 207,000";
 export const CASCADE_PRICE_SILVER = "KRW 223,000";
 
@@ -261,7 +263,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — Modular Stand, Dot Port, Cascade, then Drain Tower. */
+/** /new catalog — Modular Stand, Dot Port, Mini Port, Cascade, then Drain Tower. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -424,6 +426,36 @@ export const NEW_PRODUCTS: NewProduct[] = [
     price: DRAIN_TOWER_PRICE_160,
     emptySrc: "/products/drain-tower-230.png",
     emptyAlt: "TAEGYE Drain Tower 160",
+  },
+  {
+    id: "mini-port-purple",
+    category: "mini-port",
+    name: "Mini Port, Purple",
+    nameKr: "미니 포트, 퍼플",
+    finish: "Purple finish",
+    price: MINI_PORT_PRICE,
+    emptySrc: "/products/mini-port-purple.png",
+    emptyAlt: "TAEGYE Mini Port, Purple",
+  },
+  {
+    id: "mini-port-black",
+    category: "mini-port",
+    name: "Mini Port, Black",
+    nameKr: "미니 포트, 블랙",
+    finish: "Black finish",
+    price: MINI_PORT_PRICE,
+    emptySrc: "/products/mini-port-black.png",
+    emptyAlt: "TAEGYE Mini Port, Black",
+  },
+  {
+    id: "mini-port-white",
+    category: "mini-port",
+    name: "Mini Port, White",
+    nameKr: "미니 포트, 화이트",
+    finish: "White finish",
+    price: MINI_PORT_PRICE,
+    emptySrc: "/products/mini-port-white.png",
+    emptyAlt: "TAEGYE Mini Port, White",
   },
 ];
 

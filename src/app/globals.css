@@ -1218,6 +1218,12 @@ button {
   min-width: 0;
 }
 
+.new-subnav-item,
+.new-sort-trigger {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .new-sort {
   position: relative;
   margin-left: auto;

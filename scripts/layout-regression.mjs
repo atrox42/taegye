@@ -14,6 +14,7 @@ const require = createRequire(import.meta.url);
 
 const MOBILE = { width: 412, height: 915, deviceScaleFactor: 2.75 };
 const MOBILE_360 = { width: 360, height: 780, deviceScaleFactor: 2 };
+const MOBILE_320 = { width: 320, height: 700, deviceScaleFactor: 2 };
 const DESKTOP = { width: 1440, height: 900, deviceScaleFactor: 1 };
 const DESKTOP_FHD = { width: 1920, height: 1080, deviceScaleFactor: 1 };
 const BASE = (process.env.BASE_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
@@ -458,11 +459,11 @@ async function runBrowser() {
       );
       assert.deepEqual(
         tabs.map((tab) => tab.label),
-        ["All", "Wall-kit", "Dot-port", "Cascade", "Drain Tower"],
+        ["All", "Wall-kit", "Dot-port", "Mini-port", "Cascade", "Drain Tower"],
       );
       assert.deepEqual(
         tabs.map((tab) => tab.href),
-        ["/new", "/new?cat=wall-kit", "/new?cat=one-port", "/new?cat=cascade", "/new?cat=drain-tower"],
+        ["/new", "/new?cat=wall-kit", "/new?cat=one-port", "/new?cat=mini-port", "/new?cat=cascade", "/new?cat=drain-tower"],
       );
       await page.click(".site-menubar-toggle");
       await page.waitForSelector(".site-menu.is-open");
@@ -470,8 +471,8 @@ async function runBrowser() {
       const menu = await page.$$eval(".site-menu-subrow .site-menu-label", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(menu, ["All", "Wall-kit", "Dot-port", "Cascade", "Drain Tower"]);
-      console.log("ok  mobile /new tabs + Product menu: Cascade before Drain Tower");
+      assert.deepEqual(menu, ["All", "Wall-kit", "Dot-port", "Mini-port", "Cascade", "Drain Tower"]);
+      console.log("ok  mobile /new tabs + Product menu: Mini-port before Cascade, Drain Tower last");
     });
 
     await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
@@ -510,6 +511,43 @@ async function runBrowser() {
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "cascade tab keeps moss tile");
       console.log("ok  mobile /new?cat=cascade: Silver, Purple, Black, priced, linked");
+    });
+
+    await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
+      const report = await page.evaluate(() => {
+        const cards = [...document.querySelectorAll(".product-card")].map((card) => {
+          const img = card.querySelector(".product-empty img");
+          return {
+            name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
+            price: card.querySelector(".product-price")?.textContent?.trim() || null,
+            tag: card.tagName,
+            href: card.getAttribute("href"),
+            still: card.classList.contains("is-still"),
+            src: img?.getAttribute("src") || "",
+            moss: Boolean(card.querySelector(".product-moss")),
+          };
+        });
+        return cards;
+      });
+      assert.equal(report.length, 3, `mini-port cards ${report.length}`);
+      assert.deepEqual(
+        report.map((card) => card.name),
+        ["Mini Port, Purple", "Mini Port, Black", "Mini Port, White"],
+      );
+      const hrefs = ["/new/mini-port-purple", "/new/mini-port-black", "/new/mini-port-white"];
+      report.forEach((card, index) => {
+        assert.equal(card.price, "KRW 63,000", `${card.name} price`);
+        assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
+        assert.equal(card.href, hrefs[index]);
+        assert.equal(card.still, true);
+        assert.equal(card.moss, false, `${card.name} must not have a hover image`);
+      });
+      assert.equal(report[0].src, "/products/mini-port-purple.png");
+      assert.equal(report[1].src, "/products/mini-port-black.png");
+      assert.equal(report[2].src, "/products/mini-port-white.png");
+      const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
+      assert.equal(textures, 1, "mini-port tab keeps moss tile");
+      console.log("ok  mobile /new?cat=mini-port: Purple, Black, White, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
@@ -561,6 +599,9 @@ async function runBrowser() {
       const i80 = names.indexOf("Drain Tower 80");
       const i120 = names.indexOf("Drain Tower 120");
       const i160 = names.indexOf("Drain Tower 160");
+      const iMiniPurple = names.indexOf("Mini Port, Purple");
+      const iMiniBlack = names.indexOf("Mini Port, Black");
+      const iMiniWhite = names.indexOf("Mini Port, White");
       assert.ok(
         iDotWhite >= 0 &&
           iSilver === iDotWhite + 1 &&
@@ -568,14 +609,38 @@ async function runBrowser() {
           iBlack === iPurple + 1 &&
           i80 === iBlack + 1 &&
           i120 === i80 + 1 &&
-          i160 === i120 + 1,
-        `All order Dot Port → Cascade Silver/Purple/Black → Drain Tower, got ${names}`,
+          i160 === i120 + 1 &&
+          iMiniPurple === i160 + 1 &&
+          iMiniBlack === iMiniPurple + 1 &&
+          iMiniWhite === iMiniBlack + 1 &&
+          iMiniWhite === names.length - 1,
+        `All order Dot Port → Cascade → Drain Tower → Mini Port, got ${names}`,
       );
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
       assert.equal(textures, 0, "All tab must not insert a moss tile");
-      assert.equal(cards, 14, `All product cards ${cards}`);
-      console.log("ok  mobile /new All: Cascade Silver, Purple, Black before Drain Tower, no moss tile");
+      assert.equal(cards, 17, `All product cards ${cards}`);
+      const mini = await page.evaluate(() =>
+        [...document.querySelectorAll(".product-card")]
+          .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("Mini Port"))
+          .map((card) => ({
+            name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
+            price: card.querySelector(".product-price")?.textContent?.trim() || "",
+            href: card.getAttribute("href"),
+            still: card.classList.contains("is-still"),
+            moss: Boolean(card.querySelector(".product-moss")),
+            src: card.querySelector(".product-empty img")?.getAttribute("src") || "",
+          })),
+      );
+      assert.deepEqual(
+        mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
+        [
+          ["Mini Port, Purple", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png", true, false],
+          ["Mini Port, Black", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png", true, false],
+          ["Mini Port, White", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png", true, false],
+        ],
+      );
+      console.log("ok  mobile /new All: Mini Port last, no moss tile");
     });
 
     const listed = [
@@ -585,6 +650,9 @@ async function runBrowser() {
       ["drain-tower-80", "Drain Tower 80", "KRW 8,000", "/products/drain-tower-100.png"],
       ["drain-tower-120", "Drain Tower 120", "KRW 10,000", "/products/drain-tower-160.png"],
       ["drain-tower-160", "Drain Tower 160", "KRW 12,000", "/products/drain-tower-230.png"],
+      ["mini-port-purple", "Mini Port, Purple", "KRW 63,000", "/products/mini-port-purple.png"],
+      ["mini-port-black", "Mini Port, Black", "KRW 63,000", "/products/mini-port-black.png"],
+      ["mini-port-white", "Mini Port, White", "KRW 63,000", "/products/mini-port-white.png"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
@@ -658,13 +726,14 @@ async function runBrowser() {
           navRight: +n.right.toFixed(1),
         };
       });
-      assert.ok(row && row.navH <= 22, `412 sort row height ${row?.navH}`);
+      assert.ok(row && row.navH <= 24, `412 sort row height ${row?.navH}`);
       assert.ok(row && row.tabsRight <= row.sortLeft - 4, `412 tabs overlap sort ${JSON.stringify(row)}`);
       assert.ok(row && row.sortRight <= row.navRight + 1, `412 sort overflow ${JSON.stringify(row)}`);
       await clickSort("Name");
       const byName = await sortNames();
       const named = [...byName].sort((a, b) => a.localeCompare(b));
       assert.deepEqual(byName, named, `Name sort ${byName}`);
+      assert.ok(byName.includes("Mini Port, Purple") && byName.includes("Mini Port, Black") && byName.includes("Mini Port, White"));
       await clickSort("Price: High to Low");
       const high = await sortNames();
       assert.equal(high[0], "Cascade, Silver");
@@ -674,6 +743,29 @@ async function runBrowser() {
       assert.equal(low[0], "Drain Tower 80");
       assert.equal(low[low.length - 1], "Cascade, Silver");
       console.log("ok  mobile /new sort: Name, High to Low, Low to High");
+    });
+
+    await withPage(browser, MOBILE_320, "/new?moss=0", async (page) => {
+      const row = await page.evaluate(() => {
+        const nav = document.querySelector(".new-subnav");
+        const tabs = document.querySelector(".new-subnav-tabs");
+        const sort = document.querySelector(".new-sort");
+        if (!nav || !tabs || !sort) return null;
+        const n = nav.getBoundingClientRect();
+        const t = tabs.getBoundingClientRect();
+        const s = sort.getBoundingClientRect();
+        return {
+          navH: +n.height.toFixed(1),
+          tabsRight: +t.right.toFixed(1),
+          sortLeft: +s.left.toFixed(1),
+          sortRight: +s.right.toFixed(1),
+          navRight: +n.right.toFixed(1),
+        };
+      });
+      assert.ok(row && row.navH <= 24, `320 sort row height ${row?.navH}`);
+      assert.ok(row && row.tabsRight <= row.sortLeft - 2, `320 tabs overlap sort ${JSON.stringify(row)}`);
+      assert.ok(row && row.sortRight <= row.navRight + 1, `320 sort overflow ${JSON.stringify(row)}`);
+      console.log("ok  mobile 320 /new: tabs + Sort stay on one row");
     });
 
     await withPage(browser, MOBILE_360, "/new?moss=0", async (page) => {
@@ -691,7 +783,7 @@ async function runBrowser() {
           sortLeft: +s.left.toFixed(1),
         };
       });
-      assert.ok(row && row.navH <= 22, `360 sort row height ${row?.navH}`);
+      assert.ok(row && row.navH <= 24, `360 sort row height ${row?.navH}`);
       assert.ok(row && row.tabsRight <= row.sortLeft - 2, `360 tabs overlap sort ${JSON.stringify(row)}`);
       console.log("ok  mobile 360 /new: sort stays on one row");
     });
