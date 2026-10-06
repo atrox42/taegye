@@ -1058,6 +1058,8 @@ async function runBrowser() {
       await page.click(".new-sort-trigger");
       await page.waitForSelector(".new-sort-menu");
       const open = await triggerBox();
+      const openFw = await page.evaluate(() => getComputedStyle(document.querySelector(".new-sort-trigger")).fontWeight);
+      assert.equal(openFw, type.currentFw, `${label} open Sort weight ${openFw} vs active tab ${type.currentFw}`);
       assert.ok(
         Math.abs(open.left - closed.left) <= 1 && Math.abs(open.right - closed.right) <= 1 && Math.abs(open.top - closed.top) <= 1,
         `${label} trigger moved ${JSON.stringify(closed)} → ${JSON.stringify(open)}`,
