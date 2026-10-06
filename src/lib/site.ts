@@ -145,8 +145,8 @@ export const ABOUT = {
 export const NEW_CATEGORIES = [
   { id: "all", label: "All" },
   { id: "wall-kit", label: "Wall-kit" },
-  { id: "one-port", label: "Dot-port" },
   { id: "mini-port", label: "Mini-port" },
+  { id: "one-port", label: "Dot-port" },
   { id: "cascade", label: "Cascade" },
   { id: "drain-tower", label: "Drain Tower" },
 ] as const;
