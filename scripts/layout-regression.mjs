@@ -680,7 +680,14 @@ async function runBrowser() {
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
           note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
-          swatches: document.querySelectorAll(".pdp-swatch").length,
+          swatches: [...document.querySelectorAll(".pdp-swatch")].map((el) => ({
+            tag: el.tagName.toLowerCase(),
+            href: el.getAttribute("href"),
+            title: el.getAttribute("title"),
+            current: el.getAttribute("aria-current") === "true",
+            currentClass: el.classList.contains("is-current"),
+            src: el.querySelector("img")?.getAttribute("src") || "",
+          })),
           store: document.querySelector("[data-pdp-store]")?.getAttribute("href") || "",
           img: document.querySelector(".pdp-hero-empty img")?.getAttribute("src") || "",
           title: document.title,
@@ -694,7 +701,37 @@ async function runBrowser() {
         assert.equal(report.name, name, `${id} name`);
         assert.equal(report.price, price, `${id} price`);
         assert.equal(report.note, null, `${id} must not invent a note`);
-        assert.equal(report.swatches, 0, `${id} must not invent swatches`);
+        if (id.startsWith("cascade-")) {
+          const expected = [
+            { id: "cascade-silver", title: "Silver" },
+            { id: "cascade-purple", title: "Purple" },
+            { id: "cascade-black", title: "Black" },
+          ];
+          assert.equal(report.swatches.length, 3, `${id} swatch count`);
+          assert.deepEqual(
+            report.swatches.map((swatch) => swatch.title),
+            expected.map((item) => item.title),
+            `${id} swatch order`,
+          );
+          for (let i = 0; i < expected.length; i++) {
+            const swatch = report.swatches[i];
+            const item = expected[i];
+            assert.equal(swatch.src, `/swatches/${item.id}.png`, `${id} ${item.title} src`);
+            if (item.id === id) {
+              assert.equal(swatch.tag, "span", `${id} current tag`);
+              assert.equal(swatch.href, null, `${id} current href`);
+              assert.equal(swatch.current, true, `${id} current aria`);
+              assert.equal(swatch.currentClass, true, `${id} current class`);
+            } else {
+              assert.equal(swatch.tag, "a", `${id} ${item.title} tag`);
+              assert.equal(swatch.href, `/new/${item.id}`, `${id} ${item.title} href`);
+              assert.equal(swatch.current, false, `${id} ${item.title} aria`);
+              assert.equal(swatch.currentClass, false, `${id} ${item.title} class`);
+            }
+          }
+        } else {
+          assert.equal(report.swatches.length, 0, `${id} must not invent swatches`);
+        }
         assert.equal(report.store, "https://smartstore.naver.com/taegye", `${id} store`);
         assert.equal(report.img, img, `${id} image`);
         assert.ok(report.title.startsWith(name), `${id} title ${report.title}`);
@@ -708,6 +745,98 @@ async function runBrowser() {
         assert.ok(report.overflow <= 0, `${id} overflow ${report.overflow}`);
         console.log(`ok  /new/${id}: PDP ${name} ${price}`);
       });
+    }
+
+    await withPage(browser, MOBILE, "/new/cascade-silver", async (page) => {
+      await page.waitForSelector('.pdp-swatch[href="/new/cascade-purple"]');
+      const before = await page.evaluate(() => ({
+        name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+        price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
+      }));
+      assert.deepEqual(before, { name: "Cascade, Silver", price: "KRW 223,000" });
+      await page.click('.pdp-swatch[href="/new/cascade-purple"]');
+      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade, Purple");
+      const after = await page.evaluate(() => ({
+        name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+        price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
+        current: document.querySelector(".pdp-swatch.is-current")?.getAttribute("title") || "",
+      }));
+      assert.deepEqual(after, { name: "Cascade, Purple", price: "KRW 207,000", current: "Purple" });
+      console.log("ok  cascade swatch click: Silver → Purple, price follows");
+    });
+
+    async function measureSwatches(page) {
+      return page.evaluate(() => {
+        const swatches = document.querySelector(".pdp-swatches");
+        const price = document.querySelector(".pdp-price");
+        const store = document.querySelector("[data-pdp-store]");
+        const s = swatches ? getComputedStyle(swatches) : null;
+        const item = document.querySelector(".pdp-swatch");
+        const itemS = item ? getComputedStyle(item) : null;
+        const sr = swatches?.getBoundingClientRect();
+        const pr = price?.getBoundingClientRect();
+        const tr = store?.getBoundingClientRect();
+        return {
+          count: document.querySelectorAll(".pdp-swatch").length,
+          display: s?.display || null,
+          gap: s?.gap || null,
+          width: itemS?.width || null,
+          height: itemS?.height || null,
+          radius: itemS?.borderRadius || null,
+          titles: [...document.querySelectorAll(".pdp-swatch")].map((el) => el.getAttribute("title")),
+          belowPrice: Boolean(sr && pr && sr.top >= pr.bottom - 1),
+          aboveStore: Boolean(sr && tr && sr.bottom <= tr.top + 1),
+        };
+      });
+    }
+
+    for (const viewport of [MOBILE, DESKTOP]) {
+      const vp = viewport.width === DESKTOP.width ? "1440" : "412";
+      let wallKit;
+      await withPage(browser, viewport, "/new/silver", async (page) => {
+        wallKit = await measureSwatches(page);
+        assert.equal(wallKit.count, 5, `${vp} wall-kit swatch count`);
+        assert.deepEqual(wallKit.titles, ["Silver", "Purple", "Black", "Green", "White"]);
+        assert.equal(wallKit.display, "flex");
+        assert.equal(wallKit.width, "14px");
+        assert.equal(wallKit.height, "14px");
+        assert.equal(wallKit.radius, "50%");
+        assert.ok(wallKit.belowPrice, `${vp} wall-kit swatches below price`);
+        assert.ok(wallKit.aboveStore, `${vp} wall-kit swatches above Store`);
+      });
+      await withPage(browser, viewport, "/new/one-port-purple", async (page) => {
+        const report = await measureSwatches(page);
+        assert.equal(report.count, 3, `${vp} dot-port swatch count`);
+        assert.deepEqual(report.titles, ["Purple", "Black", "White"]);
+        assert.equal(report.display, wallKit.display, `${vp} dot-port display`);
+        assert.equal(report.gap, wallKit.gap, `${vp} dot-port gap`);
+        assert.equal(report.width, wallKit.width, `${vp} dot-port width`);
+        assert.equal(report.height, wallKit.height, `${vp} dot-port height`);
+        assert.equal(report.radius, wallKit.radius, `${vp} dot-port radius`);
+        assert.ok(report.belowPrice, `${vp} dot-port swatches below price`);
+        assert.ok(report.aboveStore, `${vp} dot-port swatches above Store`);
+      });
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const report = await measureSwatches(page);
+        assert.equal(report.count, 3, `${vp} cascade swatch count`);
+        assert.deepEqual(report.titles, ["Silver", "Purple", "Black"]);
+        assert.equal(report.display, wallKit.display, `${vp} cascade display`);
+        assert.equal(report.gap, wallKit.gap, `${vp} cascade gap`);
+        assert.equal(report.width, wallKit.width, `${vp} cascade width`);
+        assert.equal(report.height, wallKit.height, `${vp} cascade height`);
+        assert.equal(report.radius, wallKit.radius, `${vp} cascade radius`);
+        assert.ok(report.belowPrice, `${vp} cascade swatches below price`);
+        assert.ok(report.aboveStore, `${vp} cascade swatches above Store`);
+      });
+      await withPage(browser, viewport, "/new/mini-port-purple", async (page) => {
+        const count = await page.$$eval(".pdp-swatch", (nodes) => nodes.length);
+        assert.equal(count, 0, `${vp} mini-port must not show swatches`);
+      });
+      await withPage(browser, viewport, "/new/drain-tower-80", async (page) => {
+        const count = await page.$$eval(".pdp-swatch", (nodes) => nodes.length);
+        assert.equal(count, 0, `${vp} drain-tower must not show swatches`);
+      });
+      console.log(`ok  ${vp} PDP swatches: wall-kit/dot-port unchanged, cascade matches, mini/drain none`);
     }
 
     await withPage(browser, DESKTOP, "/new/drain-tower-80", async (page) => {
