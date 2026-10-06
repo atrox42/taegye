@@ -110,30 +110,34 @@ export function legalLine() {
   ].join("  ·  ");
 }
 
-/** About page — each paragraph is three display lines (EN 3+3, KR 3+3). */
+/** About page — EN then KR; two paragraphs each; one sentence per line. */
 export const ABOUT = {
   en: [
     [
-      "TAEGYE is an object brand working with terrariums.",
-      "We consider each piece as a whole, from the combination of plants and materials to the vessel that holds them.",
-      "We care as much about how these elements come together and sit within a space as we do about the beauty of an individual plant.",
+      "Structures where nature grows.",
+      "TAEGYE is a design brand creating structures where plants and moss can take root and grow.",
+      "We consider where roots settle, how water flows, and where moisture stays, designing the foundations of a small living world.",
+      "Forms found in rock, geological layers, and eroded landscapes inform our structures for planting and growth.",
+      "Through 3D design and digital fabrication, we create vertical walls and dimensional spaces where plants, moss, soil, and stone come together.",
     ],
     [
-      "A terrarium continues to change after it is made.",
-      "As plants grow, new shapes emerge and the arrangement takes on a different character.",
-      "TAEGYE embraces these changes, creating objects that invite you to look closely and enjoy them over time.",
+      "TAEGYE’s products continue to change as nature settles in.",
+      "Plants grow and moss spreads, creating different landscapes within the same structure.",
+      "We create the structures where that change begins.",
     ],
   ],
   kr: [
     [
-      "태계는 테라리움을 만드는 오브제 브랜드입니다.",
-      "식물과 재료의 조합부터 이를 담는 그릇까지, 전체의 형태를 함께 생각합니다.",
-      "식물 하나의 아름다움만큼 여러 요소가 모였을 때의 모습과 공간에 놓였을 때의 어울림을 중요하게 봅니다.",
+      "자연이 자라는 구조.",
+      "태계는 식물과 이끼가 뿌리내리고 자랄 수 있는 구조를 만드는 디자인 브랜드입니다.",
+      "뿌리가 머무는 자리, 물이 흐르는 길, 습기가 유지되는 공간을 생각하며 작은 세계의 기반을 설계합니다.",
+      "암석과 지층, 침식된 지형에서 발견한 형태를 식재와 성장을 위한 구조로 발전시킵니다.",
+      "3D 디자인과 디지털 제작을 통해 수직의 벽과 입체적인 공간을 만들고, 그 안에 식물과 이끼, 흙과 돌이 자리 잡습니다.",
     ],
     [
-      "테라리움은 완성된 이후에도 조금씩 달라집니다.",
-      "식물이 자라면서 처음에는 보이지 않던 모양이 생기고, 재료 사이의 관계도 바뀝니다.",
-      "태계는 이러한 변화를 담아, 두고 바라보는 즐거움이 있는 오브제를 만듭니다.",
+      "태계의 제품은 자연이 자리 잡으면서 계속 변화합니다.",
+      "식물이 자라고 이끼가 번지며, 같은 구조 안에서도 서로 다른 풍경이 만들어집니다.",
+      "우리는 그 변화가 시작될 구조를 만듭니다.",
     ],
   ],
 } as const;
