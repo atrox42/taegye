@@ -37,7 +37,6 @@ export const HERO_CLIPS = [
   { id: "c", src: "/hero-loop-c.mp4", poster: "/hero-poster-c.jpg" },
 ] as const;
 
-/** Home opening promo — set `enabled: false` to hide without deleting copy. */
 /** Home “New In” — first item is the mobile feature; desktop shows both. */
 export const HOME_NEW_IN = [
   {
@@ -50,13 +49,13 @@ export const HOME_NEW_IN = [
   },
 ] as const;
 
+/** Home opening promo — set `enabled: false` to hide without deleting copy. */
 export const HOME_PROMO = {
   enabled: true,
-  eyebrow: "GRAND OPENING",
-  title: "5% OFF",
-  line: "스마트스토어 첫 구매 5% 할인",
-  cta: "쿠폰 받기",
-  href: STORE_URL,
+  productName: "Cascade",
+  productKicker: "Now Available",
+  productSrc: "/products/cascade-silver.png",
+  href: "/new/cascade-silver",
   hideTodayLabel: "오늘 하루 보지 않기",
   closeLabel: "닫기",
 } as const;
