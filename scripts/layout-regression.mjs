@@ -573,7 +573,7 @@ async function runBrowser() {
       assert.equal(report.length, 3, `drain-tower cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Drain Tower 80", "Drain Tower 40", "Drain Tower 20"],
+        ["Drain Tower 80, VOID", "Drain Tower 40, VOID", "Drain Tower 20, VOID"],
       );
       const hrefs = ["/new/drain-tower-80", "/new/drain-tower-40", "/new/drain-tower-20"];
       report.forEach((card, index) => {
@@ -686,9 +686,9 @@ async function runBrowser() {
       "Cascade 600, HOLLOW",
       "Cascade 600, ODD",
       "Cascade 600, VOID",
-      "Drain Tower 80",
-      "Drain Tower 40",
-      "Drain Tower 20",
+      "Drain Tower 80, VOID",
+      "Drain Tower 40, VOID",
+      "Drain Tower 20, VOID",
     ];
 
     await withPage(browser, MOBILE, "/new?moss=0", async (page) => {
@@ -757,9 +757,9 @@ async function runBrowser() {
       ["cascade-silver", "Cascade 600, HOLLOW", "KRW 223,000", "/products/cascade-silver.png"],
       ["cascade-purple", "Cascade 600, ODD", "KRW 207,000", "/products/cascade-purple.png"],
       ["cascade-black", "Cascade 600, VOID", "KRW 207,000", "/products/cascade-black.png"],
-      ["drain-tower-20", "Drain Tower 20", "KRW 8,000", "/products/drain-tower-20.png?v=2"],
-      ["drain-tower-40", "Drain Tower 40", "KRW 10,000", "/products/drain-tower-40.png?v=2"],
-      ["drain-tower-80", "Drain Tower 80", "KRW 12,000", "/products/drain-tower-80.png"],
+      ["drain-tower-20", "Drain Tower 20, VOID", "KRW 8,000", "/products/drain-tower-20.png?v=2"],
+      ["drain-tower-40", "Drain Tower 40, VOID", "KRW 10,000", "/products/drain-tower-40.png?v=2"],
+      ["drain-tower-80", "Drain Tower 80, VOID", "KRW 12,000", "/products/drain-tower-80.png"],
       ["mini-port-purple", "One Port 141, ODD", "KRW 63,000", "/products/mini-port-purple.png?v=2"],
       ["mini-port-black", "One Port 141, VOID", "KRW 63,000", "/products/mini-port-black.png?v=2"],
       ["mini-port-white", "One Port 141, MIST", "KRW 63,000", "/products/mini-port-white.png?v=2"],
@@ -967,10 +967,10 @@ async function runBrowser() {
     });
 
     const legacy = [
-      ["/new/drain-tower-100", "/new/drain-tower-20", "Drain Tower 20", "KRW 8,000"],
-      ["/new/drain-tower-120", "/new/drain-tower-40", "Drain Tower 40", "KRW 10,000"],
-      ["/new/drain-tower-160", "/new/drain-tower-80", "Drain Tower 80", "KRW 12,000"],
-      ["/new/drain-tower-230", "/new/drain-tower-80", "Drain Tower 80", "KRW 12,000"],
+      ["/new/drain-tower-100", "/new/drain-tower-20", "Drain Tower 20, VOID", "KRW 8,000"],
+      ["/new/drain-tower-120", "/new/drain-tower-40", "Drain Tower 40, VOID", "KRW 10,000"],
+      ["/new/drain-tower-160", "/new/drain-tower-80", "Drain Tower 80, VOID", "KRW 12,000"],
+      ["/new/drain-tower-230", "/new/drain-tower-80", "Drain Tower 80, VOID", "KRW 12,000"],
     ];
     for (const [from, to, name, price] of legacy) {
       await withPage(browser, MOBILE, from, async (page) => {
@@ -1029,10 +1029,10 @@ async function runBrowser() {
       await clickSort("Price: High to Low");
       const high = await sortNames();
       assert.equal(high[0], "Cascade 600, HOLLOW");
-      assert.equal(high[high.length - 1], "Drain Tower 20");
+      assert.equal(high[high.length - 1], "Drain Tower 20, VOID");
       await clickSort("Price: Low to High");
       const low = await sortNames();
-      assert.equal(low[0], "Drain Tower 20");
+      assert.equal(low[0], "Drain Tower 20, VOID");
       assert.equal(low[low.length - 1], "Cascade 600, HOLLOW");
       console.log("ok  mobile /new sort: Name, High to Low, Low to High");
     });
