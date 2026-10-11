@@ -1665,7 +1665,14 @@ async function runBrowser() {
           photoH: photo ? +photo.getBoundingClientRect().height.toFixed(1) : 0,
           hasLogo: Boolean(document.querySelector(".site-promo-logo")),
           ruleInk: sampleCanvas(".site-promo-strip-rule .canvas-white-fill", 0.5, 0.5),
-          dividerInk: sampleCanvas(".site-promo-strip-divider .canvas-white-fill", 0.5, 0.5),
+          dividerInk: (() => {
+            const canvas = document.querySelector(".site-promo-strip-divider .canvas-white-fill");
+            if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 1 || canvas.height < 1) return null;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return null;
+            const d = ctx.getImageData(0, Math.max(0, Math.floor(canvas.height / 2)), 1, 1).data;
+            return [d[0], d[1], d[2], d[3]];
+          })(),
           couponLeak: /GRAND OPENING|5% OFF|쿠폰 받기|스마트스토어 첫 구매/.test(leak),
           open: Boolean(document.querySelector(".site-promo-card")),
           vw: window.innerWidth,
