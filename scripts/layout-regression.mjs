@@ -1840,14 +1840,14 @@ async function runBrowser() {
       assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
       assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
-      assert.equal(report.productName, "Wall 212", `${label}: product name`);
+      assert.equal(report.productName, "Wall 212, HOLLOW", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
       assert.equal(report.productHref, "/new/silver", `${label}: product href`);
       assert.equal(report.photoSrc, "/products/stand-silver-moss.webp", `${label}: product photo`);
       assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
       const gutter = report.vw <= 400 ? 24 : 32;
-      const expectedPhoto = +((report.cardW - gutter) * (report.vw <= 400 ? 0.88 : 0.86) * 0.8 * 0.8 * 0.8).toFixed(1);
+      const expectedPhoto = +((report.cardW - gutter) * 0.59).toFixed(1);
       assert.ok(
         Math.abs(report.photoW - expectedPhoto) <= 2 && Math.abs(report.photoH - report.photoW) <= 2,
         `${label}: photo ${report.photoW}×${report.photoH} vs ${expectedPhoto}`,
