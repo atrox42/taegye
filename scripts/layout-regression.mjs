@@ -1661,6 +1661,11 @@ async function runBrowser() {
           productKicker: document.querySelector(".site-promo-kicker .sr-only")?.textContent || "",
           productHref: product?.getAttribute("href") || "",
           photoSrc: photo?.getAttribute("src") || "",
+          photoW: photo ? +photo.getBoundingClientRect().width.toFixed(1) : 0,
+          photoH: photo ? +photo.getBoundingClientRect().height.toFixed(1) : 0,
+          hasLogo: Boolean(document.querySelector(".site-promo-logo")),
+          ruleInk: sampleCanvas(".site-promo-strip-rule .canvas-white-fill", 0.5, 0.5),
+          dividerInk: sampleCanvas(".site-promo-strip-divider .canvas-white-fill", 0.5, 0.5),
           couponLeak: /GRAND OPENING|5% OFF|쿠폰 받기|스마트스토어 첫 구매/.test(leak),
           open: Boolean(document.querySelector(".site-promo-card")),
           vw: window.innerWidth,
@@ -1674,7 +1679,22 @@ async function runBrowser() {
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
       assert.equal(report.productHref, "/new/cascade-silver", `${label}: product href`);
       assert.equal(report.photoSrc, "/products/cascade-silver.png", `${label}: product photo`);
+      assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
+      const expectedPhoto = +(report.cardW * (report.vw <= 400 ? 0.88 : 0.86) * 0.8).toFixed(1);
+      assert.ok(
+        Math.abs(report.photoW - expectedPhoto) <= 2 && Math.abs(report.photoH - report.photoW) <= 2,
+        `${label}: photo ${report.photoW}×${report.photoH} vs ${expectedPhoto}`,
+      );
+      const gray = (ink, name) => {
+        assert.ok(ink, `${label}: ${name} line empty`);
+        assert.ok(
+          ink[0] >= 210 && ink[0] <= 245 && ink[1] >= 210 && ink[1] <= 245 && ink[2] >= 210 && ink[2] <= 245,
+          `${label}: ${name} must stay light gray, got ${ink}`,
+        );
+      };
+      gray(report.ruleInk, "top rule");
+      gray(report.dividerInk, "divider");
       assert.equal(report.dimTag, "DIV", `${label}: dim must not be a button`);
       assert.ok(report.xW >= 44 && report.xH >= 44, `${label}: X hit ${report.xW}×${report.xH}`);
       const expectedW = report.vw >= 768 ? 360 : +(report.vw * 0.82).toFixed(1);
