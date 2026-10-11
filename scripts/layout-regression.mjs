@@ -99,11 +99,11 @@ async function withPromo(browser, viewport, dark, fn) {
   await page.waitForSelector(".site-promo-card", { timeout: 20000 });
       await page.waitForFunction(
     () => {
-      const title = document.querySelector(".site-promo-title canvas");
+      const name = document.querySelector(".site-promo-name canvas");
       const strip = document.querySelector(".site-promo-strip-btn canvas");
       return (
-        title instanceof HTMLCanvasElement &&
-        title.width > 4 &&
+        name instanceof HTMLCanvasElement &&
+        name.width > 4 &&
         strip instanceof HTMLCanvasElement &&
         strip.width > 4
       );
@@ -1636,29 +1636,33 @@ async function runBrowser() {
         };
         const x = document.querySelector(".site-promo-x");
         const xr = x ? x.getBoundingClientRect() : null;
+        const card = document.querySelector(".site-promo-card");
+        const cr = card ? card.getBoundingClientRect() : null;
+        const product = document.querySelector(".site-promo-product");
+        const photo = document.querySelector(".site-promo-photo");
+        const leak = `${document.body.innerText}\n${document.title}`;
         return {
           strip: Boolean(document.querySelector(".site-promo-strip")),
           stripBtns: document.querySelectorAll(".site-promo-strip-btn").length,
           dimTag: document.querySelector(".site-promo-dim")?.tagName || null,
           xW: xr ? xr.width : 0,
           xH: xr ? xr.height : 0,
-          purple: sampleCanvas(".site-promo-purple-fill", 0.5, 0.5),
-          ctaPlate: sampleCanvas(".site-promo-cta-plate", 0.5, 0.5),
-          title: brightest(".site-promo-title canvas"),
-          cta: brightest(".site-promo-cta-label canvas"),
-          line: brightest(".site-promo-line canvas"),
-          eyebrow: brightest(".site-promo-eyebrow canvas"),
+          cardW: cr ? +cr.width.toFixed(1) : 0,
+          cardPlate: sampleCanvas(".site-promo-card > .canvas-white-fill", 0.5, 0.5),
+          name: darkest(".site-promo-name canvas"),
+          kicker: darkest(".site-promo-kicker canvas"),
+          xInk: darkest(".site-promo-x-mark"),
           stripInk: darkest(".site-promo-strip-btn canvas"),
           stripPlate: sampleCanvas(".site-promo-strip .canvas-white-fill", 0.5, 0.5),
           hideLabel: document.querySelector(".site-promo-strip-btn .sr-only")?.textContent || "",
           closeLabel:
             document.querySelector(".site-promo-strip-close .sr-only")?.textContent || "",
+          productName: document.querySelector(".site-promo-name .sr-only")?.textContent || "",
+          productKicker: document.querySelector(".site-promo-kicker .sr-only")?.textContent || "",
+          productHref: product?.getAttribute("href") || "",
+          photoSrc: photo?.getAttribute("src") || "",
+          couponLeak: /GRAND OPENING|5% OFF|쿠폰 받기|스마트스토어 첫 구매/.test(leak),
           open: Boolean(document.querySelector(".site-promo-card")),
-          ctaToPurple: (() => {
-            const cta = document.querySelector(".site-promo-cta")?.getBoundingClientRect();
-            const visual = document.querySelector(".site-promo-visual")?.getBoundingClientRect();
-            return cta && visual ? visual.bottom - cta.bottom : null;
-          })(),
           vw: window.innerWidth,
         };
       });
@@ -1666,40 +1670,45 @@ async function runBrowser() {
       assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
       assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
+      assert.equal(report.productName, "Cascade", `${label}: product name`);
+      assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
+      assert.equal(report.productHref, "/new/cascade-silver", `${label}: product href`);
+      assert.equal(report.photoSrc, "/products/cascade-silver.png", `${label}: product photo`);
+      assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
       assert.equal(report.dimTag, "DIV", `${label}: dim must not be a button`);
       assert.ok(report.xW >= 44 && report.xH >= 44, `${label}: X hit ${report.xW}×${report.xH}`);
-      const expectedPad = report.vw <= 400 ? 25.2 : 31.5;
+      const expectedW = report.vw >= 768 ? 360 : +(report.vw * 0.82).toFixed(1);
       assert.ok(
-        Math.abs((report.ctaToPurple ?? 0) - expectedPad) <= 1,
-        `${label}: CTA→purple should be ~${expectedPad}px, got ${report.ctaToPurple}`,
+        Math.abs(report.cardW - expectedW) <= 2,
+        `${label}: card width ${report.cardW} vs ${expectedW}`,
       );
-      assert.ok(report.title, `${label}: title canvas empty`);
-      assert.ok(report.cta, `${label}: cta canvas empty`);
-      assert.ok(report.purple, `${label}: purple plate empty`);
-      assert.ok(report.ctaPlate, `${label}: cta plate empty`);
+      assert.ok(report.cardPlate, `${label}: card white plate empty`);
+      assert.ok(report.name, `${label}: name canvas empty`);
+      assert.ok(report.kicker, `${label}: kicker canvas empty`);
       assert.ok(report.stripInk, `${label}: strip ink canvas empty`);
       assert.ok(report.stripPlate, `${label}: strip white plate empty`);
-      const titleContrast = contrastRatio(report.title.slice(0, 3), report.purple.slice(0, 3));
-      const ctaContrast = contrastRatio(report.cta.slice(0, 3), report.ctaPlate.slice(0, 3));
-      const lineContrast = contrastRatio(report.line.slice(0, 3), report.purple.slice(0, 3));
+      const nameContrast = contrastRatio(report.name.slice(0, 3), report.cardPlate.slice(0, 3));
       const stripContrast = contrastRatio(report.stripInk.slice(0, 3), report.stripPlate.slice(0, 3));
       assert.ok(
-        titleContrast >= 4.5,
-        `${label}: title contrast ${titleContrast.toFixed(2)} title=${report.title} purple=${report.purple}`,
-      );
-      assert.ok(
-        ctaContrast >= 4.5,
-        `${label}: cta contrast ${ctaContrast.toFixed(2)} cta=${report.cta} plate=${report.ctaPlate}`,
-      );
-      assert.ok(
-        lineContrast >= 4.5,
-        `${label}: line contrast ${lineContrast.toFixed(2)} line=${report.line} purple=${report.purple}`,
+        nameContrast >= 4.5,
+        `${label}: name contrast ${nameContrast.toFixed(2)} name=${report.name} plate=${report.cardPlate}`,
       );
       assert.ok(
         stripContrast >= 4.5,
         `${label}: strip contrast ${stripContrast.toFixed(2)} ink=${report.stripInk} plate=${report.stripPlate}`,
       );
-      assert.ok(report.title[0] >= 240 && report.title[1] >= 240 && report.title[2] >= 240, `${label}: title not white ${report.title}`);
+      assert.ok(
+        report.cardPlate[0] >= 250 && report.cardPlate[1] >= 250 && report.cardPlate[2] >= 250,
+        `${label}: card plate must stay white, got ${report.cardPlate}`,
+      );
+      assert.ok(
+        report.name[0] <= 30 && report.name[1] <= 30 && report.name[2] <= 30,
+        `${label}: name must stay near-black, got ${report.name}`,
+      );
+      assert.ok(
+        report.xInk && report.xInk[0] <= 100 && report.xInk[1] <= 100 && report.xInk[2] <= 100,
+        `${label}: X must stay dark gray, got ${report.xInk}`,
+      );
       assert.ok(
         report.stripInk[0] <= 30 && report.stripInk[1] <= 30 && report.stripInk[2] <= 30,
         `${label}: strip ink must stay near-black, got ${report.stripInk}`,
@@ -1720,7 +1729,7 @@ async function runBrowser() {
       await page.click(".site-promo-x");
       await new Promise((resolve) => setTimeout(resolve, 250));
       assert.equal(await page.$(".site-promo-card"), null, `${label}: X should close promo`);
-      return { titleContrast, ctaContrast, lineContrast, stripContrast };
+      return { nameContrast, stripContrast };
     }
 
     async function assertPromoActions(page, label) {
@@ -1744,11 +1753,13 @@ async function runBrowser() {
       ["mobile 412 forced-dark", MOBILE, true],
       ["mobile 360 forced-dark", MOBILE_360, true],
       ["mobile 412 light", MOBILE, false],
+      ["desktop 1440 light", DESKTOP, false],
+      ["desktop 1440 forced-dark", DESKTOP, true],
     ]) {
       await withPromo(browser, vp, dark, async (page) => {
         const ratios = await assertPromo(page, name);
         console.log(
-          `ok  promo ${name}: strip+X; title ${ratios.titleContrast.toFixed(2)}:1 CTA ${ratios.ctaContrast.toFixed(2)}:1 strip ${ratios.stripContrast.toFixed(2)}:1`,
+          `ok  promo ${name}: white card; name ${ratios.nameContrast.toFixed(2)}:1 strip ${ratios.stripContrast.toFixed(2)}:1`,
         );
       });
     }
@@ -1853,6 +1864,22 @@ async function runBrowser() {
       assert.ok(stored.hideUntil > Date.now(), `hide-today until ${stored.hideUntil}`);
       assert.ok(stored.hideUntil <= Date.now() + 24 * 60 * 60 * 1000 + 1000, "hide-today window");
       console.log("ok  promo 오늘 하루 보지 않기 stores hide-until");
+    });
+
+    await withPromo(browser, MOBILE, false, async (page) => {
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: "networkidle0", timeout: 20000 }),
+        page.click(".site-promo-product"),
+      ]);
+      const dest = await page.evaluate(() => ({
+        path: location.pathname,
+        closed: window.sessionStorage.getItem("taegye-promo-closed"),
+        open: Boolean(document.querySelector(".site-promo-card")),
+      }));
+      assert.equal(dest.path, "/new/cascade-silver", `product link path ${dest.path}`);
+      assert.equal(dest.closed, "1", "product link should mark the session");
+      assert.equal(dest.open, false, "product link should close the promo");
+      console.log("ok  promo product link goes to Cascade Silver");
     });
 
     async function withSplash(browser, viewport, fn) {

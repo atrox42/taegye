@@ -4,18 +4,11 @@ import { usePathname } from "next/navigation";
 import { useLayoutEffect, useId, useState } from "react";
 
 import { CanvasColorPlate, CanvasWhitePlate } from "@/components/canvas-white-plate";
+import { CanvasLogo } from "@/components/canvas-logo";
 import { CanvasText } from "@/components/canvas-text";
 import { CanvasX } from "@/components/canvas-x";
-import {
-  BRAND_MAIN,
-  BRAND_SUB,
-  forcePurpleLightStyle,
-  forcePurpleStyle,
-  DIM_BLACK_PNG_SRC,
-  PURPLE_574667_PNG_SRC,
-  PURPLE_6F5C82_PNG_SRC,
-} from "@/lib/force-white";
-import { HOME_PROMO } from "@/lib/site";
+import { DIM_BLACK_PNG_SRC } from "@/lib/force-white";
+import { HOME_PROMO, LOGO_SRC, SITE_NAME } from "@/lib/site";
 
 export const PROMO_HIDE_KEY = "taegye-promo-hide-until";
 export const PROMO_SESSION_KEY = "taegye-promo-closed";
@@ -152,34 +145,53 @@ export function HomePromo() {
       {/* eslint-disable-next-line @next/next/no-img-element -- dark raster dimmer skips Force Dark invert */}
       <img src={DIM_BLACK_PNG_SRC} alt="" aria-hidden className="site-promo-dim-bitmap" />
       <div className="site-promo-card" role="dialog" aria-modal="true" aria-labelledby={titleId}>
-        <div className="site-promo-visual" style={forcePurpleStyle}>
-          <CanvasColorPlate color={BRAND_MAIN} className="site-promo-purple-fill" />
-          {/* eslint-disable-next-line @next/next/no-img-element -- exact #574667 PNG fill skips Force Dark invert */}
-          <img src={PURPLE_574667_PNG_SRC} alt="" aria-hidden className="site-promo-purple" />
+        <CanvasWhitePlate />
+        <div className="site-promo-visual">
           <button
             type="button"
             className="site-promo-x"
             aria-label="Close"
             onClick={() => hide(false)}
           >
-            <CanvasX />
+            <CanvasX color="#555555" />
           </button>
-          <CanvasText text={HOME_PROMO.eyebrow} className="site-promo-eyebrow" />
-          <CanvasText id={titleId} text={HOME_PROMO.title} className="site-promo-title" />
-          <div className="site-promo-copy">
-            <CanvasText text={HOME_PROMO.line} className="site-promo-line" />
-            <a href={HOME_PROMO.href} target="_blank" rel="noopener noreferrer" className="site-promo-cta">
-              <span className="site-promo-cta-face" style={forcePurpleLightStyle}>
-                <CanvasColorPlate color={BRAND_SUB} className="site-promo-cta-plate" />
-                {/* eslint-disable-next-line @next/next/no-img-element -- exact #6F5C82 PNG fill skips Force Dark invert */}
-                <img src={PURPLE_6F5C82_PNG_SRC} alt="" aria-hidden className="site-promo-cta-fill" />
-                <CanvasText text={HOME_PROMO.cta} className="site-promo-cta-label" fit="fill" />
-              </span>
-            </a>
+          <div className="site-promo-logo">
+            <CanvasLogo
+              src={LOGO_SRC}
+              alt={SITE_NAME}
+              width={80}
+              height={28}
+              align="center"
+              className="site-promo-logo-mark"
+            />
           </div>
+          <a href={HOME_PROMO.href} className="site-promo-product" onClick={() => hide(false)}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- transparent product PNG must stay raster */}
+            <img
+              src={HOME_PROMO.productSrc}
+              alt={HOME_PROMO.productName}
+              className="site-promo-photo"
+              width={1254}
+              height={1254}
+            />
+            <CanvasText
+              id={titleId}
+              text={HOME_PROMO.productName}
+              fill="#111111"
+              className="site-promo-name"
+            />
+            <CanvasText
+              text={HOME_PROMO.productKicker}
+              fill="#999999"
+              className="site-promo-kicker"
+            />
+          </a>
         </div>
         <div className="site-promo-strip">
           <CanvasWhitePlate />
+          <span className="site-promo-strip-rule" aria-hidden>
+            <CanvasColorPlate color="#111111" />
+          </span>
           <button
             type="button"
             className="site-promo-strip-btn"
@@ -187,6 +199,9 @@ export function HomePromo() {
           >
             <CanvasText text={HOME_PROMO.hideTodayLabel} fill="#111111" />
           </button>
+          <span className="site-promo-strip-divider" aria-hidden>
+            <CanvasColorPlate color="#111111" />
+          </span>
           <button
             type="button"
             className="site-promo-strip-btn site-promo-strip-close"

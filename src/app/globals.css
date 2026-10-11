@@ -3114,7 +3114,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(74.8vw, 357px);
+  width: min(82vw, 360px);
   overflow: hidden;
   background-color: transparent !important;
   background-image: none !important;
@@ -3157,21 +3157,6 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   pointer-events: none;
 }
 
-.site-promo-purple-fill,
-.site-promo-cta-plate {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.site-promo-purple,
-.site-promo-cta-fill {
-  z-index: 0;
-}
-
 .site-promo-canvas-text {
   position: relative;
   z-index: 2;
@@ -3211,192 +3196,85 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
   min-height: 0;
   margin: 0;
-  padding: 45px 1.6rem 31.5px; /* bottom 45→31.5, ~30% less under 쿠폰 받기 */
+  padding: 8px 16px 22px;
   border: 0;
-  border-bottom: 0;
   box-shadow: none;
   overflow: hidden;
-  background-color: var(--brand-main) !important;
-  background-image: var(--brand-main-image) !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
-  text-align: center;
-  forced-color-adjust: none;
-}
-
-.site-promo-purple {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  forced-color-adjust: none;
-}
-
-.site-promo-ink {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  color: #111111 !important;
-  -webkit-text-fill-color: transparent !important;
-  background-image: var(--ink-111-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-}
-
-.site-promo-white {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  color: #ffffff !important;
-  -webkit-text-fill-color: transparent !important;
-  background-image: var(--white-clip-image) !important;
-  background-repeat: repeat !important;
-  background-size: 8px 8px !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-}
-
-.site-promo-eyebrow,
-.site-promo-title {
-  font-family: var(--font-pretendard);
-  text-transform: uppercase;
-  font-synthesis: none;
-}
-
-.site-promo-eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  padding: 0;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-.site-promo-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0;
-  min-height: 0;
-  font-size: 42px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-
-.site-promo-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: max-content;
-  max-width: 100%;
-  gap: 14px;
-}
-
-.site-promo-line {
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  margin-top: 0;
-  min-height: 0;
-  padding: 0;
-  font-family: var(--font-pretendard);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: var(--tracking-copy-kr);
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.site-promo-cta {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  margin-top: 0;
-  margin-left: 0;
-  margin-right: 0;
-  min-width: 0;
-  padding: 0;
-  border: 0;
   background-color: transparent !important;
   background-image: none !important;
-  box-shadow: none;
-  text-decoration: none !important;
-}
-
-.site-promo-cta-face {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  background-color: var(--brand-sub) !important;
-  background-image: var(--brand-sub-image) !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
-  background-clip: border-box !important;
-  -webkit-background-clip: border-box !important;
-  box-shadow: none;
   text-align: center;
   forced-color-adjust: none;
 }
 
-.site-promo-cta-fill {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  forced-color-adjust: none;
-}
-
-.site-promo-cta-label {
-  position: relative;
-  z-index: 2;
+.site-promo-logo {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 28px;
+  margin: 10px 0 6px;
+  pointer-events: none;
+}
+
+.site-promo-logo-mark {
+  display: block;
+}
+
+.site-promo-product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  min-height: 2.75rem;
+  margin: 0;
   padding: 0;
+  border: 0;
+  background: transparent !important;
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.site-promo-photo {
+  display: block;
+  width: 86%;
+  height: auto;
+  aspect-ratio: 1;
+  margin: 4px 0 16px;
+  object-fit: contain;
+  background: transparent !important;
+  forced-color-adjust: none;
+  color-scheme: only light;
+}
+
+.site-promo-name {
+  margin: 0;
   font-family: var(--font-pretendard);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
-  letter-spacing: var(--tracking-copy-kr);
-  text-transform: none;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.site-promo-kicker {
+  margin: 4px 0 0;
+  font-family: var(--font-pretendard);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
 }
 
 .site-promo-strip {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
   width: 100%;
-  padding: 0.42rem 1rem;
+  min-height: 48px;
+  padding: 0;
   overflow: hidden;
   border: 0;
-  border-top: 0;
   box-shadow: none;
   background-color: transparent !important;
   background-image: none !important;
@@ -3404,13 +3282,36 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   forced-color-adjust: none;
 }
 
+.site-promo-strip-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.site-promo-strip-divider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  transform: translateX(-0.5px);
+}
+
 .site-promo-strip-btn {
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  min-height: 1.925rem;
-  padding: 0.2rem 0;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.6rem 0.5rem;
   border: 0;
   background-color: transparent !important;
   background-image: none !important;
@@ -3425,15 +3326,10 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 }
 
 .site-promo-strip-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
-  flex-shrink: 0;
-  min-width: 5.5rem;
-  min-height: 1.925rem;
-  padding: 0.525rem 0.25rem 0.525rem 1rem;
-  font-size: 13px;
+  margin-left: 0;
+  justify-content: center;
+  min-width: 0;
+  padding: 0.6rem 0.5rem;
 }
 
 @media (max-width: 400px) {
@@ -3442,33 +3338,17 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   }
 
   .site-promo-visual {
-    min-height: 0;
-    padding: 36px 1.15rem 25.2px; /* bottom 36→25.2, ~30% less under 쿠폰 받기 */
-    gap: 14px;
+    padding: 6px 12px 18px;
   }
 
-  .site-promo-copy {
-    gap: 14px;
-  }
-
-  .site-promo-title {
-    margin-top: 0;
-    font-size: 36px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    min-height: 0;
+  .site-promo-photo {
+    width: 88%;
   }
 }
 
 @media (min-width: 768px) {
   .site-promo-card {
-    width: 357px;
-  }
-
-  .site-promo-title {
-    font-size: 48px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    width: 360px;
   }
 }
 
