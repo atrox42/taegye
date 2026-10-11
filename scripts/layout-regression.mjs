@@ -436,18 +436,18 @@ async function runBrowser() {
       const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(names, ["Dot Port, ODD", "Dot Port, VOID", "Dot Port, MIST"]);
-      console.log("ok  mobile /new?cat=one-port: KRW 38,000, Dot Port names");
+      assert.deepEqual(names, ["Starship, ODD", "Starship, VOID", "Starship, MIST"]);
+      console.log("ok  mobile /new?cat=one-port: KRW 38,000, Starship names");
     });
 
     await withPage(browser, MOBILE, "/new/one-port-purple", async (page) => {
       const price = await page.$eval(".pdp-price", (node) => (node.textContent || "").trim());
       assert.equal(price, "KRW 38,000", `one-port PDP ${price}`);
       const name = await page.$eval(".pdp-name", (node) => (node.textContent || "").trim());
-      assert.equal(name, "Dot Port, ODD");
+      assert.equal(name, "Starship, ODD");
       const title = await page.title();
-      assert.match(title, /Dot Port, ODD/);
-      console.log("ok  mobile one-port PDP: KRW 38,000, Dot Port title");
+      assert.match(title, /Starship, ODD/);
+      console.log("ok  mobile one-port PDP: KRW 38,000, Starship title");
     });
 
     await withPage(browser, MOBILE, "/new", async (page) => {
@@ -459,7 +459,7 @@ async function runBrowser() {
       );
       assert.deepEqual(
         tabs.map((tab) => tab.label),
-        ["All", "Wall-kit", "Mini-port", "Dot-port", "Cascade", "Drain Tower"],
+        ["All", "Wall 212", "One Port", "Starship", "Cascade", "Drain Tower"],
       );
       assert.deepEqual(
         tabs.map((tab) => tab.href),
@@ -471,8 +471,8 @@ async function runBrowser() {
       const menu = await page.$$eval(".site-menu-subrow .site-menu-label", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(menu, ["All", "Wall-kit", "Mini-port", "Dot-port", "Cascade", "Drain Tower"]);
-      console.log("ok  mobile /new tabs + Product menu: Mini-port before Dot-port, Drain Tower last");
+      assert.deepEqual(menu, ["All", "Wall 212", "One Port", "Starship", "Cascade", "Drain Tower"]);
+      console.log("ok  mobile /new tabs + Product menu: One Port before Starship, Drain Tower last");
     });
 
     await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
@@ -532,7 +532,7 @@ async function runBrowser() {
       assert.equal(report.length, 3, `mini-port cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Mini Port, ODD", "Mini Port, VOID", "Mini Port, MIST"],
+        ["One Port, ODD", "One Port, VOID", "One Port, MIST"],
       );
       const hrefs = ["/new/mini-port-purple", "/new/mini-port-black", "/new/mini-port-white"];
       report.forEach((card, index) => {
@@ -677,12 +677,12 @@ async function runBrowser() {
       "Wall 212, VOID",
       "Wall 212, BUG",
       "Wall 212, MIST",
-      "Mini Port, ODD",
-      "Mini Port, VOID",
-      "Mini Port, MIST",
-      "Dot Port, ODD",
-      "Dot Port, VOID",
-      "Dot Port, MIST",
+      "One Port, ODD",
+      "One Port, VOID",
+      "One Port, MIST",
+      "Starship, ODD",
+      "Starship, VOID",
+      "Starship, MIST",
       "Cascade, HOLLOW",
       "Cascade, ODD",
       "Cascade, VOID",
@@ -702,7 +702,7 @@ async function runBrowser() {
       assert.equal(cards, 17, `All product cards ${cards}`);
       const mini = await page.evaluate(() =>
         [...document.querySelectorAll(".product-card")]
-          .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("Mini Port"))
+          .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("One Port"))
           .map((card) => ({
             name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
             price: card.querySelector(".product-price")?.textContent?.trim() || "",
@@ -715,12 +715,12 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
-          ["Mini Port, ODD", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
-          ["Mini Port, VOID", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
-          ["Mini Port, MIST", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
+          ["One Port, ODD", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
+          ["One Port, VOID", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
+          ["One Port, MIST", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
         ],
       );
-      console.log("ok  mobile /new All: Wall-kit → Mini Port → Dot Port → Cascade → Drain Tower, no moss tile");
+      console.log("ok  mobile /new All: Wall 212 → One Port → Starship → Cascade → Drain Tower, no moss tile");
     });
 
     await withPage(browser, DESKTOP, "/new?moss=0", async (page) => {
@@ -728,7 +728,7 @@ async function runBrowser() {
         nodes.map((node) => (node.textContent || "").trim()),
       );
       assert.deepEqual(names, ALL_DEFAULT_NAMES, `1440 All order ${names}`);
-      console.log("ok  desktop /new All: Wall-kit → Mini Port → Dot Port → Cascade → Drain Tower");
+      console.log("ok  desktop /new All: Wall 212 → One Port → Starship → Cascade → Drain Tower");
     });
 
     const listed = [
@@ -738,9 +738,9 @@ async function runBrowser() {
       ["drain-tower-20", "Drain Tower 20", "KRW 8,000", "/products/drain-tower-20.png?v=2"],
       ["drain-tower-40", "Drain Tower 40", "KRW 10,000", "/products/drain-tower-40.png?v=2"],
       ["drain-tower-80", "Drain Tower 80", "KRW 12,000", "/products/drain-tower-80.png"],
-      ["mini-port-purple", "Mini Port, ODD", "KRW 63,000", "/products/mini-port-purple.png?v=2"],
-      ["mini-port-black", "Mini Port, VOID", "KRW 63,000", "/products/mini-port-black.png?v=2"],
-      ["mini-port-white", "Mini Port, MIST", "KRW 63,000", "/products/mini-port-white.png?v=2"],
+      ["mini-port-purple", "One Port, ODD", "KRW 63,000", "/products/mini-port-purple.png?v=2"],
+      ["mini-port-black", "One Port, VOID", "KRW 63,000", "/products/mini-port-black.png?v=2"],
+      ["mini-port-white", "One Port, MIST", "KRW 63,000", "/products/mini-port-white.png?v=2"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
@@ -1003,7 +1003,7 @@ async function runBrowser() {
       const byName = await sortNames();
       const named = [...byName].sort((a, b) => a.localeCompare(b));
       assert.deepEqual(byName, named, `Name sort ${byName}`);
-      assert.ok(byName.includes("Mini Port, ODD") && byName.includes("Mini Port, VOID") && byName.includes("Mini Port, MIST"));
+      assert.ok(byName.includes("One Port, ODD") && byName.includes("One Port, VOID") && byName.includes("One Port, MIST"));
       await clickSort("Price: High to Low");
       const high = await sortNames();
       assert.equal(high[0], "Cascade, HOLLOW");
@@ -1212,6 +1212,58 @@ async function runBrowser() {
       console.log("ok  mobile 360 /new: sort stays on one row");
     });
 
+    for (const [viewport, label] of [
+      [MOBILE_320, "320"],
+      [MOBILE_360, "360"],
+      [MOBILE, "412"],
+      [DESKTOP, "1440"],
+    ]) {
+      await withPage(browser, viewport, "/new?moss=0", async (page) => {
+        const row = await page.evaluate(() => {
+          const nav = document.querySelector(".new-subnav");
+          const tabs = document.querySelector(".new-subnav-tabs");
+          const sort = document.querySelector(".new-sort");
+          if (!nav || !tabs || !sort) return null;
+          const n = nav.getBoundingClientRect();
+          const t = tabs.getBoundingClientRect();
+          const s = sort.getBoundingClientRect();
+          const items = [...tabs.querySelectorAll(".new-subnav-item")].map((node) => {
+            const r = node.getBoundingClientRect();
+            return { label: (node.textContent || "").trim(), w: +r.width.toFixed(1) };
+          });
+          const overlapping = items.filter((item, i) => {
+            const node = tabs.querySelectorAll(".new-subnav-item")[i];
+            const r = node.getBoundingClientRect();
+            const left = Math.max(r.left, t.left);
+            const right = Math.min(r.right, t.right);
+            if (right - left < 0.5) return false;
+            return right > s.left + 0.5 && left < s.right - 0.5;
+          }).map((item) => item.label);
+          return {
+            navH: +n.height.toFixed(1),
+            tabsW: +t.width.toFixed(1),
+            tabsScroll: +tabs.scrollWidth.toFixed(1),
+            sortW: +s.width.toFixed(1),
+            gap: +(s.left - t.right).toFixed(1),
+            overflowX: getComputedStyle(tabs).overflowX,
+            labels: items,
+            overlapping,
+          };
+        });
+        assert.ok(row, `${label} tab strip missing`);
+        assert.ok(row.navH <= 24, `${label} tab row wrap ${row.navH}`);
+        assert.deepEqual(row.overlapping, [], `${label} tab overlaps Sort ${JSON.stringify(row)}`);
+        if (Number(label) >= 360) {
+          assert.ok(row.gap >= 2, `${label} tabs must fit beside Sort ${JSON.stringify(row)}`);
+          assert.equal(row.overflowX === "auto" || row.overflowX === "scroll", false, `${label} must not scroll tabs`);
+        } else {
+          assert.ok(row.gap >= 4, `${label} visible tab/Sort gap ${JSON.stringify(row)}`);
+          assert.ok(row.tabsScroll > row.tabsW + 1, `${label} tabs must scroll ${JSON.stringify(row)}`);
+        }
+        console.log(`ok  tab strip ${label}: ${JSON.stringify(row)}`);
+      });
+    }
+
     for (const path of ["/new", "/new?cat=one-port", "/new/one-port-purple", "/new/one-port-black", "/new/one-port-white"]) {
       await withPage(browser, MOBILE, path, async (page) => {
         const leak = await page.evaluate(() => {
@@ -1219,12 +1271,12 @@ async function runBrowser() {
           const alts = [...document.querySelectorAll("img[alt]")].map((img) => img.getAttribute("alt") || "");
           return { text, alts };
         });
-        assert.equal(/One Port|One-port/i.test(leak.text), false, `${path} visible One Port: ${leak.text}`);
+        assert.equal(/Dot Port|Dot-port|Mini Port|Mini-port|Wall-kit/i.test(leak.text), false, `${path} leftover name: ${leak.text}`);
         assert.ok(
-          leak.alts.every((alt) => !/one port/i.test(alt)),
-          `${path} alt One Port: ${leak.alts}`,
+          leak.alts.every((alt) => !/dot port|mini port/i.test(alt)),
+          `${path} leftover alt: ${leak.alts}`,
         );
-        console.log(`ok  ${path}: no visible One Port`);
+        console.log(`ok  ${path}: no leftover Mini Port / Dot Port`);
       });
     }
 
@@ -1682,7 +1734,7 @@ async function runBrowser() {
       assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
       assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
-      assert.equal(report.productName, "Dot Port", `${label}: product name`);
+      assert.equal(report.productName, "Starship", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
       assert.equal(report.productHref, "/new/one-port-purple", `${label}: product href`);
       assert.equal(report.photoSrc, "/products/one-port-purple.png", `${label}: product photo`);
@@ -1907,7 +1959,7 @@ async function runBrowser() {
       assert.equal(dest.path, "/new/one-port-purple", `product link path ${dest.path}`);
       assert.equal(dest.closed, "1", "product link should mark the session");
       assert.equal(dest.open, false, "product link should close the promo");
-      console.log("ok  promo product link goes to Dot Port Purple");
+      console.log("ok  promo product link goes to Starship ODD");
     });
 
     async function withSplash(browser, viewport, fn) {

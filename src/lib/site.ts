@@ -52,7 +52,7 @@ export const HOME_NEW_IN = [
 /** Home opening promo — set `enabled: false` to hide without deleting copy. */
 export const HOME_PROMO = {
   enabled: true,
-  productName: "Dot Port",
+  productName: "Starship",
   productKicker: "Now Available",
   productSrc: "/products/one-port-purple.png",
   href: "/new/one-port-purple",
@@ -143,9 +143,9 @@ export const ABOUT = {
 
 export const NEW_CATEGORIES = [
   { id: "all", label: "All" },
-  { id: "wall-kit", label: "Wall-kit" },
-  { id: "mini-port", label: "Mini-port" },
-  { id: "one-port", label: "Dot-port" },
+  { id: "wall-kit", label: "Wall 212" },
+  { id: "mini-port", label: "One Port" },
+  { id: "one-port", label: "Starship" },
   { id: "cascade", label: "Cascade" },
   { id: "drain-tower", label: "Drain Tower" },
 ] as const;
@@ -200,7 +200,7 @@ export const STAND_ORIGIN = "Made In Korea";
 export const STAND_ACCORDION = [
   {
     label: "Size",
-    body: "Dimensions to be confirmed. Wall-kit modular stand.",
+    body: "Dimensions to be confirmed. Wall 212 modular stand.",
   },
   {
     label: "Care",
@@ -229,7 +229,7 @@ export const ONE_PORT_NOTE = {
     "Keep in indirect light. Water sparingly.",
   ],
   kr: [
-    "식물을 담는 원 포트.",
+    "식물을 담는 스타쉽.",
     "직사광선을 피하고, 물은 적게 주세요.",
   ],
 } as const;
@@ -266,7 +266,7 @@ export const GRID_TEXTURE_SRCS = [
 export const GRID_TEXTURE_SLOT_MIN = 2;
 export const GRID_TEXTURE_SLOT_MAX = 6;
 
-/** /new catalog — Wall 212, Mini Port, Dot Port, Cascade, then Drain Tower. */
+/** /new catalog — Wall 212, One Port, Starship, Cascade, then Drain Tower. */
 export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
@@ -335,70 +335,70 @@ export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "mini-port-purple",
     category: "mini-port",
-    name: "Mini Port, ODD",
-    nameKr: "미니 포트, ODD",
+    name: "One Port, ODD",
+    nameKr: "원 포트, ODD",
     finish: "ODD finish",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-purple.png?v=2",
-    emptyAlt: "TAEGYE Mini Port, ODD",
+    emptyAlt: "TAEGYE One Port, ODD",
   },
   {
     id: "mini-port-black",
     category: "mini-port",
-    name: "Mini Port, VOID",
-    nameKr: "미니 포트, VOID",
+    name: "One Port, VOID",
+    nameKr: "원 포트, VOID",
     finish: "VOID finish",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-black.png?v=2",
-    emptyAlt: "TAEGYE Mini Port, VOID",
+    emptyAlt: "TAEGYE One Port, VOID",
   },
   {
     id: "mini-port-white",
     category: "mini-port",
-    name: "Mini Port, MIST",
-    nameKr: "미니 포트, MIST",
+    name: "One Port, MIST",
+    nameKr: "원 포트, MIST",
     finish: "MIST finish",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-white.png?v=2",
-    emptyAlt: "TAEGYE Mini Port, MIST",
+    emptyAlt: "TAEGYE One Port, MIST",
   },
   {
     id: "one-port-purple",
     category: "one-port",
-    name: "Dot Port, ODD",
-    nameKr: "닷 포트, ODD",
+    name: "Starship, ODD",
+    nameKr: "스타쉽, ODD",
     finish: "ODD finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-purple.png",
     mossSrc: "/products/one-port-purple-plant.png",
-    emptyAlt: "TAEGYE Dot Port, ODD",
-    mossAlt: "TAEGYE Dot Port, ODD with plant",
+    emptyAlt: "TAEGYE Starship, ODD",
+    mossAlt: "TAEGYE Starship, ODD with plant",
   },
   {
     id: "one-port-black",
     category: "one-port",
-    name: "Dot Port, VOID",
-    nameKr: "닷 포트, VOID",
+    name: "Starship, VOID",
+    nameKr: "스타쉽, VOID",
     finish: "VOID finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-black.png",
     mossSrc: "/products/one-port-black-plant.png",
-    emptyAlt: "TAEGYE Dot Port, VOID",
-    mossAlt: "TAEGYE Dot Port, VOID with plant",
+    emptyAlt: "TAEGYE Starship, VOID",
+    mossAlt: "TAEGYE Starship, VOID with plant",
   },
   {
     id: "one-port-white",
     category: "one-port",
-    name: "Dot Port, MIST",
-    nameKr: "닷 포트, MIST",
+    name: "Starship, MIST",
+    nameKr: "스타쉽, MIST",
     finish: "MIST finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-white.png",
     mossSrc: "/products/one-port-white-plant.png",
     emptySrcMobile: "/products/one-port-white-mobile.png",
     mossSrcMobile: "/products/one-port-white-plant-mobile.png",
-    emptyAlt: "TAEGYE Dot Port, MIST",
-    mossAlt: "TAEGYE Dot Port, MIST with plant",
+    emptyAlt: "TAEGYE Starship, MIST",
+    mossAlt: "TAEGYE Starship, MIST with plant",
   },
   {
     id: "cascade-silver",
