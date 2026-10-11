@@ -52,7 +52,7 @@ export const HOME_NEW_IN = [
 /** Home opening promo — set `enabled: false` to hide without deleting copy. */
 export const HOME_PROMO = {
   enabled: true,
-  productName: "Wall 212",
+  productName: "Wall 212, HOLLOW",
   productKicker: "Now Available",
   productSrc: "/products/stand-silver-moss.webp",
   href: "/new/silver",
