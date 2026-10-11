@@ -176,15 +176,15 @@ export type NewProduct = {
 /** Matches the site mobile / desktop split used by nav, PDP gallery, and float logo. */
 export const PRODUCT_MOBILE_MEDIA = "(max-width: 767px)";
 
-export const STAND_PRICE_SILVER = "KRW 103,000";
+export const STAND_PRICE_SILVER = "KRW 106,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
-export const ONE_PORT_PRICE = "KRW 38,000";
-export const DRAIN_TOWER_PRICE_20 = "KRW 8,000";
-export const DRAIN_TOWER_PRICE_40 = "KRW 10,000";
-export const DRAIN_TOWER_PRICE_80 = "KRW 12,000";
-export const MINI_PORT_PRICE = "KRW 63,000";
-export const CASCADE_PRICE_PURPLE = "KRW 207,000";
-export const CASCADE_PRICE_SILVER = "KRW 223,000";
+export const ONE_PORT_PRICE = "KRW 36,000";
+export const DRAIN_TOWER_PRICE_20 = "KRW 3,000";
+export const DRAIN_TOWER_PRICE_40 = "KRW 5,000";
+export const DRAIN_TOWER_PRICE_80 = "KRW 9,000";
+export const MINI_PORT_PRICE = "KRW 56,000";
+export const CASCADE_PRICE_PURPLE = "KRW 197,000";
+export const CASCADE_PRICE_SILVER = "KRW 236,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
@@ -433,32 +433,32 @@ export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "drain-tower-80",
     category: "drain-tower",
-    name: "Drain Tower 80",
-    nameKr: "드레인 타워 80",
+    name: "Drain Tower 80, VOID",
+    nameKr: "드레인 타워 80, VOID",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_80,
     emptySrc: "/products/drain-tower-80.png",
-    emptyAlt: "TAEGYE Drain Tower 80",
+    emptyAlt: "TAEGYE Drain Tower 80, VOID",
   },
   {
     id: "drain-tower-40",
     category: "drain-tower",
-    name: "Drain Tower 40",
-    nameKr: "드레인 타워 40",
+    name: "Drain Tower 40, VOID",
+    nameKr: "드레인 타워 40, VOID",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_40,
     emptySrc: "/products/drain-tower-40.png?v=2",
-    emptyAlt: "TAEGYE Drain Tower 40",
+    emptyAlt: "TAEGYE Drain Tower 40, VOID",
   },
   {
     id: "drain-tower-20",
     category: "drain-tower",
-    name: "Drain Tower 20",
-    nameKr: "드레인 타워 20",
+    name: "Drain Tower 20, VOID",
+    nameKr: "드레인 타워 20, VOID",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_20,
     emptySrc: "/products/drain-tower-20.png?v=2",
-    emptyAlt: "TAEGYE Drain Tower 20",
+    emptyAlt: "TAEGYE Drain Tower 20, VOID",
   },
 ];
 
