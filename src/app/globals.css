@@ -3329,7 +3329,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   align-items: center;
   min-height: 0;
   margin: 0;
-  padding: 32px 16px 14px;
+  padding: 76px 16px 28px;
   border: 0;
   box-shadow: none;
   overflow: hidden;
@@ -3354,7 +3354,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 
 .site-promo-photo {
   display: block;
-  width: 55.04%; /* 86% × 0.8 × 0.8 */
+  width: 44.032%; /* 86% × 0.8 × 0.8 × 0.8 */
   height: auto;
   aspect-ratio: 1;
   margin: 0 0 12px;
@@ -3463,11 +3463,11 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   }
 
   .site-promo-visual {
-    padding: 30px 12px 12px;
+    padding: 76px 12px 28px;
   }
 
   .site-promo-photo {
-    width: 56.32%; /* 88% × 0.8 × 0.8 */
+    width: 45.056%; /* 88% × 0.8 × 0.8 × 0.8 */
   }
 }
 

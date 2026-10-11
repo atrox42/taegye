@@ -1788,6 +1788,8 @@ async function runBrowser() {
         const cr = card ? card.getBoundingClientRect() : null;
         const product = document.querySelector(".site-promo-product");
         const photo = document.querySelector(".site-promo-photo");
+        const kickerEl = document.querySelector(".site-promo-kicker");
+        const stripEl = document.querySelector(".site-promo-strip");
         const leak = `${document.body.innerText}\n${document.title}`;
         return {
           strip: Boolean(document.querySelector(".site-promo-strip")),
@@ -1811,6 +1813,14 @@ async function runBrowser() {
           photoSrc: photo?.getAttribute("src") || "",
           photoW: photo ? +photo.getBoundingClientRect().width.toFixed(1) : 0,
           photoH: photo ? +photo.getBoundingClientRect().height.toFixed(1) : 0,
+          gapXtoPhoto:
+            xr && photo
+              ? +(photo.getBoundingClientRect().top - xr.bottom).toFixed(1)
+              : 0,
+          gapKickerToStrip:
+            kickerEl && stripEl
+              ? +(stripEl.getBoundingClientRect().top - kickerEl.getBoundingClientRect().bottom).toFixed(1)
+              : 0,
           hasLogo: Boolean(document.querySelector(".site-promo-logo")),
           ruleInk: sampleCanvas(".site-promo-strip-rule .canvas-white-fill", 0.5, 0.5),
           dividerInk: (() => {
@@ -1830,17 +1840,25 @@ async function runBrowser() {
       assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
       assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
-      assert.equal(report.productName, "Starship 157", `${label}: product name`);
+      assert.equal(report.productName, "Wall 212", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
-      assert.equal(report.productHref, "/new/one-port-purple", `${label}: product href`);
-      assert.equal(report.photoSrc, "/products/one-port-purple.png", `${label}: product photo`);
+      assert.equal(report.productHref, "/new/silver", `${label}: product href`);
+      assert.equal(report.photoSrc, "/products/stand-silver-moss.webp", `${label}: product photo`);
       assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
       const gutter = report.vw <= 400 ? 24 : 32;
-      const expectedPhoto = +((report.cardW - gutter) * (report.vw <= 400 ? 0.88 : 0.86) * 0.8 * 0.8).toFixed(1);
+      const expectedPhoto = +((report.cardW - gutter) * (report.vw <= 400 ? 0.88 : 0.86) * 0.8 * 0.8 * 0.8).toFixed(1);
       assert.ok(
         Math.abs(report.photoW - expectedPhoto) <= 2 && Math.abs(report.photoH - report.photoW) <= 2,
         `${label}: photo ${report.photoW}×${report.photoH} vs ${expectedPhoto}`,
+      );
+      assert.ok(
+        report.gapXtoPhoto >= 24 && report.gapXtoPhoto <= 36,
+        `${label}: X→photo gap ${report.gapXtoPhoto}`,
+      );
+      assert.ok(
+        report.gapKickerToStrip >= 24 && report.gapKickerToStrip <= 36,
+        `${label}: kicker→strip gap ${report.gapKickerToStrip}`,
       );
       const gray = (ink, name) => {
         assert.ok(ink, `${label}: ${name} line empty`);
@@ -2058,10 +2076,10 @@ async function runBrowser() {
         closed: window.sessionStorage.getItem("taegye-promo-closed"),
         open: Boolean(document.querySelector(".site-promo-card")),
       }));
-      assert.equal(dest.path, "/new/one-port-purple", `product link path ${dest.path}`);
+      assert.equal(dest.path, "/new/silver", `product link path ${dest.path}`);
       assert.equal(dest.closed, "1", "product link should mark the session");
       assert.equal(dest.open, false, "product link should close the promo");
-      console.log("ok  promo product link goes to Starship ODD");
+      console.log("ok  promo product link goes to Wall 212 HOLLOW");
     });
 
     async function withSplash(browser, viewport, fn) {
