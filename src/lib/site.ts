@@ -52,10 +52,10 @@ export const HOME_NEW_IN = [
 /** Home opening promo — set `enabled: false` to hide without deleting copy. */
 export const HOME_PROMO = {
   enabled: true,
-  productName: "Starship 157",
+  productName: "Wall 212",
   productKicker: "Now Available",
-  productSrc: "/products/one-port-purple.png",
-  href: "/new/one-port-purple",
+  productSrc: "/products/stand-silver-moss.webp",
+  href: "/new/silver",
   hideTodayLabel: "오늘 하루 보지 않기",
   closeLabel: "닫기",
 } as const;

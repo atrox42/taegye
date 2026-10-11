@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /** X drawn as canvas pixels so Force Dark cannot invert the close control. */
-export function CanvasX({ size = 18, color = "#555555" }: { size?: number; color?: string }) {
+export function CanvasX({ size = 18, color = "#999999" }: { size?: number; color?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,8 +20,8 @@ export function CanvasX({ size = 18, color = "#555555" }: { size?: number; color
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, size, size);
       ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.lineCap = "square";
+      ctx.lineWidth = 1;
+      ctx.lineCap = "butt";
       ctx.globalAlpha = 1;
       const pad = 3;
       ctx.beginPath();
