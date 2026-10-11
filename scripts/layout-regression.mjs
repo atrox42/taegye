@@ -1681,7 +1681,8 @@ async function runBrowser() {
       assert.equal(report.photoSrc, "/products/cascade-silver.png", `${label}: product photo`);
       assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
-      const expectedPhoto = +(report.cardW * (report.vw <= 400 ? 0.88 : 0.86) * 0.8).toFixed(1);
+      const gutter = report.vw <= 400 ? 24 : 32;
+      const expectedPhoto = +((report.cardW - gutter) * (report.vw <= 400 ? 0.88 : 0.86) * 0.8).toFixed(1);
       assert.ok(
         Math.abs(report.photoW - expectedPhoto) <= 2 && Math.abs(report.photoH - report.photoW) <= 2,
         `${label}: photo ${report.photoW}×${report.photoH} vs ${expectedPhoto}`,
