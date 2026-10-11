@@ -1682,14 +1682,14 @@ async function runBrowser() {
       assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
       assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
-      assert.equal(report.productName, "Cascade", `${label}: product name`);
+      assert.equal(report.productName, "Dot Port", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
-      assert.equal(report.productHref, "/new/cascade-silver", `${label}: product href`);
-      assert.equal(report.photoSrc, "/products/cascade-silver.png", `${label}: product photo`);
+      assert.equal(report.productHref, "/new/one-port-purple", `${label}: product href`);
+      assert.equal(report.photoSrc, "/products/one-port-purple.png", `${label}: product photo`);
       assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
       const gutter = report.vw <= 400 ? 24 : 32;
-      const expectedPhoto = +((report.cardW - gutter) * (report.vw <= 400 ? 0.88 : 0.86) * 0.8).toFixed(1);
+      const expectedPhoto = +((report.cardW - gutter) * (report.vw <= 400 ? 0.88 : 0.86) * 0.8 * 0.8).toFixed(1);
       assert.ok(
         Math.abs(report.photoW - expectedPhoto) <= 2 && Math.abs(report.photoH - report.photoW) <= 2,
         `${label}: photo ${report.photoW}×${report.photoH} vs ${expectedPhoto}`,
@@ -1904,10 +1904,10 @@ async function runBrowser() {
         closed: window.sessionStorage.getItem("taegye-promo-closed"),
         open: Boolean(document.querySelector(".site-promo-card")),
       }));
-      assert.equal(dest.path, "/new/cascade-silver", `product link path ${dest.path}`);
+      assert.equal(dest.path, "/new/one-port-purple", `product link path ${dest.path}`);
       assert.equal(dest.closed, "1", "product link should mark the session");
       assert.equal(dest.open, false, "product link should close the promo");
-      console.log("ok  promo product link goes to Cascade Silver");
+      console.log("ok  promo product link goes to Dot Port Purple");
     });
 
     async function withSplash(browser, viewport, fn) {
