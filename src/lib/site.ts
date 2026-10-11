@@ -176,15 +176,15 @@ export type NewProduct = {
 /** Matches the site mobile / desktop split used by nav, PDP gallery, and float logo. */
 export const PRODUCT_MOBILE_MEDIA = "(max-width: 767px)";
 
-export const STAND_PRICE_SILVER = "KRW 103,000";
+export const STAND_PRICE_SILVER = "KRW 106,000";
 export const STAND_PRICE_COLOR = "KRW 86,000";
-export const ONE_PORT_PRICE = "KRW 38,000";
-export const DRAIN_TOWER_PRICE_20 = "KRW 8,000";
-export const DRAIN_TOWER_PRICE_40 = "KRW 10,000";
-export const DRAIN_TOWER_PRICE_80 = "KRW 12,000";
-export const MINI_PORT_PRICE = "KRW 63,000";
-export const CASCADE_PRICE_PURPLE = "KRW 207,000";
-export const CASCADE_PRICE_SILVER = "KRW 223,000";
+export const ONE_PORT_PRICE = "KRW 36,000";
+export const DRAIN_TOWER_PRICE_20 = "KRW 3,000";
+export const DRAIN_TOWER_PRICE_40 = "KRW 5,000";
+export const DRAIN_TOWER_PRICE_80 = "KRW 9,000";
+export const MINI_PORT_PRICE = "KRW 56,000";
+export const CASCADE_PRICE_PURPLE = "KRW 197,000";
+export const CASCADE_PRICE_SILVER = "KRW 236,000";
 
 export const STAND_FEATURES = [
   "A modular vessel for a moss object",
