@@ -152,7 +152,7 @@ export function HomePromo() {
             aria-label="Close"
             onClick={() => hide(false)}
           >
-            <CanvasX color="#555555" />
+            <CanvasX color="#999999" />
           </button>
           <a href={HOME_PROMO.href} className="site-promo-product" onClick={() => hide(false)}>
             {/* eslint-disable-next-line @next/next/no-img-element -- transparent product PNG must stay raster */}

@@ -1882,8 +1882,14 @@ async function runBrowser() {
         `${label}: name must stay near-black, got ${report.name}`,
       );
       assert.ok(
-        report.xInk && report.xInk[0] <= 100 && report.xInk[1] <= 100 && report.xInk[2] <= 100,
-        `${label}: X must stay dark gray, got ${report.xInk}`,
+        report.xInk &&
+          report.xInk[0] >= 140 &&
+          report.xInk[0] <= 180 &&
+          report.xInk[1] >= 140 &&
+          report.xInk[1] <= 180 &&
+          report.xInk[2] >= 140 &&
+          report.xInk[2] <= 180,
+        `${label}: X must stay mid gray (#999–#AAA), got ${report.xInk}`,
       );
       assert.ok(
         report.stripInk[0] <= 30 && report.stripInk[1] <= 30 && report.stripInk[2] <= 30,
