@@ -212,7 +212,7 @@ async function runBrowser() {
       await new Promise((resolve) => setTimeout(resolve, 250));
       const mid = await page.evaluate(() => {
         const mark = document.querySelector(".site-float-logo");
-        const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
+        const cta = document.querySelector(".home-new-in-copy")?.getBoundingClientRect();
         const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
         const r = mark?.getBoundingClientRect();
         const s = mark ? getComputedStyle(mark) : null;
@@ -237,7 +237,7 @@ async function runBrowser() {
       await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
       await new Promise((resolve) => setTimeout(resolve, 250));
       const bottom = await page.evaluate(() => {
-        const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
+        const cta = document.querySelector(".home-new-in-copy")?.getBoundingClientRect();
         const footer = document.querySelector(".site-footer")?.getBoundingClientRect();
         const nav = document.querySelector(".site-footer-nav")?.getBoundingClientRect();
         const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
@@ -303,7 +303,7 @@ async function runBrowser() {
       await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
       await new Promise((resolve) => setTimeout(resolve, 250));
       const bottom360 = await page.evaluate(() => {
-        const cta = document.querySelector(".home-new-in-cta")?.getBoundingClientRect();
+        const cta = document.querySelector(".home-new-in-copy")?.getBoundingClientRect();
         const copy = document.querySelector(".site-footer-copy-line")?.getBoundingClientRect();
         const mark = document.querySelector(".site-float-logo")?.getBoundingClientRect();
         const h = window.innerHeight;
@@ -322,6 +322,74 @@ async function runBrowser() {
         `360 logo bottom offset must stay 92px, got ${bottom360.logoFromBottom}`,
       );
       console.log("ok  mobile 360×780 bottom: button → logo → copyright");
+    });
+
+    await withPage(browser, MOBILE, "/", async (page) => {
+      const report = await page.evaluate(() => {
+        const track = document.querySelector(".home-new-in-track");
+        const title = document.querySelector(".home-new-in-title");
+        const rule = document.querySelector(".home-new-in-rule");
+        const ts = title ? getComputedStyle(title) : null;
+        const tr = track ? getComputedStyle(track) : null;
+        const dots = [...document.querySelectorAll(".home-new-in-slide:first-child .home-new-in-dot")].map((node) => {
+          const r = node.getBoundingClientRect();
+          const s = getComputedStyle(node);
+          return {
+            w: +r.width.toFixed(1),
+            h: +r.height.toFixed(1),
+            radius: s.borderRadius,
+            src: node.querySelector("img")?.getAttribute("src") || "",
+          };
+        });
+        const leak = `${document.querySelector(".home-new-in")?.innerText || ""}\n${document.title}`;
+        return {
+          title: title?.textContent?.trim() || "",
+          titleFs: ts?.fontSize || null,
+          titleFw: ts?.fontWeight || null,
+          ruleH: rule ? +rule.getBoundingClientRect().height.toFixed(1) : 0,
+          slides: document.querySelectorAll(".home-new-in-slide").length,
+          snap: tr?.scrollSnapType || "",
+          overflowX: tr?.overflowX || "",
+          names: [...document.querySelectorAll(".home-new-in-name")].map((n) => n.textContent.trim()),
+          prices: [...document.querySelectorAll(".home-new-in-price")].map((n) => n.textContent.trim()),
+          hrefs: [...document.querySelectorAll(".home-new-in-card")].map((n) => n.getAttribute("href")),
+          featured: /Featured:|View product|moss on steel/i.test(leak),
+          cta: Boolean(document.querySelector(".home-new-in-cta")),
+          dots,
+        };
+      });
+      assert.equal(report.title, "New In");
+      assert.equal(report.titleFs, "36px", `New In size ${report.titleFs}`);
+      assert.ok(Number(report.titleFw) >= 700, `New In weight ${report.titleFw}`);
+      assert.ok(report.ruleH >= 1 && report.ruleH <= 2, `New In rule ${report.ruleH}`);
+      assert.equal(report.slides, 2);
+      assert.match(report.snap, /mandatory/);
+      assert.equal(report.overflowX, "auto");
+      assert.deepEqual(report.names, ["Wall 212, HOLLOW", "Wall 212, ODD"]);
+      assert.deepEqual(report.prices, ["KRW 106,000", "KRW 86,000"]);
+      assert.deepEqual(report.hrefs, ["/new/silver", "/new/purple"]);
+      assert.equal(report.featured, false, "old Featured / View product still visible");
+      assert.equal(report.cta, false);
+      assert.equal(report.dots.length, 5, `color dots ${report.dots.length}`);
+      for (const dot of report.dots) {
+        assert.ok(dot.w >= 8 && dot.w <= 10 && Math.abs(dot.w - dot.h) <= 0.5, `dot box ${dot.w}×${dot.h}`);
+        assert.equal(dot.radius, "50%", `dot radius ${dot.radius}`);
+        assert.match(dot.src, /^\/swatches\/.+\.png$/);
+      }
+      assert.deepEqual(
+        report.dots.map((dot) => dot.src),
+        ["/swatches/silver.png", "/swatches/purple.png", "/swatches/black.png", "/swatches/green.png", "/swatches/white.png"],
+      );
+      const before = await page.evaluate(() => document.querySelector(".home-new-in-track")?.scrollLeft || 0);
+      await page.evaluate(() => {
+        const track = document.querySelector(".home-new-in-track");
+        const slide = document.querySelector(".home-new-in-slide");
+        if (track && slide) track.scrollBy({ left: slide.getBoundingClientRect().width, behavior: "instant" });
+      });
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      const after = await page.evaluate(() => document.querySelector(".home-new-in-track")?.scrollLeft || 0);
+      assert.ok(after > before + 40, `412 swipe scrollLeft ${before} → ${after}`);
+      console.log("ok  mobile 412 New In: big title, circular swatch dots, swipe snaps");
     });
 
     await withPage(browser, MOBILE, "/new", async (page) => {
@@ -1653,9 +1721,15 @@ async function runBrowser() {
       console.log("ok  desktop /new: snapped canvas grid lines, no CSS gap");
     });
 
-    await withPage(browser, DESKTOP, "/?scales=1.25,1,0.4&layout=0", (page) =>
-      assertDesktopScatter(page, "desktop 1440×900"),
-    );
+    await withPage(browser, DESKTOP, "/?scales=1.25,1,0.4&layout=0", async (page) => {
+      await assertDesktopScatter(page, "desktop 1440×900");
+      const hidden = await page.evaluate(() => {
+        const el = document.querySelector(".home-new-in");
+        return el ? getComputedStyle(el).display : "missing";
+      });
+      assert.equal(hidden, "none", `1440 New In must stay hidden, got ${hidden}`);
+      console.log("ok  desktop 1440: New In stays hidden");
+    });
     await withPage(browser, DESKTOP_FHD, "/?scales=1.25,1,0.4&layout=0", (page) =>
       assertDesktopScatter(page, "desktop 1920×1080"),
     );
