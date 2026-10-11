@@ -68,7 +68,7 @@ export function CanvasText({
       const minH = parseFloat(style.minHeight);
       const cssW =
         fit === "fill"
-          ? Math.max(textW, wrap.clientWidth || parent?.clientWidth || textW)
+          ? Math.max(1, wrap.clientWidth || parent?.clientWidth || textW)
           : textW;
       const cssH =
         fit === "fill"

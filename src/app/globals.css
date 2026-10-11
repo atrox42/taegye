@@ -2343,7 +2343,7 @@ select::-ms-expand {
 .site-menu > :not(.canvas-white-fill),
 .site-nav > :not(.canvas-white-fill),
 .site-promo-card > :not(.canvas-white-fill),
-.site-promo-strip > :not(.canvas-white-fill),
+.site-promo-strip > :not(.canvas-white-fill):not(.site-promo-strip-rule):not(.site-promo-strip-divider),
 .site-splash > :not(.canvas-white-fill) {
   position: relative;
   z-index: 1;
@@ -3267,8 +3267,7 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
 .site-promo-strip {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   align-items: stretch;
   width: 100%;
   min-height: 48px;
@@ -3309,9 +3308,12 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  flex: 1 1 50%;
+  width: 50%;
+  min-width: 0;
   min-height: 48px;
-  padding: 0.6rem 0.5rem;
+  padding: 0.6rem 0.4rem;
+  overflow: hidden;
   border: 0;
   background-color: transparent !important;
   background-image: none !important;
@@ -3323,6 +3325,11 @@ html:not([data-promo="on"]) .site-promo-dim-bitmap {
   white-space: nowrap;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
+}
+
+.site-promo-strip-btn .site-promo-canvas-text {
+  width: 100%;
+  max-width: 100%;
 }
 
 .site-promo-strip-close {

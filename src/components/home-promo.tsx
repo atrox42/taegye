@@ -197,7 +197,7 @@ export function HomePromo() {
             className="site-promo-strip-btn"
             onClick={() => hide(true)}
           >
-            <CanvasText text={HOME_PROMO.hideTodayLabel} fill="#111111" />
+            <CanvasText text={HOME_PROMO.hideTodayLabel} fill="#111111" fit="fill" />
           </button>
           <span className="site-promo-strip-divider" aria-hidden>
             <CanvasColorPlate color="#111111" />
@@ -207,7 +207,7 @@ export function HomePromo() {
             className="site-promo-strip-btn site-promo-strip-close"
             onClick={() => hide(false)}
           >
-            <CanvasText text={HOME_PROMO.closeLabel} fill="#111111" />
+            <CanvasText text={HOME_PROMO.closeLabel} fill="#111111" fit="fill" />
           </button>
         </div>
       </div>
