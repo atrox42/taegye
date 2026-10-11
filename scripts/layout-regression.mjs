@@ -436,7 +436,7 @@ async function runBrowser() {
       const names = await page.$$eval(".product-caption p.site-type:not(.product-price)", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(names, ["Starship, ODD", "Starship, VOID", "Starship, MIST"]);
+      assert.deepEqual(names, ["Starship 157, ODD", "Starship 157, VOID", "Starship 157, MIST"]);
       console.log("ok  mobile /new?cat=one-port: KRW 38,000, Starship names");
     });
 
@@ -444,9 +444,9 @@ async function runBrowser() {
       const price = await page.$eval(".pdp-price", (node) => (node.textContent || "").trim());
       assert.equal(price, "KRW 38,000", `one-port PDP ${price}`);
       const name = await page.$eval(".pdp-name", (node) => (node.textContent || "").trim());
-      assert.equal(name, "Starship, ODD");
+      assert.equal(name, "Starship 157, ODD");
       const title = await page.title();
-      assert.match(title, /Starship, ODD/);
+      assert.match(title, /Starship 157, ODD/);
       console.log("ok  mobile one-port PDP: KRW 38,000, Starship title");
     });
 
@@ -494,7 +494,7 @@ async function runBrowser() {
       assert.equal(report.length, 3, `cascade cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Cascade, HOLLOW", "Cascade, ODD", "Cascade, VOID"],
+        ["Cascade 600, HOLLOW", "Cascade 600, ODD", "Cascade 600, VOID"],
       );
       const hrefs = ["/new/cascade-silver", "/new/cascade-purple", "/new/cascade-black"];
       const prices = ["KRW 223,000", "KRW 207,000", "KRW 207,000"];
@@ -532,7 +532,7 @@ async function runBrowser() {
       assert.equal(report.length, 3, `mini-port cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["One Port, ODD", "One Port, VOID", "One Port, MIST"],
+        ["One Port 141, ODD", "One Port 141, VOID", "One Port 141, MIST"],
       );
       const hrefs = ["/new/mini-port-purple", "/new/mini-port-black", "/new/mini-port-white"];
       report.forEach((card, index) => {
@@ -677,15 +677,15 @@ async function runBrowser() {
       "Wall 212, VOID",
       "Wall 212, BUG",
       "Wall 212, MIST",
-      "One Port, ODD",
-      "One Port, VOID",
-      "One Port, MIST",
-      "Starship, ODD",
-      "Starship, VOID",
-      "Starship, MIST",
-      "Cascade, HOLLOW",
-      "Cascade, ODD",
-      "Cascade, VOID",
+      "One Port 141, ODD",
+      "One Port 141, VOID",
+      "One Port 141, MIST",
+      "Starship 157, ODD",
+      "Starship 157, VOID",
+      "Starship 157, MIST",
+      "Cascade 600, HOLLOW",
+      "Cascade 600, ODD",
+      "Cascade 600, VOID",
       "Drain Tower 80",
       "Drain Tower 40",
       "Drain Tower 20",
@@ -696,6 +696,15 @@ async function runBrowser() {
         nodes.map((node) => (node.textContent || "").trim()),
       );
       assert.deepEqual(names, ALL_DEFAULT_NAMES, `All order ${names}`);
+      const wraps412 = await page.evaluate(() =>
+        [...document.querySelectorAll(".product-caption p.site-type:not(.product-price)")].flatMap((node) => {
+          const r = node.getBoundingClientRect();
+          const s = getComputedStyle(node);
+          const wrap = r.height > parseFloat(s.fontSize) * 1.4;
+          return wrap ? [node.textContent.trim()] : [];
+        }),
+      );
+      assert.deepEqual(wraps412, [], `412 caption wrap ${wraps412}`);
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
       assert.equal(textures, 0, "All tab must not insert a moss tile");
@@ -715,12 +724,25 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
-          ["One Port, ODD", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
-          ["One Port, VOID", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
-          ["One Port, MIST", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
+          ["One Port 141, ODD", "KRW 63,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
+          ["One Port 141, VOID", "KRW 63,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
+          ["One Port 141, MIST", "KRW 63,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
         ],
       );
       console.log("ok  mobile /new All: Wall 212 → One Port → Starship → Cascade → Drain Tower, no moss tile");
+    });
+
+    await withPage(browser, MOBILE_320, "/new?moss=0", async (page) => {
+      const wraps320 = await page.evaluate(() =>
+        [...document.querySelectorAll(".product-caption p.site-type:not(.product-price)")].flatMap((node) => {
+          const r = node.getBoundingClientRect();
+          const s = getComputedStyle(node);
+          const wrap = r.height > parseFloat(s.fontSize) * 1.4;
+          return wrap ? [`${node.textContent.trim()} h=${r.height.toFixed(1)}`] : [];
+        }),
+      );
+      assert.deepEqual(wraps320, [], `320 caption wrap ${wraps320}`);
+      console.log("ok  mobile 320 /new All: captions stay one line");
     });
 
     await withPage(browser, DESKTOP, "/new?moss=0", async (page) => {
@@ -732,15 +754,15 @@ async function runBrowser() {
     });
 
     const listed = [
-      ["cascade-silver", "Cascade, HOLLOW", "KRW 223,000", "/products/cascade-silver.png"],
-      ["cascade-purple", "Cascade, ODD", "KRW 207,000", "/products/cascade-purple.png"],
-      ["cascade-black", "Cascade, VOID", "KRW 207,000", "/products/cascade-black.png"],
+      ["cascade-silver", "Cascade 600, HOLLOW", "KRW 223,000", "/products/cascade-silver.png"],
+      ["cascade-purple", "Cascade 600, ODD", "KRW 207,000", "/products/cascade-purple.png"],
+      ["cascade-black", "Cascade 600, VOID", "KRW 207,000", "/products/cascade-black.png"],
       ["drain-tower-20", "Drain Tower 20", "KRW 8,000", "/products/drain-tower-20.png?v=2"],
       ["drain-tower-40", "Drain Tower 40", "KRW 10,000", "/products/drain-tower-40.png?v=2"],
       ["drain-tower-80", "Drain Tower 80", "KRW 12,000", "/products/drain-tower-80.png"],
-      ["mini-port-purple", "One Port, ODD", "KRW 63,000", "/products/mini-port-purple.png?v=2"],
-      ["mini-port-black", "One Port, VOID", "KRW 63,000", "/products/mini-port-black.png?v=2"],
-      ["mini-port-white", "One Port, MIST", "KRW 63,000", "/products/mini-port-white.png?v=2"],
+      ["mini-port-purple", "One Port 141, ODD", "KRW 63,000", "/products/mini-port-purple.png?v=2"],
+      ["mini-port-black", "One Port 141, VOID", "KRW 63,000", "/products/mini-port-black.png?v=2"],
+      ["mini-port-white", "One Port 141, MIST", "KRW 63,000", "/products/mini-port-white.png?v=2"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
@@ -828,15 +850,15 @@ async function runBrowser() {
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
       }));
-      assert.deepEqual(before, { name: "Cascade, HOLLOW", price: "KRW 223,000" });
+      assert.deepEqual(before, { name: "Cascade 600, HOLLOW", price: "KRW 223,000" });
       await page.click('.pdp-swatch[href="/new/cascade-purple"]');
-      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade, ODD");
+      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade 600, ODD");
       const after = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
         current: document.querySelector(".pdp-swatch.is-current")?.getAttribute("title") || "",
       }));
-      assert.deepEqual(after, { name: "Cascade, ODD", price: "KRW 207,000", current: "ODD" });
+      assert.deepEqual(after, { name: "Cascade 600, ODD", price: "KRW 207,000", current: "ODD" });
       console.log("ok  cascade swatch click: HOLLOW → ODD, price follows");
     });
 
@@ -1003,15 +1025,15 @@ async function runBrowser() {
       const byName = await sortNames();
       const named = [...byName].sort((a, b) => a.localeCompare(b));
       assert.deepEqual(byName, named, `Name sort ${byName}`);
-      assert.ok(byName.includes("One Port, ODD") && byName.includes("One Port, VOID") && byName.includes("One Port, MIST"));
+      assert.ok(byName.includes("One Port 141, ODD") && byName.includes("One Port 141, VOID") && byName.includes("One Port 141, MIST"));
       await clickSort("Price: High to Low");
       const high = await sortNames();
-      assert.equal(high[0], "Cascade, HOLLOW");
+      assert.equal(high[0], "Cascade 600, HOLLOW");
       assert.equal(high[high.length - 1], "Drain Tower 20");
       await clickSort("Price: Low to High");
       const low = await sortNames();
       assert.equal(low[0], "Drain Tower 20");
-      assert.equal(low[low.length - 1], "Cascade, HOLLOW");
+      assert.equal(low[low.length - 1], "Cascade 600, HOLLOW");
       console.log("ok  mobile /new sort: Name, High to Low, Low to High");
     });
 
@@ -1734,7 +1756,7 @@ async function runBrowser() {
       assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
       assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
       assert.equal(report.closeLabel, "닫기", `${label}: close label`);
-      assert.equal(report.productName, "Starship", `${label}: product name`);
+      assert.equal(report.productName, "Starship 157", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
       assert.equal(report.productHref, "/new/one-port-purple", `${label}: product href`);
       assert.equal(report.photoSrc, "/products/one-port-purple.png", `${label}: product photo`);
