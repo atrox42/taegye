@@ -4,11 +4,10 @@ import { usePathname } from "next/navigation";
 import { useLayoutEffect, useId, useState } from "react";
 
 import { CanvasColorPlate, CanvasWhitePlate } from "@/components/canvas-white-plate";
-import { CanvasLogo } from "@/components/canvas-logo";
 import { CanvasText } from "@/components/canvas-text";
 import { CanvasX } from "@/components/canvas-x";
 import { DIM_BLACK_PNG_SRC } from "@/lib/force-white";
-import { HOME_PROMO, LOGO_SRC, SITE_NAME } from "@/lib/site";
+import { HOME_PROMO } from "@/lib/site";
 
 export const PROMO_HIDE_KEY = "taegye-promo-hide-until";
 export const PROMO_SESSION_KEY = "taegye-promo-closed";
@@ -155,16 +154,6 @@ export function HomePromo() {
           >
             <CanvasX color="#555555" />
           </button>
-          <div className="site-promo-logo">
-            <CanvasLogo
-              src={LOGO_SRC}
-              alt={SITE_NAME}
-              width={80}
-              height={28}
-              align="center"
-              className="site-promo-logo-mark"
-            />
-          </div>
           <a href={HOME_PROMO.href} className="site-promo-product" onClick={() => hide(false)}>
             {/* eslint-disable-next-line @next/next/no-img-element -- transparent product PNG must stay raster */}
             <img
@@ -190,7 +179,7 @@ export function HomePromo() {
         <div className="site-promo-strip">
           <CanvasWhitePlate />
           <span className="site-promo-strip-rule" aria-hidden>
-            <CanvasColorPlate color="#111111" />
+            <CanvasColorPlate color="#E5E5E5" />
           </span>
           <button
             type="button"
@@ -200,7 +189,7 @@ export function HomePromo() {
             <CanvasText text={HOME_PROMO.hideTodayLabel} fill="#111111" fit="fill" />
           </button>
           <span className="site-promo-strip-divider" aria-hidden>
-            <CanvasColorPlate color="#111111" />
+            <CanvasColorPlate color="#E5E5E5" />
           </span>
           <button
             type="button"
