@@ -3,10 +3,13 @@ import type { Metadata } from "next";
 import { LEGAL, SITE_NAME } from "@/lib/site";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
+import { LEGAL_DESCRIPTION, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Legal",
-};
+  description: LEGAL_DESCRIPTION,
+  path: "/legal",
+});
 
 const ROWS = [
   { label: "상호", value: `${LEGAL.company} (${LEGAL.companyKr})` },

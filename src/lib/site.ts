@@ -2,6 +2,9 @@ export const SITE_NAME = "TAEGYE";
 export const SITE_NAME_KR = "태계";
 export const SITE_HANDLE = "taegye";
 
+/** Public origin for canonical URLs, JSON-LD, sitemap, and OG. Switch to https://taegye.kr later. */
+export const SITE_URL = "https://taegye.vercel.app";
+
 export const SITE_DESCRIPTION =
   "TAEGYE — modular moss terrarium. A quiet landscape, assembled by hand.";
 

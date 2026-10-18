@@ -1,0 +1,41 @@
+TAEGYE (태계)
+https://taegye.vercel.app
+
+EN
+Structures where nature grows.
+TAEGYE is a design brand creating structures where plants and moss can take root and grow.
+We consider where roots settle, how water flows, and where moisture stays, designing the foundations of a small living world.
+Forms found in rock, geological layers, and eroded landscapes inform our structures for planting and growth.
+Through 3D design and digital fabrication, we create vertical walls and dimensional spaces where plants, moss, soil, and stone come together.
+TAEGYE’s products continue to change as nature settles in.
+Plants grow and moss spreads, creating different landscapes within the same structure.
+We create the structures where that change begins.
+
+KR
+자연이 자라는 구조.
+태계는 식물과 이끼가 뿌리내리고 자랄 수 있는 구조를 만드는 디자인 브랜드입니다.
+뿌리가 머무는 자리, 물이 흐르는 길, 습기가 유지되는 공간을 생각하며 작은 세계의 기반을 설계합니다.
+암석과 지층, 침식된 지형에서 발견한 형태를 식재와 성장을 위한 구조로 발전시킵니다.
+3D 디자인과 디지털 제작을 통해 수직의 벽과 입체적인 공간을 만들고, 그 안에 식물과 이끼, 흙과 돌이 자리 잡습니다.
+태계의 제품은 자연이 자리 잡으면서 계속 변화합니다.
+식물이 자라고 이끼가 번지며, 같은 구조 안에서도 서로 다른 풍경이 만들어집니다.
+우리는 그 변화가 시작될 구조를 만듭니다.
+
+Products
+- Wall 212, HOLLOW — KRW 106,000 — https://taegye.vercel.app/new/silver
+- Wall 212, ODD — KRW 86,000 — https://taegye.vercel.app/new/purple
+- Wall 212, VOID — KRW 86,000 — https://taegye.vercel.app/new/black
+- Wall 212, BUG — KRW 86,000 — https://taegye.vercel.app/new/green
+- Wall 212, MIST — KRW 86,000 — https://taegye.vercel.app/new/white
+- One Port 141, ODD — KRW 56,000 — https://taegye.vercel.app/new/mini-port-purple
+- One Port 141, VOID — KRW 56,000 — https://taegye.vercel.app/new/mini-port-black
+- One Port 141, MIST — KRW 56,000 — https://taegye.vercel.app/new/mini-port-white
+- Starship 157, ODD — KRW 36,000 — https://taegye.vercel.app/new/one-port-purple
+- Starship 157, VOID — KRW 36,000 — https://taegye.vercel.app/new/one-port-black
+- Starship 157, MIST — KRW 36,000 — https://taegye.vercel.app/new/one-port-white
+- Cascade 600, HOLLOW — KRW 236,000 — https://taegye.vercel.app/new/cascade-silver
+- Cascade 600, ODD — KRW 197,000 — https://taegye.vercel.app/new/cascade-purple
+- Cascade 600, VOID — KRW 197,000 — https://taegye.vercel.app/new/cascade-black
+- Drain Tower 80, VOID — KRW 9,000 — https://taegye.vercel.app/new/drain-tower-80
+- Drain Tower 40, VOID — KRW 5,000 — https://taegye.vercel.app/new/drain-tower-40
+- Drain Tower 20, VOID — KRW 3,000 — https://taegye.vercel.app/new/drain-tower-20

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { GridLines } from "@/components/grid-lines";
 import { ProductCard } from "@/components/product-card";
@@ -87,9 +86,15 @@ function pickTextureSlot(productCount: number, requested?: number) {
   return minSlot + Math.floor(Math.random() * (maxSlot - minSlot + 1));
 }
 
-export function NewCatalog() {
-  const searchParams = useSearchParams();
-  const raw = searchParams.get("cat");
+export type CatalogQuery = {
+  cat?: string;
+  tile?: string;
+  tex?: string;
+  moss?: string;
+};
+
+export function NewCatalog({ query = {} }: { query?: CatalogQuery }) {
+  const raw = query.cat ?? null;
   const active: NewCategoryId = isNewCategory(raw) ? raw : DEFAULT_NEW_CATEGORY;
   const [placement, setPlacement] = useState<{ slot: number; src: string } | null>(null);
   const [sort, setSort] = useState<CatalogSort>("default");
@@ -122,18 +127,18 @@ export function NewCatalog() {
       setPlacement(null);
       return;
     }
-    const rawTile = searchParams.get("tile");
+    const rawTile = query.tile ?? null;
     const requested = rawTile === null ? Number.NaN : Number(rawTile);
     const slot = pickTextureSlot(products.length, Number.isInteger(requested) ? requested : undefined);
     if (slot === null) {
       setPlacement(null);
       return;
     }
-    const rawTex = searchParams.get("tex");
+    const rawTex = query.tex ?? null;
     const pinned = rawTex
       ? GRID_TEXTURE_SRCS.find((src) => src.endsWith(`/${rawTex}.webp`))
       : undefined;
-    const rawMoss = searchParams.get("moss");
+    const rawMoss = query.moss ?? null;
     const moss = rawMoss === null ? Number.NaN : Number(rawMoss);
     const src =
       pinned ??
@@ -141,7 +146,7 @@ export function NewCatalog() {
         ? GRID_TEXTURE_SRCS[((moss - 1) % GRID_TEXTURE_SRCS.length + GRID_TEXTURE_SRCS.length) % GRID_TEXTURE_SRCS.length]
         : GRID_TEXTURE_SRCS[Math.floor(Math.random() * GRID_TEXTURE_SRCS.length)]);
     setPlacement({ slot, src });
-  }, [active, products.length, searchParams]);
+  }, [active, products.length, query.tile, query.tex, query.moss]);
 
   const entries = useMemo(() => catalogEntries(products, placement), [products, placement]);
   const gridRef = useRef<HTMLUListElement>(null);

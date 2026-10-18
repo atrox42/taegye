@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 
+import { JsonLd } from "@/components/json-ld";
 import { StoreMention } from "@/components/store-mention";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
+import { FAQ_DESCRIPTION, faqJsonLd, pageMetadata } from "@/lib/seo";
 import { FAQ_ITEMS } from "@/lib/site";
 import { forceWhiteStyle } from "@/lib/force-white";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Faq",
-};
+  description: FAQ_DESCRIPTION,
+  path: "/faq",
+});
 
 export default function FaqPage() {
   return (
     <article className="site-page text-page site-gutter" style={forceWhiteStyle}>
+      <JsonLd data={faqJsonLd()} />
       <WhiteSurfaceFill />
       <h1 className="text-page-title site-type">Faq</h1>
       <div className="faq-body text-page-body">

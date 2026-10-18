@@ -3,10 +3,13 @@ import type { Metadata } from "next";
 import { ABOUT } from "@/lib/site";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
+import { ABOUT_DESCRIPTION, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
-};
+  description: ABOUT_DESCRIPTION,
+  path: "/about",
+});
 
 function AboutParagraph({
   lang,
