@@ -3,10 +3,13 @@ import type { Metadata } from "next";
 import { ImageSlot } from "@/components/image-slot";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
+import { ARCHIVE_DESCRIPTION, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Archive",
-};
+  description: ARCHIVE_DESCRIPTION,
+  path: "/archive",
+});
 
 export default function ArchivePage() {
   return (

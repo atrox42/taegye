@@ -9,7 +9,9 @@ import {
   FORCE_PURPLE_IMAGE,
   FORCE_PURPLE_LIGHT_IMAGE,
 } from "@/lib/force-white";
-import { HOME_PROMO, SITE_DESCRIPTION, SITE_NAME, SITE_NAME_KR } from "@/lib/site";
+import { JsonLd } from "@/components/json-ld";
+import { organizationJsonLd } from "@/lib/seo";
+import { HOME_PROMO, SITE_DESCRIPTION, SITE_NAME, SITE_NAME_KR, SITE_URL } from "@/lib/site";
 
 import "./globals.css";
 
@@ -31,9 +33,10 @@ const robotoCondensed = Roboto_Condensed({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE_NAME} (${SITE_NAME_KR})`,
-    template: `%s · ${SITE_NAME}`,
+    template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   icons: {
@@ -99,6 +102,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: `(function(){try{var c=document.getElementById("taegye-page-white");if(!(c&&c.getContext)){c=document.createElement("canvas");c.id="taegye-page-white";c.className="canvas-white-fixed";c.setAttribute("aria-hidden","true")}function paint(){var d=Math.max(1,window.devicePixelRatio||1),vv=window.visualViewport,gutter=Math.max(0,(document.documentElement&&document.documentElement.offsetWidth||0)-window.innerWidth),w=Math.max(1,Math.round(vv&&vv.width||window.innerWidth),window.innerWidth)+gutter+24,h=Math.max(1,Math.round(vv&&vv.height||window.innerHeight),window.innerHeight)+24;c.width=Math.max(1,Math.round(w*d));c.height=Math.max(1,Math.round(h*d));c.style.cssText="position:fixed;top:0;left:0;width:100vw;height:100dvh;min-width:100%;min-height:100%;z-index:0;pointer-events:none;background:transparent;opacity:1;filter:none;mix-blend-mode:normal";var x=c.getContext("2d",{alpha:false});if(!x)return;x.globalAlpha=1;x.fillStyle="#FFFFFF";x.fillRect(0,0,c.width,c.height)}paint();window.addEventListener("resize",paint,{passive:true});if(window.visualViewport)window.visualViewport.addEventListener("resize",paint);function mount(){if(!document.body)return;if(c.parentNode!==document.body)document.body.insertBefore(c,document.body.firstChild)}if(document.body)mount();else document.addEventListener("DOMContentLoaded",mount)}catch(e){}})()`,
           }}
         />
+        <JsonLd data={organizationJsonLd()} />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

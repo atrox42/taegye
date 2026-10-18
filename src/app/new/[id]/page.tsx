@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { JsonLd } from "@/components/json-ld";
 import { ProductDetail } from "@/components/product-detail";
+import { productJsonLd, productMetadata } from "@/lib/seo";
 import { NEW_PRODUCTS, getNewProduct } from "@/lib/site";
 
 type ProductPageProps = {
@@ -16,7 +18,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { id } = await params;
   const product = getNewProduct(id);
   if (!product) return { title: "Product" };
-  return { title: product.name };
+  return productMetadata(product);
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -24,5 +26,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const product = getNewProduct(id);
   if (!product) notFound();
 
-  return <ProductDetail product={product} />;
+  return (
+    <>
+      <JsonLd data={productJsonLd(product)} />
+      <ProductDetail product={product} />
+    </>
+  );
 }

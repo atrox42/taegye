@@ -58,7 +58,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             <ProductPhoto
               src={product.mossSrc}
               mobileSrc={product.mossSrcMobile}
-              alt=""
+              alt={product.mossAlt ?? product.emptyAlt}
               fill
               priority={priority}
             />

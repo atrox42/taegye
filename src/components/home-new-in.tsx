@@ -108,7 +108,7 @@ export function HomeNewIn() {
                         title={label}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                        <img src={`/swatches/${swatch.id}.png`} alt="" />
+                        <img src={`/swatches/${swatch.id}.png`} alt={label} />
                         <span className="sr-only">{label}</span>
                       </span>
                     );

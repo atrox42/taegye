@@ -109,7 +109,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   return (
                     <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>
                       {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                      <img src={`/swatches/${item.id}.png`} alt="" />
+                      <img src={`/swatches/${item.id}.png`} alt={label} />
                       <span className="sr-only">{label}</span>
                     </span>
                   );
@@ -124,7 +124,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     aria-label={label}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                    <img src={`/swatches/${item.id}.png`} alt="" />
+                    <img src={`/swatches/${item.id}.png`} alt={label} />
                   </Link>
                 );
               })}
