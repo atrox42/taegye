@@ -655,8 +655,8 @@ async function runBrowser() {
         ["KRW 9,000", "KRW 5,000", "KRW 3,000"],
       );
       assert.equal(report[0].src, "/products/drain-tower-80.png");
-      assert.equal(report[1].src, "/products/drain-tower-40.png?v=2");
-      assert.equal(report[2].src, "/products/drain-tower-20.png?v=2");
+      assert.equal(report[1].src, "/products/drain-tower-40.png?v=3");
+      assert.equal(report[2].src, "/products/drain-tower-20.png?v=3");
       const boxes = report.map((card) => `${card.imgW}x${card.imgH}`);
       assert.ok(
         report.every((card) => card.imgW > 0 && card.imgW === report[0].imgW && card.imgH === report[0].imgH),
@@ -709,8 +709,8 @@ async function runBrowser() {
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
       const rasters = [
-        ["/products/drain-tower-40.png?v=2", "drain-40"],
-        ["/products/drain-tower-20.png?v=2", "drain-20"],
+        ["/products/drain-tower-40.png?v=3", "drain-40"],
+        ["/products/drain-tower-20.png?v=3", "drain-20"],
       ];
       for (const [src, label] of rasters) {
         const box = await rasterCenter(page, src);
@@ -825,8 +825,8 @@ async function runBrowser() {
       ["cascade-silver", "Cascade 600, HOLLOW", "KRW 236,000", "/products/cascade-silver.png"],
       ["cascade-purple", "Cascade 600, ODD", "KRW 197,000", "/products/cascade-purple.png"],
       ["cascade-black", "Cascade 600, VOID", "KRW 197,000", "/products/cascade-black.png"],
-      ["drain-tower-20", "Drain Tower 20, VOID", "KRW 3,000", "/products/drain-tower-20.png?v=2"],
-      ["drain-tower-40", "Drain Tower 40, VOID", "KRW 5,000", "/products/drain-tower-40.png?v=2"],
+      ["drain-tower-20", "Drain Tower 20, VOID", "KRW 3,000", "/products/drain-tower-20.png?v=3"],
+      ["drain-tower-40", "Drain Tower 40, VOID", "KRW 5,000", "/products/drain-tower-40.png?v=3"],
       ["drain-tower-80", "Drain Tower 80, VOID", "KRW 9,000", "/products/drain-tower-80.png"],
       ["mini-port-purple", "One Port 141, ODD", "KRW 56,000", "/products/mini-port-purple.png?v=2"],
       ["mini-port-black", "One Port 141, VOID", "KRW 56,000", "/products/mini-port-black.png?v=2"],
