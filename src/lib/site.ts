@@ -450,7 +450,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "드레인 타워 40, VOID",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_40,
-    emptySrc: "/products/drain-tower-40.png?v=2",
+    emptySrc: "/products/drain-tower-40.png?v=3",
     emptyAlt: "TAEGYE Drain Tower 40, VOID",
   },
   {
@@ -460,7 +460,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     nameKr: "드레인 타워 20, VOID",
     finish: "Black",
     price: DRAIN_TOWER_PRICE_20,
-    emptySrc: "/products/drain-tower-20.png?v=2",
+    emptySrc: "/products/drain-tower-20.png?v=3",
     emptyAlt: "TAEGYE Drain Tower 20, VOID",
   },
 ];
