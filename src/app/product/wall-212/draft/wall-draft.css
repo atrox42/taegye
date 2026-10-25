@@ -380,6 +380,7 @@
 .wall-draft-accessories {
   margin-top: 2.75rem;
   padding-top: 1.15rem;
+  padding-bottom: 1.25rem;
   border-top: 1px solid var(--wd-ink);
 }
 
@@ -482,6 +483,7 @@
   min-height: 44px;
   padding: 0.65rem var(--site-gutter);
   border-top: 1px solid var(--wd-ink);
+  background: #ffffff;
 }
 
 .wall-draft-bar-inner .site-type {
@@ -547,6 +549,24 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .wall-draft-visual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+  }
+
+  .wall-draft-info {
+    gap: 1.1rem;
+  }
+
+  .wall-draft-stamp {
+    left: 0.45rem;
+    bottom: 0.45rem;
+    padding: 2px 4px 1px;
   }
 }
 
