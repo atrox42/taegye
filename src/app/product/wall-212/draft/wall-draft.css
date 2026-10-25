@@ -459,6 +459,7 @@
   right: 0;
   bottom: var(--float-clearance);
   z-index: 12;
+  background: #ffffff;
   transform: translate3d(0, 110%, 0);
   opacity: 0;
   pointer-events: none;
@@ -583,8 +584,6 @@
   }
 
   .wall-draft-info {
-    position: sticky;
-    top: calc(var(--site-nav-offset) + 1.15rem);
     padding-top: 0.1rem;
   }
 
