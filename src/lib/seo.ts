@@ -106,13 +106,10 @@ export function organizationJsonLd() {
 export function productJsonLd(product: NewProduct) {
   const price = offerPrice(product.price);
   const url = absoluteUrl(`/new/${product.id}`);
-  const specs = (["dimensions", "planting"] as const)
-    .map((key) => {
-      const value = productSpecValue(product, key);
-      if (!value) return null;
-      return { "@type": "PropertyValue", name: PRODUCT_SPEC_LABELS[key], value };
-    })
-    .filter((item): item is { "@type": "PropertyValue"; name: string; value: string } => item !== null);
+  const specs = (["dimensions", "planting"] as const).flatMap((key) => {
+    const value = productSpecValue(product, key);
+    return value ? [{ "@type": "PropertyValue" as const, name: PRODUCT_SPEC_LABELS[key], value }] : [];
+  });
   return {
     "@context": "https://schema.org",
     "@type": "Product",
