@@ -11,6 +11,7 @@ import {
   SITE_URL,
   STORE_URL,
   productNote,
+  productNoteLead,
   type NewProduct,
 } from "@/lib/site";
 
@@ -31,15 +32,7 @@ export function productImagePath(product: NewProduct): string {
 }
 
 export function productDescription(product: NewProduct): string {
-  const note = productNote(product);
-  const parts = [product.name];
-  if (note) {
-    parts.push(note.en.join(" "));
-  } else {
-    parts.push(ABOUT.en[0][1]);
-  }
-  if (product.price) parts.push(product.price);
-  return parts.join(" ");
+  return productNoteLead(product);
 }
 
 export function pageMetadata({
@@ -115,6 +108,7 @@ export function productJsonLd(product: NewProduct) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
+    description: productNote(product),
     brand: { "@type": "Brand", name: SITE_NAME },
     image: absoluteUrl(productImagePath(product)),
     url,

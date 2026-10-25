@@ -86,10 +86,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <div className="pdp-rail pdp-rail-copy">
           <h1 className="site-type pdp-name">{product.name}</h1>
           {note ? (
-            <p lang="en" className="site-type pdp-note" style={forceInkStyle}>
-              {note.en[0]}
-              <br />
-              {note.en[1]}
+            <p lang="ko" className="site-type pdp-note" style={forceInkStyle}>
+              {note}
             </p>
           ) : null}
         </div>

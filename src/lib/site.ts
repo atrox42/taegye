@@ -40,22 +40,37 @@ export const HERO_CLIPS = [
   { id: "c", src: "/hero-loop-c.mp4", poster: "/hero-poster-c.jpg" },
 ] as const;
 
+/** Finish code → parenthetical color. No space before `(`. */
+export const FINISH_TONE = {
+  HOLLOW: "Translucent",
+  ODD: "Indigo Purple",
+  VOID: "Black",
+  BUG: "Bamboo Green",
+  MIST: "White",
+} as const;
+
+export type FinishCode = keyof typeof FINISH_TONE;
+
+export function finishLabel(code: FinishCode) {
+  return `${code}(${FINISH_TONE[code]})`;
+}
+
 /** Home “New In” — first item is the mobile feature; desktop shows both. */
 export const HOME_NEW_IN = [
   {
     id: "silver",
-    caption: "Wall 212, HOLLOW — moss on steel.",
+    caption: `Wall 212, ${finishLabel("HOLLOW")} — moss on steel.`,
   },
   {
     id: "purple",
-    caption: "Wall 212, ODD — moss on steel.",
+    caption: `Wall 212, ${finishLabel("ODD")} — moss on steel.`,
   },
 ] as const;
 
 /** Home opening promo — set `enabled: false` to hide without deleting copy. */
 export const HOME_PROMO = {
   enabled: true,
-  productName: "Wall 212, HOLLOW",
+  productName: `Wall 212, ${finishLabel("HOLLOW")}`,
   productKicker: "Now Available",
   productSrc: "/products/stand-silver-moss.webp",
   href: "/new/silver",
@@ -215,31 +230,24 @@ export const STAND_ACCORDION = [
   },
 ] as const;
 
-export const STAND_NOTE = {
-  en: [
-    "A modular vessel for a moss object.",
-    "Keep in indirect light. Water sparingly.",
-  ],
-  kr: [
-    "이끼를 담는 모듈러 스탠드.",
-    "직사광선을 피하고, 물은 적게 주세요.",
-  ],
-} as const;
-
-export const ONE_PORT_NOTE = {
-  en: [
-    "A glass vessel for a living plant.",
-    "Keep in indirect light. Water sparingly.",
-  ],
-  kr: [
-    "식물을 담는 스타쉽.",
-    "직사광선을 피하고, 물은 적게 주세요.",
-  ],
-} as const;
+/** Customer PDP copy — verbatim; do not edit wording, spelling, or punctuation. */
+export const PRODUCT_COPY = {
+  "wall-kit":
+    "Wall은 바닥과 수직 벽면을 모두 식재 공간으로 활용할 수 있도록 설계된 DIY 테라리움 키트입니다. 3D 프린팅으로 제작된 월 구조물에 이끼와 식물을 식재하고, 바닥에는 배양토와 자연 소재를 배치하여 입체적인 자연환경을 구성할 수 있습니다. 사용자의 취향에 따라 식물과 돌, 유목 등의 소재를 자유롭게 조합할 수 있으며, 시간이 지남에 따라 식물이 구조물에 자리 잡고 성장하면서 자연스럽게 변화하는 테라리움을 완성할 수 있습니다.",
+  "mini-port":
+    "Oneport는 하나의 식물 포트와 유리 커버로 구성된 단일 식물 전용 온실입니다. 유리 커버를 통해 내부 습도를 유지하여 높은 습도를 필요로 하는 열대식물과 정글식물이 성장하기에 적합한 환경을 제공합니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있는 소형 온실입니다.",
+  "one-port":
+    "Starship은 어린 열대식물과 소형 정글식물을 독립적으로 재배할 수 있도록 설계된 미니 온실입니다. 하나의 식물 포트와 유리 커버로 구성되어 있으며, 작은 공간에서도 식물의 생육에 필요한 습도를 유지할 수 있도록 돕습니다. 발아 이후의 어린 식물부터 크기가 작은 열대식물까지 개별적으로 관리할 수 있으며, 식물의 성장 과정을 가까이에서 관찰할 수 있습니다. 컴팩트한 크기와 간결한 구조로 정글식물 재배를 처음 시작하는 사용자에게도 적합한 제품입니다.",
+  cascade:
+    "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루디리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다.",
+  "drain-tower":
+    "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다.",
+} as const satisfies Record<NewProductCategoryId, string>;
 
 export function productColorLabel(product: NewProduct) {
   const parts = product.name.split(", ");
-  return parts[1] ?? product.finish.replace(/ finish$/i, "");
+  const finish = parts[1] ?? product.finish.replace(/ finish$/i, "");
+  return finish.replace(/\([^)]*\)$/, "");
 }
 
 export function productFamilyLabel(product: NewProduct) {
@@ -247,9 +255,13 @@ export function productFamilyLabel(product: NewProduct) {
 }
 
 export function productNote(product: NewProduct) {
-  if (product.category === "one-port") return ONE_PORT_NOTE;
-  if (product.category === "wall-kit") return STAND_NOTE;
-  return null;
+  return PRODUCT_COPY[product.category];
+}
+
+export function productNoteLead(product: NewProduct) {
+  const note = productNote(product);
+  const match = note.match(/^.+?\./);
+  return match ? match[0] : note;
 }
 
 /**
@@ -274,194 +286,194 @@ export const NEW_PRODUCTS: NewProduct[] = [
   {
     id: "silver",
     category: "wall-kit",
-    name: "Wall 212, HOLLOW",
-    nameKr: "월 212, HOLLOW",
+    name: `Wall 212, ${finishLabel("HOLLOW")}`,
+    nameKr: `월 212, ${finishLabel("HOLLOW")}`,
     finish: "HOLLOW finish",
     price: STAND_PRICE_SILVER,
     emptySrc: "/products/stand-silver.webp",
     mossSrc: "/products/stand-silver-moss.webp",
     emptySrcMobile: "/products/stand-silver-mobile.webp",
     mossSrcMobile: "/products/stand-silver-moss-mobile.webp",
-    emptyAlt: "TAEGYE Wall 212, HOLLOW",
-    mossAlt: "TAEGYE Wall 212, HOLLOW with moss",
+    emptyAlt: `TAEGYE Wall 212, ${finishLabel("HOLLOW")}`,
+    mossAlt: `TAEGYE Wall 212, ${finishLabel("HOLLOW")} with moss`,
   },
   {
     id: "purple",
     category: "wall-kit",
-    name: "Wall 212, ODD",
-    nameKr: "월 212, ODD",
+    name: `Wall 212, ${finishLabel("ODD")}`,
+    nameKr: `월 212, ${finishLabel("ODD")}`,
     finish: "ODD finish",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-purple.webp",
     mossSrc: "/products/stand-purple-moss.webp",
-    emptyAlt: "TAEGYE Wall 212, ODD",
-    mossAlt: "TAEGYE Wall 212, ODD with moss",
+    emptyAlt: `TAEGYE Wall 212, ${finishLabel("ODD")}`,
+    mossAlt: `TAEGYE Wall 212, ${finishLabel("ODD")} with moss`,
   },
   {
     id: "black",
     category: "wall-kit",
-    name: "Wall 212, VOID",
-    nameKr: "월 212, VOID",
+    name: `Wall 212, ${finishLabel("VOID")}`,
+    nameKr: `월 212, ${finishLabel("VOID")}`,
     finish: "VOID finish",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-black.webp",
     mossSrc: "/products/stand-black-moss.webp",
-    emptyAlt: "TAEGYE Wall 212, VOID",
-    mossAlt: "TAEGYE Wall 212, VOID with moss",
+    emptyAlt: `TAEGYE Wall 212, ${finishLabel("VOID")}`,
+    mossAlt: `TAEGYE Wall 212, ${finishLabel("VOID")} with moss`,
   },
   {
     id: "green",
     category: "wall-kit",
-    name: "Wall 212, BUG",
-    nameKr: "월 212, BUG",
+    name: `Wall 212, ${finishLabel("BUG")}`,
+    nameKr: `월 212, ${finishLabel("BUG")}`,
     finish: "BUG finish",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-green.webp",
     mossSrc: "/products/stand-green-moss.webp",
-    emptyAlt: "TAEGYE Wall 212, BUG",
-    mossAlt: "TAEGYE Wall 212, BUG with moss",
+    emptyAlt: `TAEGYE Wall 212, ${finishLabel("BUG")}`,
+    mossAlt: `TAEGYE Wall 212, ${finishLabel("BUG")} with moss`,
   },
   {
     id: "white",
     category: "wall-kit",
-    name: "Wall 212, MIST",
-    nameKr: "월 212, MIST",
+    name: `Wall 212, ${finishLabel("MIST")}`,
+    nameKr: `월 212, ${finishLabel("MIST")}`,
     finish: "MIST finish",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-white.webp",
     mossSrc: "/products/stand-white-moss.webp",
     emptySrcMobile: "/products/stand-white-mobile.webp",
     mossSrcMobile: "/products/stand-white-moss-mobile.webp",
-    emptyAlt: "TAEGYE Wall 212, MIST",
-    mossAlt: "TAEGYE Wall 212, MIST with moss",
+    emptyAlt: `TAEGYE Wall 212, ${finishLabel("MIST")}`,
+    mossAlt: `TAEGYE Wall 212, ${finishLabel("MIST")} with moss`,
   },
   {
     id: "mini-port-purple",
     category: "mini-port",
-    name: "One Port 141, ODD",
-    nameKr: "원 포트 141, ODD",
+    name: `One Port 141, ${finishLabel("ODD")}`,
+    nameKr: `원 포트 141, ${finishLabel("ODD")}`,
     finish: "ODD finish",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-purple.png?v=2",
-    emptyAlt: "TAEGYE One Port 141, ODD",
+    emptyAlt: `TAEGYE One Port 141, ${finishLabel("ODD")}`,
   },
   {
     id: "mini-port-black",
     category: "mini-port",
-    name: "One Port 141, VOID",
-    nameKr: "원 포트 141, VOID",
+    name: `One Port 141, ${finishLabel("VOID")}`,
+    nameKr: `원 포트 141, ${finishLabel("VOID")}`,
     finish: "VOID finish",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-black.png?v=2",
-    emptyAlt: "TAEGYE One Port 141, VOID",
+    emptyAlt: `TAEGYE One Port 141, ${finishLabel("VOID")}`,
   },
   {
     id: "mini-port-white",
     category: "mini-port",
-    name: "One Port 141, MIST",
-    nameKr: "원 포트 141, MIST",
+    name: `One Port 141, ${finishLabel("MIST")}`,
+    nameKr: `원 포트 141, ${finishLabel("MIST")}`,
     finish: "MIST finish",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-white.png?v=2",
-    emptyAlt: "TAEGYE One Port 141, MIST",
+    emptyAlt: `TAEGYE One Port 141, ${finishLabel("MIST")}`,
   },
   {
     id: "one-port-purple",
     category: "one-port",
-    name: "Starship 157, ODD",
-    nameKr: "스타쉽 157, ODD",
+    name: `Starship 157, ${finishLabel("ODD")}`,
+    nameKr: `스타쉽 157, ${finishLabel("ODD")}`,
     finish: "ODD finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-purple.png",
     mossSrc: "/products/one-port-purple-plant.png",
-    emptyAlt: "TAEGYE Starship 157, ODD",
-    mossAlt: "TAEGYE Starship 157, ODD with plant",
+    emptyAlt: `TAEGYE Starship 157, ${finishLabel("ODD")}`,
+    mossAlt: `TAEGYE Starship 157, ${finishLabel("ODD")} with plant`,
   },
   {
     id: "one-port-black",
     category: "one-port",
-    name: "Starship 157, VOID",
-    nameKr: "스타쉽 157, VOID",
+    name: `Starship 157, ${finishLabel("VOID")}`,
+    nameKr: `스타쉽 157, ${finishLabel("VOID")}`,
     finish: "VOID finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-black.png",
     mossSrc: "/products/one-port-black-plant.png",
-    emptyAlt: "TAEGYE Starship 157, VOID",
-    mossAlt: "TAEGYE Starship 157, VOID with plant",
+    emptyAlt: `TAEGYE Starship 157, ${finishLabel("VOID")}`,
+    mossAlt: `TAEGYE Starship 157, ${finishLabel("VOID")} with plant`,
   },
   {
     id: "one-port-white",
     category: "one-port",
-    name: "Starship 157, MIST",
-    nameKr: "스타쉽 157, MIST",
+    name: `Starship 157, ${finishLabel("MIST")}`,
+    nameKr: `스타쉽 157, ${finishLabel("MIST")}`,
     finish: "MIST finish",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-white.png",
     mossSrc: "/products/one-port-white-plant.png",
     emptySrcMobile: "/products/one-port-white-mobile.png",
     mossSrcMobile: "/products/one-port-white-plant-mobile.png",
-    emptyAlt: "TAEGYE Starship 157, MIST",
-    mossAlt: "TAEGYE Starship 157, MIST with plant",
+    emptyAlt: `TAEGYE Starship 157, ${finishLabel("MIST")}`,
+    mossAlt: `TAEGYE Starship 157, ${finishLabel("MIST")} with plant`,
   },
   {
     id: "cascade-silver",
     category: "cascade",
-    name: "Cascade 600, HOLLOW",
-    nameKr: "캐스케이드 600, HOLLOW",
+    name: `Cascade 600, ${finishLabel("HOLLOW")}`,
+    nameKr: `캐스케이드 600, ${finishLabel("HOLLOW")}`,
     finish: "HOLLOW finish",
     price: CASCADE_PRICE_SILVER,
     emptySrc: "/products/cascade-silver.png",
-    emptyAlt: "TAEGYE Cascade 600, HOLLOW",
+    emptyAlt: `TAEGYE Cascade 600, ${finishLabel("HOLLOW")}`,
   },
   {
     id: "cascade-purple",
     category: "cascade",
-    name: "Cascade 600, ODD",
-    nameKr: "캐스케이드 600, ODD",
+    name: `Cascade 600, ${finishLabel("ODD")}`,
+    nameKr: `캐스케이드 600, ${finishLabel("ODD")}`,
     finish: "ODD finish",
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-purple.png",
-    emptyAlt: "TAEGYE Cascade 600, ODD",
+    emptyAlt: `TAEGYE Cascade 600, ${finishLabel("ODD")}`,
   },
   {
     id: "cascade-black",
     category: "cascade",
-    name: "Cascade 600, VOID",
-    nameKr: "캐스케이드 600, VOID",
+    name: `Cascade 600, ${finishLabel("VOID")}`,
+    nameKr: `캐스케이드 600, ${finishLabel("VOID")}`,
     finish: "VOID finish",
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-black.png",
-    emptyAlt: "TAEGYE Cascade 600, VOID",
+    emptyAlt: `TAEGYE Cascade 600, ${finishLabel("VOID")}`,
   },
   {
     id: "drain-tower-80",
     category: "drain-tower",
-    name: "Drain Tower 80, VOID",
-    nameKr: "드레인 타워 80, VOID",
+    name: `Drain Tower 80, ${finishLabel("VOID")}`,
+    nameKr: `드레인 타워 80, ${finishLabel("VOID")}`,
     finish: "Black",
     price: DRAIN_TOWER_PRICE_80,
     emptySrc: "/products/drain-tower-80.png",
-    emptyAlt: "TAEGYE Drain Tower 80, VOID",
+    emptyAlt: `TAEGYE Drain Tower 80, ${finishLabel("VOID")}`,
   },
   {
     id: "drain-tower-40",
     category: "drain-tower",
-    name: "Drain Tower 40, VOID",
-    nameKr: "드레인 타워 40, VOID",
+    name: `Drain Tower 40, ${finishLabel("VOID")}`,
+    nameKr: `드레인 타워 40, ${finishLabel("VOID")}`,
     finish: "Black",
     price: DRAIN_TOWER_PRICE_40,
     emptySrc: "/products/drain-tower-40.png?v=3",
-    emptyAlt: "TAEGYE Drain Tower 40, VOID",
+    emptyAlt: `TAEGYE Drain Tower 40, ${finishLabel("VOID")}`,
   },
   {
     id: "drain-tower-20",
     category: "drain-tower",
-    name: "Drain Tower 20, VOID",
-    nameKr: "드레인 타워 20, VOID",
+    name: `Drain Tower 20, ${finishLabel("VOID")}`,
+    nameKr: `드레인 타워 20, ${finishLabel("VOID")}`,
     finish: "Black",
     price: DRAIN_TOWER_PRICE_20,
     emptySrc: "/products/drain-tower-20.png?v=3",
-    emptyAlt: "TAEGYE Drain Tower 20, VOID",
+    emptyAlt: `TAEGYE Drain Tower 20, ${finishLabel("VOID")}`,
   },
 ];
 
