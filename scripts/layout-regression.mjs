@@ -517,6 +517,21 @@ async function runBrowser() {
       assert.match(title, /Starship 157, ODD\(Indigo Purple\)/);
       const note = await page.$eval(".pdp-note", (node) => (node.textContent || "").trim());
       assert.ok(note.startsWith("Starship은"), `one-port note ${note.slice(0, 24)}`);
+      const specs = await page.$$eval("[data-pdp-spec]", (nodes) =>
+        nodes.map((el) => ({
+          key: el.getAttribute("data-pdp-spec"),
+          label: el.querySelector(".pdp-spec-label")?.textContent?.trim() || "",
+          value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
+        })),
+      );
+      assert.deepEqual(specs, [
+        { key: "dimensions", label: "Dimensions / 치수", value: "준비 중" },
+        {
+          key: "planting",
+          label: "Recommended Planting & Environment / 추천 식재 조건 및 환경",
+          value: "준비 중",
+        },
+      ]);
       console.log("ok  mobile one-port PDP: KRW 36,000, Starship title");
     });
 
@@ -561,13 +576,13 @@ async function runBrowser() {
         });
         return cards;
       });
-      assert.equal(report.length, 3, `cascade cards ${report.length}`);
+      assert.equal(report.length, 2, `cascade cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["Cascade 600, HOLLOW(Translucent)", "Cascade 600, ODD(Indigo Purple)", "Cascade 600, VOID(Black)"],
+        ["Cascade 600, HOLLOW(Translucent)", "Cascade 600, VOID(Black)"],
       );
-      const hrefs = ["/new/cascade-silver", "/new/cascade-purple", "/new/cascade-black"];
-      const prices = ["KRW 236,000", "KRW 197,000", "KRW 197,000"];
+      const hrefs = ["/new/cascade-silver", "/new/cascade-black"];
+      const prices = ["KRW 236,000", "KRW 197,000"];
       report.forEach((card, index) => {
         assert.equal(card.price, prices[index], `${card.name} price`);
         assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
@@ -576,11 +591,10 @@ async function runBrowser() {
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
       });
       assert.equal(report[0].src, "/products/cascade-silver.png");
-      assert.equal(report[1].src, "/products/cascade-purple.png");
-      assert.equal(report[2].src, "/products/cascade-black.png");
+      assert.equal(report[1].src, "/products/cascade-black.png");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "cascade tab keeps moss tile");
-      console.log("ok  mobile /new?cat=cascade: HOLLOW, ODD, VOID, priced, linked");
+      console.log("ok  mobile /new?cat=cascade: HOLLOW, VOID, priced, linked");
     });
 
     await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
@@ -754,7 +768,6 @@ async function runBrowser() {
       "Starship 157, VOID(Black)",
       "Starship 157, MIST(White)",
       "Cascade 600, HOLLOW(Translucent)",
-      "Cascade 600, ODD(Indigo Purple)",
       "Cascade 600, VOID(Black)",
       "Drain Tower 80, VOID(Black)",
       "Drain Tower 40, VOID(Black)",
@@ -790,7 +803,7 @@ async function runBrowser() {
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
       assert.equal(textures, 0, "All tab must not insert a moss tile");
-      assert.equal(cards, 17, `All product cards ${cards}`);
+      assert.equal(cards, 16, `All product cards ${cards}`);
       const mini = await page.evaluate(() =>
         [...document.querySelectorAll(".product-card")]
           .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("One Port"))
@@ -868,7 +881,6 @@ async function runBrowser() {
 
     const listed = [
       ["cascade-silver", "Cascade 600, HOLLOW(Translucent)", "KRW 236,000", "/products/cascade-silver.png"],
-      ["cascade-purple", "Cascade 600, ODD(Indigo Purple)", "KRW 197,000", "/products/cascade-purple.png"],
       ["cascade-black", "Cascade 600, VOID(Black)", "KRW 197,000", "/products/cascade-black.png"],
       ["drain-tower-20", "Drain Tower 20, VOID(Black)", "KRW 3,000", "/products/drain-tower-20.png?v=3"],
       ["drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000", "/products/drain-tower-40.png?v=3"],
@@ -890,6 +902,12 @@ async function runBrowser() {
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
           note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
+          specs: [...document.querySelectorAll("[data-pdp-spec]")].map((el) => ({
+            key: el.getAttribute("data-pdp-spec"),
+            label: el.querySelector(".pdp-spec-label")?.textContent?.trim() || "",
+            value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
+            empty: el.querySelector(".pdp-spec-value")?.classList.contains("is-empty") || false,
+          })),
           swatches: [...document.querySelectorAll(".pdp-swatch")].map((el) => ({
             tag: el.tagName.toLowerCase(),
             href: el.getAttribute("href"),
@@ -916,13 +934,25 @@ async function runBrowser() {
             ? "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다."
             : "Oneport는 하나의 식물 포트와 유리 커버로 구성된 단일 식물 전용 온실입니다. 유리 커버를 통해 내부 습도를 유지하여 높은 습도를 필요로 하는 열대식물과 정글식물이 성장하기에 적합한 환경을 제공합니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있는 소형 온실입니다.";
         assert.equal(report.note, expectedNote, `${id} note`);
+        assert.deepEqual(
+          report.specs,
+          [
+            { key: "dimensions", label: "Dimensions / 치수", value: "준비 중", empty: true },
+            {
+              key: "planting",
+              label: "Recommended Planting & Environment / 추천 식재 조건 및 환경",
+              value: "준비 중",
+              empty: true,
+            },
+          ],
+          `${id} specs`,
+        );
         if (id.startsWith("cascade-")) {
           const expected = [
             { id: "cascade-silver", title: "HOLLOW" },
-            { id: "cascade-purple", title: "ODD" },
             { id: "cascade-black", title: "VOID" },
           ];
-          assert.equal(report.swatches.length, 3, `${id} swatch count`);
+          assert.equal(report.swatches.length, 2, `${id} swatch count`);
           assert.deepEqual(
             report.swatches.map((swatch) => swatch.title),
             expected.map((item) => item.title),
@@ -963,21 +993,21 @@ async function runBrowser() {
     }
 
     await withPage(browser, MOBILE, "/new/cascade-silver", async (page) => {
-      await page.waitForSelector('.pdp-swatch[href="/new/cascade-purple"]');
+      await page.waitForSelector('.pdp-swatch[href="/new/cascade-black"]');
       const before = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
       }));
       assert.deepEqual(before, { name: "Cascade 600, HOLLOW(Translucent)", price: "KRW 236,000" });
-      await page.click('.pdp-swatch[href="/new/cascade-purple"]');
-      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade 600, ODD(Indigo Purple)");
+      await page.click('.pdp-swatch[href="/new/cascade-black"]');
+      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade 600, VOID(Black)");
       const after = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
         current: document.querySelector(".pdp-swatch.is-current")?.getAttribute("title") || "",
       }));
-      assert.deepEqual(after, { name: "Cascade 600, ODD(Indigo Purple)", price: "KRW 197,000", current: "ODD" });
-      console.log("ok  cascade swatch click: HOLLOW → ODD, price follows");
+      assert.deepEqual(after, { name: "Cascade 600, VOID(Black)", price: "KRW 197,000", current: "VOID" });
+      console.log("ok  cascade swatch click: HOLLOW → VOID, price follows");
     });
 
     async function measureSwatches(page) {
@@ -1033,8 +1063,8 @@ async function runBrowser() {
       });
       await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
         const report = await measureSwatches(page);
-        assert.equal(report.count, 3, `${vp} cascade swatch count`);
-        assert.deepEqual(report.titles, ["HOLLOW", "ODD", "VOID"]);
+        assert.equal(report.count, 2, `${vp} cascade swatch count`);
+        assert.deepEqual(report.titles, ["HOLLOW", "VOID"]);
         assert.equal(report.display, wallKit.display, `${vp} cascade display`);
         assert.equal(report.gap, wallKit.gap, `${vp} cascade gap`);
         assert.equal(report.width, wallKit.width, `${vp} cascade width`);
@@ -1089,6 +1119,7 @@ async function runBrowser() {
       ["/new/drain-tower-120", "/new/drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000"],
       ["/new/drain-tower-160", "/new/drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000"],
       ["/new/drain-tower-230", "/new/drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000"],
+      ["/new/cascade-purple", "/new/cascade-silver", "Cascade 600, HOLLOW(Translucent)", "KRW 236,000"],
     ];
     for (const [from, to, name, price] of legacy) {
       await withPage(browser, MOBILE, from, async (page) => {

@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { source: "/new/drain-tower-120", destination: "/new/drain-tower-40", permanent: true },
       { source: "/new/drain-tower-160", destination: "/new/drain-tower-80", permanent: true },
       { source: "/new/drain-tower-230", destination: "/new/drain-tower-80", permanent: true },
+      { source: "/new/cascade-purple", destination: "/new/cascade-silver", permanent: true },
     ];
   },
 };

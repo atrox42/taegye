@@ -50,7 +50,6 @@ Products
 - Starship 157, VOID(Black) — KRW 36,000 — https://taegye.vercel.app/new/one-port-black
 - Starship 157, MIST(White) — KRW 36,000 — https://taegye.vercel.app/new/one-port-white
 - Cascade 600, HOLLOW(Translucent) — KRW 236,000 — https://taegye.vercel.app/new/cascade-silver
-- Cascade 600, ODD(Indigo Purple) — KRW 197,000 — https://taegye.vercel.app/new/cascade-purple
 - Cascade 600, VOID(Black) — KRW 197,000 — https://taegye.vercel.app/new/cascade-black
 - Drain Tower 80, VOID(Black) — KRW 9,000 — https://taegye.vercel.app/new/drain-tower-80
 - Drain Tower 40, VOID(Black) — KRW 5,000 — https://taegye.vercel.app/new/drain-tower-40

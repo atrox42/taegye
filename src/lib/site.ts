@@ -187,6 +187,10 @@ export type NewProduct = {
   mossSrcMobile?: string;
   emptyAlt: string;
   mossAlt?: string;
+  /** Empty until measured. Do not invent values. */
+  dimensions: string;
+  /** Empty until planting notes exist. Do not invent values. */
+  planting: string;
   /** Catalog card only — no `/new/[id]` page and no click-through. */
   listedOnly?: boolean;
 };
@@ -264,6 +268,17 @@ export function productNoteLead(product: NewProduct) {
   return match ? match[0] : note;
 }
 
+export const PRODUCT_SPEC_PENDING = "준비 중";
+
+export const PRODUCT_SPEC_LABELS = {
+  dimensions: "Dimensions / 치수",
+  planting: "Recommended Planting & Environment / 추천 식재 조건 및 환경",
+} as const;
+
+export function productSpecValue(product: NewProduct, key: "dimensions" | "planting") {
+  return product[key].trim();
+}
+
 /**
  * Decorative /new grid tile — not a product.
  * Slot is 1-indexed and chosen client-side among 2–6.
@@ -289,6 +304,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Wall 212, ${finishLabel("HOLLOW")}`,
     nameKr: `월 212, ${finishLabel("HOLLOW")}`,
     finish: "HOLLOW finish",
+    dimensions: "",
+    planting: "",
     price: STAND_PRICE_SILVER,
     emptySrc: "/products/stand-silver.webp",
     mossSrc: "/products/stand-silver-moss.webp",
@@ -303,6 +320,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Wall 212, ${finishLabel("ODD")}`,
     nameKr: `월 212, ${finishLabel("ODD")}`,
     finish: "ODD finish",
+    dimensions: "",
+    planting: "",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-purple.webp",
     mossSrc: "/products/stand-purple-moss.webp",
@@ -315,6 +334,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Wall 212, ${finishLabel("VOID")}`,
     nameKr: `월 212, ${finishLabel("VOID")}`,
     finish: "VOID finish",
+    dimensions: "",
+    planting: "",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-black.webp",
     mossSrc: "/products/stand-black-moss.webp",
@@ -327,6 +348,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Wall 212, ${finishLabel("BUG")}`,
     nameKr: `월 212, ${finishLabel("BUG")}`,
     finish: "BUG finish",
+    dimensions: "",
+    planting: "",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-green.webp",
     mossSrc: "/products/stand-green-moss.webp",
@@ -339,6 +362,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Wall 212, ${finishLabel("MIST")}`,
     nameKr: `월 212, ${finishLabel("MIST")}`,
     finish: "MIST finish",
+    dimensions: "",
+    planting: "",
     price: STAND_PRICE_COLOR,
     emptySrc: "/products/stand-white.webp",
     mossSrc: "/products/stand-white-moss.webp",
@@ -353,6 +378,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `One Port 141, ${finishLabel("ODD")}`,
     nameKr: `원 포트 141, ${finishLabel("ODD")}`,
     finish: "ODD finish",
+    dimensions: "",
+    planting: "",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-purple.png?v=2",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("ODD")}`,
@@ -363,6 +390,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `One Port 141, ${finishLabel("VOID")}`,
     nameKr: `원 포트 141, ${finishLabel("VOID")}`,
     finish: "VOID finish",
+    dimensions: "",
+    planting: "",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-black.png?v=2",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("VOID")}`,
@@ -373,6 +402,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `One Port 141, ${finishLabel("MIST")}`,
     nameKr: `원 포트 141, ${finishLabel("MIST")}`,
     finish: "MIST finish",
+    dimensions: "",
+    planting: "",
     price: MINI_PORT_PRICE,
     emptySrc: "/products/mini-port-white.png?v=2",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("MIST")}`,
@@ -383,6 +414,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Starship 157, ${finishLabel("ODD")}`,
     nameKr: `스타쉽 157, ${finishLabel("ODD")}`,
     finish: "ODD finish",
+    dimensions: "",
+    planting: "",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-purple.png",
     mossSrc: "/products/one-port-purple-plant.png",
@@ -395,6 +428,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Starship 157, ${finishLabel("VOID")}`,
     nameKr: `스타쉽 157, ${finishLabel("VOID")}`,
     finish: "VOID finish",
+    dimensions: "",
+    planting: "",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-black.png",
     mossSrc: "/products/one-port-black-plant.png",
@@ -407,6 +442,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Starship 157, ${finishLabel("MIST")}`,
     nameKr: `스타쉽 157, ${finishLabel("MIST")}`,
     finish: "MIST finish",
+    dimensions: "",
+    planting: "",
     price: ONE_PORT_PRICE,
     emptySrc: "/products/one-port-white.png",
     mossSrc: "/products/one-port-white-plant.png",
@@ -421,19 +458,11 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Cascade 600, ${finishLabel("HOLLOW")}`,
     nameKr: `캐스케이드 600, ${finishLabel("HOLLOW")}`,
     finish: "HOLLOW finish",
+    dimensions: "",
+    planting: "",
     price: CASCADE_PRICE_SILVER,
     emptySrc: "/products/cascade-silver.png",
     emptyAlt: `TAEGYE Cascade 600, ${finishLabel("HOLLOW")}`,
-  },
-  {
-    id: "cascade-purple",
-    category: "cascade",
-    name: `Cascade 600, ${finishLabel("ODD")}`,
-    nameKr: `캐스케이드 600, ${finishLabel("ODD")}`,
-    finish: "ODD finish",
-    price: CASCADE_PRICE_PURPLE,
-    emptySrc: "/products/cascade-purple.png",
-    emptyAlt: `TAEGYE Cascade 600, ${finishLabel("ODD")}`,
   },
   {
     id: "cascade-black",
@@ -441,6 +470,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Cascade 600, ${finishLabel("VOID")}`,
     nameKr: `캐스케이드 600, ${finishLabel("VOID")}`,
     finish: "VOID finish",
+    dimensions: "",
+    planting: "",
     price: CASCADE_PRICE_PURPLE,
     emptySrc: "/products/cascade-black.png",
     emptyAlt: `TAEGYE Cascade 600, ${finishLabel("VOID")}`,
@@ -451,6 +482,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Drain Tower 80, ${finishLabel("VOID")}`,
     nameKr: `드레인 타워 80, ${finishLabel("VOID")}`,
     finish: "Black",
+    dimensions: "",
+    planting: "",
     price: DRAIN_TOWER_PRICE_80,
     emptySrc: "/products/drain-tower-80.png",
     emptyAlt: `TAEGYE Drain Tower 80, ${finishLabel("VOID")}`,
@@ -461,6 +494,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Drain Tower 40, ${finishLabel("VOID")}`,
     nameKr: `드레인 타워 40, ${finishLabel("VOID")}`,
     finish: "Black",
+    dimensions: "",
+    planting: "",
     price: DRAIN_TOWER_PRICE_40,
     emptySrc: "/products/drain-tower-40.png?v=3",
     emptyAlt: `TAEGYE Drain Tower 40, ${finishLabel("VOID")}`,
@@ -471,6 +506,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     name: `Drain Tower 20, ${finishLabel("VOID")}`,
     nameKr: `드레인 타워 20, ${finishLabel("VOID")}`,
     finish: "Black",
+    dimensions: "",
+    planting: "",
     price: DRAIN_TOWER_PRICE_20,
     emptySrc: "/products/drain-tower-20.png?v=3",
     emptyAlt: `TAEGYE Drain Tower 20, ${finishLabel("VOID")}`,

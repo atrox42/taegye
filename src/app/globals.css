@@ -862,6 +862,44 @@ button {
   overflow-wrap: break-word;
 }
 
+.pdp-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 100%;
+}
+
+.pdp-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pdp-spec-label,
+.pdp-spec-value {
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.pdp-spec-label {
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.pdp-spec-value {
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.pdp-spec-value.is-empty {
+  color: #999999 !important;
+  -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+
 .product-caption .site-type:not(.product-price) {
   max-width: 100%;
   overflow-wrap: break-word;
@@ -3524,6 +3562,8 @@ p.site-type,
 .pdp-store,
 .pdp-name,
 .pdp-note,
+.pdp-spec-label,
+.pdp-spec-value,
 .pdp-price {
   background-color: transparent !important;
 }

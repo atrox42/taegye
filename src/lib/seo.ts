@@ -10,8 +10,10 @@ import {
   SITE_NAME,
   SITE_URL,
   STORE_URL,
+  PRODUCT_SPEC_LABELS,
   productNote,
   productNoteLead,
+  productSpecValue,
   type NewProduct,
 } from "@/lib/site";
 
@@ -104,6 +106,13 @@ export function organizationJsonLd() {
 export function productJsonLd(product: NewProduct) {
   const price = offerPrice(product.price);
   const url = absoluteUrl(`/new/${product.id}`);
+  const specs = (["dimensions", "planting"] as const)
+    .map((key) => {
+      const value = productSpecValue(product, key);
+      if (!value) return null;
+      return { "@type": "PropertyValue", name: PRODUCT_SPEC_LABELS[key], value };
+    })
+    .filter((item): item is { "@type": "PropertyValue"; name: string; value: string } => item !== null);
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -112,6 +121,7 @@ export function productJsonLd(product: NewProduct) {
     brand: { "@type": "Brand", name: SITE_NAME },
     image: absoluteUrl(productImagePath(product)),
     url,
+    ...(specs.length ? { additionalProperty: specs } : {}),
     offers: {
       "@type": "Offer",
       ...(price ? { price, priceCurrency: "KRW" } : {}),
