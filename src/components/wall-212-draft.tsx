@@ -36,11 +36,23 @@ function finishFromProduct(product: NewProduct): FinishCode {
   return code && FINISH_CODES.includes(code) ? code : "HOLLOW";
 }
 
+function pad(index: number) {
+  return String(index).padStart(2, "0");
+}
+
 function Mark({ d }: { d: string }) {
   return (
     <svg className="wall-draft-ico" viewBox="0 0 10 10" width="10" height="10" aria-hidden>
       <path d={d} fill="none" stroke="#111111" strokeWidth="1" strokeLinejoin="miter" />
     </svg>
+  );
+}
+
+function Fade({ text, className }: { text: string; className?: string }) {
+  return (
+    <span key={text} className={className ? `wall-draft-fade ${className}` : "wall-draft-fade"}>
+      {text}
+    </span>
   );
 }
 
@@ -77,7 +89,7 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
     if (!node) return;
     const io = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting), {
       threshold: 0,
-      rootMargin: "-64px 0px 0px 0px",
+      rootMargin: "-72px 0px 0px 0px",
     });
     io.observe(node);
     return () => io.disconnect();
@@ -93,6 +105,7 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
   const finishName = finishLabel(finish);
   const note = productNote(product);
   const family = productFamilyLabel(product);
+  const colorIndex = WALL.findIndex((item) => item.id === id) + 1;
   const specs = [
     {
       key: "dimensions",
@@ -133,7 +146,7 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
                 <Plate key={`e-${item.id}`} product={item} kind="empty" active={item.id === id} priority={item.id === id} />
               ))}
             </div>
-            <figcaption className="site-type wall-draft-cap" style={forceInkStyle}>
+            <figcaption className="site-type wall-draft-stamp" style={forceInkStyle}>
               01
             </figcaption>
           </figure>
@@ -144,7 +157,7 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
                 <Plate key={`m-${item.id}`} product={item} kind="moss" active={item.id === id} />
               ))}
             </div>
-            <figcaption className="site-type wall-draft-cap" style={forceInkStyle}>
+            <figcaption className="site-type wall-draft-stamp" style={forceInkStyle}>
               02
             </figcaption>
           </figure>
@@ -156,16 +169,31 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
               {family}
             </h1>
             <p className="site-type wall-draft-finish" style={forceInkStyle}>
-              {finishName}
+              <Fade text={finishName} />
+              <span className="wall-draft-idx wall-draft-finish-idx" aria-hidden>
+                {pad(colorIndex)} / {pad(WALL.length)}
+              </span>
             </p>
           </header>
 
           <div ref={buyRef} className="wall-draft-buy">
-            {product.price ? (
-              <p className="site-type wall-draft-price" style={forceInkStyle}>
-                {product.price}
-              </p>
-            ) : null}
+            <div className="wall-draft-buy-row">
+              {product.price ? (
+                <p className="site-type wall-draft-price" style={forceInkStyle}>
+                  <Fade text={product.price} />
+                </p>
+              ) : null}
+              <a
+                href={STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="site-type wall-draft-store no-underline hover:no-underline"
+                style={forceInkStyle}
+              >
+                Store
+                <span className="wall-draft-chevron" aria-hidden />
+              </a>
+            </div>
             <div className="wall-draft-swatches" role="list" aria-label="Color">
               {WALL.map((item) => {
                 const code = finishFromProduct(item);
@@ -185,23 +213,13 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
                       {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
                       <img src={`/swatches/${item.id}.png`} alt="" />
                     </span>
-                    <span className="site-type" style={forceInkStyle}>
+                    <span className="site-type" style={current ? forceInkStyle : undefined}>
                       {label}
                     </span>
                   </button>
                 );
               })}
             </div>
-            <a
-              href={STORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="site-type wall-draft-store no-underline hover:no-underline"
-              style={forceInkStyle}
-            >
-              Store
-              <span className="wall-draft-chevron" aria-hidden />
-            </a>
           </div>
 
           {note ? (
@@ -210,14 +228,16 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
             </p>
           ) : null}
 
-          <dl className="wall-draft-specs">
+          <dl className="wall-draft-plate">
             {specs.map((spec, index) => (
               <div key={spec.key} className="wall-draft-spec" data-pdp-spec={spec.key === "origin" ? undefined : spec.key}>
                 <dt>
                   <span className="site-type wall-draft-idx" style={forceInkStyle}>
-                    {String(index + 1).padStart(2, "0")}
+                    {pad(index + 1)}
                   </span>
-                  <Mark d={spec.mark} />
+                  <span className="wall-draft-mark">
+                    <Mark d={spec.mark} />
+                  </span>
                   <span className="site-type" style={forceInkStyle}>
                     {spec.label}
                   </span>
@@ -227,34 +247,44 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
                 </dd>
               </div>
             ))}
-          </dl>
-          <ul className="wall-draft-points">
-            {STAND_FEATURES.map((line) => (
-              <li key={line} className="site-type" style={forceInkStyle}>
-                {line}
-              </li>
+            {STAND_FEATURES.map((line, index) => (
+              <div key={line} className="wall-draft-spec wall-draft-spec-note">
+                <dt>
+                  <span className="site-type wall-draft-idx" style={forceInkStyle}>
+                    {pad(specs.length + index + 1)}
+                  </span>
+                  <span className="wall-draft-mark" aria-hidden />
+                  <span className="site-type" style={forceInkStyle}>
+                    {line}
+                  </span>
+                </dt>
+                <dd />
+              </div>
             ))}
-          </ul>
-          <p className="site-type wall-draft-star" style={forceInkStyle}>
+          </dl>
+          <p className="site-type wall-draft-star">
             {STAND_STAR_NOTE}
           </p>
         </div>
       </div>
 
       <section className="wall-draft-accessories" aria-label="Product">
+        <p className="site-type wall-draft-kicker" style={forceInkStyle}>
+          Product
+        </p>
         <ul className="wall-draft-accessories-row">
           {ACCESSORIES.map((item, index) => (
             <li key={item.id}>
               <Link href={`/new/${item.id}`} className="wall-draft-acc no-underline hover:no-underline">
                 <span className="site-type wall-draft-idx" style={forceInkStyle}>
-                  {String(index + 1).padStart(2, "0")}
+                  {pad(index + 1)}
                 </span>
                 <div className="wall-draft-acc-photo" style={forceWhiteStyle}>
                   <WhiteSurfaceFill />
                   <ProductPhoto src={item.emptySrc} mobileSrc={item.emptySrcMobile} alt={item.emptyAlt} fill />
                 </div>
                 <p className="site-type" style={forceInkStyle}>
-                  {item.name}
+                  {productFamilyLabel(item)}
                 </p>
                 {item.price ? (
                   <p className="site-type wall-draft-acc-price" style={forceInkStyle}>
@@ -270,15 +300,19 @@ export function Wall212Draft({ initialId }: { initialId: string }) {
       <div className={`wall-draft-bar${stuck ? " is-on" : ""}`} aria-hidden={!stuck}>
         <WhiteSurfaceFill />
         <div className="wall-draft-bar-inner">
-          <p className="site-type" style={forceInkStyle}>
+          <p className="site-type wall-draft-bar-id" style={forceInkStyle}>
+            <span className={`wall-draft-bar-swatch${finish === "MIST" ? " is-mist" : ""}`} aria-hidden>
+              {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
+              <img src={`/swatches/${product.id}.png`} alt="" />
+            </span>
             {family}
             <span className="wall-draft-bar-dot" aria-hidden />
-            {finishName}
+            <Fade text={finishName} />
           </p>
           <div className="wall-draft-bar-buy">
             {product.price ? (
               <p className="site-type" style={forceInkStyle}>
-                {product.price}
+                <Fade text={product.price} />
               </p>
             ) : null}
             <a
