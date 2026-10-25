@@ -6,9 +6,12 @@ import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
+  PRODUCT_SPEC_LABELS,
+  PRODUCT_SPEC_PENDING,
   STORE_URL,
   productColorLabel,
   productNote,
+  productSpecValue,
   productsInFamily,
   type NewProduct,
 } from "@/lib/site";
@@ -86,12 +89,28 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <div className="pdp-rail pdp-rail-copy">
           <h1 className="site-type pdp-name">{product.name}</h1>
           {note ? (
-            <p lang="en" className="site-type pdp-note" style={forceInkStyle}>
-              {note.en[0]}
-              <br />
-              {note.en[1]}
+            <p lang="ko" className="site-type pdp-note" style={forceInkStyle}>
+              {note}
             </p>
           ) : null}
+          <div className="pdp-specs">
+            {(["dimensions", "planting"] as const).map((key) => {
+              const value = productSpecValue(product, key);
+              return (
+                <section key={key} className="pdp-spec" data-pdp-spec={key}>
+                  <h2 className="site-type pdp-spec-label" style={forceInkStyle}>
+                    {PRODUCT_SPEC_LABELS[key]}
+                  </h2>
+                  <p
+                    className={`site-type pdp-spec-value${value ? "" : " is-empty"}`}
+                    style={value ? forceInkStyle : undefined}
+                  >
+                    {value || PRODUCT_SPEC_PENDING}
+                  </p>
+                </section>
+              );
+            })}
+          </div>
         </div>
         <div className="pdp-rail pdp-rail-buy">
           {product.price ? (

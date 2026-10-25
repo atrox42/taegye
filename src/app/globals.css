@@ -844,7 +844,8 @@ button {
 }
 
 .pdp-name {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
   line-height: 22px;
   min-height: 22px;
 }
@@ -855,7 +856,53 @@ button {
 }
 
 .pdp-note {
-  line-height: 1.45;
+  max-width: 100%;
+  line-height: 1.4;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.pdp-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 100%;
+}
+
+.pdp-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pdp-spec-label,
+.pdp-spec-value {
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.pdp-spec-label {
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.pdp-spec-value {
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.pdp-spec-value.is-empty {
+  color: #999999 !important;
+  -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+
+.product-caption .site-type:not(.product-price) {
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .pdp-store {
@@ -1073,6 +1120,7 @@ button {
 
   .pdp-rail-copy {
     grid-column: 1;
+    min-width: 0;
     pointer-events: none;
   }
 
@@ -2094,6 +2142,7 @@ select::-ms-expand {
 
 .home-new-in-name {
   font-size: 15px;
+  overflow-wrap: break-word;
 }
 
 .home-new-in-price {
@@ -3513,6 +3562,8 @@ p.site-type,
 .pdp-store,
 .pdp-name,
 .pdp-note,
+.pdp-spec-label,
+.pdp-spec-value,
 .pdp-price {
   background-color: transparent !important;
 }

@@ -10,7 +10,10 @@ import {
   SITE_NAME,
   SITE_URL,
   STORE_URL,
+  PRODUCT_SPEC_LABELS,
   productNote,
+  productNoteLead,
+  productSpecValue,
   type NewProduct,
 } from "@/lib/site";
 
@@ -31,15 +34,7 @@ export function productImagePath(product: NewProduct): string {
 }
 
 export function productDescription(product: NewProduct): string {
-  const note = productNote(product);
-  const parts = [product.name];
-  if (note) {
-    parts.push(note.en.join(" "));
-  } else {
-    parts.push(ABOUT.en[0][1]);
-  }
-  if (product.price) parts.push(product.price);
-  return parts.join(" ");
+  return productNoteLead(product);
 }
 
 export function pageMetadata({
@@ -111,13 +106,19 @@ export function organizationJsonLd() {
 export function productJsonLd(product: NewProduct) {
   const price = offerPrice(product.price);
   const url = absoluteUrl(`/new/${product.id}`);
+  const specs = (["dimensions", "planting"] as const).flatMap((key) => {
+    const value = productSpecValue(product, key);
+    return value ? [{ "@type": "PropertyValue" as const, name: PRODUCT_SPEC_LABELS[key], value }] : [];
+  });
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
+    description: productNote(product),
     brand: { "@type": "Brand", name: SITE_NAME },
     image: absoluteUrl(productImagePath(product)),
     url,
+    ...(specs.length ? { additionalProperty: specs } : {}),
     offers: {
       "@type": "Offer",
       ...(price ? { price, priceCurrency: "KRW" } : {}),
