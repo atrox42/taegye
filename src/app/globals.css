@@ -909,6 +909,86 @@ button {
   background-clip: border-box !important;
 }
 
+.pdp-spec-toggle {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pdp-spec-label-text {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: pre-line;
+  text-align: left;
+}
+
+.pdp-spec-toggle-mark {
+  flex: 0 0 auto;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  background: none !important;
+  background-image: none !important;
+  line-height: 1.25;
+}
+
+.pdp-spec-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pdp-spec-body.is-collapsed {
+  display: none;
+}
+
+.pdp-spec-line,
+.pdp-spec-subhead {
+  margin: 0;
+  max-width: 100%;
+  line-height: 1.4;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.pdp-spec-subhead {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.pdp-spec-body > :first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 768px) {
+  .pdp-spec-body.is-collapsed {
+    display: flex;
+  }
+
+  .pdp-spec-toggle {
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .pdp-spec-toggle-mark {
+    display: none;
+  }
+}
+
 .product-caption .site-type:not(.product-price) {
   max-width: 100%;
   overflow-wrap: break-word;
@@ -3574,6 +3654,9 @@ p.site-type,
 .pdp-note,
 .pdp-spec-label,
 .pdp-spec-value,
+.pdp-spec-line,
+.pdp-spec-subhead,
+.pdp-spec-toggle,
 .pdp-price {
   background-color: transparent !important;
 }

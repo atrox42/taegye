@@ -520,18 +520,26 @@ async function runBrowser() {
       const specs = await page.$$eval("[data-pdp-spec]", (nodes) =>
         nodes.map((el) => ({
           key: el.getAttribute("data-pdp-spec"),
-          label: el.querySelector(".pdp-spec-label")?.innerText?.trim() || "",
+          label:
+            el.querySelector(".pdp-spec-label-text")?.innerText?.trim() ||
+            el.querySelector(".pdp-spec-label")?.innerText?.trim() ||
+            "",
           value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
+          lines: [...el.querySelectorAll(".pdp-spec-line, .pdp-spec-subhead")].map((node) => node.textContent.trim()),
         })),
       );
       assert.deepEqual(specs, [
-        { key: "dimensions", label: "", value: "W — × D — × H — mm" },
+        { key: "dimensions", label: "", value: "W — × D — × H — mm", lines: [] },
         {
           key: "planting",
           label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
-          value: "준비 중",
+          value: "",
+          lines: [],
         },
+        { key: "cleaning", label: "Cleaning\n세척 방법", value: "", lines: [] },
+        { key: "temperature", label: "Temperature & Notes\n온도 및 주의사항", value: "", lines: [] },
       ]);
+      assert.equal(await page.$eval(".pdp-specs", (el) => (el.textContent || "").includes("준비 중")), false);
       console.log("ok  mobile one-port PDP: KRW 36,000, Starship title");
     });
 
@@ -904,9 +912,19 @@ async function runBrowser() {
           note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
           specs: [...document.querySelectorAll("[data-pdp-spec]")].map((el) => ({
             key: el.getAttribute("data-pdp-spec"),
-            label: el.querySelector(".pdp-spec-label")?.innerText?.trim() || "",
+            label:
+              el.querySelector(".pdp-spec-label-text")?.innerText?.trim() ||
+              el.querySelector(".pdp-spec-label")?.innerText?.trim() ||
+              "",
             value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
             empty: el.querySelector(".pdp-spec-value")?.classList.contains("is-empty") || false,
+            lines: [...el.querySelectorAll(".pdp-spec-line, .pdp-spec-subhead")].map((node) => ({
+              role: node.classList.contains("pdp-spec-subhead") ? "subhead" : "line",
+              text: (node.textContent || "").trim(),
+            })),
+            collapsed: el.querySelector(".pdp-spec-body")
+              ? getComputedStyle(el.querySelector(".pdp-spec-body")).display === "none"
+              : false,
           })),
           swatches: [...document.querySelectorAll(".pdp-swatch")].map((el) => ({
             tag: el.tagName.toLowerCase(),
@@ -939,6 +957,51 @@ async function runBrowser() {
           "drain-tower-40": "W 55 × D 55 × H 45 mm",
           "drain-tower-20": "W 55 × D 55 × H 25 mm",
         };
+        const cascadeLines = {
+          planting: [
+            ["line", "식재 및 생육 환경 안내"],
+            ["line", "캐스케이드는 돌과 흙 등 자연 소재를 활용해 직접 지형을 구성하고, 흐르는 물 주변에 식물을 식재할 수 있는 DIY 폭포형 여과 구조물입니다."],
+            ["line", "식물의 특성에 맞는 위치와 환경을 조성하면 더욱 안정적으로 유지할 수 있습니다."],
+            ["subhead", "01. 추천 식재 식물"],
+            ["line", "습도가 높은 환경에서 생육하는 식물을 권장합니다."],
+            ["line", "이끼류, 고사리류 등 습한 환경을 선호하는 식물이 적합하며, 물이 흐르는 위치와 식물의 생육 특성을 고려해 식재해 주세요."],
+            ["line", "식물에 따라 필요한 수분량이 다르므로 지속적인 침수나 강한 물줄기에 주의해 주세요."],
+          ],
+          cleaning: [
+            ["line", "세척 및 관리 안내"],
+            ["line", "캐스케이드는 정기적인 세척을 통해 원활한 물 순환과 여과 기능을 유지할 수 있습니다."],
+            ["subhead", "01. 여과 스펀지 세척"],
+            ["line", "여과 스펀지를 분리한 후 흐르는 물에 가볍게 헹궈 이물질을 제거해 주세요."],
+            ["line", "스펀지가 손상되지 않도록 강하게 비틀거나 문지르지 마세요."],
+            ["line", "*생물학적 여과를 유지하는 경우에는 수돗물 대신 기존 수조의 물로 헹궈주세요."],
+            ["subhead", "02. 구조물 세척"],
+            ["line", "부드러운 솔을 이용해 물이 흐르는 통로와 구조물 표면에 쌓인 이물질을 제거해 주세요."],
+            ["line", "직접 부착한 돌이나 흙 등의 소재가 떨어지지 않도록 주의해 주세요."],
+            ["line", "세제나 화학 세척제는 사용하지 마세요."],
+            ["subhead", "03. 재조립 및 작동 확인"],
+            ["line", "세척한 여과 스펀지를 원래 위치에 장착해 주세요."],
+            ["line", "물을 순환시켜 폭포가 정상적으로 흐르는지 확인해 주세요."],
+            ["line", "관리 시 주의사항"],
+            ["line", "- 세척 전 반드시 전원을 차단해 주세요."],
+            ["line", "- 오염 정도에 따라 주기적으로 세척해 주세요."],
+            ["line", "- 날카롭거나 거친 도구는 사용하지 마세요."],
+            ["line", "- 물의 흐름이 약해지면 여과 스펀지와 물길의 막힘 여부를 확인해 주세요."],
+          ],
+          temperature: [
+            ["line", "온도"],
+            ["line", "- 권장 온도: 20~26°C"],
+            ["line", "- 급격한 온도 변화 및 찬바람 주의"],
+          ],
+        };
+        const specLines = (pairs) => pairs.map(([role, text]) => ({ role, text }));
+        const emptySection = (key, label) => ({
+          key,
+          label,
+          value: "",
+          empty: false,
+          lines: [],
+          collapsed: false,
+        });
         assert.deepEqual(
           report.specs,
           [
@@ -947,13 +1010,39 @@ async function runBrowser() {
               label: "",
               value: drainDimensions[id] || "W — × D — × H — mm",
               empty: true,
+              lines: [],
+              collapsed: false,
             },
-            {
-              key: "planting",
-              label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
-              value: "준비 중",
-              empty: true,
-            },
+            id.startsWith("cascade-")
+              ? {
+                  key: "planting",
+                  label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
+                  value: "",
+                  empty: false,
+                  lines: specLines(cascadeLines.planting),
+                  collapsed: true,
+                }
+              : emptySection("planting", "Recommended Planting & Environment\n추천 식재 조건 및 환경"),
+            id.startsWith("cascade-")
+              ? {
+                  key: "cleaning",
+                  label: "Cleaning\n세척 방법",
+                  value: "",
+                  empty: false,
+                  lines: specLines(cascadeLines.cleaning),
+                  collapsed: true,
+                }
+              : emptySection("cleaning", "Cleaning\n세척 방법"),
+            id.startsWith("cascade-")
+              ? {
+                  key: "temperature",
+                  label: "Temperature & Notes\n온도 및 주의사항",
+                  value: "",
+                  empty: false,
+                  lines: specLines(cascadeLines.temperature),
+                  collapsed: true,
+                }
+              : emptySection("temperature", "Temperature & Notes\n온도 및 주의사항"),
           ],
           `${id} specs`,
         );

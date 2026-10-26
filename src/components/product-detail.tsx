@@ -2,16 +2,18 @@ import Link from "next/link";
 
 import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
+import { PdpSpecSection } from "@/components/pdp-spec-section";
 import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
   PRODUCT_DIMENSION_PLACEHOLDER,
-  PRODUCT_PLANTING_LABEL_LINES,
-  PRODUCT_SPEC_PENDING,
+  PRODUCT_SPEC_SECTIONS,
   STORE_URL,
   productColorLabel,
   productNote,
+  productSpecLines,
+  productSpecSectionBody,
   productSpecValue,
   productsInFamily,
   type NewProduct,
@@ -95,31 +97,23 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </p>
           ) : null}
           <div className="pdp-specs">
-            {(["dimensions", "planting"] as const).map((key) => {
-              const value = productSpecValue(product, key);
-              if (key === "dimensions") {
-                return (
-                  <section key={key} className="pdp-spec" data-pdp-spec={key}>
-                    <p className="site-type pdp-spec-value is-empty">
-                      {value || PRODUCT_DIMENSION_PLACEHOLDER}
-                    </p>
-                  </section>
-                );
-              }
+            <section className="pdp-spec" data-pdp-spec="dimensions">
+              <p className="site-type pdp-spec-value is-empty">
+                {productSpecValue(product, "dimensions") || PRODUCT_DIMENSION_PLACEHOLDER}
+              </p>
+            </section>
+            {PRODUCT_SPEC_SECTIONS.map((section) => {
+              const lines = productSpecLines(productSpecSectionBody(product, section.key));
               return (
-                <section key={key} className="pdp-spec" data-pdp-spec={key}>
-                  <h2
-                    className="site-type pdp-spec-label"
-                    style={{ ...forceInkStyle, whiteSpace: "pre-line" }}
-                  >
-                    {PRODUCT_PLANTING_LABEL_LINES.join("\n")}
-                  </h2>
-                  <p
-                    className={`site-type pdp-spec-value${value ? "" : " is-empty"}`}
-                    style={value ? forceInkStyle : undefined}
-                  >
-                    {value || PRODUCT_SPEC_PENDING}
-                  </p>
+                <section key={section.key} className="pdp-spec" data-pdp-spec={section.key}>
+                  {lines.length ? (
+                    <PdpSpecSection sectionKey={section.key} en={section.en} ko={section.ko} lines={lines} />
+                  ) : (
+                    <h2
+                      className="site-type pdp-spec-label"
+                      style={{ ...forceInkStyle, whiteSpace: "pre-line" }}
+                    >{`${section.en}\n${section.ko}`}</h2>
+                  )}
                 </section>
               );
             })}
