@@ -974,21 +974,6 @@ button {
   margin-top: 0;
 }
 
-@media (min-width: 768px) {
-  .pdp-spec-body.is-collapsed {
-    display: flex;
-  }
-
-  .pdp-spec-toggle {
-    pointer-events: none;
-    cursor: default;
-  }
-
-  .pdp-spec-toggle-mark {
-    display: none;
-  }
-}
-
 .product-caption .site-type:not(.product-price) {
   max-width: 100%;
   overflow-wrap: break-word;

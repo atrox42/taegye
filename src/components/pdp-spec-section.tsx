@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 
 import { forceInkStyle } from "@/lib/force-white";
 import { productSpecHeading, type ProductSpecLine, type ProductSpecSectionKey } from "@/lib/site";
-
-const DESKTOP_QUERY = "(min-width: 768px)";
 
 const labelStyle = { ...forceInkStyle, whiteSpace: "pre-line" as const };
 
@@ -23,14 +21,6 @@ export function PdpSpecSection({
   const [open, setOpen] = useState(false);
   const panelId = useId();
 
-  useEffect(() => {
-    const media = window.matchMedia(DESKTOP_QUERY);
-    const sync = () => setOpen(media.matches);
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, []);
-
   return (
     <>
       <h2 className="site-type pdp-spec-label">
@@ -39,10 +29,7 @@ export function PdpSpecSection({
           className="pdp-spec-toggle"
           aria-expanded={open}
           aria-controls={panelId}
-          onClick={() => {
-            if (window.matchMedia(DESKTOP_QUERY).matches) return;
-            setOpen((value) => !value);
-          }}
+          onClick={() => setOpen((value) => !value)}
         >
           <span className="pdp-spec-label-text" style={labelStyle}>{productSpecHeading({ en, ko })}</span>
           <span className="pdp-spec-toggle-mark" aria-hidden>

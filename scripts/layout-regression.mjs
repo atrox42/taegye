@@ -1144,6 +1144,34 @@ async function runBrowser() {
       console.log(`ok  ${vp} PDP swatches: wall-kit/dot-port unchanged, cascade matches, mini/drain none`);
     }
 
+    for (const viewport of [MOBILE, DESKTOP]) {
+      const vp = viewport.width === DESKTOP.width ? "1440" : "412";
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const readToggles = () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll(".pdp-spec-toggle")].map((button) => {
+              const body = document.getElementById(button.getAttribute("aria-controls") || "");
+              return {
+                expanded: button.getAttribute("aria-expanded"),
+                display: body ? getComputedStyle(body).display : "missing",
+              };
+            }),
+          );
+        const closed = await readToggles();
+        assert.equal(closed.length, 2, `${vp} cascade toggle count`);
+        for (const section of closed) {
+          assert.equal(section.expanded, "false", `${vp} cascade starts closed`);
+          assert.equal(section.display, "none", `${vp} cascade body hidden`);
+        }
+        await page.$eval(".pdp-spec-toggle", (button) => button.click());
+        const opened = await readToggles();
+        assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
+        assert.equal(opened[0].display, "flex", `${vp} cascade body shown`);
+        assert.equal(opened[1].expanded, "false", `${vp} other section stays closed`);
+        console.log(`ok  ${vp} cascade specs stay closed until the heading is clicked`);
+      });
+    }
+
     await withPage(browser, DESKTOP, "/new/drain-tower-80", async (page) => {
       await page.evaluate(() => document.querySelector(".pdp-hero-guide")?.scrollIntoView({ block: "center" }));
       await page.waitForFunction(() => {
