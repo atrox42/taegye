@@ -1531,6 +1531,9 @@ async function runBrowser() {
 
     async function assertPdpImageNotStore(page, label) {
       const report = await page.evaluate((storeHref) => {
+        for (const portal of document.querySelectorAll("nextjs-portal")) {
+          portal.style.pointerEvents = "none";
+        }
         const box = (el) => {
           if (!el) return null;
           const r = el.getBoundingClientRect();
