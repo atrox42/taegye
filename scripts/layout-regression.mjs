@@ -446,13 +446,15 @@ async function runBrowser() {
           logoFromBottom: logo ? h - logo.bottom : null,
           logoToCopy: logo && copy ? copy.top - logo.bottom : null,
           centerOff: logo ? logo.x + logo.width / 2 - w / 2 : null,
+          buybar: document.documentElement.classList.contains("has-pdp-buybar"),
         };
       });
       assert.ok(Math.abs((bottom.w ?? 0) - 67) <= 1, `${label}: logo width ${bottom.w}`);
       assert.ok(Math.abs((bottom.h ?? 0) - 43) <= 1, `${label}: logo height ${bottom.h}`);
       assert.ok(Math.abs(bottom.centerOff ?? 99) <= 2, `${label}: logo not centered, off=${bottom.centerOff}`);
+      const fromBottom = bottom.buybar ? 148 : 92;
       assert.ok(
-        Math.abs((bottom.logoFromBottom ?? 0) - 92) <= 1,
+        Math.abs((bottom.logoFromBottom ?? 0) - fromBottom) <= 1,
         `${label}: logo from bottom ${bottom.logoFromBottom}`,
       );
       assert.ok(
@@ -931,11 +933,9 @@ async function runBrowser() {
               role: node.classList.contains("pdp-spec-subhead") ? "subhead" : "line",
               text: (node.textContent || "").trim(),
             })),
-            collapsed: el.querySelector(".pdp-spec-body")
-              ? getComputedStyle(el.querySelector(".pdp-spec-body")).display === "none"
-              : false,
+            collapsed: el.querySelector(".pdp-spec-body")?.classList.contains("is-collapsed") ?? false,
           })),
-          swatches: [...document.querySelectorAll(".pdp-swatch")].map((el) => ({
+          swatches: [...document.querySelectorAll(".pdp-buy .pdp-swatch")].map((el) => ({
             tag: el.tagName.toLowerCase(),
             href: el.getAttribute("href"),
             title: el.getAttribute("title"),
@@ -1081,23 +1081,24 @@ async function runBrowser() {
 
     async function measureSwatches(page) {
       return page.evaluate(() => {
-        const swatches = document.querySelector(".pdp-swatches");
+        const buy = document.querySelector(".pdp-buy");
+        const swatches = buy?.querySelector(".pdp-swatches");
         const price = document.querySelector(".pdp-price");
         const store = document.querySelector("[data-pdp-store]");
         const s = swatches ? getComputedStyle(swatches) : null;
-        const item = document.querySelector(".pdp-swatch");
+        const item = buy?.querySelector(".pdp-swatch");
         const itemS = item ? getComputedStyle(item) : null;
         const sr = swatches?.getBoundingClientRect();
         const pr = price?.getBoundingClientRect();
         const tr = store?.getBoundingClientRect();
         return {
-          count: document.querySelectorAll(".pdp-swatch").length,
+          count: buy?.querySelectorAll(".pdp-swatch").length ?? 0,
           display: s?.display || null,
           gap: s?.gap || null,
           width: itemS?.width || null,
           height: itemS?.height || null,
           radius: itemS?.borderRadius || null,
-          titles: [...document.querySelectorAll(".pdp-swatch")].map((el) => el.getAttribute("title")),
+          titles: [...(buy?.querySelectorAll(".pdp-swatch") ?? [])].map((el) => el.getAttribute("title")),
           belowPrice: Boolean(sr && pr && sr.top >= pr.bottom - 1),
           aboveStore: Boolean(sr && tr && sr.bottom <= tr.top + 1),
         };
@@ -1162,7 +1163,9 @@ async function runBrowser() {
               const body = document.getElementById(button.getAttribute("aria-controls") || "");
               return {
                 expanded: button.getAttribute("aria-expanded"),
-                display: body ? getComputedStyle(body).display : "missing",
+                collapsed: body?.classList.contains("is-collapsed") ?? true,
+                rows: body ? getComputedStyle(body).gridTemplateRows : "",
+                duration: body ? getComputedStyle(body).transitionDuration : "",
               };
             }),
           );
@@ -1170,15 +1173,19 @@ async function runBrowser() {
         assert.equal(closed.length, 3, `${vp} cascade toggle count`);
         for (const section of closed) {
           assert.equal(section.expanded, "false", `${vp} cascade starts closed`);
-          assert.equal(section.display, "none", `${vp} cascade body hidden`);
+          assert.equal(section.collapsed, true, `${vp} cascade body hidden`);
         }
         await page.$eval(".pdp-spec-toggle", (button) => button.click());
         const opened = await readToggles();
         assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
-        assert.equal(opened[0].display, "flex", `${vp} cascade body shown`);
+        assert.equal(opened[0].collapsed, false, `${vp} cascade body shown`);
+        assert.equal(opened[0].duration, "0.25s", `${vp} cascade body motion`);
         assert.equal(opened[1].expanded, "false", `${vp} other section stays closed`);
-        const marks = await page.$$eval(".pdp-spec-toggle-glyph", (nodes) => nodes.map((node) => node.textContent));
-        assert.deepEqual(marks, ["−", "+", "+"], `${vp} cascade mark`);
+        assert.equal(opened[1].collapsed, true, `${vp} other body stays closed`);
+        const marks = await page.$$eval(".pdp-spec-toggle-bar-v", (nodes) =>
+          nodes.map((node) => node.classList.contains("is-open")),
+        );
+        assert.deepEqual(marks, [true, false, false], `${vp} cascade mark`);
         const bodyInk = await page.$eval(".pdp-spec-line", (node) => getComputedStyle(node).webkitTextFillColor);
         assert.notEqual(bodyInk, "rgb(153, 153, 153)", `${vp} cascade body stays black`);
         console.log(`ok  ${vp} cascade specs stay closed until the heading is clicked`);
@@ -1209,7 +1216,7 @@ async function runBrowser() {
             assert.equal(item.color, "rgb(17, 17, 17)", `${vp} ${path} ${item.text} color`);
             assert.equal(/[가-힣]/.test(item.text), false, `${vp} ${path} Korean heading ${item.text}`);
           }
-          const marks = await page.$$eval(".pdp-spec-toggle-glyph", (nodes) =>
+          const marks = await page.$$eval(".pdp-spec-toggle-bar-v", (nodes) =>
             nodes.map((node) => {
               const style = getComputedStyle(node);
               const mark = node.parentElement.getBoundingClientRect();
@@ -1217,18 +1224,18 @@ async function runBrowser() {
               const first = node.closest(".pdp-spec-toggle").querySelector(".pdp-spec-label-text").getBoundingClientRect();
               const mid = mark.top + mark.height / 2;
               return {
-                text: node.textContent,
-                color: style.color,
-                weight: style.fontWeight,
-                atRight: Math.abs(mark.right - row.right) <= 1,
-                onFirstLine: mid >= first.top - 1 && mid <= first.bottom + 1,
+                open: node.classList.contains("is-open"),
+                duration: style.transitionDuration,
+                bg: style.backgroundColor,
+                atRight: Math.abs(mark.right - row.right) <= 2,
+                onFirstLine: mid >= first.top - 2 && mid <= first.bottom + 2,
               };
             }),
           );
-          assert.deepEqual(marks.map((mark) => mark.text), ["+", "+", "+"], `${vp} ${path} closed marks`);
+          assert.deepEqual(marks.map((mark) => mark.open), [false, false, false], `${vp} ${path} closed marks`);
           for (const mark of marks) {
-            assert.equal(mark.color, "rgb(17, 17, 17)", `${vp} ${path} mark color`);
-            assert.equal(mark.weight, "300", `${vp} ${path} mark weight`);
+            assert.equal(mark.bg, "rgb(17, 17, 17)", `${vp} ${path} mark color`);
+            assert.equal(mark.duration, "0.25s", `${vp} ${path} mark motion`);
             assert.equal(mark.atRight, true, `${vp} ${path} mark at right`);
             assert.equal(mark.onFirstLine, true, `${vp} ${path} mark on first line`);
           }
@@ -1249,6 +1256,7 @@ async function runBrowser() {
               related: document.querySelector("#pdp-related-title")?.textContent?.trim() || "",
               arrows: document.querySelectorAll(".pdp-related-arrow").length,
               cards: document.querySelectorAll(".pdp-related-card").length,
+              relatedNames: [...document.querySelectorAll(".pdp-related-name")].map((node) => node.textContent.trim()),
               currentInRelated: [...document.querySelectorAll(".pdp-related-name")].some((node) =>
                 (node.textContent || "").includes(document.querySelector(".pdp-name")?.textContent?.trim() || "___"),
               ),
@@ -1260,7 +1268,14 @@ async function runBrowser() {
           assert.equal(sheet.diagramSecond, true, `${vp} ${path} drawing should be the second gallery image`);
           assert.equal(sheet.related, "Recommended for you", `${vp} ${path} related title`);
           assert.equal(sheet.arrows, 2, `${vp} ${path} related arrows`);
-          assert.ok(sheet.cards >= 4, `${vp} ${path} related cards ${sheet.cards}`);
+          assert.deepEqual(
+            sheet.relatedNames,
+            path.endsWith("cascade-silver")
+              ? ["Wall 212, HOLLOW(Translucent)"]
+              : ["Cascade 600, HOLLOW(Translucent)"],
+            `${vp} ${path} same-color related`,
+          );
+          assert.equal(sheet.cards, sheet.relatedNames.length, `${vp} ${path} related cards`);
           assert.equal(sheet.currentInRelated, false, `${vp} ${path} related includes current`);
           assert.equal(sheet.leak, false, `${vp} ${path} overseas chrome leaked`);
           assert.equal(sheet.madeIn.color, "rgb(153, 153, 153)", `${vp} ${path} sample made in`);
@@ -1270,8 +1285,127 @@ async function runBrowser() {
             assert.equal(sheet.color.color, "rgb(17, 17, 17)", `${vp} ${path} color ink`);
             assert.ok(sheet.dimensions.text.includes("(sample)"), `${vp} ${path} sample dimensions`);
           }
+          const type = await page.evaluate(() => {
+            const box = (el) => (el ? el.getBoundingClientRect() : null);
+            const name = document.querySelector(".pdp-name");
+            const price = document.querySelector(".pdp-price");
+            const ns = name ? getComputedStyle(name) : null;
+            const ps = price ? getComputedStyle(price) : null;
+            const heading = document.querySelector(".pdp-spec-label-text");
+            const body = document.querySelector(".pdp-spec-line");
+            const cell = document.querySelector(".pdp-specsheet-table td");
+            const feature = document.querySelector(".pdp-features-line");
+            return {
+              nameSize: ns?.fontSize || "",
+              priceSize: ps?.fontSize || "",
+              nameWeight: ns?.fontWeight || "",
+              priceWeight: ps?.fontWeight || "",
+              name: box(name),
+              price: box(price),
+              heading: heading ? parseFloat(getComputedStyle(heading).fontSize) : 0,
+              body: body ? parseFloat(getComputedStyle(body).fontSize) : 0,
+              cell: cell ? parseFloat(getComputedStyle(cell).fontSize) : 0,
+              features: [...document.querySelectorAll(".pdp-features-line")].map((node) => ({
+                text: (node.textContent || "").replace(/\s+/g, " ").trim(),
+                color: getComputedStyle(node).color,
+              })),
+              featureColor: feature ? getComputedStyle(feature).color : "",
+            };
+          });
+          assert.equal(type.nameSize, type.priceSize, `${vp} ${path} name/price size`);
+          assert.equal(type.nameWeight, type.priceWeight, `${vp} ${path} name/price weight`);
+          assert.equal(type.nameSize, "18px", `${vp} ${path} title size ${type.nameSize}`);
+          assert.ok(type.price.left > type.name.left, `${vp} ${path} price sits right of the name`);
+          assert.ok(Math.abs(type.price.top - type.name.top) <= 1, `${vp} ${path} price top-aligned`);
+          assert.equal(type.heading, 14, `${vp} ${path} heading ${type.heading}`);
+          assert.ok(type.body < type.heading && type.body >= 12, `${vp} ${path} body ${type.body}`);
+          assert.ok(type.cell < type.heading && type.cell <= 13, `${vp} ${path} spec cell ${type.cell}`);
+          assert.equal(type.features.length, 3, `${vp} ${path} feature count`);
+          assert.equal(type.featureColor, "rgb(17, 17, 17)", `${vp} ${path} feature ink`);
+          assert.equal(type.features.some((line) => line.text.includes("(sample)")), false, `${vp} ${path} sample feature`);
+          if (path.endsWith("cascade-silver")) {
+            assert.ok(type.features[0].text.includes("물이 흐르는 폭포"), `${vp} cascade feature 01`);
+            assert.ok(type.features[1].text.includes("돌과 배양토"), `${vp} cascade feature 02`);
+            assert.ok(type.features[2].text.includes("이끼류"), `${vp} cascade feature 03`);
+          }
         });
       }
+      await withPage(browser, viewport, "/new/green", async (page) => {
+        assert.equal(await page.$(".pdp-related"), null, `${vp} BUG has no same-color products`);
+      });
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const desktop = viewport.width === DESKTOP.width;
+        if (desktop) {
+          await page.waitForSelector(".pdp-scroll-rail.is-on", { timeout: 8000 });
+          const rail = await page.evaluate(() => {
+            const rail = document.querySelector(".pdp-scroll-rail");
+            const thumb = rail?.querySelector(".pdp-scroll-rail-thumb");
+            const nav = document.querySelector(".site-nav a");
+            const index = document.querySelector(".pdp-gallery-index");
+            const slides = [...document.querySelectorAll(".pdp-gallery-slide")].map((node) => node.getBoundingClientRect());
+            const rr = rail.getBoundingClientRect();
+            const nr = nav.getBoundingClientRect();
+            const tr = thumb.getBoundingClientRect();
+            return {
+              index: index ? getComputedStyle(index).display : "missing",
+              railLeft: rr.left,
+              navLeft: nr.left,
+              railH: rr.height,
+              thumbH: tr.height,
+              stacked: slides.length > 1 && slides[1].top >= slides[0].bottom - 1,
+            };
+          });
+          assert.equal(rail.index, "none", `${vp} counter hidden`);
+          assert.ok(Math.abs(rail.railLeft - rail.navLeft) <= 1, `${vp} rail left ${rail.railLeft} vs nav ${rail.navLeft}`);
+          assert.ok(rail.railH > 40 && rail.thumbH < rail.railH, `${vp} rail ${rail.railH} thumb ${rail.thumbH}`);
+          assert.equal(rail.stacked, true, `${vp} gallery stacks vertically`);
+        } else {
+          const mobileGallery = await page.evaluate(() => {
+            const rail = document.querySelector(".pdp-scroll-rail");
+            const index = document.querySelector(".pdp-gallery-index");
+            const slides = [...document.querySelectorAll(".pdp-gallery-slide")].map((node) => node.getBoundingClientRect());
+            return {
+              rail: rail ? getComputedStyle(rail).display : "missing",
+              index: (index?.textContent || "").trim(),
+              sideBySide: slides.length > 1 && slides[1].left >= slides[0].right - 1,
+            };
+          });
+          assert.equal(mobileGallery.rail, "none", `${vp} rail hidden`);
+          assert.match(mobileGallery.index, /^\d+ \/ \d+$/, `${vp} counter ${mobileGallery.index}`);
+          assert.equal(mobileGallery.sideBySide, true, `${vp} gallery stays horizontal`);
+        }
+        await page.evaluate(() => document.querySelector("[data-pdp-store]")?.scrollIntoView({ block: "center" }));
+        await page.waitForFunction(
+          () => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "off",
+        );
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await page.waitForFunction(() => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "on");
+        const bar = await page.evaluate(() => {
+          const node = document.querySelector("[data-pdp-buybar]");
+          const store = document.querySelector("[data-pdp-store]");
+          const link = document.querySelector("[data-pdp-buybar-store]");
+          const swatches = document.querySelector(".pdp-buybar-swatches");
+          const header = document.querySelector(".site-header");
+          const promo = document.querySelector(".site-promo");
+          return {
+            name: document.querySelector(".pdp-buybar-name")?.textContent?.trim() || "",
+            label: link?.textContent?.trim() || "",
+            href: link?.getAttribute("href") || "",
+            main: store?.getAttribute("href") || "",
+            swatchDisplay: swatches ? getComputedStyle(swatches).display : "missing",
+            z: Number(getComputedStyle(node).zIndex) || 0,
+            headerZ: header ? Number(getComputedStyle(header).zIndex) || 0 : 0,
+            promoZ: promo ? Number(getComputedStyle(promo).zIndex) || 0 : 70,
+            pad: getComputedStyle(document.querySelector(".site-column")).paddingBottom,
+          };
+        });
+        assert.equal(bar.name, "Cascade 600, HOLLOW(Translucent)", `${vp} buy bar name`);
+        assert.equal(bar.label, "Store · KRW 236,000", `${vp} buy bar label`);
+        assert.equal(bar.href, bar.main, `${vp} buy bar link`);
+        assert.equal(bar.swatchDisplay, desktop ? "flex" : "none", `${vp} buy bar swatches ${bar.swatchDisplay}`);
+        assert.ok(bar.z < bar.headerZ && bar.z < bar.promoZ, `${vp} buy bar z ${bar.z}`);
+        assert.ok(parseFloat(bar.pad) >= 56, `${vp} buy bar padding ${bar.pad}`);
+      });
       console.log(`ok  ${vp} accordions, specifications, and recommended row`);
     }
 

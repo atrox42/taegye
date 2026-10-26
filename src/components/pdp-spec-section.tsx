@@ -30,7 +30,8 @@ export function PdpAccordion({
             {label}
           </span>
           <span className="pdp-spec-toggle-mark" aria-hidden>
-            <span className="pdp-spec-toggle-glyph">{open ? "−" : "+"}</span>
+            <span className="pdp-spec-toggle-bar pdp-spec-toggle-bar-h" />
+            <span className={`pdp-spec-toggle-bar pdp-spec-toggle-bar-v${open ? " is-open" : ""}`} />
           </span>
         </button>
       </h2>
@@ -39,7 +40,7 @@ export function PdpAccordion({
         className={open ? "pdp-spec-body" : "pdp-spec-body is-collapsed"}
         data-pdp-spec-body={sectionKey}
       >
-        {children}
+        <div className="pdp-spec-body-inner">{children}</div>
       </div>
     </section>
   );

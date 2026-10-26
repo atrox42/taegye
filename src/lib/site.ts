@@ -25,7 +25,8 @@ export const NAV_ITEMS = [
 /** Logo display box — keep within the 135×48 px brand lockup. */
 export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 /** Footer lockup — 20% smaller than the default. */
-export const FOOTER_LOGO_DISPLAY = { width: 108, height: 38 } as const;
+/** Matches the logo file’s aspect so the mark fills the box. */
+export const FOOTER_LOGO_DISPLAY = { width: 57, height: 38 } as const;
 
 /** Transparent black PNG — drawn onto canvas so OEM Force Dark cannot grey it. */
 export const LOGO_SRC = "/logo-taegye.png";
@@ -332,12 +333,44 @@ export const PDP_INFO_SECTIONS = [
 
 export type PdpInfoSectionKey = (typeof PDP_INFO_SECTIONS)[number]["key"];
 
-/** Placeholder feature lines. Gray “(sample)” copy until real lines exist. */
-export const PDP_FEATURE_SAMPLES = [
-  { n: "01", text: "Sample feature (sample)" },
-  { n: "02", text: "Sample feature (sample)" },
-  { n: "03", text: "Sample feature (sample)" },
-] as const;
+/**
+ * Three short feature lines per product, taken only from that product’s
+ * existing description (Cascade also uses its planting copy).
+ */
+const PDP_FEATURES: Record<NewProductCategoryId, readonly [string, string, string]> = {
+  "wall-kit": [
+    "바닥과 수직 벽면을 식재 공간으로 쓰는 DIY 테라리움",
+    "이끼와 식물을 심고 바닥에 배양토와 자연 소재를 배치",
+    "식물과 돌, 유목을 자유롭게 조합",
+  ],
+  "mini-port": [
+    "식물 포트와 유리 커버로 된 단일 식물 온실",
+    "유리 커버로 내부 습도를 유지",
+    "열대식물과 정글식물을 가까이에서 관찰",
+  ],
+  "one-port": [
+    "어린 열대식물과 소형 정글식물을 위한 미니 온실",
+    "작은 공간에서도 생육에 필요한 습도를 유지",
+    "발아 이후의 어린 식물을 개별적으로 관리",
+  ],
+  cascade: [
+    "물이 흐르는 폭포를 연출하는 DIY 여과 구조물",
+    "돌과 배양토를 직접 붙여 지형을 구성",
+    "이끼류·고사리류처럼 습한 환경을 좋아하는 식물에 적합",
+  ],
+  "drain-tower": [
+    "고인 물을 배출하고 바닥의 수분을 관리",
+    "잔여 수분을 제거해 뿌리 손상과 배양토 과습을 예방",
+    "바닥 구조와 사육장 크기에 맞춰 설치",
+  ],
+};
+
+export function productFeatures(product: NewProduct) {
+  return PDP_FEATURES[product.category].map((text, index) => ({
+    n: String(index + 1).padStart(2, "0"),
+    text,
+  }));
+}
 
 /** Placeholder specification values. Real measurements and color names stay unmarked. */
 export const PDP_SAMPLE_SPEC = {
@@ -361,7 +394,8 @@ export function parseMeasuredDimensions(value: string) {
 }
 
 export function relatedProducts(product: NewProduct) {
-  return NEW_PRODUCTS.filter((item) => item.id !== product.id);
+  const color = productColorLabel(product);
+  return NEW_PRODUCTS.filter((item) => item.id !== product.id && productColorLabel(item) === color);
 }
 
 /**

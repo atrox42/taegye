@@ -1,20 +1,21 @@
 import Link from "next/link";
 
+import { PdpBuyBar } from "@/components/pdp-buy-bar";
 import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpAccordion } from "@/components/pdp-spec-section";
 import { PdpRelated } from "@/components/pdp-related";
 import { PdpReveal } from "@/components/pdp-reveal";
 import { PdpDiagramSlide, PdpSpecTable } from "@/components/pdp-spec-sheet";
+import { PdpSwatches } from "@/components/pdp-swatches";
 import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceInkStyle, forceMutedStyle, forceWhiteClipStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle, forceWhiteClipStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
-  PDP_FEATURE_SAMPLES,
   PDP_INFO_SECTIONS,
   STORE_URL,
-  productColorLabel,
   productColorName,
   productFamilyLabel,
+  productFeatures,
   productNote,
   productSpecSectionBody,
   productsInFamily,
@@ -94,48 +95,22 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <span aria-hidden="true"> / </span>
           <span>{productFamilyLabel(product)}</span>
         </p>
-        <h1 className="site-type pdp-name" style={forceInkStyle}>
-          {product.name}
-        </h1>
-        {product.price ? (
-          <p className="site-type pdp-price product-price" style={forceInkStyle}>
-            {product.price}
-          </p>
-        ) : null}
+        <div className="pdp-title-row">
+          <h1 className="site-type pdp-name" style={forceInkStyle}>
+            {product.name}
+          </h1>
+          {product.price ? (
+            <p className="site-type pdp-price product-price" style={forceInkStyle}>
+              {product.price}
+            </p>
+          ) : null}
+        </div>
         {showSwatches ? (
           <div className="pdp-color">
             <p className="pdp-color-name" style={forceInkStyle}>
               {productColorName(product)}
             </p>
-            <div className="pdp-swatches" role="list" aria-label="Color">
-              {family.map((item) => {
-                const label = productColorLabel(item);
-                const current = item.id === product.id;
-                const className = `pdp-swatch${current ? " is-current" : ""}`;
-                if (current) {
-                  return (
-                    <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>
-                      {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                      <img src={`/swatches/${item.id}.png`} alt={label} />
-                      <span className="sr-only">{label}</span>
-                    </span>
-                  );
-                }
-                return (
-                  <Link
-                    key={item.id}
-                    role="listitem"
-                    href={`/new/${item.id}`}
-                    className={className}
-                    title={label}
-                    aria-label={label}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                    <img src={`/swatches/${item.id}.png`} alt={label} />
-                  </Link>
-                );
-              })}
-            </div>
+            <PdpSwatches product={product} family={family} />
           </div>
         ) : null}
         <a
@@ -155,8 +130,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
             Features
           </h2>
           <ol className="pdp-features-list">
-            {PDP_FEATURE_SAMPLES.map((feature) => (
-              <li key={feature.n} className="pdp-features-line" style={forceMutedStyle}>
+            {productFeatures(product).map((feature) => (
+              <li key={feature.n} className="pdp-features-line" lang="ko" style={forceInkStyle}>
                 <span className="pdp-features-num">{feature.n}</span>
                 <span>{feature.text}</span>
               </li>
@@ -224,6 +199,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </div>
       ) : null}
       <PdpRelated product={product} />
+      <PdpBuyBar product={product} family={family} showSwatches={showSwatches} />
     </article>
   );
 }

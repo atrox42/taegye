@@ -11,6 +11,8 @@ export function PdpRelated({ product }: { product: NewProduct }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const items = relatedProducts(product);
 
+  if (items.length === 0) return null;
+
   const scrollByCard = (direction: number) => {
     const track = trackRef.current;
     if (!track) return;
