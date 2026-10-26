@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from "react";
 
 import { forceInkStyle } from "@/lib/force-white";
-import type { ProductSpecLine, ProductSpecSectionKey } from "@/lib/site";
+import { productSpecHeading, type ProductSpecLine, type ProductSpecSectionKey } from "@/lib/site";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
 
@@ -44,7 +44,7 @@ export function PdpSpecSection({
             setOpen((value) => !value);
           }}
         >
-          <span className="pdp-spec-label-text" style={labelStyle}>{`${en}\n${ko}`}</span>
+          <span className="pdp-spec-label-text" style={labelStyle}>{productSpecHeading({ en, ko })}</span>
           <span className="pdp-spec-toggle-mark" aria-hidden>
             {open ? "–" : "+"}
           </span>

@@ -12,6 +12,7 @@ import {
   STORE_URL,
   productColorLabel,
   productNote,
+  productSpecHeading,
   productSpecLines,
   productSpecSectionBody,
   productSpecValue,
@@ -112,7 +113,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     <h2
                       className="site-type pdp-spec-label"
                       style={{ ...forceInkStyle, whiteSpace: "pre-line" }}
-                    >{`${section.en}\n${section.ko}`}</h2>
+                    >{productSpecHeading(section)}</h2>
                   )}
                 </section>
               );

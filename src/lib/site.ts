@@ -278,24 +278,22 @@ export const PRODUCT_SPEC_SECTIONS = [
     ko: "추천 식재 조건 및 환경",
   },
   {
-    key: "cleaning",
-    en: "Cleaning",
-    ko: "세척 방법",
-  },
-  {
     key: "temperature",
-    en: "Temperature & Notes",
-    ko: "온도 및 주의사항",
+    en: "Notes",
+    ko: "주의사항",
   },
 ] as const;
 
 export type ProductSpecSectionKey = (typeof PRODUCT_SPEC_SECTIONS)[number]["key"];
 
+export function productSpecHeading(section: { en: string; ko: string }) {
+  return `${section.ko}\n(${section.en})`;
+}
+
 export const PRODUCT_SPEC_LABELS = {
   dimensions: "Dimensions / 치수",
-  planting: `${PRODUCT_SPEC_SECTIONS[0].en} / ${PRODUCT_SPEC_SECTIONS[0].ko}`,
-  cleaning: `${PRODUCT_SPEC_SECTIONS[1].en} / ${PRODUCT_SPEC_SECTIONS[1].ko}`,
-  temperature: `${PRODUCT_SPEC_SECTIONS[2].en} / ${PRODUCT_SPEC_SECTIONS[2].ko}`,
+  planting: `${PRODUCT_SPEC_SECTIONS[0].ko} (${PRODUCT_SPEC_SECTIONS[0].en})`,
+  temperature: `${PRODUCT_SPEC_SECTIONS[1].ko} (${PRODUCT_SPEC_SECTIONS[1].en})`,
 } as const;
 
 /** Verbatim Cascade care copy. Numbered lines render as subheads; other lines stay plain. */
@@ -307,24 +305,6 @@ const CASCADE_SPEC_TEXT = {
 습도가 높은 환경에서 생육하는 식물을 권장합니다.
 이끼류, 고사리류 등 습한 환경을 선호하는 식물이 적합하며, 물이 흐르는 위치와 식물의 생육 특성을 고려해 식재해 주세요.
 식물에 따라 필요한 수분량이 다르므로 지속적인 침수나 강한 물줄기에 주의해 주세요.`,
-  cleaning: `세척 및 관리 안내
-캐스케이드는 정기적인 세척을 통해 원활한 물 순환과 여과 기능을 유지할 수 있습니다.
-01. 여과 스펀지 세척
-여과 스펀지를 분리한 후 흐르는 물에 가볍게 헹궈 이물질을 제거해 주세요.
-스펀지가 손상되지 않도록 강하게 비틀거나 문지르지 마세요.
-*생물학적 여과를 유지하는 경우에는 수돗물 대신 기존 수조의 물로 헹궈주세요.
-02. 구조물 세척
-부드러운 솔을 이용해 물이 흐르는 통로와 구조물 표면에 쌓인 이물질을 제거해 주세요.
-직접 부착한 돌이나 흙 등의 소재가 떨어지지 않도록 주의해 주세요.
-세제나 화학 세척제는 사용하지 마세요.
-03. 재조립 및 작동 확인
-세척한 여과 스펀지를 원래 위치에 장착해 주세요.
-물을 순환시켜 폭포가 정상적으로 흐르는지 확인해 주세요.
-관리 시 주의사항
-- 세척 전 반드시 전원을 차단해 주세요.
-- 오염 정도에 따라 주기적으로 세척해 주세요.
-- 날카롭거나 거친 도구는 사용하지 마세요.
-- 물의 흐름이 약해지면 여과 스펀지와 물길의 막힘 여부를 확인해 주세요.`,
   temperature: `온도
 - 권장 온도: 20~26°C
 - 급격한 온도 변화 및 찬바람 주의`,
