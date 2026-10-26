@@ -934,10 +934,20 @@ async function runBrowser() {
             ? "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다."
             : "Oneport는 하나의 식물 포트와 유리 커버로 구성된 단일 식물 전용 온실입니다. 유리 커버를 통해 내부 습도를 유지하여 높은 습도를 필요로 하는 열대식물과 정글식물이 성장하기에 적합한 환경을 제공합니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있는 소형 온실입니다.";
         assert.equal(report.note, expectedNote, `${id} note`);
+        const drainDimensions = {
+          "drain-tower-80": "W 55 × D 55 × H 80 mm",
+          "drain-tower-40": "W 55 × D 55 × H 45 mm",
+          "drain-tower-20": "W 55 × D 55 × H 25 mm",
+        };
         assert.deepEqual(
           report.specs,
           [
-            { key: "dimensions", label: "", value: "W — × D — × H — mm", empty: true },
+            {
+              key: "dimensions",
+              label: "",
+              value: drainDimensions[id] || "W — × D — × H — mm",
+              empty: true,
+            },
             {
               key: "planting",
               label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
