@@ -34,9 +34,12 @@ export function PdpBuyBar({
   useEffect(() => {
     const target = document.querySelector("[data-pdp-store]");
     if (!(target instanceof Element)) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      setOn(!entry?.isIntersecting);
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setOn(!entry || entry.intersectionRatio < 0.6);
+      },
+      { threshold: [0, 0.6, 1] },
+    );
     observer.observe(target);
     return () => observer.disconnect();
   }, [product.id]);

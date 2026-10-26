@@ -1286,7 +1286,11 @@ async function runBrowser() {
             assert.ok(sheet.dimensions.text.includes("(sample)"), `${vp} ${path} sample dimensions`);
           }
           const type = await page.evaluate(() => {
-            const box = (el) => (el ? el.getBoundingClientRect() : null);
+            const box = (el) => {
+              if (!el) return null;
+              const r = el.getBoundingClientRect();
+              return { left: r.left, top: r.top, width: r.width, height: r.height };
+            };
             const name = document.querySelector(".pdp-name");
             const price = document.querySelector(".pdp-price");
             const ns = name ? getComputedStyle(name) : null;

@@ -79,6 +79,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
+      <div className="pdp-stage-row">
       <div className="pdp-media">
         <PdpGallery
           slides={[
@@ -179,6 +180,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </PdpAccordion>
           ))}
         </div>
+      </div>
       </div>
 
       {product.category === "drain-tower" ? (

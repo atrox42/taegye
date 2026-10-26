@@ -4199,19 +4199,25 @@ button.site-menubar-toggle,
     padding-top: calc(2.5rem + 11px + 48px);
   }
 
-  .pdp-atelier > .pdp-media {
-    grid-column: 2;
+  .pdp-atelier > .pdp-stage-row {
+    grid-column: 2 / 4;
     grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(260px, 400px);
+    column-gap: 3rem;
+    align-items: start;
+    width: 100%;
+  }
+
+  .pdp-stage-row > .pdp-media {
     width: 100%;
     max-width: 520px;
     justify-self: end;
   }
 
-  .pdp-atelier > .pdp-buy {
+  .pdp-stage-row > .pdp-buy {
     position: sticky !important;
     top: 6.5rem;
-    grid-column: 3;
-    grid-row: 1;
     align-self: start;
     width: 100%;
     justify-self: start;
