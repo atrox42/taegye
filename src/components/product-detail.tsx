@@ -97,9 +97,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <h1 className="site-type pdp-name" style={forceInkStyle}>
           {product.name}
         </h1>
-        <p className="pdp-subtitle" lang="ko" style={forceInkStyle}>
-          {product.nameKr}
-        </p>
         {product.price ? (
           <p className="site-type pdp-price product-price" style={forceInkStyle}>
             {product.price}

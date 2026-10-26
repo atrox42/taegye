@@ -3694,198 +3694,6 @@ button.site-menubar-toggle,
   border: 0 !important;
 }
 
-html[data-cookies="off"] .site-cookies {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-.site-lang-card {
-  padding: 22px 22px 20px;
-}
-
-.site-lang-body {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.site-lang-title {
-  margin: 8px 36px 22px 0;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: 0;
-}
-
-.site-lang-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.site-lang-label {
-  line-height: 1.2;
-}
-
-.site-lang-select {
-  position: relative;
-  display: block;
-}
-
-.site-lang-select select {
-  width: 100%;
-  height: 44px;
-  margin: 0;
-  padding: 0 36px 0 12px;
-  border: 1px solid #111111;
-  border-radius: 0;
-  background-color: #ffffff !important;
-  background-image: none !important;
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-  font-family: var(--font-pretendard);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 44px;
-  cursor: pointer;
-}
-
-.site-lang-caret {
-  position: absolute;
-  top: 50%;
-  right: 14px;
-  transform: translateY(-50%);
-  color: #111111;
-  font-size: 10px;
-  line-height: 1;
-  pointer-events: none;
-}
-
-.site-lang-confirm {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 44px;
-  margin-top: 20px;
-  padding: 0 12px;
-  border: 0;
-  background-color: #111111 !important;
-  background-image: none !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  font-family: var(--font-pretendard);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.site-lang-x {
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-  font-size: 22px;
-  font-weight: 300;
-  line-height: 1;
-}
-
-.site-cookies {
-  position: fixed;
-  z-index: 76;
-  left: 16px;
-  bottom: 16px;
-  width: min(300px, calc(100vw - 32px));
-  padding: 16px;
-  border: 1px solid #111111;
-  background-color: transparent !important;
-  color: #111111;
-}
-
-.site-cookies-body {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.site-cookies-copy {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.45;
-  letter-spacing: 0;
-}
-
-.site-cookies-actions,
-.site-cookies-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.site-cookies-accept,
-.site-cookies-save,
-.site-cookies-manage {
-  height: 36px;
-  padding: 0 12px;
-  font-family: var(--font-pretendard);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.site-cookies-accept,
-.site-cookies-save {
-  border: 1px solid #111111;
-  background-color: #111111 !important;
-  background-image: none !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-.site-cookies-manage {
-  border: 1px solid #111111;
-  background-color: #ffffff !important;
-  background-image: none !important;
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
-}
-
-.site-cookies-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  line-height: 1.3;
-}
-
-.site-cookies-row input {
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  accent-color: #111111;
-}
-
-.site-cookies-note {
-  margin-left: auto;
-  color: #999999 !important;
-  -webkit-text-fill-color: #999999 !important;
-  font-size: 11px;
-}
-
-@media (max-width: 767.98px) {
-  .site-cookies {
-    bottom: calc(24px + 43px + 16px);
-  }
-}
-
 /* PDP buy column — Aarke order, TAEGYE type and Store button. */
 .pdp-media,
 .pdp-buy,
@@ -3946,14 +3754,6 @@ html[data-cookies="off"] .site-cookies {
   line-height: 1.25;
   letter-spacing: 0;
   white-space: normal;
-}
-
-.pdp-subtitle {
-  margin: 6px 0 0;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.45;
-  letter-spacing: 0;
 }
 
 .pdp-buy .pdp-price {
@@ -4166,13 +3966,13 @@ html[data-cookies="off"] .site-cookies {
 .pdp-specsheet-table {
   width: 100%;
   border-collapse: collapse;
-  border-top: 1px solid #111111;
+  border-top: 1px solid #E5E5E5;
 }
 
 .pdp-specsheet-table th,
 .pdp-specsheet-table td {
   padding: 12px 0;
-  border-bottom: 1px solid #111111;
+  border-bottom: 1px solid #E5E5E5;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.4;

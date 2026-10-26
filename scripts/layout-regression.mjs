@@ -98,7 +98,16 @@ async function withPromo(browser, viewport, dark, fn) {
   await pageReady(page);
   await page.waitForSelector(".site-promo-card", { timeout: 20000 });
       await page.waitForFunction(
-    () => document.querySelector(".site-lang-title")?.textContent?.includes("Choose your language"),
+    () => {
+      const name = document.querySelector(".site-promo-name canvas");
+      const strip = document.querySelector(".site-promo-strip-btn canvas");
+      return (
+        name instanceof HTMLCanvasElement &&
+        name.width > 4 &&
+        strip instanceof HTMLCanvasElement &&
+        strip.width > 4
+      );
+    },
     { timeout: 15000 },
   );
   await new Promise((resolve) => setTimeout(resolve, 300));
@@ -2012,38 +2021,178 @@ async function runBrowser() {
           const d = ctx.getImageData(x, y, 1, 1).data;
           return [d[0], d[1], d[2], d[3]];
         };
+        const brightest = (sel) => {
+          const canvas = document.querySelector(sel);
+          if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 2) return null;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return null;
+          const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let best = [0, 0, 0, 0];
+          let score = -1;
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] < 200) continue;
+            const s = data[i] + data[i + 1] + data[i + 2];
+            if (s > score) {
+              score = s;
+              best = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+            }
+          }
+          return score < 0 ? null : best;
+        };
+        const darkest = (sel) => {
+          const canvas = document.querySelector(sel);
+          if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 2) return null;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return null;
+          const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let best = [255, 255, 255, 0];
+          let score = Infinity;
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] < 200) continue;
+            const s = data[i] + data[i + 1] + data[i + 2];
+            if (s < score) {
+              score = s;
+              best = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+            }
+          }
+          return score === Infinity ? null : best;
+        };
         const x = document.querySelector(".site-promo-x");
         const xr = x ? x.getBoundingClientRect() : null;
         const card = document.querySelector(".site-promo-card");
-        const select = document.querySelector(".site-lang-select select");
+        const cr = card ? card.getBoundingClientRect() : null;
+        const product = document.querySelector(".site-promo-product");
+        const photo = document.querySelector(".site-promo-photo");
+        const kickerEl = document.querySelector(".site-promo-kicker");
+        const stripEl = document.querySelector(".site-promo-strip");
+        const leak = `${document.body.innerText}\n${document.title}`;
         return {
-          title: document.querySelector(".site-lang-title")?.textContent?.trim() || "",
-          options: select ? [...select.options].map((option) => option.textContent.trim()) : [],
-          value: select?.value || "",
-          confirm: document.querySelector(".site-lang-confirm")?.textContent?.trim() || "",
+          strip: Boolean(document.querySelector(".site-promo-strip")),
+          stripBtns: document.querySelectorAll(".site-promo-strip-btn").length,
           dimTag: document.querySelector(".site-promo-dim")?.tagName || null,
           xW: xr ? xr.width : 0,
           xH: xr ? xr.height : 0,
+          cardW: cr ? +cr.width.toFixed(1) : 0,
           cardPlate: sampleCanvas(".site-promo-card > .canvas-white-fill", 0.5, 0.5),
-          open: Boolean(card),
-          country: Boolean(document.body.innerText.includes("Shipping to this country")),
-          leak: /GRAND OPENING|5% OFF|쿠폰 받기/.test(document.body.innerText),
+          name: darkest(".site-promo-name canvas"),
+          kicker: darkest(".site-promo-kicker canvas"),
+          xInk: darkest(".site-promo-x-mark"),
+          stripInk: darkest(".site-promo-strip-btn canvas"),
+          stripPlate: sampleCanvas(".site-promo-strip .canvas-white-fill", 0.5, 0.5),
+          hideLabel: document.querySelector(".site-promo-strip-btn .sr-only")?.textContent || "",
+          closeLabel:
+            document.querySelector(".site-promo-strip-close .sr-only")?.textContent || "",
+          productName: document.querySelector(".site-promo-name .sr-only")?.textContent || "",
+          productKicker: document.querySelector(".site-promo-kicker .sr-only")?.textContent || "",
+          productHref: product?.getAttribute("href") || "",
+          photoSrc: photo?.getAttribute("src") || "",
+          photoW: photo ? +photo.getBoundingClientRect().width.toFixed(1) : 0,
+          photoH: photo ? +photo.getBoundingClientRect().height.toFixed(1) : 0,
+          gapXtoPhoto:
+            xr && photo
+              ? +(photo.getBoundingClientRect().top - xr.bottom).toFixed(1)
+              : 0,
+          gapKickerToStrip:
+            kickerEl && stripEl
+              ? +(stripEl.getBoundingClientRect().top - kickerEl.getBoundingClientRect().bottom).toFixed(1)
+              : 0,
+          hasLogo: Boolean(document.querySelector(".site-promo-logo")),
+          ruleInk: sampleCanvas(".site-promo-strip-rule .canvas-white-fill", 0.5, 0.5),
+          dividerInk: (() => {
+            const canvas = document.querySelector(".site-promo-strip-divider .canvas-white-fill");
+            if (!(canvas instanceof HTMLCanvasElement) || canvas.width < 1 || canvas.height < 1) return null;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return null;
+            const d = ctx.getImageData(0, Math.max(0, Math.floor(canvas.height / 2)), 1, 1).data;
+            return [d[0], d[1], d[2], d[3]];
+          })(),
+          couponLeak: /GRAND OPENING|5% OFF|쿠폰 받기|스마트스토어 첫 구매/.test(leak),
+          open: Boolean(document.querySelector(".site-promo-card")),
+          vw: window.innerWidth,
         };
       });
-      assert.equal(report.open, true, `${label}: language modal missing`);
-      assert.equal(report.title, "Choose your language", `${label}: title`);
-      assert.deepEqual(report.options, ["한국어", "English", "日本語", "中文"], `${label}: languages`);
-      assert.equal(report.value, "ko", `${label}: default language`);
-      assert.equal(report.confirm, "Confirm & Close", `${label}: confirm`);
-      assert.equal(report.country, false, `${label}: shipping note should be gone`);
-      assert.equal(report.leak, false, `${label}: old promo copy leaked`);
+      assert.equal(report.strip, true, `${label}: hide-today / close strip missing`);
+      assert.equal(report.stripBtns, 2, `${label}: strip buttons`);
+      assert.equal(report.hideLabel, "오늘 하루 보지 않기", `${label}: hide-today label`);
+      assert.equal(report.closeLabel, "닫기", `${label}: close label`);
+      assert.equal(report.productName, "Wall 212, HOLLOW(Translucent)", `${label}: product name`);
+      assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
+      assert.equal(report.productHref, "/new/silver", `${label}: product href`);
+      assert.equal(report.photoSrc, "/products/stand-silver-moss.webp", `${label}: product photo`);
+      assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
+      assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
+      const gutter = report.vw <= 400 ? 24 : 32;
+      const expectedPhoto = +((report.cardW - gutter) * 0.59).toFixed(1);
+      assert.ok(
+        Math.abs(report.photoW - expectedPhoto) <= 2 && Math.abs(report.photoH - report.photoW) <= 2,
+        `${label}: photo ${report.photoW}×${report.photoH} vs ${expectedPhoto}`,
+      );
+      assert.ok(
+        report.gapXtoPhoto >= 24 && report.gapXtoPhoto <= 36,
+        `${label}: X→photo gap ${report.gapXtoPhoto}`,
+      );
+      assert.ok(
+        report.gapKickerToStrip >= 24 && report.gapKickerToStrip <= 36,
+        `${label}: kicker→strip gap ${report.gapKickerToStrip}`,
+      );
+      const gray = (ink, name) => {
+        assert.ok(ink, `${label}: ${name} line empty`);
+        assert.ok(
+          ink[0] >= 210 && ink[0] <= 245 && ink[1] >= 210 && ink[1] <= 245 && ink[2] >= 210 && ink[2] <= 245,
+          `${label}: ${name} must stay light gray, got ${ink}`,
+        );
+      };
+      gray(report.ruleInk, "top rule");
+      gray(report.dividerInk, "divider");
       assert.equal(report.dimTag, "DIV", `${label}: dim must not be a button`);
       assert.ok(report.xW >= 44 && report.xH >= 44, `${label}: X hit ${report.xW}×${report.xH}`);
+      const expectedW = report.vw >= 768 ? 360 : +(report.vw * 0.82).toFixed(1);
+      assert.ok(
+        Math.abs(report.cardW - expectedW) <= 2,
+        `${label}: card width ${report.cardW} vs ${expectedW}`,
+      );
       assert.ok(report.cardPlate, `${label}: card white plate empty`);
+      assert.ok(report.name, `${label}: name canvas empty`);
+      assert.ok(report.kicker, `${label}: kicker canvas empty`);
+      assert.ok(report.stripInk, `${label}: strip ink canvas empty`);
+      assert.ok(report.stripPlate, `${label}: strip white plate empty`);
+      const nameContrast = contrastRatio(report.name.slice(0, 3), report.cardPlate.slice(0, 3));
+      const stripContrast = contrastRatio(report.stripInk.slice(0, 3), report.stripPlate.slice(0, 3));
+      assert.ok(
+        nameContrast >= 4.5,
+        `${label}: name contrast ${nameContrast.toFixed(2)} name=${report.name} plate=${report.cardPlate}`,
+      );
+      assert.ok(
+        stripContrast >= 4.5,
+        `${label}: strip contrast ${stripContrast.toFixed(2)} ink=${report.stripInk} plate=${report.stripPlate}`,
+      );
       assert.ok(
         report.cardPlate[0] >= 250 && report.cardPlate[1] >= 250 && report.cardPlate[2] >= 250,
         `${label}: card plate must stay white, got ${report.cardPlate}`,
       );
+      assert.ok(
+        report.name[0] <= 30 && report.name[1] <= 30 && report.name[2] <= 30,
+        `${label}: name must stay near-black, got ${report.name}`,
+      );
+      assert.ok(
+        report.xInk &&
+          report.xInk[0] >= 140 &&
+          report.xInk[0] <= 180 &&
+          report.xInk[1] >= 140 &&
+          report.xInk[1] <= 180 &&
+          report.xInk[2] >= 140 &&
+          report.xInk[2] <= 180,
+        `${label}: X must stay mid gray (#999–#AAA), got ${report.xInk}`,
+      );
+      assert.ok(
+        report.stripInk[0] <= 30 && report.stripInk[1] <= 30 && report.stripInk[2] <= 30,
+        `${label}: strip ink must stay near-black, got ${report.stripInk}`,
+      );
+      assert.ok(
+        report.stripPlate[0] >= 240 && report.stripPlate[1] >= 240 && report.stripPlate[2] >= 240,
+        `${label}: strip plate must stay white, got ${report.stripPlate}`,
+      );
+
       await page.$eval(".site-promo-dim", (el) => {
         el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
       });
@@ -2055,21 +2204,24 @@ async function runBrowser() {
       await page.click(".site-promo-x");
       await new Promise((resolve) => setTimeout(resolve, 250));
       assert.equal(await page.$(".site-promo-card"), null, `${label}: X should close promo`);
-      return report;
+      return { nameContrast, stripContrast };
     }
 
     async function assertPromoActions(page, label) {
-      const before = await page.evaluate(() => window.localStorage.getItem("taegye-language"));
-      assert.equal(before, null, `${label}: language should start empty`);
-      await page.click(".site-promo-x");
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      assert.equal(await page.$(".site-promo-card"), null, `${label}: X should close`);
-      const after = await page.evaluate(() => ({
-        language: window.localStorage.getItem("taegye-language"),
+      const before = await page.evaluate(() => ({
+        hideUntil: window.localStorage.getItem("taegye-promo-hide-until"),
         closed: window.sessionStorage.getItem("taegye-promo-closed"),
       }));
-      assert.equal(after.closed, "1", `${label}: X marks the session`);
-      assert.equal(after.language, null, `${label}: X must not store a language`);
+      assert.equal(before.hideUntil, null, `${label}: hide-until should start empty`);
+      await page.click(".site-promo-strip-close");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      assert.equal(await page.$(".site-promo-card"), null, `${label}: 닫기 should close promo`);
+      const afterClose = await page.evaluate(() => ({
+        hideUntil: window.localStorage.getItem("taegye-promo-hide-until"),
+        closed: window.sessionStorage.getItem("taegye-promo-closed"),
+      }));
+      assert.equal(afterClose.closed, "1", `${label}: 닫기 should mark the session`);
+      assert.equal(afterClose.hideUntil, null, `${label}: 닫기 must not hide today`);
     }
 
     for (const [name, vp, dark] of [
@@ -2080,8 +2232,10 @@ async function runBrowser() {
       ["desktop 1440 forced-dark", DESKTOP, true],
     ]) {
       await withPromo(browser, vp, dark, async (page) => {
-        await assertPromo(page, name);
-        console.log(`ok  promo ${name}: language modal`);
+        const ratios = await assertPromo(page, name);
+        console.log(
+          `ok  promo ${name}: white card; name ${ratios.nameContrast.toFixed(2)}:1 strip ${ratios.stripContrast.toFixed(2)}:1`,
+        );
       });
     }
 
@@ -2171,20 +2325,36 @@ async function runBrowser() {
 
     await withPromo(browser, MOBILE, false, async (page) => {
       await assertPromoActions(page, "mobile 412 close");
-      console.log("ok  language X closes for the session only");
+      console.log("ok  promo 닫기 closes for the session only");
     });
     await withPromo(browser, MOBILE, false, async (page) => {
-      await page.select(".site-lang-select select", "en");
-      await page.click(".site-lang-confirm");
+      await page.click(".site-promo-strip-btn:not(.site-promo-strip-close)");
       await new Promise((resolve) => setTimeout(resolve, 250));
-      assert.equal(await page.$(".site-promo-card"), null, "confirm should close the modal");
+      assert.equal(await page.$(".site-promo-card"), null, "hide-today should close promo");
       const stored = await page.evaluate(() => ({
-        language: window.localStorage.getItem("taegye-language"),
+        hideUntil: Number(window.localStorage.getItem("taegye-promo-hide-until") || "0"),
         closed: window.sessionStorage.getItem("taegye-promo-closed"),
       }));
-      assert.equal(stored.language, "en", "confirm stores the selected language");
-      assert.equal(stored.closed, "1", "confirm marks the session");
-      console.log("ok  language confirm stores the selection");
+      assert.equal(stored.closed, "1", "hide-today should mark the session");
+      assert.ok(stored.hideUntil > Date.now(), `hide-today until ${stored.hideUntil}`);
+      assert.ok(stored.hideUntil <= Date.now() + 24 * 60 * 60 * 1000 + 1000, "hide-today window");
+      console.log("ok  promo 오늘 하루 보지 않기 stores hide-until");
+    });
+
+    await withPromo(browser, MOBILE, false, async (page) => {
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: "networkidle0", timeout: 20000 }),
+        page.click(".site-promo-product"),
+      ]);
+      const dest = await page.evaluate(() => ({
+        path: location.pathname,
+        closed: window.sessionStorage.getItem("taegye-promo-closed"),
+        open: Boolean(document.querySelector(".site-promo-card")),
+      }));
+      assert.equal(dest.path, "/new/silver", `product link path ${dest.path}`);
+      assert.equal(dest.closed, "1", "product link should mark the session");
+      assert.equal(dest.open, false, "product link should close the promo");
+      console.log("ok  promo product link goes to Wall 212 HOLLOW");
     });
 
     async function withSplash(browser, viewport, fn) {

@@ -1,7 +1,6 @@
 import { FloatLogo } from "@/components/float-logo";
 import { GridDissolveProvider } from "@/components/grid-dissolve";
 import { HomePromo } from "@/components/home-promo";
-import { SiteCookies } from "@/components/site-cookies";
 import { IntroSplashController } from "@/components/intro-splash";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -34,7 +33,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       </div>
       <IntroSplashController />
       <HomePromo />
-      <SiteCookies />
     </div>
     </GridDissolveProvider>
   );
