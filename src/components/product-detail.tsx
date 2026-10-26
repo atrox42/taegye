@@ -6,7 +6,8 @@ import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
-  PRODUCT_SPEC_LABELS,
+  PRODUCT_DIMENSION_PLACEHOLDER,
+  PRODUCT_PLANTING_LABEL_LINES,
   PRODUCT_SPEC_PENDING,
   STORE_URL,
   productColorLabel,
@@ -96,10 +97,25 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <div className="pdp-specs">
             {(["dimensions", "planting"] as const).map((key) => {
               const value = productSpecValue(product, key);
+              if (key === "dimensions") {
+                return (
+                  <section key={key} className="pdp-spec" data-pdp-spec={key}>
+                    <p
+                      className={`site-type pdp-spec-value${value ? "" : " is-empty"}`}
+                      style={value ? forceInkStyle : undefined}
+                    >
+                      {value || PRODUCT_DIMENSION_PLACEHOLDER}
+                    </p>
+                  </section>
+                );
+              }
               return (
                 <section key={key} className="pdp-spec" data-pdp-spec={key}>
-                  <h2 className="site-type pdp-spec-label" style={forceInkStyle}>
-                    {PRODUCT_SPEC_LABELS[key]}
+                  <h2
+                    className="site-type pdp-spec-label"
+                    style={{ ...forceInkStyle, whiteSpace: "pre-line" }}
+                  >
+                    {PRODUCT_PLANTING_LABEL_LINES.join("\n")}
                   </h2>
                   <p
                     className={`site-type pdp-spec-value${value ? "" : " is-empty"}`}
