@@ -1,18 +1,23 @@
 import Link from "next/link";
 
+import { PdpBuyBar } from "@/components/pdp-buy-bar";
 import { PdpGallery } from "@/components/pdp-gallery";
+import { PdpAccordion } from "@/components/pdp-spec-section";
+import { PdpRelated } from "@/components/pdp-related";
 import { PdpReveal } from "@/components/pdp-reveal";
+import { PdpSpecTable } from "@/components/pdp-spec-sheet";
+import { PdpSwatches } from "@/components/pdp-swatches";
 import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
-import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
+import { forceInkStyle, forceWhiteClipStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
-  PRODUCT_DIMENSION_PLACEHOLDER,
-  PRODUCT_PLANTING_LABEL_LINES,
-  PRODUCT_SPEC_PENDING,
+  PDP_INFO_SECTIONS,
   STORE_URL,
-  productColorLabel,
+  productColorName,
+  productFamilyLabel,
+  productFeatures,
   productNote,
-  productSpecValue,
+  productSpecSectionBody,
   productsInFamily,
   type NewProduct,
 } from "@/lib/site";
@@ -47,11 +52,12 @@ function ProductHero({
 
 export function ProductDetail({ product }: ProductDetailProps) {
   const note = productNote(product);
+  const planting = productSpecSectionBody(product, "planting");
+  const notes = productSpecSectionBody(product, "temperature");
   const family = productsInFamily(product);
   const showSwatches =
     product.category === "wall-kit" || product.category === "one-port" || product.category === "cascade";
   const mossSrc = product.mossSrc;
-  const hasMoss = Boolean(mossSrc);
   const emptyHero = (
     <ProductHero
       src={product.emptySrc}
@@ -73,116 +79,110 @@ export function ProductDetail({ product }: ProductDetailProps) {
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <div className="pdp-mobile-gallery">
-        {hasMoss && mossHero ? <PdpGallery empty={emptyHero} moss={mossHero} /> : emptyHero}
-      </div>
-      <PdpReveal>
-        <ProductHero
-          src={product.emptySrc}
-          mobileSrc={product.emptySrcMobile}
-          alt={product.emptyAlt}
-          priority
-          className="pdp-hero-empty"
+      <div className="pdp-stage-row">
+      <div className="pdp-media">
+        <PdpGallery
+          slides={[<PdpReveal key="photo">{emptyHero}</PdpReveal>, ...(mossHero ? [mossHero] : [])]}
         />
-      </PdpReveal>
+      </div>
 
-      <div className="pdp-rails">
-        <div className="pdp-rail pdp-rail-copy">
-          <h1 className="site-type pdp-name">{product.name}</h1>
-          {note ? (
-            <p lang="ko" className="site-type pdp-note" style={forceInkStyle}>
-              {note}
-            </p>
-          ) : null}
-          <div className="pdp-specs">
-            {(["dimensions", "planting"] as const).map((key) => {
-              const value = productSpecValue(product, key);
-              if (key === "dimensions") {
-                return (
-                  <section key={key} className="pdp-spec" data-pdp-spec={key}>
-                    <p className="site-type pdp-spec-value is-empty">
-                      {value || PRODUCT_DIMENSION_PLACEHOLDER}
-                    </p>
-                  </section>
-                );
-              }
-              return (
-                <section key={key} className="pdp-spec" data-pdp-spec={key}>
-                  <h2
-                    className="site-type pdp-spec-label"
-                    style={{ ...forceInkStyle, whiteSpace: "pre-line" }}
-                  >
-                    {PRODUCT_PLANTING_LABEL_LINES.join("\n")}
-                  </h2>
-                  <p
-                    className={`site-type pdp-spec-value${value ? "" : " is-empty"}`}
-                    style={value ? forceInkStyle : undefined}
-                  >
-                    {value || PRODUCT_SPEC_PENDING}
-                  </p>
-                </section>
-              );
-            })}
+      <div className="pdp-buy" data-pdp-buy="true">
+        <p className="pdp-crumb">
+          <Link href="/new">Product</Link>
+          <span aria-hidden="true"> / </span>
+          <span>{productFamilyLabel(product)}</span>
+        </p>
+        <div className="pdp-title-row">
+          <div className="pdp-title-copy">
+            <h1 className="site-type pdp-name" style={forceInkStyle}>
+              {productFamilyLabel(product)}
+            </h1>
+            {product.name.includes(", ") ? (
+              <p className="pdp-title-color" style={forceInkStyle}>
+                {productColorName(product)}
+              </p>
+            ) : null}
           </div>
-        </div>
-        <div className="pdp-rail pdp-rail-buy">
           {product.price ? (
             <p className="site-type pdp-price product-price" style={forceInkStyle}>
               {product.price}
             </p>
           ) : null}
-          {showSwatches ? (
-            <div className="pdp-swatches" role="list" aria-label="Color">
-              {family.map((item) => {
-                const label = productColorLabel(item);
-                const current = item.id === product.id;
-                const className = `pdp-swatch${current ? " is-current" : ""}`;
-                if (current) {
-                  return (
-                    <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>
-                      {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                      <img src={`/swatches/${item.id}.png`} alt={label} />
-                      <span className="sr-only">{label}</span>
-                    </span>
-                  );
-                }
-                return (
-                  <Link
-                    key={item.id}
-                    role="listitem"
-                    href={`/new/${item.id}`}
-                    className={className}
-                    title={label}
-                    aria-label={label}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
-                    <img src={`/swatches/${item.id}.png`} alt={label} />
-                  </Link>
-                );
-              })}
-            </div>
-          ) : null}
-          <a
-            href={STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="site-type pdp-store no-underline hover:no-underline"
-            data-pdp-store="true"
-            style={forceInkStyle}
-          >
+        </div>
+        {showSwatches ? (
+          <div className="pdp-color">
+            <PdpSwatches product={product} family={family} />
+          </div>
+        ) : null}
+        <a
+          href={STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="pdp-store no-underline hover:no-underline"
+          data-pdp-store="true"
+        >
+          <span className="pdp-store-face" aria-hidden="true" />
+          <span className="pdp-store-label" style={forceWhiteClipStyle}>
             Store
-            <span className="pdp-store-chevron" aria-hidden />
-          </a>
+          </span>
+        </a>
+        <section className="pdp-features" aria-label="Features">
+          <h2 className="pdp-features-title" style={forceInkStyle}>
+            Features
+          </h2>
+          <ol className="pdp-features-list">
+            {productFeatures(product).map((feature) => (
+              <li key={feature.n} className="pdp-features-line" lang="ko" style={forceInkStyle}>
+                <span className="pdp-features-num">{feature.n}</span>
+                <span>{feature.text}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+        <div className="pdp-acc-list">
+          {PDP_INFO_SECTIONS.map((section) => (
+            <PdpAccordion key={section.key} sectionKey={section.key} label={section.label}>
+              {section.key === "description" ? (
+                <>
+                  <p lang="ko" className="pdp-note pdp-spec-line" style={forceInkStyle}>
+                    {note}
+                  </p>
+                  {planting ? (
+                    <>
+                      <p className="pdp-spec-subhead" style={forceInkStyle}>
+                        Planting Guide
+                      </p>
+                      <p lang="ko" className="pdp-spec-line" style={forceInkStyle}>
+                        {planting}
+                      </p>
+                    </>
+                  ) : null}
+                </>
+              ) : null}
+              {section.key === "details" ? (
+                <>
+                  <p className="pdp-spec-subhead" style={forceInkStyle}>
+                    Product specifications
+                  </p>
+                  <PdpSpecTable product={product} />
+                  {notes ? (
+                    <>
+                      <p className="pdp-spec-subhead" style={forceInkStyle}>
+                        Notes
+                      </p>
+                      <p lang="ko" className="pdp-spec-line" style={forceInkStyle}>
+                        {notes}
+                      </p>
+                    </>
+                  ) : null}
+                </>
+              ) : null}
+            </PdpAccordion>
+          ))}
         </div>
       </div>
-      {mossSrc ? (
-        <ProductHero
-          src={mossSrc}
-          mobileSrc={product.mossSrcMobile}
-          alt={product.mossAlt ?? product.emptyAlt}
-          className="pdp-hero-moss pdp-desktop-moss"
-        />
-      ) : null}
+      </div>
+
       {product.category === "drain-tower" ? (
         <div className="pdp-hero pdp-hero-guide" style={forceWhiteStyle}>
           <WhiteSurfaceFill />
@@ -200,6 +200,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </div>
         </div>
       ) : null}
+      <PdpRelated product={product} />
+      <PdpBuyBar product={product} family={family} showSwatches={showSwatches} />
     </article>
   );
 }

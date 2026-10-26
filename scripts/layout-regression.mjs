@@ -446,13 +446,15 @@ async function runBrowser() {
           logoFromBottom: logo ? h - logo.bottom : null,
           logoToCopy: logo && copy ? copy.top - logo.bottom : null,
           centerOff: logo ? logo.x + logo.width / 2 - w / 2 : null,
+          buybar: document.documentElement.classList.contains("has-pdp-buybar"),
         };
       });
       assert.ok(Math.abs((bottom.w ?? 0) - 67) <= 1, `${label}: logo width ${bottom.w}`);
       assert.ok(Math.abs((bottom.h ?? 0) - 43) <= 1, `${label}: logo height ${bottom.h}`);
       assert.ok(Math.abs(bottom.centerOff ?? 99) <= 2, `${label}: logo not centered, off=${bottom.centerOff}`);
+      const fromBottom = bottom.buybar ? 148 : 92;
       assert.ok(
-        Math.abs((bottom.logoFromBottom ?? 0) - 92) <= 1,
+        Math.abs((bottom.logoFromBottom ?? 0) - fromBottom) <= 1,
         `${label}: logo from bottom ${bottom.logoFromBottom}`,
       );
       assert.ok(
@@ -512,7 +514,9 @@ async function runBrowser() {
       const price = await page.$eval(".pdp-price", (node) => (node.textContent || "").trim());
       assert.equal(price, "KRW 36,000", `one-port PDP ${price}`);
       const name = await page.$eval(".pdp-name", (node) => (node.textContent || "").trim());
-      assert.equal(name, "Starship 157, ODD(Indigo Purple)");
+      const color = await page.$eval(".pdp-title-color", (node) => (node.textContent || "").trim());
+      assert.equal(name, "Starship 157");
+      assert.equal(color, "ODD(Indigo Purple)");
       const title = await page.title();
       assert.match(title, /Starship 157, ODD\(Indigo Purple\)/);
       const note = await page.$eval(".pdp-note", (node) => (node.textContent || "").trim());
@@ -520,18 +524,35 @@ async function runBrowser() {
       const specs = await page.$$eval("[data-pdp-spec]", (nodes) =>
         nodes.map((el) => ({
           key: el.getAttribute("data-pdp-spec"),
-          label: el.querySelector(".pdp-spec-label")?.innerText?.trim() || "",
+          label:
+            el.querySelector(".pdp-spec-label-text")?.innerText?.trim() ||
+            el.querySelector(".pdp-spec-label")?.innerText?.trim() ||
+            "",
           value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
+          lines: [...el.querySelectorAll(".pdp-spec-line, .pdp-spec-subhead")].map((node) => node.textContent.trim()),
         })),
       );
       assert.deepEqual(specs, [
-        { key: "dimensions", label: "", value: "W — × D — × H — mm" },
         {
-          key: "planting",
-          label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
-          value: "준비 중",
+          key: "description",
+          label: "Description",
+          value: "",
+          lines: [note],
+        },
+        {
+          key: "details",
+          label: "Details",
+          value: "",
+          lines: ["Product specifications"],
+        },
+        {
+          key: "delivery",
+          label: "Delivery & Return",
+          value: "",
+          lines: [],
         },
       ]);
+      assert.equal(await page.$eval(".pdp-buy", (el) => (el.textContent || "").includes("준비 중")), false);
       console.log("ok  mobile one-port PDP: KRW 36,000, Starship title");
     });
 
@@ -900,15 +921,24 @@ async function runBrowser() {
         }
         const report = await page.evaluate(() => ({
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+          color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
           note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
           specs: [...document.querySelectorAll("[data-pdp-spec]")].map((el) => ({
             key: el.getAttribute("data-pdp-spec"),
-            label: el.querySelector(".pdp-spec-label")?.innerText?.trim() || "",
+            label:
+              el.querySelector(".pdp-spec-label-text")?.innerText?.trim() ||
+              el.querySelector(".pdp-spec-label")?.innerText?.trim() ||
+              "",
             value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
             empty: el.querySelector(".pdp-spec-value")?.classList.contains("is-empty") || false,
+            lines: [...el.querySelectorAll(".pdp-spec-line, .pdp-spec-subhead")].map((node) => ({
+              role: node.classList.contains("pdp-spec-subhead") ? "subhead" : "line",
+              text: (node.textContent || "").trim(),
+            })),
+            collapsed: el.querySelector(".pdp-spec-body")?.classList.contains("is-collapsed") ?? false,
           })),
-          swatches: [...document.querySelectorAll(".pdp-swatch")].map((el) => ({
+          swatches: [...document.querySelectorAll(".pdp-buy .pdp-swatch")].map((el) => ({
             tag: el.tagName.toLowerCase(),
             href: el.getAttribute("href"),
             title: el.getAttribute("title"),
@@ -926,10 +956,12 @@ async function runBrowser() {
             : null,
           overflow: +(document.documentElement.scrollWidth - document.documentElement.clientWidth).toFixed(1),
         }));
-        assert.equal(report.name, name, `${id} name`);
+        const [family, colorName] = name.split(", ");
+        assert.equal(report.name, family, `${id} name`);
+        assert.equal(report.color, colorName, `${id} color`);
         assert.equal(report.price, price, `${id} price`);
         const expectedNote = id.startsWith("cascade-")
-          ? "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루디리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다."
+          ? "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루다리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다."
           : id.startsWith("drain-tower")
             ? "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다."
             : "Oneport는 하나의 식물 포트와 유리 커버로 구성된 단일 식물 전용 온실입니다. 유리 커버를 통해 내부 습도를 유지하여 높은 습도를 필요로 하는 열대식물과 정글식물이 성장하기에 적합한 환경을 제공합니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있는 소형 온실입니다.";
@@ -939,24 +971,56 @@ async function runBrowser() {
           "drain-tower-40": "W 55 × D 55 × H 45 mm",
           "drain-tower-20": "W 55 × D 55 × H 25 mm",
         };
+        const cascadeLines = {
+          planting: [
+            ["line", "캐스케이드는 돌과 흙 등 자연 소재로 직접 지형을 구성하고, 흐르는 물 주변에 식물을 식재할 수 있는 DIY 폭포형 여과 구조물입니다. 이끼류, 고사리류처럼 습도가 높은 환경을 좋아하는 식물이 잘 맞으며, 물이 흐르는 위치와 식물의 생육 특성을 고려해 식재해 주세요. 식물마다 필요한 수분량이 다르므로 지속적인 침수나 강한 물줄기에 주의하고, 식물에 맞는 위치와 환경을 조성하면 더욱 안정적으로 유지할 수 있습니다."],
+          ],
+          temperature: [
+            ["line", "캐스케이드는 20~26°C에서 가장 안정적으로 유지되며, 급격한 온도 변화와 찬바람은 피해 주세요. 세척할 때는 반드시 전원을 먼저 차단하고, 날카롭거나 거친 도구는 사용하지 마세요. 오염 정도에 따라 주기적으로 세척해 주시고, 물의 흐름이 약해졌다면 여과 스펀지와 물길이 막히지 않았는지 확인해 주세요."],
+          ],
+        };
+        const specLines = (pairs) => pairs.map(([role, text]) => ({ role, text }));
+        const section = (key, label, extra) => ({
+          key,
+          label,
+          value: "",
+          empty: false,
+          lines: [],
+          collapsed: true,
+          ...extra,
+        });
         assert.deepEqual(
           report.specs,
           [
-            {
-              key: "dimensions",
-              label: "",
-              value: drainDimensions[id] || "W — × D — × H — mm",
-              empty: true,
-            },
-            {
-              key: "planting",
-              label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
-              value: "준비 중",
-              empty: true,
-            },
+            section("description", "Description", {
+              lines: specLines([
+                ["line", expectedNote],
+                ...(id.startsWith("cascade-")
+                  ? [
+                      ["subhead", "Planting Guide"],
+                      ...cascadeLines.planting,
+                    ]
+                  : []),
+              ]),
+            }),
+            section("details", "Details", {
+              lines: specLines([
+                ["subhead", "Product specifications"],
+                ...(id.startsWith("cascade-") ? [["subhead", "Notes"], ...cascadeLines.temperature] : []),
+              ]),
+            }),
+            section("delivery", "Delivery & Return"),
           ],
           `${id} specs`,
         );
+        if (drainDimensions[id]) {
+          const dimensionCell = await page.$eval('[data-pdp-spec-row="Dimensions"] td', (el) => ({
+            text: el.textContent.trim(),
+            sample: el.classList.contains("is-sample"),
+          }));
+          assert.equal(dimensionCell.text, drainDimensions[id], `${id} measured dimensions`);
+          assert.equal(dimensionCell.sample, false, `${id} dimensions must not be marked sample`);
+        }
         if (id.startsWith("cascade-")) {
           const expected = [
             { id: "cascade-silver", title: "HOLLOW" },
@@ -1006,39 +1070,53 @@ async function runBrowser() {
       await page.waitForSelector('.pdp-swatch[href="/new/cascade-black"]');
       const before = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+        color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
       }));
-      assert.deepEqual(before, { name: "Cascade 600, HOLLOW(Translucent)", price: "KRW 236,000" });
+      assert.deepEqual(before, {
+        name: "Cascade 600",
+        color: "HOLLOW(Translucent)",
+        price: "KRW 236,000",
+      });
       await page.click('.pdp-swatch[href="/new/cascade-black"]');
-      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade 600, VOID(Black)");
+      await page.waitForFunction(
+        () => document.querySelector(".pdp-title-color")?.textContent?.trim() === "VOID(Black)",
+      );
       const after = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+        color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
         current: document.querySelector(".pdp-swatch.is-current")?.getAttribute("title") || "",
       }));
-      assert.deepEqual(after, { name: "Cascade 600, VOID(Black)", price: "KRW 197,000", current: "VOID" });
+      assert.deepEqual(after, {
+        name: "Cascade 600",
+        color: "VOID(Black)",
+        price: "KRW 197,000",
+        current: "VOID",
+      });
       console.log("ok  cascade swatch click: HOLLOW → VOID, price follows");
     });
 
     async function measureSwatches(page) {
       return page.evaluate(() => {
-        const swatches = document.querySelector(".pdp-swatches");
+        const buy = document.querySelector(".pdp-buy");
+        const swatches = buy?.querySelector(".pdp-swatches");
         const price = document.querySelector(".pdp-price");
         const store = document.querySelector("[data-pdp-store]");
         const s = swatches ? getComputedStyle(swatches) : null;
-        const item = document.querySelector(".pdp-swatch");
+        const item = buy?.querySelector(".pdp-swatch");
         const itemS = item ? getComputedStyle(item) : null;
         const sr = swatches?.getBoundingClientRect();
         const pr = price?.getBoundingClientRect();
         const tr = store?.getBoundingClientRect();
         return {
-          count: document.querySelectorAll(".pdp-swatch").length,
+          count: buy?.querySelectorAll(".pdp-swatch").length ?? 0,
           display: s?.display || null,
           gap: s?.gap || null,
           width: itemS?.width || null,
           height: itemS?.height || null,
           radius: itemS?.borderRadius || null,
-          titles: [...document.querySelectorAll(".pdp-swatch")].map((el) => el.getAttribute("title")),
+          titles: [...(buy?.querySelectorAll(".pdp-swatch") ?? [])].map((el) => el.getAttribute("title")),
           belowPrice: Boolean(sr && pr && sr.top >= pr.bottom - 1),
           aboveStore: Boolean(sr && tr && sr.bottom <= tr.top + 1),
         };
@@ -1094,6 +1172,333 @@ async function runBrowser() {
       console.log(`ok  ${vp} PDP swatches: wall-kit/dot-port unchanged, cascade matches, mini/drain none`);
     }
 
+    for (const viewport of [MOBILE, DESKTOP]) {
+      const vp = viewport.width === DESKTOP.width ? "1440" : "412";
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const readToggles = () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll(".pdp-spec-toggle")].map((button) => {
+              const body = document.getElementById(button.getAttribute("aria-controls") || "");
+              return {
+                expanded: button.getAttribute("aria-expanded"),
+                collapsed: body?.classList.contains("is-collapsed") ?? true,
+                rows: body ? getComputedStyle(body).gridTemplateRows : "",
+                duration: body ? getComputedStyle(body).transitionDuration : "",
+                height: body ? body.getBoundingClientRect().height : -1,
+                overflow: body ? getComputedStyle(body).overflowY : "",
+                pad: body ? getComputedStyle(body).padding : "",
+                innerPad: body?.firstElementChild ? getComputedStyle(body.firstElementChild).padding : "",
+                divider: (() => {
+                  const row = button.closest(".pdp-acc-row");
+                  if (!row || !body) return null;
+                  const label = button.getBoundingClientRect();
+                  const rowBox = row.getBoundingClientRect();
+                  const style = getComputedStyle(row);
+                  return {
+                    gap: Math.round((rowBox.bottom - label.bottom) * 100) / 100,
+                    border: style.borderBottomWidth,
+                    color: style.borderBottomColor,
+                  };
+                })(),
+              };
+            }),
+          );
+        const closed = await readToggles();
+        assert.equal(closed.length, 3, `${vp} cascade toggle count`);
+        for (const section of closed) {
+          assert.equal(section.expanded, "false", `${vp} cascade starts closed`);
+          assert.equal(section.collapsed, true, `${vp} cascade body hidden`);
+          assert.equal(section.height, 0, `${vp} cascade closed body height`);
+          assert.equal(section.overflow, "hidden", `${vp} cascade closed overflow`);
+          assert.equal(section.pad, "0px", `${vp} cascade closed padding`);
+          assert.equal(section.innerPad, "0px", `${vp} cascade closed inner padding`);
+          assert.equal(section.divider.border, "1px", `${vp} cascade divider width`);
+          assert.equal(section.divider.color, "rgb(229, 229, 229)", `${vp} cascade divider color`);
+          assert.ok(section.divider.gap <= 1.5, `${vp} cascade divider gap ${section.divider.gap}`);
+        }
+        await page.$eval(".pdp-spec-toggle", (button) => button.click());
+        const opened = await readToggles();
+        assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
+        assert.equal(opened[0].collapsed, false, `${vp} cascade body shown`);
+        assert.equal(opened[0].duration, "0.25s", `${vp} cascade body motion`);
+        assert.equal(opened[1].expanded, "false", `${vp} other section stays closed`);
+        assert.equal(opened[1].collapsed, true, `${vp} other body stays closed`);
+        const marks = await page.$$eval(".pdp-spec-toggle-bar-v", (nodes) =>
+          nodes.map((node) => node.classList.contains("is-open")),
+        );
+        assert.deepEqual(marks, [true, false, false], `${vp} cascade mark`);
+        const bodyInk = await page.$eval(".pdp-spec-line", (node) => getComputedStyle(node).webkitTextFillColor);
+        assert.notEqual(bodyInk, "rgb(153, 153, 153)", `${vp} cascade body stays black`);
+        console.log(`ok  ${vp} cascade specs stay closed until the heading is clicked`);
+      });
+      for (const path of ["/new/cascade-silver", "/new/silver"]) {
+        await withPage(browser, viewport, path, async (page) => {
+          const colors = await page.evaluate(() => {
+            const line = (el) => {
+              const style = getComputedStyle(el);
+              return {
+                text: el.textContent,
+                color: style.color,
+                fill: style.webkitTextFillColor,
+              };
+            };
+            return {
+              dim: line(document.querySelector('[data-pdp-spec-row="Dimensions"] td')),
+              labels: [...document.querySelectorAll(".pdp-spec-label-text")].map(line),
+            };
+          });
+          assert.deepEqual(
+            colors.labels.map((item) => item.text),
+            ["Description", "Details", "Delivery & Return"],
+            `${vp} ${path} English headings`,
+          );
+          assert.equal(colors.dim.color, "rgb(153, 153, 153)", `${vp} ${path} dimensions gray`);
+          for (const item of colors.labels) {
+            assert.equal(item.color, "rgb(17, 17, 17)", `${vp} ${path} ${item.text} color`);
+            assert.equal(/[가-힣]/.test(item.text), false, `${vp} ${path} Korean heading ${item.text}`);
+          }
+          const marks = await page.$$eval(".pdp-spec-toggle-bar-v", (nodes) =>
+            nodes.map((node) => {
+              const style = getComputedStyle(node);
+              const mark = node.parentElement.getBoundingClientRect();
+              const row = node.closest(".pdp-spec-toggle").getBoundingClientRect();
+              const first = node.closest(".pdp-spec-toggle").querySelector(".pdp-spec-label-text").getBoundingClientRect();
+              const mid = mark.top + mark.height / 2;
+              return {
+                open: node.classList.contains("is-open"),
+                duration: style.transitionDuration,
+                bg: style.backgroundColor,
+                atRight: Math.abs(mark.right - row.right) <= 2,
+                onFirstLine: mid >= first.top - 2 && mid <= first.bottom + 2,
+              };
+            }),
+          );
+          assert.deepEqual(marks.map((mark) => mark.open), [false, false, false], `${vp} ${path} closed marks`);
+          for (const mark of marks) {
+            assert.equal(mark.bg, "rgb(17, 17, 17)", `${vp} ${path} mark color`);
+            assert.equal(mark.duration, "0.25s", `${vp} ${path} mark motion`);
+            assert.equal(mark.atRight, true, `${vp} ${path} mark at right`);
+            assert.equal(mark.onFirstLine, true, `${vp} ${path} mark on first line`);
+          }
+          const sheet = await page.evaluate(() => {
+            const row = (label) => {
+              const el = document.querySelector(`[data-pdp-spec-row="${label}"] td`);
+              if (!el) return null;
+              const style = getComputedStyle(el);
+              return { text: el.textContent.trim(), fill: style.webkitTextFillColor, color: style.color };
+            };
+            return {
+              labels: [...document.querySelectorAll(".pdp-specsheet-table th")].map((node) => node.textContent.trim()),
+              dimensions: row("Dimensions"),
+              madeIn: row("Made in"),
+              color: row("Color"),
+              separateSheet: Boolean(document.querySelector(".pdp-atelier > .pdp-specsheet")),
+              diagram: document.querySelectorAll("[data-pdp-diagram]").length,
+              photos: document.querySelectorAll(".pdp-gallery-slide img").length,
+              related: document.querySelector("#pdp-related-title")?.textContent?.trim() || "",
+              arrows: document.querySelectorAll(".pdp-related-arrow").length,
+              cards: document.querySelectorAll(".pdp-related-card").length,
+              relatedNames: [...document.querySelectorAll(".pdp-related-name")].map((node) => node.textContent.trim()),
+              currentInRelated: [...document.querySelectorAll(".pdp-related-name")].some((node) =>
+                (node.textContent || "").includes(document.querySelector(".pdp-name")?.textContent?.trim() || "___"),
+              ),
+              leak: /visa|mastercard|paypal|apple pay|klarna|★|☆|€|£|\$/i.test(document.body.innerText),
+            };
+          });
+          assert.deepEqual(sheet.labels, ["Dimensions", "Color", "Made in"], `${vp} ${path} spec rows`);
+          assert.equal(sheet.separateSheet, false, `${vp} ${path} specifications should sit inside Details`);
+          assert.equal(sheet.diagram, 0, `${vp} ${path} gallery has no dimension drawing`);
+          assert.equal(sheet.photos > 0, true, `${vp} ${path} gallery keeps product photos`);
+          assert.equal(sheet.related, "Recommended for you", `${vp} ${path} related title`);
+          assert.equal(sheet.arrows, 2, `${vp} ${path} related arrows`);
+          assert.deepEqual(
+            sheet.relatedNames,
+            path.endsWith("cascade-silver")
+              ? ["Wall 212, HOLLOW(Translucent)"]
+              : ["Cascade 600, HOLLOW(Translucent)"],
+            `${vp} ${path} same-color related`,
+          );
+          assert.equal(sheet.cards, sheet.relatedNames.length, `${vp} ${path} related cards`);
+          assert.equal(sheet.currentInRelated, false, `${vp} ${path} related includes current`);
+          assert.equal(sheet.leak, false, `${vp} ${path} overseas chrome leaked`);
+          assert.equal(sheet.madeIn.color, "rgb(153, 153, 153)", `${vp} ${path} sample made in`);
+          assert.ok(sheet.madeIn.text.includes("(sample)"), `${vp} ${path} made in sample`);
+          if (path.endsWith("cascade-silver")) {
+            assert.equal(sheet.color.text, "HOLLOW(Translucent)", `${vp} ${path} color name`);
+            assert.equal(sheet.color.color, "rgb(17, 17, 17)", `${vp} ${path} color ink`);
+            assert.ok(sheet.dimensions.text.includes("(sample)"), `${vp} ${path} sample dimensions`);
+          }
+          const type = await page.evaluate(() => {
+            const box = (el) => {
+              if (!el) return null;
+              const r = el.getBoundingClientRect();
+              return { left: r.left, top: r.top, width: r.width, height: r.height };
+            };
+            const name = document.querySelector(".pdp-name");
+            const color = document.querySelector(".pdp-title-color");
+            const price = document.querySelector(".pdp-price");
+            const ns = name ? getComputedStyle(name) : null;
+            const cs = color ? getComputedStyle(color) : null;
+            const ps = price ? getComputedStyle(price) : null;
+            const heading = document.querySelector(".pdp-spec-label-text");
+            const body = document.querySelector(".pdp-spec-line");
+            const cell = document.querySelector(".pdp-specsheet-table td");
+            const feature = document.querySelector(".pdp-features-line");
+            return {
+              nameSize: ns?.fontSize || "",
+              colorSize: cs?.fontSize || "",
+              priceSize: ps?.fontSize || "",
+              nameWeight: ns?.fontWeight || "",
+              colorWeight: cs?.fontWeight || "",
+              priceWeight: ps?.fontWeight || "",
+              name: box(name),
+              color: box(color),
+              price: box(price),
+              heading: heading ? parseFloat(getComputedStyle(heading).fontSize) : 0,
+              body: body ? parseFloat(getComputedStyle(body).fontSize) : 0,
+              cell: cell ? parseFloat(getComputedStyle(cell).fontSize) : 0,
+              features: [...document.querySelectorAll(".pdp-features-line")].map((node) => ({
+                text: (node.textContent || "").replace(/\s+/g, " ").trim(),
+                color: getComputedStyle(node).color,
+              })),
+              featureColor: feature ? getComputedStyle(feature).color : "",
+            };
+          });
+          assert.equal(type.nameSize, type.priceSize, `${vp} ${path} name/price size`);
+          assert.equal(type.nameWeight, type.priceWeight, `${vp} ${path} name/price weight`);
+          assert.equal(type.nameSize, "18px", `${vp} ${path} title size ${type.nameSize}`);
+          const colorPx = parseFloat(type.colorSize);
+          assert.ok(colorPx >= 18 * 0.7 && colorPx <= 18 * 0.75, `${vp} ${path} color size ${type.colorSize}`);
+          assert.equal(type.colorWeight, "400", `${vp} ${path} color weight`);
+          assert.ok(
+            type.color.top >= type.name.top + type.name.height - 2,
+            `${vp} ${path} color under the name`,
+          );
+          assert.ok(type.price.left > type.name.left, `${vp} ${path} price sits right of the name`);
+          assert.ok(Math.abs(type.price.top - type.name.top) <= 1, `${vp} ${path} price top-aligned`);
+          assert.equal(type.heading, 14, `${vp} ${path} heading ${type.heading}`);
+          assert.ok(type.body < type.heading && type.body >= 12, `${vp} ${path} body ${type.body}`);
+          assert.ok(type.cell < type.heading && type.cell <= 13, `${vp} ${path} spec cell ${type.cell}`);
+          assert.equal(type.features.length, 3, `${vp} ${path} feature count`);
+          assert.equal(type.featureColor, "rgb(17, 17, 17)", `${vp} ${path} feature ink`);
+          assert.equal(type.features.some((line) => line.text.includes("(sample)")), false, `${vp} ${path} sample feature`);
+          if (path.endsWith("cascade-silver")) {
+            assert.ok(type.features[0].text.includes("물이 흐르는 폭포"), `${vp} cascade feature 01`);
+            assert.ok(type.features[1].text.includes("돌과 배양토"), `${vp} cascade feature 02`);
+            assert.ok(type.features[2].text.includes("이끼류"), `${vp} cascade feature 03`);
+          }
+        });
+      }
+      await withPage(browser, viewport, "/new/green", async (page) => {
+        assert.equal(await page.$(".pdp-related"), null, `${vp} BUG has no same-color products`);
+      });
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const single = await page.evaluate(() => {
+          const stage = document.querySelector(".pdp-gallery .pdp-stage");
+          const rect = stage.getBoundingClientRect();
+          return {
+            slides: document.querySelectorAll(".pdp-gallery-slide").length,
+            diagram: document.querySelectorAll("[data-pdp-diagram]").length,
+            index: Boolean(document.querySelector(".pdp-gallery-index")),
+            rail: Boolean(document.querySelector(".pdp-scroll-rail")),
+            bg: stage ? getComputedStyle(stage).backgroundColor : "",
+            square: Math.abs(rect.width - rect.height) <= 1,
+          };
+        });
+        assert.equal(single.slides, 1, `${vp} cascade gallery is one photo`);
+        assert.equal(single.bg, "rgb(232, 232, 232)", `${vp} gallery plate`);
+        assert.equal(single.square, true, `${vp} gallery square`);
+        assert.equal(single.diagram, 0, `${vp} cascade has no drawing`);
+        assert.equal(single.index, false, `${vp} cascade counter hidden`);
+        assert.equal(single.rail, false, `${vp} cascade rail hidden`);
+      });
+      await withPage(browser, viewport, "/new/silver", async (page) => {
+        const desktop = viewport.width === DESKTOP.width;
+        const count = await page.$$eval(".pdp-gallery-slide", (nodes) => nodes.length);
+        assert.equal(count, 2, `${vp} wall gallery keeps both photos`);
+        assert.equal(await page.$$eval("[data-pdp-diagram]", (nodes) => nodes.length), 0, `${vp} wall gallery has no drawing`);
+        if (desktop) {
+          await page.waitForSelector(".pdp-scroll-rail.is-on", { timeout: 8000 });
+          const rail = await page.evaluate(() => {
+            const rail = document.querySelector(".pdp-scroll-rail");
+            const thumb = rail?.querySelector(".pdp-scroll-rail-thumb");
+            const nav = document.querySelector(".site-nav a");
+            const index = document.querySelector(".pdp-gallery-index");
+            const slides = [...document.querySelectorAll(".pdp-gallery-slide")].map((node) => node.getBoundingClientRect());
+            const rr = rail.getBoundingClientRect();
+            const nr = nav.getBoundingClientRect();
+            const tr = thumb.getBoundingClientRect();
+            return {
+              index: index ? getComputedStyle(index).display : "missing",
+              railLeft: rr.left,
+              navLeft: nr.left,
+              railH: rr.height,
+              thumbH: tr.height,
+              stacked: slides.length > 1 && slides[1].top >= slides[0].bottom - 1,
+            };
+          });
+          assert.equal(rail.index, "none", `${vp} counter hidden`);
+          assert.ok(Math.abs(rail.railLeft - rail.navLeft) <= 1, `${vp} rail left ${rail.railLeft} vs nav ${rail.navLeft}`);
+          assert.ok(rail.railH > 40 && rail.thumbH < rail.railH, `${vp} rail ${rail.railH} thumb ${rail.thumbH}`);
+          assert.equal(rail.stacked, true, `${vp} gallery stacks vertically`);
+        } else {
+          const mobileGallery = await page.evaluate(() => {
+            const rail = document.querySelector(".pdp-scroll-rail");
+            const index = document.querySelector(".pdp-gallery-index");
+            const slides = [...document.querySelectorAll(".pdp-gallery-slide")].map((node) => node.getBoundingClientRect());
+            return {
+              rail: rail ? getComputedStyle(rail).display : "missing",
+              index: (index?.textContent || "").trim(),
+              sideBySide: slides.length > 1 && slides[1].left >= slides[0].right - 1,
+            };
+          });
+          assert.equal(mobileGallery.rail, "none", `${vp} rail hidden`);
+          assert.match(mobileGallery.index, /^\d+ \/ \d+$/, `${vp} counter ${mobileGallery.index}`);
+          assert.equal(mobileGallery.sideBySide, true, `${vp} gallery stays horizontal`);
+        }
+      });
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const desktop = viewport.width === DESKTOP.width;
+        await page.evaluate(() => document.querySelector("[data-pdp-store]")?.scrollIntoView({ block: "center" }));
+        await page.waitForFunction(
+          () => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "off",
+        );
+        await page.$eval(".pdp-spec-toggle", (button) => button.click());
+        await page.waitForFunction(() => {
+          const body = document.querySelector(".pdp-spec-body");
+          return Boolean(body && !body.classList.contains("is-collapsed") && body.getBoundingClientRect().height > 80);
+        });
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await page.waitForFunction(() => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "on");
+        const bar = await page.evaluate(() => {
+          const node = document.querySelector("[data-pdp-buybar]");
+          const store = document.querySelector("[data-pdp-store]");
+          const link = document.querySelector("[data-pdp-buybar-store]");
+          const swatches = document.querySelector(".pdp-buybar-swatches");
+          const header = document.querySelector(".site-header");
+          const promo = document.querySelector(".site-promo");
+          return {
+            name: document.querySelector(".pdp-buybar-name")?.textContent?.trim() || "",
+            label: link?.textContent?.trim() || "",
+            href: link?.getAttribute("href") || "",
+            main: store?.getAttribute("href") || "",
+            swatchDisplay: swatches ? getComputedStyle(swatches).display : "missing",
+            z: Number(getComputedStyle(node).zIndex) || 0,
+            headerZ: header ? Number(getComputedStyle(header).zIndex) || 0 : 0,
+            promoZ: promo ? Number(getComputedStyle(promo).zIndex) || 0 : 70,
+            pad: getComputedStyle(document.querySelector(".site-column")).paddingBottom,
+          };
+        });
+        assert.equal(bar.name, "Cascade 600, HOLLOW(Translucent)", `${vp} buy bar name`);
+        assert.equal(bar.label, "Store · KRW 236,000", `${vp} buy bar label`);
+        assert.equal(bar.href, bar.main, `${vp} buy bar link`);
+        assert.equal(bar.swatchDisplay, desktop ? "flex" : "none", `${vp} buy bar swatches ${bar.swatchDisplay}`);
+        assert.ok(bar.z < bar.headerZ && bar.z < bar.promoZ, `${vp} buy bar z ${bar.z}`);
+        assert.ok(parseFloat(bar.pad) >= 56, `${vp} buy bar padding ${bar.pad}`);
+      });
+      console.log(`ok  ${vp} accordions, specifications, and recommended row`);
+    }
+
     await withPage(browser, DESKTOP, "/new/drain-tower-80", async (page) => {
       await page.evaluate(() => document.querySelector(".pdp-hero-guide")?.scrollIntoView({ block: "center" }));
       await page.waitForFunction(() => {
@@ -1136,10 +1541,13 @@ async function runBrowser() {
         const pathname = new URL(page.url()).pathname;
         const report = await page.evaluate(() => ({
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+          color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
         }));
+        const [family, colorName] = name.split(", ");
         assert.equal(pathname, to, `${from} redirect path`);
-        assert.equal(report.name, name, `${from} redirect name`);
+        assert.equal(report.name, family, `${from} redirect name`);
+        assert.equal(report.color, colorName, `${from} redirect color`);
         assert.equal(report.price, price, `${from} redirect price`);
         console.log(`ok  ${from} → ${to}: ${name} ${price}`);
       });
@@ -1473,6 +1881,9 @@ async function runBrowser() {
 
     async function assertPdpImageNotStore(page, label) {
       const report = await page.evaluate((storeHref) => {
+        for (const portal of document.querySelectorAll("nextjs-portal")) {
+          portal.style.pointerEvents = "none";
+        }
         const box = (el) => {
           if (!el) return null;
           const r = el.getBoundingClientRect();
@@ -1548,9 +1959,9 @@ async function runBrowser() {
       assert.equal(report.photoWrapped, false, `${label}: photo must not be inside an <a>`);
       assert.equal(report.storeAbs, STORE_HREF, `${label}: Store href ${report.storeAbs}`);
       assert.equal(report.overlaps, false, `${label}: Store overlay on photo ${JSON.stringify(report)}`);
-      assert.ok(
-        report.storeBox && report.storeBox.w > 20 && report.storeBox.w < 160,
-        `${label}: Store hit box should be text-sized, got ${JSON.stringify(report.storeBox)}`,
+        assert.ok(
+        report.storeBox && report.storeBox.w > 160 && report.storeBox.h >= 40,
+        `${label}: Store should be a full-width button, got ${JSON.stringify(report.storeBox)}`,
       );
       for (const point of report.hits) {
         assert.ok(
@@ -1934,7 +2345,7 @@ async function runBrowser() {
       assert.equal(report.productName, "Wall 212, HOLLOW(Translucent)", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
       assert.equal(report.productHref, "/new/silver", `${label}: product href`);
-      assert.equal(report.photoSrc, "/products/stand-silver-moss.webp", `${label}: product photo`);
+      assert.equal(report.photoSrc, "/products/wall212-hollow-planted.png", `${label}: product photo`);
       assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
       const gutter = report.vw <= 400 ? 24 : 32;

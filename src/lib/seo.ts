@@ -11,8 +11,10 @@ import {
   SITE_URL,
   STORE_URL,
   PRODUCT_SPEC_LABELS,
+  PRODUCT_SPEC_SECTIONS,
   productNote,
   productNoteLead,
+  productSpecSectionBody,
   productSpecValue,
   type NewProduct,
 } from "@/lib/site";
@@ -106,10 +108,16 @@ export function organizationJsonLd() {
 export function productJsonLd(product: NewProduct) {
   const price = offerPrice(product.price);
   const url = absoluteUrl(`/new/${product.id}`);
-  const specs = (["dimensions", "planting"] as const).flatMap((key) => {
-    const value = productSpecValue(product, key);
-    return value ? [{ "@type": "PropertyValue" as const, name: PRODUCT_SPEC_LABELS[key], value }] : [];
-  });
+  const dimension = productSpecValue(product, "dimensions");
+  const specs = [
+    ...(dimension
+      ? [{ "@type": "PropertyValue" as const, name: PRODUCT_SPEC_LABELS.dimensions, value: dimension }]
+      : []),
+    ...PRODUCT_SPEC_SECTIONS.flatMap((section) => {
+      const value = productSpecSectionBody(product, section.key);
+      return value ? [{ "@type": "PropertyValue" as const, name: PRODUCT_SPEC_LABELS[section.key], value }] : [];
+    }),
+  ];
   return {
     "@context": "https://schema.org",
     "@type": "Product",

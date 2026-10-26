@@ -25,7 +25,8 @@ export const NAV_ITEMS = [
 /** Logo display box — keep within the 135×48 px brand lockup. */
 export const LOGO_DISPLAY = { width: 135, height: 48 } as const;
 /** Footer lockup — 20% smaller than the default. */
-export const FOOTER_LOGO_DISPLAY = { width: 108, height: 38 } as const;
+/** Matches the logo file’s aspect so the mark fills the box. */
+export const FOOTER_LOGO_DISPLAY = { width: 57, height: 38 } as const;
 
 /** Transparent black PNG — drawn onto canvas so OEM Force Dark cannot grey it. */
 export const LOGO_SRC = "/logo-taegye.png";
@@ -72,7 +73,7 @@ export const HOME_PROMO = {
   enabled: true,
   productName: `Wall 212, ${finishLabel("HOLLOW")}`,
   productKicker: "Now Available",
-  productSrc: "/products/stand-silver-moss.webp",
+  productSrc: "/products/wall212-hollow-planted.png",
   href: "/new/silver",
   hideTodayLabel: "오늘 하루 보지 않기",
   closeLabel: "닫기",
@@ -243,7 +244,7 @@ export const PRODUCT_COPY = {
   "one-port":
     "Starship은 어린 열대식물과 소형 정글식물을 독립적으로 재배할 수 있도록 설계된 미니 온실입니다. 하나의 식물 포트와 유리 커버로 구성되어 있으며, 작은 공간에서도 식물의 생육에 필요한 습도를 유지할 수 있도록 돕습니다. 발아 이후의 어린 식물부터 크기가 작은 열대식물까지 개별적으로 관리할 수 있으며, 식물의 성장 과정을 가까이에서 관찰할 수 있습니다. 컴팩트한 크기와 간결한 구조로 정글식물 재배를 처음 시작하는 사용자에게도 적합한 제품입니다.",
   cascade:
-    "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루디리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다.",
+    "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루다리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다.",
   "drain-tower":
     "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다.",
 } as const satisfies Record<NewProductCategoryId, string>;
@@ -268,23 +269,132 @@ export function productNoteLead(product: NewProduct) {
   return match ? match[0] : note;
 }
 
-export const PRODUCT_SPEC_PENDING = "준비 중";
-
 /** Live PDP dimension line until measured numbers replace it. No heading, no subtitle. */
 export const PRODUCT_DIMENSION_PLACEHOLDER = "W — × D — × H — mm";
 
-export const PRODUCT_PLANTING_LABEL_LINES = [
-  "Recommended Planting & Environment",
-  "추천 식재 조건 및 환경",
+export const PRODUCT_SPEC_SECTIONS = [
+  {
+    key: "planting",
+    en: "Planting Guide",
+    ko: "추천 식재 조건 및 환경",
+  },
+  {
+    key: "temperature",
+    en: "Notes",
+    ko: "주의사항",
+  },
 ] as const;
+
+export type ProductSpecSectionKey = (typeof PRODUCT_SPEC_SECTIONS)[number]["key"];
 
 export const PRODUCT_SPEC_LABELS = {
   dimensions: "Dimensions / 치수",
-  planting: `${PRODUCT_PLANTING_LABEL_LINES[0]} / ${PRODUCT_PLANTING_LABEL_LINES[1]}`,
+  planting: `${PRODUCT_SPEC_SECTIONS[0].ko} (${PRODUCT_SPEC_SECTIONS[0].en})`,
+  temperature: `${PRODUCT_SPEC_SECTIONS[1].ko} (${PRODUCT_SPEC_SECTIONS[1].en})`,
 } as const;
+
+/** Verbatim Cascade care copy. Numbered lines render as subheads; other lines stay plain. */
+const CASCADE_SPEC_TEXT = {
+  planting: `캐스케이드는 돌과 흙 등 자연 소재로 직접 지형을 구성하고, 흐르는 물 주변에 식물을 식재할 수 있는 DIY 폭포형 여과 구조물입니다. 이끼류, 고사리류처럼 습도가 높은 환경을 좋아하는 식물이 잘 맞으며, 물이 흐르는 위치와 식물의 생육 특성을 고려해 식재해 주세요. 식물마다 필요한 수분량이 다르므로 지속적인 침수나 강한 물줄기에 주의하고, 식물에 맞는 위치와 환경을 조성하면 더욱 안정적으로 유지할 수 있습니다.`,
+  temperature: `캐스케이드는 20~26°C에서 가장 안정적으로 유지되며, 급격한 온도 변화와 찬바람은 피해 주세요. 세척할 때는 반드시 전원을 먼저 차단하고, 날카롭거나 거친 도구는 사용하지 마세요. 오염 정도에 따라 주기적으로 세척해 주시고, 물의 흐름이 약해졌다면 여과 스펀지와 물길이 막히지 않았는지 확인해 주세요.`,
+} as const satisfies Record<ProductSpecSectionKey, string>;
+
+export type ProductSpecLine = {
+  role: "subhead" | "line";
+  text: string;
+};
+
+export function productSpecSectionBody(product: NewProduct, key: ProductSpecSectionKey) {
+  if (product.category !== "cascade") return "";
+  return CASCADE_SPEC_TEXT[key];
+}
+
+export function productSpecLines(text: string): ProductSpecLine[] {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => ({
+      role: /^\d{2}\. /.test(line) ? "subhead" : "line",
+      text: line,
+    }));
+}
 
 export function productSpecValue(product: NewProduct, key: "dimensions" | "planting") {
   return product[key].trim();
+}
+
+/** Buy-column accordions. Planting and notes stay inside Description and Details. */
+export const PDP_INFO_SECTIONS = [
+  { key: "description", label: "Description" },
+  { key: "details", label: "Details" },
+  { key: "delivery", label: "Delivery & Return" },
+] as const;
+
+export type PdpInfoSectionKey = (typeof PDP_INFO_SECTIONS)[number]["key"];
+
+/**
+ * Three short feature lines per product, taken only from that product’s
+ * existing description (Cascade also uses its planting copy).
+ */
+const PDP_FEATURES: Record<NewProductCategoryId, readonly [string, string, string]> = {
+  "wall-kit": [
+    "바닥과 수직 벽면을 식재 공간으로 쓰는 DIY 테라리움",
+    "이끼와 식물을 심고 바닥에 배양토와 자연 소재를 배치",
+    "식물과 돌, 유목을 자유롭게 조합",
+  ],
+  "mini-port": [
+    "식물 포트와 유리 커버로 된 단일 식물 온실",
+    "유리 커버로 내부 습도를 유지",
+    "열대식물과 정글식물을 가까이에서 관찰",
+  ],
+  "one-port": [
+    "어린 열대식물과 소형 정글식물을 위한 미니 온실",
+    "작은 공간에서도 생육에 필요한 습도를 유지",
+    "발아 이후의 어린 식물을 개별적으로 관리",
+  ],
+  cascade: [
+    "물이 흐르는 폭포를 연출하는 DIY 여과 구조물",
+    "돌과 배양토를 직접 붙여 지형을 구성",
+    "이끼류·고사리류처럼 습한 환경을 좋아하는 식물에 적합",
+  ],
+  "drain-tower": [
+    "고인 물을 배출하고 바닥의 수분을 관리",
+    "잔여 수분을 제거해 뿌리 손상과 배양토 과습을 예방",
+    "바닥 구조와 사육장 크기에 맞춰 설치",
+  ],
+};
+
+export function productFeatures(product: NewProduct) {
+  return PDP_FEATURES[product.category].map((text, index) => ({
+    n: String(index + 1).padStart(2, "0"),
+    text,
+  }));
+}
+
+/** Placeholder specification values. Real measurements and color names stay unmarked. */
+export const PDP_SAMPLE_SPEC = {
+  dimensions: "W 120 × D 80 × H 160 mm (sample)",
+  madeIn: "Korea (sample)",
+} as const;
+
+/** Color token as written on the product, e.g. HOLLOW(Translucent). */
+export function productColorName(product: NewProduct) {
+  const parts = product.name.split(", ");
+  return (parts[1] ?? product.finish).trim();
+}
+
+export function parseMeasuredDimensions(value: string) {
+  const match = value
+    .trim()
+    .match(/^W\s*(\d+(?:\.\d+)?)\s*×\s*D\s*(\d+(?:\.\d+)?)\s*×\s*H\s*(\d+(?:\.\d+)?)\s*mm$/);
+  if (!match) return null;
+  return { w: Number(match[1]), d: Number(match[2]), h: Number(match[3]) };
+}
+
+export function relatedProducts(product: NewProduct) {
+  const color = productColorLabel(product);
+  return NEW_PRODUCTS.filter((item) => item.id !== product.id && productColorLabel(item) === color);
 }
 
 /**
@@ -315,10 +425,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: STAND_PRICE_SILVER,
-    emptySrc: "/products/stand-silver.webp",
-    mossSrc: "/products/stand-silver-moss.webp",
-    emptySrcMobile: "/products/stand-silver-mobile.webp",
-    mossSrcMobile: "/products/stand-silver-moss-mobile.webp",
+    emptySrc: "/products/wall212-hollow.png",
+    mossSrc: "/products/wall212-hollow-planted.png",
     emptyAlt: `TAEGYE Wall 212, ${finishLabel("HOLLOW")}`,
     mossAlt: `TAEGYE Wall 212, ${finishLabel("HOLLOW")} with moss`,
   },
@@ -331,8 +439,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: STAND_PRICE_COLOR,
-    emptySrc: "/products/stand-purple.webp",
-    mossSrc: "/products/stand-purple-moss.webp",
+    emptySrc: "/products/wall212-odd.png",
+    mossSrc: "/products/wall212-odd-planted.png",
     emptyAlt: `TAEGYE Wall 212, ${finishLabel("ODD")}`,
     mossAlt: `TAEGYE Wall 212, ${finishLabel("ODD")} with moss`,
   },
