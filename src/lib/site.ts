@@ -274,7 +274,7 @@ export const PRODUCT_DIMENSION_PLACEHOLDER = "W — × D — × H — mm";
 export const PRODUCT_SPEC_SECTIONS = [
   {
     key: "planting",
-    en: "Recommended Planting & Environment",
+    en: "Planting Guide",
     ko: "추천 식재 조건 및 환경",
   },
   {

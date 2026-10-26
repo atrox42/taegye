@@ -532,7 +532,7 @@ async function runBrowser() {
         { key: "dimensions", label: "", value: "W — × D — × H — mm", lines: [] },
         {
           key: "planting",
-          label: "추천 식재 조건 및 환경\n(Recommended Planting & Environment)",
+          label: "추천 식재 조건 및 환경\n(Planting Guide)",
           value: "",
           lines: [],
         },
@@ -987,13 +987,13 @@ async function runBrowser() {
             id.startsWith("cascade-")
               ? {
                   key: "planting",
-                  label: "추천 식재 조건 및 환경\n(Recommended Planting & Environment)",
+                  label: "추천 식재 조건 및 환경\n(Planting Guide)",
                   value: "",
                   empty: false,
                   lines: specLines(cascadeLines.planting),
                   collapsed: true,
                 }
-              : emptySection("planting", "추천 식재 조건 및 환경\n(Recommended Planting & Environment)"),
+              : emptySection("planting", "추천 식재 조건 및 환경\n(Planting Guide)"),
             id.startsWith("cascade-")
               ? {
                   key: "temperature",
