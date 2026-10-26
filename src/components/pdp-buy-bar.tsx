@@ -60,6 +60,7 @@ export function PdpBuyBar({
             <span className="pdp-buybar-store-label" style={forceWhiteClipStyle}>
               {label}
             </span>
+            <span className="pdp-store-arrow" aria-hidden="true" />
           </a>
         </div>
       </div>
