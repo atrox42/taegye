@@ -100,10 +100,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               if (key === "dimensions") {
                 return (
                   <section key={key} className="pdp-spec" data-pdp-spec={key}>
-                    <p
-                      className={`site-type pdp-spec-value${value ? "" : " is-empty"}`}
-                      style={value ? forceInkStyle : undefined}
-                    >
+                    <p className="site-type pdp-spec-value is-empty">
                       {value || PRODUCT_DIMENSION_PLACEHOLDER}
                     </p>
                   </section>
