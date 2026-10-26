@@ -1242,7 +1242,7 @@ async function runBrowser() {
             return {
               labels: [...document.querySelectorAll(".pdp-specsheet-table th")].map((node) => node.textContent.trim()),
               dimensions: row("Dimensions"),
-              material: row("Material"),
+              madeIn: row("Made in"),
               color: row("Color"),
               separateSheet: Boolean(document.querySelector(".pdp-atelier > .pdp-specsheet")),
               diagramSecond: Boolean(document.querySelectorAll(".pdp-gallery-slide")[1]?.querySelector("[data-pdp-diagram]")),
@@ -1255,7 +1255,7 @@ async function runBrowser() {
               leak: /visa|mastercard|paypal|apple pay|klarna|★|☆|€|£|\$/i.test(document.body.innerText),
             };
           });
-          assert.deepEqual(sheet.labels, ["Dimensions", "Material", "Finish", "Color", "Made in"], `${vp} ${path} spec rows`);
+          assert.deepEqual(sheet.labels, ["Dimensions", "Color", "Made in"], `${vp} ${path} spec rows`);
           assert.equal(sheet.separateSheet, false, `${vp} ${path} specifications should sit inside Details`);
           assert.equal(sheet.diagramSecond, true, `${vp} ${path} drawing should be the second gallery image`);
           assert.equal(sheet.related, "Recommended for you", `${vp} ${path} related title`);
@@ -1263,8 +1263,8 @@ async function runBrowser() {
           assert.ok(sheet.cards >= 4, `${vp} ${path} related cards ${sheet.cards}`);
           assert.equal(sheet.currentInRelated, false, `${vp} ${path} related includes current`);
           assert.equal(sheet.leak, false, `${vp} ${path} overseas chrome leaked`);
-          assert.equal(sheet.material.color, "rgb(153, 153, 153)", `${vp} ${path} sample material`);
-          assert.ok(sheet.material.text.includes("(sample)"), `${vp} ${path} material sample`);
+          assert.equal(sheet.madeIn.color, "rgb(153, 153, 153)", `${vp} ${path} sample made in`);
+          assert.ok(sheet.madeIn.text.includes("(sample)"), `${vp} ${path} made in sample`);
           if (path.endsWith("cascade-silver")) {
             assert.equal(sheet.color.text, "HOLLOW(Translucent)", `${vp} ${path} color name`);
             assert.equal(sheet.color.color, "rgb(17, 17, 17)", `${vp} ${path} color ink`);

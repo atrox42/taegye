@@ -342,8 +342,6 @@ export const PDP_FEATURE_SAMPLES = [
 /** Placeholder specification values. Real measurements and color names stay unmarked. */
 export const PDP_SAMPLE_SPEC = {
   dimensions: "W 120 × D 80 × H 160 mm (sample)",
-  material: "PLA (sample)",
-  finish: "Matte (sample)",
   madeIn: "Korea (sample)",
   diagram: { w: 120, d: 80, h: 160 },
 } as const;

@@ -20,8 +20,6 @@ function specModel(product: NewProduct) {
       value: parsed ? measured : PDP_SAMPLE_SPEC.dimensions,
       sample: dimensionsSample,
     },
-    { label: "Material", value: PDP_SAMPLE_SPEC.material, sample: true },
-    { label: "Finish", value: PDP_SAMPLE_SPEC.finish, sample: true },
     { label: "Color", value: productColorName(product), sample: false },
     { label: "Made in", value: PDP_SAMPLE_SPEC.madeIn, sample: true },
   ];
