@@ -1425,6 +1425,11 @@ async function runBrowser() {
         await page.waitForFunction(
           () => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "off",
         );
+        await page.$eval(".pdp-spec-toggle", (button) => button.click());
+        await page.waitForFunction(() => {
+          const body = document.querySelector(".pdp-spec-body");
+          return Boolean(body && !body.classList.contains("is-collapsed") && body.getBoundingClientRect().height > 80);
+        });
         await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
         await page.waitForFunction(() => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "on");
         const bar = await page.evaluate(() => {
