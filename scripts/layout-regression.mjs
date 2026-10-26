@@ -1370,7 +1370,10 @@ async function runBrowser() {
           const colorPx = parseFloat(type.colorSize);
           assert.ok(colorPx >= 18 * 0.7 && colorPx <= 18 * 0.75, `${vp} ${path} color size ${type.colorSize}`);
           assert.equal(type.colorWeight, "400", `${vp} ${path} color weight`);
-          assert.ok(type.color.top >= type.name.bottom - 2, `${vp} ${path} color under the name`);
+          assert.ok(
+            type.color.top >= type.name.top + type.name.height - 2,
+            `${vp} ${path} color under the name`,
+          );
           assert.ok(type.price.left > type.name.left, `${vp} ${path} price sits right of the name`);
           assert.ok(Math.abs(type.price.top - type.name.top) <= 1, `${vp} ${path} price top-aligned`);
           assert.equal(type.heading, 14, `${vp} ${path} heading ${type.heading}`);
