@@ -1,17 +1,23 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useId, useState } from "react";
+import { useId, useLayoutEffect, useState } from "react";
 
-import { CanvasColorPlate, CanvasWhitePlate } from "@/components/canvas-white-plate";
-import { CanvasText } from "@/components/canvas-text";
-import { CanvasX } from "@/components/canvas-x";
-import { DIM_BLACK_PNG_SRC } from "@/lib/force-white";
+import { CanvasWhitePlate } from "@/components/canvas-white-plate";
+import { DIM_BLACK_PNG_SRC, forceInkStyle } from "@/lib/force-white";
 import { HOME_PROMO } from "@/lib/site";
 
-export const PROMO_HIDE_KEY = "taegye-promo-hide-until";
 export const PROMO_SESSION_KEY = "taegye-promo-closed";
-const DAY_MS = 24 * 60 * 60 * 1000;
+export const LANGUAGE_KEY = "taegye-language";
+
+const LANGUAGES = [
+  { value: "ko", label: "한국어" },
+  { value: "en", label: "English" },
+  { value: "ja", label: "日本語" },
+  { value: "zh", label: "中文" },
+] as const;
+
+type LanguageCode = (typeof LANGUAGES)[number]["value"];
 
 function forceHold() {
   return new URLSearchParams(window.location.search).get("promo") === "hold";
@@ -21,12 +27,11 @@ function querySkip() {
   return new URLSearchParams(window.location.search).get("promo") === "skip";
 }
 
-function hiddenForToday() {
+function savedLanguage() {
   try {
-    const until = Number(window.localStorage.getItem(PROMO_HIDE_KEY) || "0");
-    return until > Date.now();
+    return window.localStorage.getItem(LANGUAGE_KEY);
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -106,16 +111,16 @@ function unlockPage() {
 export function HomePromo() {
   const pathname = usePathname();
   const titleId = useId();
-  /** Do not SSR the dim PNG. A stuck overlay would tint the whole home page. */
   const [open, setOpen] = useState(false);
+  const [language, setLanguage] = useState<LanguageCode>("ko");
 
-  const hide = (today: boolean) => {
+  const dismiss = (save: boolean) => {
     setPromoFlag(false);
     setOpen(false);
     unlockPage();
     try {
       window.sessionStorage.setItem(PROMO_SESSION_KEY, "1");
-      if (today) window.localStorage.setItem(PROMO_HIDE_KEY, String(Date.now() + DAY_MS));
+      if (save) window.localStorage.setItem(LANGUAGE_KEY, language);
     } catch {
       /* ignore */
     }
@@ -124,9 +129,8 @@ export function HomePromo() {
   useLayoutEffect(() => {
     const show =
       HOME_PROMO.enabled &&
-      pathname === "/" &&
       !querySkip() &&
-      (forceHold() || !(hiddenForToday() || closedThisSession()));
+      (forceHold() || !(savedLanguage() || closedThisSession()));
     setPromoFlag(show);
     setOpen(show);
     if (show) lockPage();
@@ -143,60 +147,40 @@ export function HomePromo() {
       <div className="site-promo-dim" aria-hidden />
       {/* eslint-disable-next-line @next/next/no-img-element -- dark raster dimmer skips Force Dark invert */}
       <img src={DIM_BLACK_PNG_SRC} alt="" aria-hidden className="site-promo-dim-bitmap" />
-      <div className="site-promo-card" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <div className="site-promo-card site-lang-card" role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <CanvasWhitePlate />
-        <div className="site-promo-visual">
-          <button
-            type="button"
-            className="site-promo-x"
-            aria-label="Close"
-            onClick={() => hide(false)}
-          >
-            <CanvasX color="#999999" />
-          </button>
-          <a href={HOME_PROMO.href} className="site-promo-product" onClick={() => hide(false)}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- transparent product PNG must stay raster */}
-            <img
-              src={HOME_PROMO.productSrc}
-              alt={HOME_PROMO.productName}
-              className="site-promo-photo"
-              width={1254}
-              height={1254}
-            />
-            <CanvasText
-              id={titleId}
-              text={HOME_PROMO.productName}
-              fill="#111111"
-              className="site-promo-name"
-            />
-            <CanvasText
-              text={HOME_PROMO.productKicker}
-              fill="#999999"
-              className="site-promo-kicker"
-            />
-          </a>
-        </div>
-        <div className="site-promo-strip">
-          <CanvasWhitePlate />
-          <span className="site-promo-strip-rule" aria-hidden>
-            <CanvasColorPlate color="#E5E5E5" />
+        <button type="button" className="site-promo-x" aria-label="Close" onClick={() => dismiss(false)}>
+          <span className="site-lang-x" aria-hidden>
+            ×
           </span>
-          <button
-            type="button"
-            className="site-promo-strip-btn"
-            onClick={() => hide(true)}
-          >
-            <CanvasText text={HOME_PROMO.hideTodayLabel} fill="#111111" fit="fill" />
-          </button>
-          <span className="site-promo-strip-divider" aria-hidden>
-            <CanvasColorPlate color="#E5E5E5" />
-          </span>
-          <button
-            type="button"
-            className="site-promo-strip-btn site-promo-strip-close"
-            onClick={() => hide(false)}
-          >
-            <CanvasText text={HOME_PROMO.closeLabel} fill="#111111" fit="fill" />
+        </button>
+        <div className="site-lang-body">
+          <h2 id={titleId} className="site-lang-title" style={forceInkStyle}>
+            Choose your language
+          </h2>
+          <label className="site-lang-field">
+            <span className="site-type site-lang-label" style={forceInkStyle}>
+              Language
+            </span>
+            <span className="site-lang-select">
+              <select
+                value={language}
+                aria-label="Language"
+                onChange={(event) => setLanguage(event.target.value as LanguageCode)}
+              >
+                {LANGUAGES.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+              <span className="site-lang-caret" aria-hidden>
+                ▾
+              </span>
+            </span>
+          </label>
+          <button type="button" className="site-lang-confirm" onClick={() => dismiss(true)}>
+            Confirm & Close
           </button>
         </div>
       </div>

@@ -323,6 +323,49 @@ export function productSpecValue(product: NewProduct, key: "dimensions" | "plant
   return product[key].trim();
 }
 
+/** Buy-column accordions. Planting and notes stay inside Description and Details. */
+export const PDP_INFO_SECTIONS = [
+  { key: "description", ko: "설명", en: "Description" },
+  { key: "details", ko: "상세 정보", en: "Details" },
+  { key: "delivery", ko: "배송 및 반품", en: "Delivery & Return" },
+] as const;
+
+export type PdpInfoSectionKey = (typeof PDP_INFO_SECTIONS)[number]["key"];
+
+/** Placeholder feature lines. Gray “(sample)” copy until real lines exist. */
+export const PDP_FEATURE_SAMPLES = [
+  { n: "01", text: "Sample feature (sample)" },
+  { n: "02", text: "Sample feature (sample)" },
+  { n: "03", text: "Sample feature (sample)" },
+] as const;
+
+/** Placeholder specification values. Real measurements and color names stay unmarked. */
+export const PDP_SAMPLE_SPEC = {
+  dimensions: "W 120 × D 80 × H 160 mm (sample)",
+  material: "PLA (sample)",
+  finish: "Matte (sample)",
+  madeIn: "Korea (sample)",
+  diagram: { w: 120, d: 80, h: 160 },
+} as const;
+
+/** Color token as written on the product, e.g. HOLLOW(Translucent). */
+export function productColorName(product: NewProduct) {
+  const parts = product.name.split(", ");
+  return (parts[1] ?? product.finish).trim();
+}
+
+export function parseMeasuredDimensions(value: string) {
+  const match = value
+    .trim()
+    .match(/^W\s*(\d+(?:\.\d+)?)\s*×\s*D\s*(\d+(?:\.\d+)?)\s*×\s*H\s*(\d+(?:\.\d+)?)\s*mm$/);
+  if (!match) return null;
+  return { w: Number(match[1]), d: Number(match[2]), h: Number(match[3]) };
+}
+
+export function relatedProducts(product: NewProduct) {
+  return NEW_PRODUCTS.filter((item) => item.id !== product.id);
+}
+
 /**
  * Decorative /new grid tile — not a product.
  * Slot is 1-indexed and chosen client-side among 2–6.

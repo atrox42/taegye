@@ -1,36 +1,26 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 
 import { forceInkStyle } from "@/lib/force-white";
-import { type ProductSpecLine, type ProductSpecSectionKey } from "@/lib/site";
 
-export function PdpSpecHeadingLines({ en, ko }: { en: string; ko: string }) {
-  return (
-    <span className="pdp-spec-label-text">
-      <span className="pdp-spec-label-ko">{ko}</span>
-      <span className="pdp-spec-label-en">({en})</span>
-    </span>
-  );
-}
-
-export function PdpSpecSection({
+export function PdpAccordion({
   sectionKey,
   en,
   ko,
-  lines,
+  children,
 }: {
-  sectionKey: ProductSpecSectionKey;
+  sectionKey: string;
   en: string;
   ko: string;
-  lines: ProductSpecLine[];
+  children?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
 
   return (
-    <>
-      <h2 className="site-type pdp-spec-label">
+    <section className="pdp-acc-row" data-pdp-spec={sectionKey}>
+      <h2 className="pdp-acc-label">
         <button
           type="button"
           className="pdp-spec-toggle"
@@ -38,7 +28,10 @@ export function PdpSpecSection({
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
         >
-          <PdpSpecHeadingLines en={en} ko={ko} />
+          <span className="pdp-spec-label-text" style={forceInkStyle}>
+            <span className="pdp-spec-label-ko">{ko}</span>
+            <span className="pdp-spec-label-en"> ({en})</span>
+          </span>
           <span className="pdp-spec-toggle-mark" aria-hidden>
             <span className="pdp-spec-toggle-glyph">{open ? "−" : "+"}</span>
           </span>
@@ -48,18 +41,9 @@ export function PdpSpecSection({
         id={panelId}
         className={open ? "pdp-spec-body" : "pdp-spec-body is-collapsed"}
         data-pdp-spec-body={sectionKey}
-        lang="ko"
       >
-        {lines.map((line, index) => (
-          <p
-            key={`${line.role}-${index}`}
-            className={line.role === "subhead" ? "site-type pdp-spec-subhead" : "site-type pdp-spec-line"}
-            style={forceInkStyle}
-          >
-            {line.text}
-          </p>
-        ))}
+        {children}
       </div>
-    </>
+    </section>
   );
 }
