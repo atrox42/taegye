@@ -4,21 +4,19 @@ import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpAccordion } from "@/components/pdp-spec-section";
 import { PdpRelated } from "@/components/pdp-related";
 import { PdpReveal } from "@/components/pdp-reveal";
-import { PdpSpecSheet } from "@/components/pdp-spec-sheet";
+import { PdpDiagramSlide, PdpSpecTable } from "@/components/pdp-spec-sheet";
 import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceMutedStyle, forceWhiteClipStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
   PDP_FEATURE_SAMPLES,
   PDP_INFO_SECTIONS,
-  PRODUCT_DIMENSION_PLACEHOLDER,
   STORE_URL,
   productColorLabel,
   productColorName,
   productFamilyLabel,
   productNote,
   productSpecSectionBody,
-  productSpecValue,
   productsInFamily,
   type NewProduct,
 } from "@/lib/site";
@@ -55,12 +53,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const note = productNote(product);
   const planting = productSpecSectionBody(product, "planting");
   const notes = productSpecSectionBody(product, "temperature");
-  const dimensions = productSpecValue(product, "dimensions");
   const family = productsInFamily(product);
   const showSwatches =
     product.category === "wall-kit" || product.category === "one-port" || product.category === "cascade";
   const mossSrc = product.mossSrc;
-  const hasMoss = Boolean(mossSrc);
   const emptyHero = (
     <ProductHero
       src={product.emptySrc}
@@ -82,27 +78,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
   return (
     <article className="site-page pdp pdp-atelier site-gutter" style={forceWhiteStyle}>
       <WhiteSurfaceFill />
-      <div className="pdp-mobile-gallery">
-        {hasMoss && mossHero ? <PdpGallery empty={emptyHero} moss={mossHero} /> : emptyHero}
-      </div>
       <div className="pdp-media">
-        <PdpReveal>
-          <ProductHero
-            src={product.emptySrc}
-            mobileSrc={product.emptySrcMobile}
-            alt={product.emptyAlt}
-            priority
-            className="pdp-hero-empty"
-          />
-        </PdpReveal>
-        {mossSrc ? (
-          <ProductHero
-            src={mossSrc}
-            mobileSrc={product.mossSrcMobile}
-            alt={product.mossAlt ?? product.emptyAlt}
-            className="pdp-hero-moss pdp-desktop-moss"
-          />
-        ) : null}
+        <PdpGallery
+          slides={[
+            <PdpReveal key="photo">{emptyHero}</PdpReveal>,
+            <PdpDiagramSlide key="diagram" product={product} />,
+            ...(mossHero ? [mossHero] : []),
+          ]}
+        />
       </div>
 
       <div className="pdp-buy" data-pdp-buy="true">
@@ -185,7 +168,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </section>
         <div className="pdp-acc-list">
           {PDP_INFO_SECTIONS.map((section) => (
-            <PdpAccordion key={section.key} sectionKey={section.key} en={section.en} ko={section.ko}>
+            <PdpAccordion key={section.key} sectionKey={section.key} label={section.label}>
               {section.key === "description" ? (
                 <>
                   <p lang="ko" className="pdp-note pdp-spec-line" style={forceInkStyle}>
@@ -194,7 +177,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   {planting ? (
                     <>
                       <p className="pdp-spec-subhead" style={forceInkStyle}>
-                        추천 식재 조건 및 환경
+                        Planting Guide
                       </p>
                       <p lang="ko" className="pdp-spec-line" style={forceInkStyle}>
                         {planting}
@@ -205,16 +188,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
               ) : null}
               {section.key === "details" ? (
                 <>
-                  <p
-                    className={dimensions ? "pdp-spec-value" : "pdp-spec-value is-empty"}
-                    style={dimensions ? forceInkStyle : forceMutedStyle}
-                  >
-                    {dimensions || PRODUCT_DIMENSION_PLACEHOLDER}
+                  <p className="pdp-spec-subhead" style={forceInkStyle}>
+                    Product specifications
                   </p>
+                  <PdpSpecTable product={product} />
                   {notes ? (
                     <>
                       <p className="pdp-spec-subhead" style={forceInkStyle}>
-                        주의사항
+                        Notes
                       </p>
                       <p lang="ko" className="pdp-spec-line" style={forceInkStyle}>
                         {notes}
@@ -245,7 +226,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </div>
         </div>
       ) : null}
-      <PdpSpecSheet product={product} />
       <PdpRelated product={product} />
     </article>
   );

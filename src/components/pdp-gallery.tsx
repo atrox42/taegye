@@ -14,15 +14,15 @@ import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceWhiteStyle } from "@/lib/force-white";
 
 type PdpGalleryProps = {
-  empty: ReactNode;
-  moss: ReactNode;
+  slides: ReactNode[];
 };
 
-export function PdpGallery({ empty, moss }: PdpGalleryProps) {
+export function PdpGallery({ slides }: PdpGalleryProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const pointer = useRef<{ x: number; y: number } | null>(null);
   const userMoved = useRef(false);
   const [page, setPage] = useState(1);
+  const count = slides.length;
 
   const snapIdle = useCallback(() => {
     const track = trackRef.current;
@@ -32,7 +32,9 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
     if (!userMoved.current && track.scrollLeft !== 0) {
       track.scrollLeft = 0;
     }
-    setPage(track.scrollLeft >= width * 0.5 ? 2 : 1);
+    const total = track.querySelectorAll(":scope > .pdp-gallery-slide").length || 1;
+    const index = Math.round(track.scrollLeft / width);
+    setPage(Math.min(total, Math.max(1, index + 1)));
   }, []);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
       ro.disconnect();
       imgs.forEach((img) => img.removeEventListener("load", snapIdle));
     };
-  }, [snapIdle]);
+  }, [snapIdle, count]);
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     pointer.current = { x: event.clientX, y: event.clientY };
@@ -59,20 +61,24 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
   };
 
   const onTrackClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (window.matchMedia("(min-width: 768px)").matches) return;
     const start = pointer.current;
     pointer.current = null;
     if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10) return;
     const track = trackRef.current;
     if (!track) return;
     const rect = track.getBoundingClientRect();
-    const next = event.clientX - rect.left >= rect.width * 0.5;
+    const width = rect.width;
+    if (width <= 0) return;
+    const total = track.querySelectorAll(":scope > .pdp-gallery-slide").length;
+    const current = Math.round(track.scrollLeft / width);
+    const forward = event.clientX - rect.left >= width * 0.5;
+    const target = forward ? Math.min(total - 1, current + 1) : Math.max(0, current - 1);
     userMoved.current = true;
-    track.scrollTo({ left: next ? rect.width : 0, behavior: "smooth" });
+    track.scrollTo({ left: target * width, behavior: "smooth" });
   };
 
   return (
-    <div className="pdp-gallery" style={forceWhiteStyle}>
+    <div className="pdp-gallery pdp-mobile-gallery" style={forceWhiteStyle}>
       <WhiteSurfaceFill className="pdp-gallery-plate" />
       <div
         ref={trackRef}
@@ -81,18 +87,18 @@ export function PdpGallery({ empty, moss }: PdpGalleryProps) {
         onPointerDown={onPointerDown}
         onClick={onTrackClick}
       >
-        <div className="pdp-gallery-slide" style={forceWhiteStyle}>
-          <WhiteSurfaceFill />
-          {empty}
-        </div>
-        <div className="pdp-gallery-slide" style={forceWhiteStyle}>
-          <WhiteSurfaceFill />
-          {moss}
-        </div>
+        {slides.map((slide, index) => (
+          <div key={index} className="pdp-gallery-slide" style={forceWhiteStyle}>
+            <WhiteSurfaceFill />
+            {slide}
+          </div>
+        ))}
       </div>
-      <p className="pdp-gallery-index site-type" aria-live="polite">
-        {page} / 2
-      </p>
+      {count > 1 ? (
+        <p className="pdp-gallery-index site-type" aria-live="polite">
+          {page} / {count}
+        </p>
+      ) : null}
     </div>
   );
 }

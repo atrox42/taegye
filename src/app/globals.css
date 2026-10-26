@@ -796,27 +796,12 @@ button {
 @media (max-width: 767.98px) {
   .pdp-atelier > .pdp-reveal,
   .pdp-atelier > .pdp-hero-moss,
-  .pdp-desktop-moss,
-  .pdp-media {
+  .pdp-desktop-moss {
     display: none !important;
   }
 
   .pdp-atelier {
     min-height: calc(100lvh + var(--float-clearance));
-  }
-}
-
-@media (min-width: 768px) {
-  .pdp-gallery,
-  .pdp-gallery-track,
-  .pdp-gallery-slide,
-  .pdp-mobile-gallery {
-    display: none !important;
-  }
-
-  .pdp-gallery-plate,
-  .pdp-gallery-index {
-    display: none !important;
   }
 }
 
@@ -4329,30 +4314,57 @@ html[data-cookies="off"] .site-cookies {
   white-space: normal;
 }
 
+.pdp-diagram-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdp-diagram-slide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 72%;
+  max-width: 360px;
+  gap: 4px;
+}
+
+.pdp-acc-row .pdp-specsheet-table {
+  margin-top: 4px;
+}
+
+.pdp-acc-row .pdp-specsheet-table th,
+.pdp-acc-row .pdp-specsheet-table td {
+  font-size: 12px;
+  padding: 10px 0;
+}
+
 @media (min-width: 768px) {
   .pdp-atelier {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+    grid-template-columns: 1fr minmax(0, 520px) minmax(260px, 400px) 1fr;
     align-items: start;
-    column-gap: 4.5rem;
+    column-gap: 3rem;
     row-gap: 3.5rem;
     min-height: 0;
     padding-top: calc(2.5rem + 11px + 48px);
   }
 
   .pdp-atelier > .pdp-media {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
     width: 100%;
+    max-width: 520px;
+    justify-self: end;
   }
 
   .pdp-atelier > .pdp-buy {
     position: sticky !important;
     top: 6.5rem;
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 1;
     align-self: start;
     width: 100%;
+    justify-self: start;
   }
 
   .pdp-media .pdp-hero,
@@ -4361,22 +4373,15 @@ html[data-cookies="off"] .site-cookies {
   }
 
   .pdp-atelier > .pdp-hero-guide {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 2;
     justify-self: stretch;
+    max-width: 520px;
   }
 
-  .pdp-atelier > .pdp-specsheet,
   .pdp-atelier > .pdp-related {
-    grid-column: 1 / -1;
+    grid-column: 2 / 4;
     width: 100%;
-  }
-
-  .pdp-specsheet-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 3rem;
-    align-items: start;
   }
 
   .pdp-related-card {

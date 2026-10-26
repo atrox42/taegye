@@ -522,19 +522,19 @@ async function runBrowser() {
       assert.deepEqual(specs, [
         {
           key: "description",
-          label: "설명 (Description)",
+          label: "Description",
           value: "",
           lines: [note],
         },
         {
           key: "details",
-          label: "상세 정보 (Details)",
-          value: "W — × D — × H — mm",
-          lines: [],
+          label: "Details",
+          value: "",
+          lines: ["Product specifications"],
         },
         {
           key: "delivery",
-          label: "배송 및 반품 (Delivery & Return)",
+          label: "Delivery & Return",
           value: "",
           lines: [],
         },
@@ -978,28 +978,35 @@ async function runBrowser() {
         assert.deepEqual(
           report.specs,
           [
-            section("description", "설명 (Description)", {
+            section("description", "Description", {
               lines: specLines([
                 ["line", expectedNote],
                 ...(id.startsWith("cascade-")
                   ? [
-                      ["subhead", "추천 식재 조건 및 환경"],
+                      ["subhead", "Planting Guide"],
                       ...cascadeLines.planting,
                     ]
                   : []),
               ]),
             }),
-            section("details", "상세 정보 (Details)", {
-              value: drainDimensions[id] || "W — × D — × H — mm",
-              empty: !drainDimensions[id],
-              lines: id.startsWith("cascade-")
-                ? specLines([["subhead", "주의사항"], ...cascadeLines.temperature])
-                : [],
+            section("details", "Details", {
+              lines: specLines([
+                ["subhead", "Product specifications"],
+                ...(id.startsWith("cascade-") ? [["subhead", "Notes"], ...cascadeLines.temperature] : []),
+              ]),
             }),
-            section("delivery", "배송 및 반품 (Delivery & Return)"),
+            section("delivery", "Delivery & Return"),
           ],
           `${id} specs`,
         );
+        if (drainDimensions[id]) {
+          const dimensionCell = await page.$eval('[data-pdp-spec-row="Dimensions"] td', (el) => ({
+            text: el.textContent.trim(),
+            sample: el.classList.contains("is-sample"),
+          }));
+          assert.equal(dimensionCell.text, drainDimensions[id], `${id} measured dimensions`);
+          assert.equal(dimensionCell.sample, false, `${id} dimensions must not be marked sample`);
+        }
         if (id.startsWith("cascade-")) {
           const expected = [
             { id: "cascade-silver", title: "HOLLOW" },
@@ -1179,26 +1186,26 @@ async function runBrowser() {
               };
             };
             return {
-              dim: line(document.querySelector(".pdp-spec-value")),
-              en: [...document.querySelectorAll(".pdp-spec-label-en")].map(line),
-              ko: [...document.querySelectorAll(".pdp-spec-label-ko")].map(line),
+              dim: line(document.querySelector('[data-pdp-spec-row="Dimensions"] td')),
+              labels: [...document.querySelectorAll(".pdp-spec-label-text")].map(line),
             };
           });
           assert.deepEqual(
-            colors.en.map((item) => item.text),
-            [" (Description)", " (Details)", " (Delivery & Return)"],
-            `${vp} ${path} English lines`,
+            colors.labels.map((item) => item.text),
+            ["Description", "Details", "Delivery & Return"],
+            `${vp} ${path} English headings`,
           );
           assert.equal(colors.dim.color, "rgb(153, 153, 153)", `${vp} ${path} dimensions gray`);
-          for (const item of [...colors.en, ...colors.ko]) {
+          for (const item of colors.labels) {
             assert.equal(item.color, "rgb(17, 17, 17)", `${vp} ${path} ${item.text} color`);
+            assert.equal(/[가-힣]/.test(item.text), false, `${vp} ${path} Korean heading ${item.text}`);
           }
           const marks = await page.$$eval(".pdp-spec-toggle-glyph", (nodes) =>
             nodes.map((node) => {
               const style = getComputedStyle(node);
               const mark = node.parentElement.getBoundingClientRect();
               const row = node.closest(".pdp-spec-toggle").getBoundingClientRect();
-              const first = node.closest(".pdp-spec-toggle").querySelector(".pdp-spec-label-ko").getBoundingClientRect();
+              const first = node.closest(".pdp-spec-toggle").querySelector(".pdp-spec-label-text").getBoundingClientRect();
               const mid = mark.top + mark.height / 2;
               return {
                 text: node.textContent,
@@ -1228,6 +1235,8 @@ async function runBrowser() {
               dimensions: row("Dimensions"),
               material: row("Material"),
               color: row("Color"),
+              separateSheet: Boolean(document.querySelector(".pdp-atelier > .pdp-specsheet")),
+              diagramSecond: Boolean(document.querySelectorAll(".pdp-gallery-slide")[1]?.querySelector("[data-pdp-diagram]")),
               related: document.querySelector("#pdp-related-title")?.textContent?.trim() || "",
               arrows: document.querySelectorAll(".pdp-related-arrow").length,
               cards: document.querySelectorAll(".pdp-related-card").length,
@@ -1238,6 +1247,8 @@ async function runBrowser() {
             };
           });
           assert.deepEqual(sheet.labels, ["Dimensions", "Material", "Finish", "Color", "Made in"], `${vp} ${path} spec rows`);
+          assert.equal(sheet.separateSheet, false, `${vp} ${path} specifications should sit inside Details`);
+          assert.equal(sheet.diagramSecond, true, `${vp} ${path} drawing should be the second gallery image`);
           assert.equal(sheet.related, "Recommended for you", `${vp} ${path} related title`);
           assert.equal(sheet.arrows, 2, `${vp} ${path} related arrows`);
           assert.ok(sheet.cards >= 4, `${vp} ${path} related cards ${sheet.cards}`);

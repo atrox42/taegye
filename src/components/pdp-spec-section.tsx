@@ -6,13 +6,11 @@ import { forceInkStyle } from "@/lib/force-white";
 
 export function PdpAccordion({
   sectionKey,
-  en,
-  ko,
+  label,
   children,
 }: {
   sectionKey: string;
-  en: string;
-  ko: string;
+  label: string;
   children?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -29,8 +27,7 @@ export function PdpAccordion({
           onClick={() => setOpen((value) => !value)}
         >
           <span className="pdp-spec-label-text" style={forceInkStyle}>
-            <span className="pdp-spec-label-ko">{ko}</span>
-            <span className="pdp-spec-label-en"> ({en})</span>
+            {label}
           </span>
           <span className="pdp-spec-toggle-mark" aria-hidden>
             <span className="pdp-spec-toggle-glyph">{open ? "−" : "+"}</span>

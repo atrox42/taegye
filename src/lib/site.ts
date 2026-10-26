@@ -325,9 +325,9 @@ export function productSpecValue(product: NewProduct, key: "dimensions" | "plant
 
 /** Buy-column accordions. Planting and notes stay inside Description and Details. */
 export const PDP_INFO_SECTIONS = [
-  { key: "description", ko: "설명", en: "Description" },
-  { key: "details", ko: "상세 정보", en: "Details" },
-  { key: "delivery", ko: "배송 및 반품", en: "Delivery & Return" },
+  { key: "description", label: "Description" },
+  { key: "details", label: "Details" },
+  { key: "delivery", label: "Delivery & Return" },
 ] as const;
 
 export type PdpInfoSectionKey = (typeof PDP_INFO_SECTIONS)[number]["key"];
