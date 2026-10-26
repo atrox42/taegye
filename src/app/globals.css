@@ -832,6 +832,15 @@ button {
   gap: var(--pdp-group-gap);
 }
 
+.pdp-rail-copy {
+  --pdp-copy-gap: 22px;
+  gap: var(--pdp-copy-gap);
+}
+
+.pdp-rail-copy .pdp-specs {
+  gap: var(--pdp-copy-gap);
+}
+
 .pdp-rail-buy {
   margin-top: var(--pdp-group-gap);
 }
@@ -1119,6 +1128,7 @@ button {
   }
 
   .pdp-rail-copy {
+    --pdp-copy-gap: 26px;
     grid-column: 1;
     min-width: 0;
     pointer-events: none;
