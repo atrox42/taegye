@@ -111,9 +111,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </div>
         {showSwatches ? (
           <div className="pdp-color">
-            <p className="pdp-color-name" style={forceInkStyle}>
-              {productColorName(product)}
-            </p>
             <PdpSwatches product={product} family={family} />
           </div>
         ) : null}
