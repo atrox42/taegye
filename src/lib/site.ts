@@ -286,10 +286,6 @@ export const PRODUCT_SPEC_SECTIONS = [
 
 export type ProductSpecSectionKey = (typeof PRODUCT_SPEC_SECTIONS)[number]["key"];
 
-export function productSpecHeading(section: { en: string; ko: string }) {
-  return `${section.ko}\n(${section.en})`;
-}
-
 export const PRODUCT_SPEC_LABELS = {
   dimensions: "Dimensions / 치수",
   planting: `${PRODUCT_SPEC_SECTIONS[0].ko} (${PRODUCT_SPEC_SECTIONS[0].en})`,

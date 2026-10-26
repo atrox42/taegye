@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpReveal } from "@/components/pdp-reveal";
-import { PdpSpecSection } from "@/components/pdp-spec-section";
+import { PdpSpecHeadingLines, PdpSpecSection } from "@/components/pdp-spec-section";
 import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteStyle } from "@/lib/force-white";
@@ -12,7 +12,6 @@ import {
   STORE_URL,
   productColorLabel,
   productNote,
-  productSpecHeading,
   productSpecLines,
   productSpecSectionBody,
   productSpecValue,
@@ -110,10 +109,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   {lines.length ? (
                     <PdpSpecSection sectionKey={section.key} en={section.en} ko={section.ko} lines={lines} />
                   ) : (
-                    <h2
-                      className="site-type pdp-spec-label"
-                      style={{ ...forceInkStyle, whiteSpace: "pre-line" }}
-                    >{productSpecHeading(section)}</h2>
+                    <h2 className="site-type pdp-spec-label">
+                      <PdpSpecHeadingLines en={section.en} ko={section.ko} />
+                    </h2>
                   )}
                 </section>
               );

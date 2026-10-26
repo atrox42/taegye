@@ -1170,6 +1170,39 @@ async function runBrowser() {
         assert.equal(opened[1].expanded, "false", `${vp} other section stays closed`);
         console.log(`ok  ${vp} cascade specs stay closed until the heading is clicked`);
       });
+      for (const path of ["/new/cascade-silver", "/new/silver"]) {
+        await withPage(browser, viewport, path, async (page) => {
+          const colors = await page.evaluate(() => {
+            const line = (el) => {
+              const style = getComputedStyle(el);
+              return {
+                text: el.textContent,
+                color: style.color,
+                fill: style.webkitTextFillColor,
+              };
+            };
+            return {
+              dim: line(document.querySelector(".pdp-spec-value")),
+              en: [...document.querySelectorAll(".pdp-spec-label-en")].map(line),
+              ko: [...document.querySelectorAll(".pdp-spec-label-ko")].map(line),
+            };
+          });
+          assert.deepEqual(
+            colors.en.map((item) => item.text),
+            ["(Planting Guide)", "(Notes)"],
+            `${vp} ${path} English lines`,
+          );
+          for (const item of colors.en) {
+            assert.equal(item.color, colors.dim.color, `${vp} ${path} ${item.text} color`);
+            assert.equal(item.fill, colors.dim.fill, `${vp} ${path} ${item.text} fill`);
+          }
+          assert.equal(colors.dim.color, "rgb(153, 153, 153)", `${vp} ${path} dimensions gray`);
+          for (const item of colors.ko) {
+            assert.notEqual(item.fill, colors.dim.fill, `${vp} ${path} ${item.text} stays ink`);
+          }
+        });
+      }
+      console.log(`ok  ${vp} English spec lines match the dimensions gray`);
     }
 
     await withPage(browser, DESKTOP, "/new/drain-tower-80", async (page) => {

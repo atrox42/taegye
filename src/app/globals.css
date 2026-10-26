@@ -937,6 +937,19 @@ button {
   text-align: left;
 }
 
+.pdp-spec-label-ko,
+.pdp-spec-label-en {
+  display: block;
+}
+
+.pdp-spec-label-en {
+  color: #999999 !important;
+  -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+
 .pdp-spec-toggle-mark {
   flex: 0 0 auto;
   color: #111111 !important;

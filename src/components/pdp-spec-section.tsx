@@ -3,9 +3,16 @@
 import { useId, useState } from "react";
 
 import { forceInkStyle } from "@/lib/force-white";
-import { productSpecHeading, type ProductSpecLine, type ProductSpecSectionKey } from "@/lib/site";
+import { type ProductSpecLine, type ProductSpecSectionKey } from "@/lib/site";
 
-const labelStyle = { ...forceInkStyle, whiteSpace: "pre-line" as const };
+export function PdpSpecHeadingLines({ en, ko }: { en: string; ko: string }) {
+  return (
+    <span className="pdp-spec-label-text">
+      <span className="pdp-spec-label-ko" style={forceInkStyle}>{ko}</span>
+      <span className="pdp-spec-label-en">({en})</span>
+    </span>
+  );
+}
 
 export function PdpSpecSection({
   sectionKey,
@@ -31,7 +38,7 @@ export function PdpSpecSection({
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
         >
-          <span className="pdp-spec-label-text" style={labelStyle}>{productSpecHeading({ en, ko })}</span>
+          <PdpSpecHeadingLines en={en} ko={ko} />
           <span className="pdp-spec-toggle-mark" aria-hidden>
             {open ? "–" : "+"}
           </span>
