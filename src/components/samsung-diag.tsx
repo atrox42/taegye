@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CANVAS_WHITE, PAGE_WHITE_CANVAS_ID, paintOpaqueWhite } from "@/lib/canvas-white";
 import { DIM_BLACK_PNG_SRC, WHITE_BITMAP_SRC } from "@/lib/force-white";
 
-const PRODUCT_PNG = "/products/stand-silver-moss.webp";
+const PRODUCT_PNG = "/products/wall212-hollow-planted.png";
 const WHITE_PNG = "/bg-white.png";
 
 type LayerRow = {

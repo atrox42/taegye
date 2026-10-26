@@ -160,8 +160,8 @@ export function HomePromo() {
               src={HOME_PROMO.productSrc}
               alt={HOME_PROMO.productName}
               className="site-promo-photo"
-              width={1254}
-              height={1254}
+              width={1024}
+              height={1024}
             />
             <CanvasText
               id={titleId}

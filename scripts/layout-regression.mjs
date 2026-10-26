@@ -514,7 +514,9 @@ async function runBrowser() {
       const price = await page.$eval(".pdp-price", (node) => (node.textContent || "").trim());
       assert.equal(price, "KRW 36,000", `one-port PDP ${price}`);
       const name = await page.$eval(".pdp-name", (node) => (node.textContent || "").trim());
-      assert.equal(name, "Starship 157, ODD(Indigo Purple)");
+      const color = await page.$eval(".pdp-title-color", (node) => (node.textContent || "").trim());
+      assert.equal(name, "Starship 157");
+      assert.equal(color, "ODD(Indigo Purple)");
       const title = await page.title();
       assert.match(title, /Starship 157, ODD\(Indigo Purple\)/);
       const note = await page.$eval(".pdp-note", (node) => (node.textContent || "").trim());
@@ -919,6 +921,7 @@ async function runBrowser() {
         }
         const report = await page.evaluate(() => ({
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+          color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
           note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
           specs: [...document.querySelectorAll("[data-pdp-spec]")].map((el) => ({
@@ -953,7 +956,9 @@ async function runBrowser() {
             : null,
           overflow: +(document.documentElement.scrollWidth - document.documentElement.clientWidth).toFixed(1),
         }));
-        assert.equal(report.name, name, `${id} name`);
+        const [family, colorName] = name.split(", ");
+        assert.equal(report.name, family, `${id} name`);
+        assert.equal(report.color, colorName, `${id} color`);
         assert.equal(report.price, price, `${id} price`);
         const expectedNote = id.startsWith("cascade-")
           ? "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루다리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다."
@@ -1065,17 +1070,30 @@ async function runBrowser() {
       await page.waitForSelector('.pdp-swatch[href="/new/cascade-black"]');
       const before = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+        color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
       }));
-      assert.deepEqual(before, { name: "Cascade 600, HOLLOW(Translucent)", price: "KRW 236,000" });
+      assert.deepEqual(before, {
+        name: "Cascade 600",
+        color: "HOLLOW(Translucent)",
+        price: "KRW 236,000",
+      });
       await page.click('.pdp-swatch[href="/new/cascade-black"]');
-      await page.waitForFunction(() => document.querySelector(".pdp-name")?.textContent?.trim() === "Cascade 600, VOID(Black)");
+      await page.waitForFunction(
+        () => document.querySelector(".pdp-title-color")?.textContent?.trim() === "VOID(Black)",
+      );
       const after = await page.evaluate(() => ({
         name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+        color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
         price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
         current: document.querySelector(".pdp-swatch.is-current")?.getAttribute("title") || "",
       }));
-      assert.deepEqual(after, { name: "Cascade 600, VOID(Black)", price: "KRW 197,000", current: "VOID" });
+      assert.deepEqual(after, {
+        name: "Cascade 600",
+        color: "VOID(Black)",
+        price: "KRW 197,000",
+        current: "VOID",
+      });
       console.log("ok  cascade swatch click: HOLLOW → VOID, price follows");
     });
 
@@ -1317,8 +1335,10 @@ async function runBrowser() {
               return { left: r.left, top: r.top, width: r.width, height: r.height };
             };
             const name = document.querySelector(".pdp-name");
+            const color = document.querySelector(".pdp-title-color");
             const price = document.querySelector(".pdp-price");
             const ns = name ? getComputedStyle(name) : null;
+            const cs = color ? getComputedStyle(color) : null;
             const ps = price ? getComputedStyle(price) : null;
             const heading = document.querySelector(".pdp-spec-label-text");
             const body = document.querySelector(".pdp-spec-line");
@@ -1326,10 +1346,13 @@ async function runBrowser() {
             const feature = document.querySelector(".pdp-features-line");
             return {
               nameSize: ns?.fontSize || "",
+              colorSize: cs?.fontSize || "",
               priceSize: ps?.fontSize || "",
               nameWeight: ns?.fontWeight || "",
+              colorWeight: cs?.fontWeight || "",
               priceWeight: ps?.fontWeight || "",
               name: box(name),
+              color: box(color),
               price: box(price),
               heading: heading ? parseFloat(getComputedStyle(heading).fontSize) : 0,
               body: body ? parseFloat(getComputedStyle(body).fontSize) : 0,
@@ -1344,6 +1367,10 @@ async function runBrowser() {
           assert.equal(type.nameSize, type.priceSize, `${vp} ${path} name/price size`);
           assert.equal(type.nameWeight, type.priceWeight, `${vp} ${path} name/price weight`);
           assert.equal(type.nameSize, "18px", `${vp} ${path} title size ${type.nameSize}`);
+          const colorPx = parseFloat(type.colorSize);
+          assert.ok(colorPx >= 18 * 0.7 && colorPx <= 18 * 0.75, `${vp} ${path} color size ${type.colorSize}`);
+          assert.equal(type.colorWeight, "400", `${vp} ${path} color weight`);
+          assert.ok(type.color.top >= type.name.bottom - 2, `${vp} ${path} color under the name`);
           assert.ok(type.price.left > type.name.left, `${vp} ${path} price sits right of the name`);
           assert.ok(Math.abs(type.price.top - type.name.top) <= 1, `${vp} ${path} price top-aligned`);
           assert.equal(type.heading, 14, `${vp} ${path} heading ${type.heading}`);
@@ -1363,13 +1390,21 @@ async function runBrowser() {
         assert.equal(await page.$(".pdp-related"), null, `${vp} BUG has no same-color products`);
       });
       await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
-        const single = await page.evaluate(() => ({
-          slides: document.querySelectorAll(".pdp-gallery-slide").length,
-          diagram: document.querySelectorAll("[data-pdp-diagram]").length,
-          index: Boolean(document.querySelector(".pdp-gallery-index")),
-          rail: Boolean(document.querySelector(".pdp-scroll-rail")),
-        }));
+        const single = await page.evaluate(() => {
+          const stage = document.querySelector(".pdp-gallery .pdp-stage");
+          const rect = stage.getBoundingClientRect();
+          return {
+            slides: document.querySelectorAll(".pdp-gallery-slide").length,
+            diagram: document.querySelectorAll("[data-pdp-diagram]").length,
+            index: Boolean(document.querySelector(".pdp-gallery-index")),
+            rail: Boolean(document.querySelector(".pdp-scroll-rail")),
+            bg: stage ? getComputedStyle(stage).backgroundColor : "",
+            square: Math.abs(rect.width - rect.height) <= 1,
+          };
+        });
         assert.equal(single.slides, 1, `${vp} cascade gallery is one photo`);
+        assert.equal(single.bg, "rgb(232, 232, 232)", `${vp} gallery plate`);
+        assert.equal(single.square, true, `${vp} gallery square`);
         assert.equal(single.diagram, 0, `${vp} cascade has no drawing`);
         assert.equal(single.index, false, `${vp} cascade counter hidden`);
         assert.equal(single.rail, false, `${vp} cascade rail hidden`);
@@ -1503,10 +1538,13 @@ async function runBrowser() {
         const pathname = new URL(page.url()).pathname;
         const report = await page.evaluate(() => ({
           name: document.querySelector(".pdp-name")?.textContent?.trim() || "",
+          color: document.querySelector(".pdp-title-color")?.textContent?.trim() || "",
           price: document.querySelector(".pdp-price")?.textContent?.trim() || "",
         }));
+        const [family, colorName] = name.split(", ");
         assert.equal(pathname, to, `${from} redirect path`);
-        assert.equal(report.name, name, `${from} redirect name`);
+        assert.equal(report.name, family, `${from} redirect name`);
+        assert.equal(report.color, colorName, `${from} redirect color`);
         assert.equal(report.price, price, `${from} redirect price`);
         console.log(`ok  ${from} → ${to}: ${name} ${price}`);
       });
@@ -2304,7 +2342,7 @@ async function runBrowser() {
       assert.equal(report.productName, "Wall 212, HOLLOW(Translucent)", `${label}: product name`);
       assert.equal(report.productKicker, "Now Available", `${label}: product kicker`);
       assert.equal(report.productHref, "/new/silver", `${label}: product href`);
-      assert.equal(report.photoSrc, "/products/stand-silver-moss.webp", `${label}: product photo`);
+      assert.equal(report.photoSrc, "/products/wall212-hollow-planted.png", `${label}: product photo`);
       assert.equal(report.hasLogo, false, `${label}: logo should be gone`);
       assert.equal(report.couponLeak, false, `${label}: coupon copy still visible`);
       const gutter = report.vw <= 400 ? 24 : 32;

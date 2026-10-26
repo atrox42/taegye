@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
   title: `${SITE_NAME} (${SITE_NAME_KR})`,
   description: HOME_DESCRIPTION,
   path: "/",
-  image: "/products/stand-silver-moss.webp",
+  image: "/products/wall212-hollow-planted.png",
 });
 
 export default async function HomePage({

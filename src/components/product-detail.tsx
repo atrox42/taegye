@@ -93,9 +93,16 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <span>{productFamilyLabel(product)}</span>
         </p>
         <div className="pdp-title-row">
-          <h1 className="site-type pdp-name" style={forceInkStyle}>
-            {product.name}
-          </h1>
+          <div className="pdp-title-copy">
+            <h1 className="site-type pdp-name" style={forceInkStyle}>
+              {productFamilyLabel(product)}
+            </h1>
+            {product.name.includes(", ") ? (
+              <p className="pdp-title-color" style={forceInkStyle}>
+                {productColorName(product)}
+              </p>
+            ) : null}
+          </div>
           {product.price ? (
             <p className="site-type pdp-price product-price" style={forceInkStyle}>
               {product.price}
