@@ -520,15 +520,15 @@ async function runBrowser() {
       const specs = await page.$$eval("[data-pdp-spec]", (nodes) =>
         nodes.map((el) => ({
           key: el.getAttribute("data-pdp-spec"),
-          label: el.querySelector(".pdp-spec-label")?.textContent?.trim() || "",
+          label: el.querySelector(".pdp-spec-label")?.innerText?.trim() || "",
           value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
         })),
       );
       assert.deepEqual(specs, [
-        { key: "dimensions", label: "Dimensions / 치수", value: "준비 중" },
+        { key: "dimensions", label: "", value: "W — × D — × H — mm" },
         {
           key: "planting",
-          label: "Recommended Planting & Environment / 추천 식재 조건 및 환경",
+          label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
           value: "준비 중",
         },
       ]);
@@ -904,7 +904,7 @@ async function runBrowser() {
           note: document.querySelector(".pdp-note")?.textContent?.trim() || null,
           specs: [...document.querySelectorAll("[data-pdp-spec]")].map((el) => ({
             key: el.getAttribute("data-pdp-spec"),
-            label: el.querySelector(".pdp-spec-label")?.textContent?.trim() || "",
+            label: el.querySelector(".pdp-spec-label")?.innerText?.trim() || "",
             value: el.querySelector(".pdp-spec-value")?.textContent?.trim() || "",
             empty: el.querySelector(".pdp-spec-value")?.classList.contains("is-empty") || false,
           })),
@@ -937,10 +937,10 @@ async function runBrowser() {
         assert.deepEqual(
           report.specs,
           [
-            { key: "dimensions", label: "Dimensions / 치수", value: "준비 중", empty: true },
+            { key: "dimensions", label: "", value: "W — × D — × H — mm", empty: true },
             {
               key: "planting",
-              label: "Recommended Planting & Environment / 추천 식재 조건 및 환경",
+              label: "Recommended Planting & Environment\n추천 식재 조건 및 환경",
               value: "준비 중",
               empty: true,
             },

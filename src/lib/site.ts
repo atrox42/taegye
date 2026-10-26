@@ -270,9 +270,17 @@ export function productNoteLead(product: NewProduct) {
 
 export const PRODUCT_SPEC_PENDING = "준비 중";
 
+/** Live PDP dimension line until measured numbers replace it. No heading, no subtitle. */
+export const PRODUCT_DIMENSION_PLACEHOLDER = "W — × D — × H — mm";
+
+export const PRODUCT_PLANTING_LABEL_LINES = [
+  "Recommended Planting & Environment",
+  "추천 식재 조건 및 환경",
+] as const;
+
 export const PRODUCT_SPEC_LABELS = {
   dimensions: "Dimensions / 치수",
-  planting: "Recommended Planting & Environment / 추천 식재 조건 및 환경",
+  planting: `${PRODUCT_PLANTING_LABEL_LINES[0]} / ${PRODUCT_PLANTING_LABEL_LINES[1]}`,
 } as const;
 
 export function productSpecValue(product: NewProduct, key: "dimensions" | "planting") {
