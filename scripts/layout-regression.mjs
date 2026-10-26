@@ -1168,6 +1168,10 @@ async function runBrowser() {
         assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
         assert.equal(opened[0].display, "flex", `${vp} cascade body shown`);
         assert.equal(opened[1].expanded, "false", `${vp} other section stays closed`);
+        const marks = await page.$$eval(".pdp-spec-toggle-glyph", (nodes) => nodes.map((node) => node.textContent));
+        assert.deepEqual(marks, ["−", "+"], `${vp} cascade mark`);
+        const bodyInk = await page.$eval(".pdp-spec-line", (node) => getComputedStyle(node).webkitTextFillColor);
+        assert.notEqual(bodyInk, "rgb(153, 153, 153)", `${vp} cascade body stays black`);
         console.log(`ok  ${vp} cascade specs stay closed until the heading is clicked`);
       });
       for (const path of ["/new/cascade-silver", "/new/silver"]) {
@@ -1198,11 +1202,39 @@ async function runBrowser() {
           }
           assert.equal(colors.dim.color, "rgb(153, 153, 153)", `${vp} ${path} dimensions gray`);
           for (const item of colors.ko) {
-            assert.notEqual(item.fill, colors.dim.fill, `${vp} ${path} ${item.text} stays ink`);
+            assert.equal(item.color, colors.dim.color, `${vp} ${path} ${item.text} color`);
+            assert.equal(item.fill, colors.dim.fill, `${vp} ${path} ${item.text} fill`);
+          }
+          const marks = await page.$$eval(".pdp-spec-toggle-glyph", (nodes) =>
+            nodes.map((node) => {
+              const style = getComputedStyle(node);
+              const mark = node.parentElement.getBoundingClientRect();
+              const row = node.closest(".pdp-spec-toggle").getBoundingClientRect();
+              const first = node.closest(".pdp-spec-toggle").querySelector(".pdp-spec-label-ko").getBoundingClientRect();
+              const mid = mark.top + mark.height / 2;
+              return {
+                text: node.textContent,
+                color: style.color,
+                weight: style.fontWeight,
+                atRight: Math.abs(mark.right - row.right) <= 1,
+                onFirstLine: mid >= first.top - 1 && mid <= first.bottom + 1,
+              };
+            }),
+          );
+          if (path.endsWith("cascade-silver")) {
+            assert.deepEqual(marks.map((mark) => mark.text), ["+", "+"], `${vp} ${path} closed marks`);
+            for (const mark of marks) {
+              assert.equal(mark.color, colors.dim.color, `${vp} ${path} mark color`);
+              assert.equal(mark.weight, "300", `${vp} ${path} mark weight`);
+              assert.equal(mark.atRight, true, `${vp} ${path} mark at right`);
+              assert.equal(mark.onFirstLine, true, `${vp} ${path} mark on first line`);
+            }
+          } else {
+            assert.deepEqual(marks, [], `${vp} ${path} has no collapsible mark`);
           }
         });
       }
-      console.log(`ok  ${vp} English spec lines match the dimensions gray`);
+      console.log(`ok  ${vp} spec headings match the dimensions gray`);
     }
 
     await withPage(browser, DESKTOP, "/new/drain-tower-80", async (page) => {

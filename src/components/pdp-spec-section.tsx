@@ -8,7 +8,7 @@ import { type ProductSpecLine, type ProductSpecSectionKey } from "@/lib/site";
 export function PdpSpecHeadingLines({ en, ko }: { en: string; ko: string }) {
   return (
     <span className="pdp-spec-label-text">
-      <span className="pdp-spec-label-ko" style={forceInkStyle}>{ko}</span>
+      <span className="pdp-spec-label-ko">{ko}</span>
       <span className="pdp-spec-label-en">({en})</span>
     </span>
   );
@@ -40,7 +40,7 @@ export function PdpSpecSection({
         >
           <PdpSpecHeadingLines en={en} ko={ko} />
           <span className="pdp-spec-toggle-mark" aria-hidden>
-            {open ? "–" : "+"}
+            <span className="pdp-spec-toggle-glyph">{open ? "−" : "+"}</span>
           </span>
         </button>
       </h2>

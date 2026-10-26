@@ -940,9 +940,6 @@ button {
 .pdp-spec-label-ko,
 .pdp-spec-label-en {
   display: block;
-}
-
-.pdp-spec-label-en {
   color: #999999 !important;
   -webkit-text-fill-color: #999999 !important;
   background-image: none !important;
@@ -952,11 +949,27 @@ button {
 
 .pdp-spec-toggle-mark {
   flex: 0 0 auto;
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.25em;
+  margin: 0;
+  color: #999999 !important;
+  -webkit-text-fill-color: #999999 !important;
   background: none !important;
   background-image: none !important;
-  line-height: 1.25;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.pdp-spec-toggle-glyph {
+  font-size: 0.8em;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
 .pdp-spec-body {
