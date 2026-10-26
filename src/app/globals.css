@@ -3705,7 +3705,6 @@ button.site-menubar-toggle,
 .pdp-features,
 .pdp-acc-list,
 .pdp-acc-row,
-.pdp-diagram,
 .pdp-related-track,
 .pdp-related-card,
 .pdp-related-plate,
@@ -3955,14 +3954,27 @@ button.site-menubar-toggle,
 .pdp-acc-row .pdp-spec-body {
   display: grid;
   grid-template-rows: 1fr;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
   padding: 0;
+  border: 0;
   gap: 0;
+  overflow: hidden;
   transition: grid-template-rows 250ms ease-out;
 }
 
 .pdp-acc-row .pdp-spec-body.is-collapsed {
   display: grid;
   grid-template-rows: 0fr;
+  height: 0;
+  min-height: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
 }
 
 .pdp-acc-row .pdp-spec-body-inner {
@@ -3970,8 +3982,23 @@ button.site-menubar-toggle,
   flex-direction: column;
   gap: 8px;
   min-height: 0;
+  margin: 0;
+  border: 0;
   overflow: hidden;
   padding: 0 0 16px;
+}
+
+.pdp-acc-row .pdp-spec-body.is-collapsed .pdp-spec-body-inner,
+.pdp-acc-row .pdp-spec-body.is-collapsed .pdp-spec-body-inner * {
+  height: 0;
+  min-height: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden;
 }
 
 .pdp-acc-row .pdp-note,
@@ -4046,32 +4073,6 @@ button.site-menubar-toggle,
   background-image: none !important;
   -webkit-background-clip: border-box !important;
   background-clip: border-box !important;
-}
-
-.pdp-diagram {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  min-width: 0;
-}
-
-.pdp-diagram-view {
-  margin: 0;
-  min-width: 0;
-}
-
-.pdp-diagram-view svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.pdp-diagram-caption {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-align: center;
 }
 
 .pdp-related {
@@ -4162,20 +4163,6 @@ button.site-menubar-toggle,
   line-height: 1.35 !important;
   letter-spacing: 0 !important;
   white-space: normal;
-}
-
-.pdp-diagram-stage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pdp-diagram-slide {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 72%;
-  max-width: 360px;
-  gap: 4px;
 }
 
 .pdp-acc-row .pdp-specsheet-table {

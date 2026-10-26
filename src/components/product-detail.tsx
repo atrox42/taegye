@@ -5,7 +5,7 @@ import { PdpGallery } from "@/components/pdp-gallery";
 import { PdpAccordion } from "@/components/pdp-spec-section";
 import { PdpRelated } from "@/components/pdp-related";
 import { PdpReveal } from "@/components/pdp-reveal";
-import { PdpDiagramSlide, PdpSpecTable } from "@/components/pdp-spec-sheet";
+import { PdpSpecTable } from "@/components/pdp-spec-sheet";
 import { PdpSwatches } from "@/components/pdp-swatches";
 import { ProductPhoto } from "@/components/product-photo";
 import { WhiteSurfaceFill } from "@/components/white-surface-fill";
@@ -82,11 +82,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
       <div className="pdp-stage-row">
       <div className="pdp-media">
         <PdpGallery
-          slides={[
-            <PdpReveal key="photo">{emptyHero}</PdpReveal>,
-            <PdpDiagramSlide key="diagram" product={product} />,
-            ...(mossHero ? [mossHero] : []),
-          ]}
+          slides={[<PdpReveal key="photo">{emptyHero}</PdpReveal>, ...(mossHero ? [mossHero] : [])]}
         />
       </div>
 

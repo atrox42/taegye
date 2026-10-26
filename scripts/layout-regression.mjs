@@ -956,7 +956,7 @@ async function runBrowser() {
         assert.equal(report.name, name, `${id} name`);
         assert.equal(report.price, price, `${id} price`);
         const expectedNote = id.startsWith("cascade-")
-          ? "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루디리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다."
+          ? "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루다리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다."
           : id.startsWith("drain-tower")
             ? "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다."
             : "Oneport는 하나의 식물 포트와 유리 커버로 구성된 단일 식물 전용 온실입니다. 유리 커버를 통해 내부 습도를 유지하여 높은 습도를 필요로 하는 열대식물과 정글식물이 성장하기에 적합한 환경을 제공합니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있는 소형 온실입니다.";
@@ -1166,6 +1166,22 @@ async function runBrowser() {
                 collapsed: body?.classList.contains("is-collapsed") ?? true,
                 rows: body ? getComputedStyle(body).gridTemplateRows : "",
                 duration: body ? getComputedStyle(body).transitionDuration : "",
+                height: body ? body.getBoundingClientRect().height : -1,
+                overflow: body ? getComputedStyle(body).overflowY : "",
+                pad: body ? getComputedStyle(body).padding : "",
+                innerPad: body?.firstElementChild ? getComputedStyle(body.firstElementChild).padding : "",
+                divider: (() => {
+                  const row = button.closest(".pdp-acc-row");
+                  if (!row || !body) return null;
+                  const label = button.getBoundingClientRect();
+                  const rowBox = row.getBoundingClientRect();
+                  const style = getComputedStyle(row);
+                  return {
+                    gap: Math.round((rowBox.bottom - label.bottom) * 100) / 100,
+                    border: style.borderBottomWidth,
+                    color: style.borderBottomColor,
+                  };
+                })(),
               };
             }),
           );
@@ -1174,6 +1190,13 @@ async function runBrowser() {
         for (const section of closed) {
           assert.equal(section.expanded, "false", `${vp} cascade starts closed`);
           assert.equal(section.collapsed, true, `${vp} cascade body hidden`);
+          assert.equal(section.height, 0, `${vp} cascade closed body height`);
+          assert.equal(section.overflow, "hidden", `${vp} cascade closed overflow`);
+          assert.equal(section.pad, "0px", `${vp} cascade closed padding`);
+          assert.equal(section.innerPad, "0px", `${vp} cascade closed inner padding`);
+          assert.equal(section.divider.border, "1px", `${vp} cascade divider width`);
+          assert.equal(section.divider.color, "rgb(229, 229, 229)", `${vp} cascade divider color`);
+          assert.ok(section.divider.gap <= 1.5, `${vp} cascade divider gap ${section.divider.gap}`);
         }
         await page.$eval(".pdp-spec-toggle", (button) => button.click());
         const opened = await readToggles();
@@ -1252,7 +1275,8 @@ async function runBrowser() {
               madeIn: row("Made in"),
               color: row("Color"),
               separateSheet: Boolean(document.querySelector(".pdp-atelier > .pdp-specsheet")),
-              diagramSecond: Boolean(document.querySelectorAll(".pdp-gallery-slide")[1]?.querySelector("[data-pdp-diagram]")),
+              diagram: document.querySelectorAll("[data-pdp-diagram]").length,
+              photos: document.querySelectorAll(".pdp-gallery-slide img").length,
               related: document.querySelector("#pdp-related-title")?.textContent?.trim() || "",
               arrows: document.querySelectorAll(".pdp-related-arrow").length,
               cards: document.querySelectorAll(".pdp-related-card").length,
@@ -1265,7 +1289,8 @@ async function runBrowser() {
           });
           assert.deepEqual(sheet.labels, ["Dimensions", "Color", "Made in"], `${vp} ${path} spec rows`);
           assert.equal(sheet.separateSheet, false, `${vp} ${path} specifications should sit inside Details`);
-          assert.equal(sheet.diagramSecond, true, `${vp} ${path} drawing should be the second gallery image`);
+          assert.equal(sheet.diagram, 0, `${vp} ${path} gallery has no dimension drawing`);
+          assert.equal(sheet.photos > 0, true, `${vp} ${path} gallery keeps product photos`);
           assert.equal(sheet.related, "Recommended for you", `${vp} ${path} related title`);
           assert.equal(sheet.arrows, 2, `${vp} ${path} related arrows`);
           assert.deepEqual(
@@ -1338,7 +1363,22 @@ async function runBrowser() {
         assert.equal(await page.$(".pdp-related"), null, `${vp} BUG has no same-color products`);
       });
       await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const single = await page.evaluate(() => ({
+          slides: document.querySelectorAll(".pdp-gallery-slide").length,
+          diagram: document.querySelectorAll("[data-pdp-diagram]").length,
+          index: Boolean(document.querySelector(".pdp-gallery-index")),
+          rail: Boolean(document.querySelector(".pdp-scroll-rail")),
+        }));
+        assert.equal(single.slides, 1, `${vp} cascade gallery is one photo`);
+        assert.equal(single.diagram, 0, `${vp} cascade has no drawing`);
+        assert.equal(single.index, false, `${vp} cascade counter hidden`);
+        assert.equal(single.rail, false, `${vp} cascade rail hidden`);
+      });
+      await withPage(browser, viewport, "/new/silver", async (page) => {
         const desktop = viewport.width === DESKTOP.width;
+        const count = await page.$$eval(".pdp-gallery-slide", (nodes) => nodes.length);
+        assert.equal(count, 2, `${vp} wall gallery keeps both photos`);
+        assert.equal(await page.$$eval("[data-pdp-diagram]", (nodes) => nodes.length), 0, `${vp} wall gallery has no drawing`);
         if (desktop) {
           await page.waitForSelector(".pdp-scroll-rail.is-on", { timeout: 8000 });
           const rail = await page.evaluate(() => {
@@ -1378,6 +1418,9 @@ async function runBrowser() {
           assert.match(mobileGallery.index, /^\d+ \/ \d+$/, `${vp} counter ${mobileGallery.index}`);
           assert.equal(mobileGallery.sideBySide, true, `${vp} gallery stays horizontal`);
         }
+      });
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        const desktop = viewport.width === DESKTOP.width;
         await page.evaluate(() => document.querySelector("[data-pdp-store]")?.scrollIntoView({ block: "center" }));
         await page.waitForFunction(
           () => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "off",
