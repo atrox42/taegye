@@ -2061,6 +2061,19 @@ async function runBrowser() {
       assert.equal(after.language, null, `${label}: X must not store a language`);
     }
 
+    for (const [name, vp, dark] of [
+      ["mobile 412 forced-dark", MOBILE, true],
+      ["mobile 360 forced-dark", MOBILE_360, true],
+      ["mobile 412 light", MOBILE, false],
+      ["desktop 1440 light", DESKTOP, false],
+      ["desktop 1440 forced-dark", DESKTOP, true],
+    ]) {
+      await withPromo(browser, vp, dark, async (page) => {
+        await assertPromo(page, name);
+        console.log(`ok  promo ${name}: language modal`);
+      });
+    }
+
     async function assertPromoScrollLock(page, label) {
       const before = await page.evaluate(() => {
         const box = (sel) => {
