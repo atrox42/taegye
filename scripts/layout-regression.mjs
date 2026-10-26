@@ -539,7 +539,7 @@ async function runBrowser() {
           lines: [],
         },
       ]);
-      assert.equal(await page.$eval(".pdp-specs", (el) => (el.textContent || "").includes("준비 중")), false);
+      assert.equal(await page.$eval(".pdp-buy", (el) => (el.textContent || "").includes("준비 중")), false);
       console.log("ok  mobile one-port PDP: KRW 36,000, Starship title");
     });
 
