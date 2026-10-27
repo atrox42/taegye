@@ -13,6 +13,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const MOBILE = { width: 412, height: 915, deviceScaleFactor: 2.75 };
+const MOBILE_390 = { width: 390, height: 844, deviceScaleFactor: 2 };
 const MOBILE_360 = { width: 360, height: 780, deviceScaleFactor: 2 };
 const MOBILE_320 = { width: 320, height: 700, deviceScaleFactor: 2 };
 const DESKTOP = { width: 1440, height: 900, deviceScaleFactor: 1 };
@@ -655,6 +656,75 @@ async function runBrowser() {
       );
     }
 
+    async function assertPdpLogoStaysInFooter(page, label) {
+      const resting = await page.evaluate(() => {
+        const float = document.querySelector(".site-float-logo");
+        const mark = document.querySelector(".site-footer-logo");
+        const footer = document.querySelector(".site-footer");
+        const mr = mark?.getBoundingClientRect();
+        return {
+          floatDisplay: float ? getComputedStyle(float).display : "",
+          markDisplay: mark ? getComputedStyle(mark).display : "",
+          markPosition: mark ? getComputedStyle(mark).position : "",
+          inFooter: Boolean(mark && footer?.contains(mark)),
+          markW: mr?.width ?? 0,
+          markH: mr?.height ?? 0,
+        };
+      });
+      assert.equal(resting.floatDisplay, "none", `${label}: float logo display ${resting.floatDisplay}`);
+      assert.notEqual(resting.markDisplay, "none", `${label}: footer logo hidden`);
+      assert.equal(resting.markPosition, "static", `${label}: footer logo position ${resting.markPosition}`);
+      assert.equal(resting.inFooter, true, `${label}: footer logo is outside the footer`);
+      assert.ok(resting.markW > 40 && resting.markH > 20, `${label}: footer logo ${resting.markW}×${resting.markH}`);
+
+      const overlaps = await page.evaluate(async () => {
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        const store = document.querySelector("[data-pdp-store]");
+        const float = document.querySelector(".site-float-logo");
+        const mark = document.querySelector(".site-footer-logo");
+        const bar = document.querySelector("[data-pdp-buybar]");
+        const area = (a, b) => {
+          if (!a || !b || a.width < 1 || b.width < 1) return 0;
+          const w = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+          const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          return w > 0 && h > 0 ? Math.round(w * h) : 0;
+        };
+        const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        const storeDocTop = store.getBoundingClientRect().top + window.scrollY;
+        const storeH = store.getBoundingClientRect().height;
+        const targets = [
+          0,
+          Math.max(0, storeDocTop - window.innerHeight * 0.45),
+          Math.max(0, storeDocTop + storeH / 2 - (window.innerHeight - 170)),
+          Math.max(0, storeDocTop + storeH - (window.innerHeight - 24)),
+          max / 2,
+          max,
+        ];
+        const hits = [];
+        for (const y of targets) {
+          window.scrollTo(0, Math.min(max, y));
+          await sleep(40);
+          const sr = store.getBoundingClientRect();
+          const fr = float.getBoundingClientRect();
+          const mr = mark.getBoundingClientRect();
+          const br = bar?.getBoundingClientRect() || null;
+          const floatOn = getComputedStyle(float).display !== "none" && Number(getComputedStyle(float).opacity) > 0.05;
+          const markOn = getComputedStyle(mark).display !== "none";
+          const barOn = bar?.getAttribute("data-pdp-buybar") === "on";
+          const hit = {
+            y: Math.round(window.scrollY),
+            floatStore: floatOn ? area(fr, sr) : 0,
+            floatBar: floatOn && barOn && br ? area(fr, br) : 0,
+            markStore: markOn ? area(mr, sr) : 0,
+            markBar: markOn && barOn && br ? area(mr, br) : 0,
+          };
+          if (hit.floatStore || hit.floatBar || hit.markStore || hit.markBar) hits.push(hit);
+        }
+        return hits;
+      });
+      assert.deepEqual(overlaps, [], `${label}: logo overlaps Store or buy bar ${JSON.stringify(overlaps)}`);
+    }
+
     for (const id of [
       "silver",
       "purple",
@@ -666,14 +736,24 @@ async function runBrowser() {
       "one-port-white",
     ]) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
-        await assertFooterLogoMatchesHome(page, `412 ${id}`);
-        console.log(`ok  mobile 412 PDP ${id}: float logo matches home`);
+        await assertPdpLogoStaysInFooter(page, `412 ${id}`);
+        console.log(`ok  mobile 412 PDP ${id}: logo stays in the footer`);
       });
     }
-    await withPage(browser, MOBILE_360, "/new/silver", async (page) => {
-      await assertFooterLogoMatchesHome(page, "360 silver");
-      console.log("ok  mobile 360 PDP silver: float logo matches home");
-    });
+    for (const [viewport, label] of [
+      [MOBILE_360, "360"],
+      [MOBILE_390, "390"],
+      [MOBILE, "412"],
+    ]) {
+      await withPage(browser, viewport, "/new/purple", async (page) => {
+        await assertPdpLogoStaysInFooter(page, `${label} purple`);
+        console.log(`ok  mobile ${label} PDP purple: logo clear of Store at several scrolls`);
+      });
+      await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
+        await assertPdpLogoStaysInFooter(page, `${label} cascade-silver`);
+        console.log(`ok  mobile ${label} PDP cascade-silver: logo clear of Store at several scrolls`);
+      });
+    }
     await withPage(browser, MOBILE, "/new", async (page) => {
       await assertFooterLogoMatchesHome(page, "412 /new");
       console.log("ok  mobile 412 /new: float logo matches home");
@@ -1790,12 +1870,14 @@ async function runBrowser() {
             return Math.min(bar.bottom, r.bottom) - Math.max(bar.top, r.top);
           };
           return {
-            logo: hits(document.querySelector(".site-float-logo")),
+            logo: hits(document.querySelector(".site-footer-logo")),
+            float: hits(document.querySelector(".site-float-logo")),
             copy: hits(document.querySelector(".site-footer-copy-line")),
             nav: hits(document.querySelector(".site-footer-nav")),
           };
         });
         assert.ok(covered.logo <= 0, `${vp} buy bar covers the footer logo by ${covered.logo}px`);
+        assert.ok(covered.float <= 0, `${vp} buy bar covers the float logo by ${covered.float}px`);
         assert.ok(covered.copy <= 0, `${vp} buy bar covers the copyright by ${covered.copy}px`);
         assert.ok(covered.nav <= 0, `${vp} buy bar covers the footer links by ${covered.nav}px`);
       });
@@ -2359,15 +2441,10 @@ async function runBrowser() {
         /white-mobile/.test(report.src),
         `mobile PDP should serve the bright raster, got ${report.src}`,
       );
-      const logo = await page.$eval(".site-float-logo", (node) => ({
-        display: getComputedStyle(node).display,
-        position: getComputedStyle(node).position,
-        hidden: node.classList.contains("is-hidden"),
-        opacity: Number(getComputedStyle(node).opacity),
-      }));
-      assert.equal(logo.position, "fixed");
-      assert.equal(logo.hidden, false);
-      assert.ok(logo.opacity > 0.5, "float logo stays visible on PDP");
+      const logo = await page.$eval(".site-float-logo", (node) => getComputedStyle(node).display);
+      const footerLogo = await page.$eval(".site-footer-logo", (node) => getComputedStyle(node).position);
+      assert.equal(logo, "none", "mobile PDP must not float the logo");
+      assert.equal(footerLogo, "static");
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 

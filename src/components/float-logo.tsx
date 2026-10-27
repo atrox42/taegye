@@ -20,7 +20,8 @@ function isChromeOpen() {
 
 /**
  * Viewport-fixed mark (pre-PR 90 / 7d587bf). Stays visible over the footer
- * edge. Canvas ink; no dock plate or box edges. Hidden only for splash/promo/menu.
+ * edge on home and /new. On mobile PDP it is hidden; the footer logo is static
+ * so it cannot cover the Store button or the sticky bar.
  */
 export function FloatLogo() {
   const logoRef = useRef<HTMLAnchorElement>(null);
