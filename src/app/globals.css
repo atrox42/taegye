@@ -3993,17 +3993,27 @@ button.site-menubar-toggle,
 .pdp-acc-row .pdp-spec-toggle-mark {
   position: relative;
   align-self: center;
+  flex: 0 0 11px;
   width: 11px;
   height: 11px;
+  min-width: 11px;
+  min-height: 11px;
+  max-width: 11px;
+  max-height: 11px;
   background: none !important;
   background-image: none !important;
   -webkit-text-fill-color: #111111 !important;
+}
+
+.pdp-spec-toggle-spin {
+  position: absolute;
+  inset: 0;
   transform: rotate(0deg);
   transform-origin: center;
   transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.pdp-acc-row .pdp-spec-toggle[aria-expanded="true"] .pdp-spec-toggle-mark {
+.pdp-acc-row .pdp-spec-toggle[aria-expanded="true"] .pdp-spec-toggle-spin {
   transform: rotate(180deg);
 }
 
@@ -4293,7 +4303,10 @@ button.site-menubar-toggle,
 
   .pdp-stage-row > .pdp-buy {
     position: sticky !important;
-    top: 6.5rem;
+    /* Match the column's in-flow start. A lower sticky top is dropped once the
+       open panel fills the row, which shifts the whole column upward. */
+    top: calc(2.5rem + 11px + 48px);
+    padding-top: calc(6.5rem - (2.5rem + 11px + 48px));
     align-self: start;
     width: 100%;
     justify-self: start;
@@ -4482,7 +4495,7 @@ html.has-pdp-buybar .site-column {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pdp-acc-row .pdp-spec-toggle-mark,
+  .pdp-spec-toggle-spin,
   .pdp-spec-toggle-bar-v,
   .pdp-acc-row .pdp-spec-body,
   .pdp-buybar,

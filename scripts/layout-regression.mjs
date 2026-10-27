@@ -71,13 +71,36 @@ async function sampleAccordionIcon(page) {
   return page.evaluate(async () => {
     const button = document.querySelector(".pdp-spec-toggle");
     const mark = button.querySelector(".pdp-spec-toggle-mark");
+    const spin = button.querySelector(".pdp-spec-toggle-spin");
     const bar = button.querySelector(".pdp-spec-toggle-bar-v");
+    const label = button.querySelector(".pdp-spec-label-text");
+    const name = document.querySelector(".pdp-name");
     const read = () => ({
-      mark: getComputedStyle(mark).transform,
+      mark: getComputedStyle(spin).transform,
       bar: getComputedStyle(bar).transform,
       opacity: Number.parseFloat(getComputedStyle(bar).opacity),
     });
-    const markStyle = getComputedStyle(mark);
+    const box = (el) => {
+      const rect = el.getBoundingClientRect();
+      return { t: rect.top, l: rect.left, w: rect.width, h: rect.height };
+    };
+    const origins = {
+      button: box(button),
+      label: box(label),
+      mark: box(mark),
+      name: name ? box(name) : null,
+    };
+    let shift = { button: 0, label: 0, mark: 0, name: 0, markW: 0, markH: 0 };
+    const track = () => {
+      const next = { button: box(button), label: box(label), mark: box(mark), name: name ? box(name) : null };
+      for (const key of ["button", "label", "mark", "name"]) {
+        if (!origins[key] || !next[key]) continue;
+        shift[key] = Math.max(shift[key], Math.abs(next[key].t - origins[key].t), Math.abs(next[key].l - origins[key].l));
+      }
+      shift.markW = Math.max(shift.markW, Math.abs(next.mark.w - origins.mark.w));
+      shift.markH = Math.max(shift.markH, Math.abs(next.mark.h - origins.mark.h));
+    };
+    const markStyle = getComputedStyle(spin);
     const barStyle = getComputedStyle(bar);
     const before = read();
     const capture = () =>
@@ -89,11 +112,12 @@ async function sampleAccordionIcon(page) {
           settled = true;
           resolve(frames);
         };
-        mark.addEventListener(
+        spin.addEventListener(
           "transitionrun",
           () => {
             const start = performance.now();
             const step = () => {
+              track();
               frames.push({ t: Math.round(performance.now() - start), ...read() });
               if (performance.now() - start < 340) requestAnimationFrame(step);
               else finish();
@@ -108,9 +132,38 @@ async function sampleAccordionIcon(page) {
     button.click();
     const openFrames = await opening;
     const opened = read();
+    track();
     const closing = capture();
     button.click();
     const closeFrames = await closing;
+    track();
+    window.scrollTo(0, 160);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const pin = button.getBoundingClientRect().top;
+    const pinName = name ? name.getBoundingClientRect().top : pin;
+    const pinMark = mark.getBoundingClientRect();
+    button.click();
+    let scrolled = 0;
+    const pinStart = performance.now();
+    await new Promise((resolve) => {
+      const step = () => {
+        const markBox = mark.getBoundingClientRect();
+        scrolled = Math.max(
+          scrolled,
+          Math.abs(button.getBoundingClientRect().top - pin),
+          Math.abs((name ? name.getBoundingClientRect().top : pin) - pinName),
+          Math.abs(markBox.top - pinMark.top),
+          Math.abs(markBox.width - pinMark.width),
+          Math.abs(markBox.height - pinMark.height),
+        );
+        if (performance.now() - pinStart < 480) requestAnimationFrame(step);
+        else resolve();
+      };
+      requestAnimationFrame(step);
+    });
+    button.click();
+    await new Promise((resolve) => setTimeout(resolve, 460));
+    window.scrollTo(0, 0);
     return {
       markDuration: markStyle.transitionDuration,
       markProperty: markStyle.transitionProperty,
@@ -121,6 +174,8 @@ async function sampleAccordionIcon(page) {
       closeFrames,
       opened,
       closed: read(),
+      shift,
+      scrolled,
     };
   });
 }
@@ -1368,6 +1423,12 @@ async function runBrowser() {
           });
         assert.ok(moving(icon.openFrames), `${vp} icon should turn while opening`);
         assert.ok(moving(icon.closeFrames), `${vp} icon should turn while closing`);
+        assert.ok(icon.shift.button < 1, `${vp} heading moved ${icon.shift.button}px`);
+        assert.ok(icon.shift.label < 1, `${vp} heading text moved ${icon.shift.label}px`);
+        assert.ok(icon.shift.mark < 1, `${vp} icon box moved ${icon.shift.mark}px`);
+        assert.ok(icon.shift.markW < 1 && icon.shift.markH < 1, `${vp} icon box resized`);
+        assert.ok(icon.shift.name < 1, `${vp} product name moved ${icon.shift.name}px`);
+        assert.ok(icon.scrolled < 1, `${vp} scrolled heading moved ${icon.scrolled}px`);
         await page.$eval(".pdp-spec-toggle", (button) => button.click());
         const opened = await readToggles();
         assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
