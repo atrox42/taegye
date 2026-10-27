@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
+import { CanvasLogo } from "@/components/canvas-logo";
 import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { InkBars, InkClose, InkHairline } from "@/components/ink-icons";
 import { forceWhiteStyle } from "@/lib/force-white";
-import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, STORE_URL } from "@/lib/site";
+import { DEFAULT_NEW_CATEGORY, NEW_CATEGORIES, SITE_NAME, STORE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 function categoryHref(id: string) {
@@ -67,6 +68,7 @@ export function SiteHeader() {
   };
 
   const toggleProduct = () => setProductOpen((value) => !value);
+  const onPdp = /^\/new\/[^/]+$/.test(pathname);
 
   return (
     <header className={cn("site-header pointer-events-none fixed z-50", open && "is-open")}>
@@ -74,6 +76,18 @@ export function SiteHeader() {
       {mobile ? (
         <div className="site-menubar pointer-events-auto" style={forceWhiteStyle}>
           <CanvasWhitePlate />
+          {onPdp ? (
+            <Link href="/" className="site-pdp-logo" aria-label={`${SITE_NAME} home`}>
+              <CanvasLogo
+                src="/logo-taegye.png"
+                alt=""
+                width={67}
+                height={43}
+                align="left"
+                className="site-pdp-logo-mark"
+              />
+            </Link>
+          ) : null}
           <button
             type="button"
             className="site-menubar-toggle"
