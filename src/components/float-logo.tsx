@@ -44,13 +44,13 @@ function placePdpLogo(logo: HTMLAnchorElement, probe: HTMLElement) {
   const logoH = logo.getBoundingClientRect().height || 43;
   const parkedBottom = vh - parkedEdge;
 
-  const hits = (bottomPx: number, obstacle: DOMRect | null) => {
-    if (!obstacle) return false;
+  const gapTo = (bottomPx: number, obstacle: DOMRect) => {
     const logoTop = vh - bottomPx - logoH;
     const logoBottom = vh - bottomPx;
-    const w = Math.min(window.innerWidth, obstacle.right) - Math.max(0, obstacle.left);
-    if (w <= 0) return false;
-    return Math.min(logoBottom, obstacle.bottom) - Math.max(logoTop, obstacle.top) > 0.5;
+    const overlap = Math.min(logoBottom, obstacle.bottom) - Math.max(logoTop, obstacle.top);
+    if (overlap > 0) return -overlap;
+    if (logoBottom <= obstacle.top) return obstacle.top - logoBottom;
+    return logoTop - obstacle.bottom;
   };
   const inside = (bottomPx: number) => {
     const logoTop = vh - bottomPx - logoH;
@@ -59,8 +59,8 @@ function placePdpLogo(logo: HTMLAnchorElement, probe: HTMLElement) {
   };
   const clearOf = (bottomPx: number) =>
     inside(bottomPx) &&
-    !(storeOnScreen && storeRect && hits(bottomPx, storeRect)) &&
-    !(barRect && hits(bottomPx, barRect));
+    !(storeOnScreen && storeRect && gapTo(bottomPx, storeRect) < PDP_LOGO_GAP - 0.5) &&
+    !(barRect && gapTo(bottomPx, barRect) < PDP_LOGO_GAP - 0.5);
 
   let chosen = parkedBottom;
   if (!clearOf(parkedBottom)) {
