@@ -2421,7 +2421,9 @@ select::-ms-expand {
 }
 
 /* Mobile home, PDP, and /new: park the float mark in the band above the © line
-   (logo centered, 92px from the bottom, ~19.8px above copyright). */
+   (logo centered, 92px from the bottom, ~19.8px above copyright).
+   On a PDP the buy-bar padding lifts that band; script nudges it if the
+   Store button would otherwise pass through the mark. */
 @media (max-width: 767.98px) {
   .home-new-in {
     padding-bottom: calc(5.5rem + 25.2px); /* 88px + extra 25.2 → CTA→logo ~50.4 */
