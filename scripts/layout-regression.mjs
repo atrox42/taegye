@@ -60,6 +60,190 @@ async function withPage(browser, viewport, path, fn) {
   }
 }
 
+function matrixParts(transform) {
+  if (!transform || transform === "none") return [1, 0, 0, 1, 0, 0];
+  const match = transform.match(/matrix\(([^)]+)\)/);
+  if (!match) return null;
+  return match[1].split(",").map((value) => Number.parseFloat(value.trim()));
+}
+
+async function sampleAccordionIcon(page) {
+  return page.evaluate(async () => {
+    const button = document.querySelector(".pdp-spec-toggle");
+    const mark = button.querySelector(".pdp-spec-toggle-mark");
+    const spin = button.querySelector(".pdp-spec-toggle-spin");
+    const bar = button.querySelector(".pdp-spec-toggle-bar-v");
+    const label = button.querySelector(".pdp-spec-label-text");
+    const name = document.querySelector(".pdp-name");
+    const read = () => ({
+      mark: getComputedStyle(spin).transform,
+      bar: getComputedStyle(bar).transform,
+      opacity: Number.parseFloat(getComputedStyle(bar).opacity),
+    });
+    const box = (el) => {
+      const rect = el.getBoundingClientRect();
+      return { t: rect.top, l: rect.left, w: rect.width, h: rect.height };
+    };
+    const origins = {
+      button: box(button),
+      label: box(label),
+      mark: box(mark),
+      name: name ? box(name) : null,
+    };
+    let shift = { button: 0, label: 0, mark: 0, name: 0, markW: 0, markH: 0 };
+    const track = () => {
+      const next = { button: box(button), label: box(label), mark: box(mark), name: name ? box(name) : null };
+      for (const key of ["button", "label", "mark", "name"]) {
+        if (!origins[key] || !next[key]) continue;
+        shift[key] = Math.max(shift[key], Math.abs(next[key].t - origins[key].t), Math.abs(next[key].l - origins[key].l));
+      }
+      shift.markW = Math.max(shift.markW, Math.abs(next.mark.w - origins.mark.w));
+      shift.markH = Math.max(shift.markH, Math.abs(next.mark.h - origins.mark.h));
+    };
+    const markStyle = getComputedStyle(spin);
+    const barStyle = getComputedStyle(bar);
+    const before = read();
+    const capture = () =>
+      new Promise((resolve) => {
+        const frames = [];
+        let settled = false;
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          resolve(frames);
+        };
+        spin.addEventListener(
+          "transitionrun",
+          () => {
+            const start = performance.now();
+            const step = () => {
+              track();
+              frames.push({ t: Math.round(performance.now() - start), ...read() });
+              if (performance.now() - start < 340) requestAnimationFrame(step);
+              else finish();
+            };
+            requestAnimationFrame(step);
+          },
+          { once: true },
+        );
+        setTimeout(finish, 700);
+      });
+    const opening = capture();
+    button.click();
+    const openFrames = await opening;
+    const opened = read();
+    track();
+    const closing = capture();
+    button.click();
+    const closeFrames = await closing;
+    track();
+    window.scrollTo(0, 160);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const pin = button.getBoundingClientRect().top;
+    const pinName = name ? name.getBoundingClientRect().top : pin;
+    const pinMark = mark.getBoundingClientRect();
+    button.click();
+    let scrolled = 0;
+    const pinStart = performance.now();
+    await new Promise((resolve) => {
+      const step = () => {
+        const markBox = mark.getBoundingClientRect();
+        scrolled = Math.max(
+          scrolled,
+          Math.abs(button.getBoundingClientRect().top - pin),
+          Math.abs((name ? name.getBoundingClientRect().top : pin) - pinName),
+          Math.abs(markBox.top - pinMark.top),
+          Math.abs(markBox.width - pinMark.width),
+          Math.abs(markBox.height - pinMark.height),
+        );
+        if (performance.now() - pinStart < 480) requestAnimationFrame(step);
+        else resolve();
+      };
+      requestAnimationFrame(step);
+    });
+    button.click();
+    await new Promise((resolve) => setTimeout(resolve, 460));
+    window.scrollTo(0, 0);
+    return {
+      markDuration: markStyle.transitionDuration,
+      markProperty: markStyle.transitionProperty,
+      barDuration: barStyle.transitionDuration,
+      barProperty: barStyle.transitionProperty,
+      before,
+      openFrames,
+      closeFrames,
+      opened,
+      closed: read(),
+      shift,
+      scrolled,
+    };
+  });
+}
+
+async function sampleStoreHover(page, selector) {
+  await page.evaluate((selector) => {
+    const link = document.querySelector(selector);
+    const face = link.querySelector(".pdp-store-face");
+    const arrow = link.querySelector(".pdp-store-arrow");
+    const read = () => ({
+      sweep: getComputedStyle(face, "::after").transform,
+      width: Number.parseFloat(getComputedStyle(arrow).width),
+      opacity: Number.parseFloat(getComputedStyle(arrow).opacity),
+      duration: getComputedStyle(arrow).transitionDuration,
+    });
+    window.__storeRest = read();
+    window.__storeMotion = [];
+    arrow.addEventListener(
+      "transitionrun",
+      () => {
+        const start = performance.now();
+        const step = () => {
+          window.__storeMotion.push({ t: Math.round(performance.now() - start), ...read() });
+          if (performance.now() - start < 280) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      },
+      { once: true },
+    );
+  }, selector);
+  await page.hover(selector);
+  await page.waitForFunction(() => (window.__storeMotion || []).length > 3, { timeout: 2000 });
+  await new Promise((resolve) => setTimeout(resolve, 280));
+  return page.evaluate((selector) => {
+    const link = document.querySelector(selector);
+    const face = link.querySelector(".pdp-store-face");
+    const arrow = link.querySelector(".pdp-store-arrow");
+    return {
+      rest: window.__storeRest,
+      frames: window.__storeMotion,
+      settled: {
+        sweep: getComputedStyle(face, "::after").transform,
+        width: Number.parseFloat(getComputedStyle(arrow).width),
+        opacity: Number.parseFloat(getComputedStyle(arrow).opacity),
+        duration: getComputedStyle(arrow).transitionDuration,
+      },
+    };
+  }, selector);
+}
+
+function assertStoreHover(report, label) {
+  assert.equal(report.rest.width, 0, `${label} arrow starts hidden`);
+  assert.equal(report.rest.opacity, 0, `${label} arrow starts invisible`);
+  const restSweep = matrixParts(report.rest.sweep);
+  assert.ok(restSweep && Math.abs(restSweep[0]) < 0.05, `${label} sweep starts closed`);
+  const settled = report.settled;
+  assert.ok(settled.width >= 11, `${label} arrow slides in, width ${settled.width}`);
+  assert.ok(settled.opacity > 0.95, `${label} arrow becomes visible`);
+  const endSweep = matrixParts(settled.sweep);
+  assert.ok(endSweep && endSweep[0] > 0.95, `${label} sweep fills, got ${settled.sweep}`);
+  assert.ok(String(settled.duration).startsWith("0.24s"), `${label} duration ${settled.duration}`);
+  const mid = report.frames.some((frame) => {
+    const parts = matrixParts(frame.sweep);
+    return frame.t > 16 && frame.t < 220 && parts && parts[0] > 0.05 && parts[0] < 0.92;
+  });
+  assert.ok(mid, `${label} sweep should animate`);
+}
+
 function srgbToLin(c) {
   const s = c / 255;
   return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
@@ -1216,6 +1400,35 @@ async function runBrowser() {
           assert.equal(section.divider.color, "rgb(229, 229, 229)", `${vp} cascade divider color`);
           assert.ok(section.divider.gap <= 1.5, `${vp} cascade divider gap ${section.divider.gap}`);
         }
+        const icon = await sampleAccordionIcon(page);
+        assert.equal(icon.markProperty, "transform", `${vp} icon transition property`);
+        assert.equal(icon.markDuration, "0.3s", `${vp} icon transition duration`);
+        assert.equal(icon.barProperty, "transform, opacity", `${vp} bar transition property`);
+        assert.equal(icon.barDuration, "0.3s, 0.3s", `${vp} bar transition duration`);
+        const openedTurn = matrixParts(icon.opened.mark);
+        const closedTurn = matrixParts(icon.closed.mark);
+        assert.ok(openedTurn && openedTurn[0] < -0.95, `${vp} icon ends at 180°, got ${icon.opened.mark}`);
+        assert.ok(icon.opened.opacity < 0.05, `${vp} vertical bar fades out, opacity ${icon.opened.opacity}`);
+        const openedBar = matrixParts(icon.opened.bar);
+        assert.ok(
+          openedBar && Math.abs(openedBar[0]) < 0.05 && Math.abs(openedBar[3]) < 0.05,
+          `${vp} vertical bar scales to 0, got ${icon.opened.bar}`,
+        );
+        assert.ok(closedTurn && closedTurn[0] > 0.95, `${vp} icon returns to 0°, got ${icon.closed.mark}`);
+        assert.ok(icon.closed.opacity > 0.95, `${vp} vertical bar returns, opacity ${icon.closed.opacity}`);
+        const moving = (frames) =>
+          frames.some((frame) => {
+            const parts = matrixParts(frame.mark);
+            return frame.t > 16 && frame.t < 320 && parts && Math.abs(parts[1]) > 0.08;
+          });
+        assert.ok(moving(icon.openFrames), `${vp} icon should turn while opening`);
+        assert.ok(moving(icon.closeFrames), `${vp} icon should turn while closing`);
+        assert.ok(icon.shift.button < 1, `${vp} heading moved ${icon.shift.button}px`);
+        assert.ok(icon.shift.label < 1, `${vp} heading text moved ${icon.shift.label}px`);
+        assert.ok(icon.shift.mark < 1, `${vp} icon box moved ${icon.shift.mark}px`);
+        assert.ok(icon.shift.markW < 1 && icon.shift.markH < 1, `${vp} icon box resized`);
+        assert.ok(icon.shift.name < 1, `${vp} product name moved ${icon.shift.name}px`);
+        assert.ok(icon.scrolled < 1, `${vp} scrolled heading moved ${icon.scrolled}px`);
         await page.$eval(".pdp-spec-toggle", (button) => button.click());
         const opened = await readToggles();
         assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
@@ -1276,7 +1489,7 @@ async function runBrowser() {
           assert.deepEqual(marks.map((mark) => mark.open), [false, false, false], `${vp} ${path} closed marks`);
           for (const mark of marks) {
             assert.equal(mark.bg, "rgb(17, 17, 17)", `${vp} ${path} mark color`);
-            assert.equal(mark.duration, "0.25s", `${vp} ${path} mark motion`);
+            assert.equal(mark.duration, "0.3s, 0.3s", `${vp} ${path} mark motion`);
             assert.equal(mark.atRight, true, `${vp} ${path} mark at right`);
             assert.equal(mark.onFirstLine, true, `${vp} ${path} mark on first line`);
           }
@@ -1495,6 +1708,64 @@ async function runBrowser() {
         assert.equal(bar.swatchDisplay, desktop ? "flex" : "none", `${vp} buy bar swatches ${bar.swatchDisplay}`);
         assert.ok(bar.z < bar.headerZ && bar.z < bar.promoZ, `${vp} buy bar z ${bar.z}`);
         assert.ok(parseFloat(bar.pad) >= 56, `${vp} buy bar padding ${bar.pad}`);
+        if (desktop) {
+          await page.waitForFunction(() => {
+            const box = document.querySelector("[data-pdp-buybar]")?.getBoundingClientRect();
+            return Boolean(box && box.top < window.innerHeight - 8 && box.bottom <= window.innerHeight + 1);
+          });
+          const barHover = await sampleStoreHover(page, "[data-pdp-buybar-store]");
+          assertStoreHover(barHover, `${vp} buy bar`);
+          await page.mouse.move(0, 0);
+          await page.evaluate(() => document.querySelector("[data-pdp-store]")?.scrollIntoView({ block: "center" }));
+          await page.waitForFunction(
+            () => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "off",
+          );
+          const mainHover = await sampleStoreHover(page, "[data-pdp-store]");
+          assertStoreHover(mainHover, `${vp} Store`);
+          await page.mouse.move(0, 0);
+          await page.waitForFunction(() => {
+            const arrow = document.querySelector("[data-pdp-store] .pdp-store-arrow");
+            return Number.parseFloat(getComputedStyle(arrow).width) === 0;
+          });
+          const hoverMedia = await page.evaluate(() => {
+            const found = [];
+            const walk = (rules, media) => {
+              for (const rule of rules) {
+                if (rule.type === CSSRule.MEDIA_RULE) walk([...rule.cssRules], rule.conditionText || media);
+                else if ((rule.selectorText || "").includes("a.pdp-store:hover .pdp-store-arrow")) found.push(media || "unscoped");
+              }
+            };
+            for (const sheet of document.styleSheets) {
+              let rules;
+              try {
+                rules = [...sheet.cssRules];
+              } catch {
+                continue;
+              }
+              walk(rules, "");
+            }
+            return found;
+          });
+          assert.ok(
+            hoverMedia.some((media) => media.includes("pointer: fine") && media.includes("pointer: none")),
+            `${vp} Store hover is limited to fine or pointer-less devices, got ${JSON.stringify(hoverMedia)}`,
+          );
+          assert.ok(!hoverMedia.includes("unscoped"), `${vp} Store hover must not apply on every pointer`);
+          await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+          await page.hover("[data-pdp-store]");
+          const reduced = await page.evaluate(() => {
+            const arrow = document.querySelector("[data-pdp-store] .pdp-store-arrow");
+            const mark = document.querySelector(".pdp-spec-toggle-mark");
+            return {
+              width: Number.parseFloat(getComputedStyle(arrow).width),
+              duration: getComputedStyle(arrow).transitionDuration,
+              markDuration: getComputedStyle(mark).transitionDuration,
+            };
+          });
+          assert.ok(reduced.width >= 11, `${vp} reduced motion still shows the arrow`);
+          assert.equal(reduced.duration, "0s", `${vp} reduced motion drops the arrow transition`);
+          assert.equal(reduced.markDuration, "0s", `${vp} reduced motion drops the icon transition`);
+        }
       });
       console.log(`ok  ${vp} accordions, specifications, and recommended row`);
     }

@@ -125,6 +125,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <span className="pdp-store-label" style={forceWhiteClipStyle}>
             Store
           </span>
+          <span className="pdp-store-arrow" aria-hidden="true" />
         </a>
         <section className="pdp-features" aria-label="Features">
           <h2 className="pdp-features-title" style={forceInkStyle}>
