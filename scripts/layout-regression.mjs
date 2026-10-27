@@ -1681,7 +1681,11 @@ async function runBrowser() {
           const body = document.querySelector(".pdp-spec-body");
           return Boolean(body && !body.classList.contains("is-collapsed") && body.getBoundingClientRect().height > 80);
         });
-        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await page.evaluate(() => {
+          const store = document.querySelector("[data-pdp-store]");
+          const bottom = store.getBoundingClientRect().bottom + window.scrollY;
+          window.scrollTo(0, bottom + 24);
+        });
         await page.waitForFunction(() => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "on");
         const bar = await page.evaluate(() => {
           const node = document.querySelector("[data-pdp-buybar]");
@@ -1766,6 +1770,26 @@ async function runBrowser() {
           assert.equal(reduced.duration, "0s", `${vp} reduced motion drops the arrow transition`);
           assert.equal(reduced.markDuration, "0s", `${vp} reduced motion drops the icon transition`);
         }
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await page.waitForFunction(
+          () => document.querySelector("[data-pdp-buybar]")?.getAttribute("data-pdp-buybar") === "off",
+        );
+        const covered = await page.evaluate(() => {
+          const bar = document.querySelector("[data-pdp-buybar]").getBoundingClientRect();
+          const hits = (el) => {
+            if (!el) return 0;
+            const r = el.getBoundingClientRect();
+            return Math.min(bar.bottom, r.bottom) - Math.max(bar.top, r.top);
+          };
+          return {
+            logo: hits(document.querySelector(".site-float-logo")),
+            copy: hits(document.querySelector(".site-footer-copy-line")),
+            nav: hits(document.querySelector(".site-footer-nav")),
+          };
+        });
+        assert.ok(covered.logo <= 0, `${vp} buy bar covers the footer logo by ${covered.logo}px`);
+        assert.ok(covered.copy <= 0, `${vp} buy bar covers the copyright by ${covered.copy}px`);
+        assert.ok(covered.nav <= 0, `${vp} buy bar covers the footer links by ${covered.nav}px`);
       });
       console.log(`ok  ${vp} accordions, specifications, and recommended row`);
     }
