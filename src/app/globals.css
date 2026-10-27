@@ -2420,26 +2420,48 @@ select::-ms-expand {
   pointer-events: none;
 }
 
-/* Mobile home, PDP, and /new: park the float mark in the band above the © line
+/* Mobile home and /new: park the float mark in the band above the © line
    (logo centered, 92px from the bottom, ~19.8px above copyright).
-   On a PDP the buy-bar padding lifts that band; script nudges it if the
-   Store button would otherwise pass through the mark. */
+   Mobile PDPs keep the mark in the header instead. */
 @media (max-width: 767.98px) {
   .home-new-in {
     padding-bottom: calc(5.5rem + 25.2px); /* 88px + extra 25.2 → CTA→logo ~50.4 */
   }
 
   .site-shell:has(.home-hero) .site-footer-inner,
-  .site-shell:has(.pdp) .site-footer-inner,
   .site-shell:has(.new-page) .site-footer-inner {
     padding-bottom: 2.25rem;
   }
 
   .site-shell:has(.home-hero) .site-float-logo,
-  .site-shell:has(.pdp) .site-float-logo,
   .site-shell:has(.new-page) .site-float-logo {
     bottom: calc(92px + env(safe-area-inset-bottom, 0px));
   }
+
+  .site-shell:has(.pdp) .site-float-logo {
+    display: none !important;
+  }
+}
+
+.site-pdp-logo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 67px;
+  height: 43px;
+  margin-right: auto;
+  background-color: transparent !important;
+  background-image: none !important;
+  text-decoration: none;
+}
+
+.site-pdp-logo-mark {
+  display: block;
+  width: 67px;
+  height: 43px;
+  pointer-events: none;
 }
 
 .site-float-logo-mark {
@@ -4493,10 +4515,6 @@ html.has-pdp-buybar .site-column {
 @media (max-width: 767.98px) {
   .pdp-buybar-swatches {
     display: none !important;
-  }
-
-  html.has-pdp-buybar .site-shell:has(.pdp) .site-float-logo {
-    bottom: calc(92px + var(--pdp-buybar-space));
   }
 }
 
