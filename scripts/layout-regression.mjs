@@ -13,6 +13,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const MOBILE = { width: 412, height: 915, deviceScaleFactor: 2.75 };
+const MOBILE_412_780 = { width: 412, height: 780, deviceScaleFactor: 2 };
 const MOBILE_390 = { width: 390, height: 844, deviceScaleFactor: 2 };
 const MOBILE_360 = { width: 360, height: 780, deviceScaleFactor: 2 };
 const MOBILE_320 = { width: 320, height: 700, deviceScaleFactor: 2 };
@@ -656,73 +657,71 @@ async function runBrowser() {
       );
     }
 
-    async function assertPdpLogoStaysInFooter(page, label) {
-      const resting = await page.evaluate(() => {
-        const float = document.querySelector(".site-float-logo");
-        const mark = document.querySelector(".site-footer-logo");
-        const footer = document.querySelector(".site-footer");
-        const mr = mark?.getBoundingClientRect();
-        return {
-          floatDisplay: float ? getComputedStyle(float).display : "",
-          markDisplay: mark ? getComputedStyle(mark).display : "",
-          markPosition: mark ? getComputedStyle(mark).position : "",
-          inFooter: Boolean(mark && footer?.contains(mark)),
-          markW: mr?.width ?? 0,
-          markH: mr?.height ?? 0,
-        };
-      });
-      assert.equal(resting.floatDisplay, "none", `${label}: float logo display ${resting.floatDisplay}`);
-      assert.notEqual(resting.markDisplay, "none", `${label}: footer logo hidden`);
-      assert.equal(resting.markPosition, "static", `${label}: footer logo position ${resting.markPosition}`);
-      assert.equal(resting.inFooter, true, `${label}: footer logo is outside the footer`);
-      assert.ok(resting.markW > 40 && resting.markH > 20, `${label}: footer logo ${resting.markW}×${resting.markH}`);
-
+    async function assertPdpFloatLogoClear(page, label) {
+      await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
       const overlaps = await page.evaluate(async () => {
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        document.querySelector(".pdp-spec-toggle")?.click();
+        await sleep(60);
         const store = document.querySelector("[data-pdp-store]");
         const float = document.querySelector(".site-float-logo");
-        const mark = document.querySelector(".site-footer-logo");
         const bar = document.querySelector("[data-pdp-buybar]");
-        const area = (a, b) => {
-          if (!a || !b || a.width < 1 || b.width < 1) return 0;
-          const w = Math.min(a.right, b.right) - Math.max(a.left, b.left);
-          const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
-          return w > 0 && h > 0 ? Math.round(w * h) : 0;
+        const max = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        const storeDocBottom = store.getBoundingClientRect().bottom + window.scrollY;
+        const gapOf = (a, b) => {
+          const overlap = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (overlap > 0.5) return -overlap;
+          if (a.bottom <= b.top) return b.top - a.bottom;
+          return a.top - b.bottom;
         };
-        const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-        const storeDocTop = store.getBoundingClientRect().top + window.scrollY;
-        const storeH = store.getBoundingClientRect().height;
-        const targets = [
-          0,
-          Math.max(0, storeDocTop - window.innerHeight * 0.45),
-          Math.max(0, storeDocTop + storeH / 2 - (window.innerHeight - 170)),
-          Math.max(0, storeDocTop + storeH - (window.innerHeight - 24)),
-          max / 2,
-          max,
-        ];
-        const hits = [];
-        for (const y of targets) {
-          window.scrollTo(0, Math.min(max, y));
-          await sleep(40);
-          const sr = store.getBoundingClientRect();
+        const sample = async (name, y) => {
+          window.scrollTo(0, Math.max(0, Math.min(max(), y)));
+          await sleep(80);
+          const vh = window.innerHeight;
           const fr = float.getBoundingClientRect();
-          const mr = mark.getBoundingClientRect();
-          const br = bar?.getBoundingClientRect() || null;
-          const floatOn = getComputedStyle(float).display !== "none" && Number(getComputedStyle(float).opacity) > 0.05;
-          const markOn = getComputedStyle(mark).display !== "none";
+          const sr = store.getBoundingClientRect();
+          const style = getComputedStyle(float);
           const barOn = bar?.getAttribute("data-pdp-buybar") === "on";
-          const hit = {
-            y: Math.round(window.scrollY),
-            floatStore: floatOn ? area(fr, sr) : 0,
-            floatBar: floatOn && barOn && br ? area(fr, br) : 0,
-            markStore: markOn ? area(mr, sr) : 0,
-            markBar: markOn && barOn && br ? area(mr, br) : 0,
-          };
-          if (hit.floatStore || hit.floatBar || hit.markStore || hit.markBar) hits.push(hit);
+          const br = barOn && bar ? bar.getBoundingClientRect() : null;
+          const storeVisible = sr.bottom > 0 && sr.top < vh;
+          const problems = [];
+          if (style.display === "none" || style.position !== "fixed" || Number(style.opacity) <= 0.5) {
+            problems.push(`hidden display=${style.display} pos=${style.position} opacity=${style.opacity}`);
+          }
+          if (fr.top < -0.5 || fr.bottom > vh + 0.5 || fr.height < 40 || fr.width < 60) {
+            problems.push(`clipped top=${fr.top.toFixed(1)} bottom=${fr.bottom.toFixed(1)} ${fr.width.toFixed(1)}×${fr.height.toFixed(1)}`);
+          }
+          if (storeVisible && gapOf(fr, sr) < 12) problems.push(`store gap ${gapOf(fr, sr).toFixed(1)}`);
+          if (br && gapOf(fr, br) < 12) problems.push(`bar gap ${gapOf(fr, br).toFixed(1)}`);
+          return { name, y: Math.round(window.scrollY), bar: barOn, problems };
+        };
+        const stickyY = storeDocBottom + 24;
+        let sticky = await sample("sticky-bar", stickyY);
+        if (!sticky.bar) {
+          for (let y = 0; y <= max(); y += 50) {
+            window.scrollTo(0, y);
+            await sleep(30);
+            if (bar?.getAttribute("data-pdp-buybar") === "on") {
+              sticky = await sample("sticky-bar", y);
+              break;
+            }
+          }
         }
-        return hits;
+        const rows = [
+          await sample("top", 0),
+          await sample("store-near-bottom", storeDocBottom - (window.innerHeight - 24)),
+          sticky,
+          await sample("footer", max()),
+        ];
+        return {
+          problems: rows.filter((row) => row.problems.length),
+          barShown: rows.some((row) => row.bar),
+        };
       });
-      assert.deepEqual(overlaps, [], `${label}: logo overlaps Store or buy bar ${JSON.stringify(overlaps)}`);
+      assert.deepEqual(overlaps.problems, [], `${label}: float logo ${JSON.stringify(overlaps.problems)}`);
+      if (label.includes("cascade")) {
+        assert.equal(overlaps.barShown, true, `${label}: sticky bar never appeared`);
+      }
     }
 
     for (const id of [
@@ -736,22 +735,23 @@ async function runBrowser() {
       "one-port-white",
     ]) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
-        await assertPdpLogoStaysInFooter(page, `412 ${id}`);
-        console.log(`ok  mobile 412 PDP ${id}: logo stays in the footer`);
+        await assertPdpFloatLogoClear(page, `412 ${id}`);
+        console.log(`ok  mobile 412 PDP ${id}: float logo clears Store and bar`);
       });
     }
     for (const [viewport, label] of [
       [MOBILE_360, "360"],
       [MOBILE_390, "390"],
+      [MOBILE_412_780, "412x780"],
       [MOBILE, "412"],
     ]) {
       await withPage(browser, viewport, "/new/purple", async (page) => {
-        await assertPdpLogoStaysInFooter(page, `${label} purple`);
-        console.log(`ok  mobile ${label} PDP purple: logo clear of Store at several scrolls`);
+        await assertPdpFloatLogoClear(page, `${label} purple`);
+        console.log(`ok  mobile ${label} PDP purple: float logo clear at top, Store, bar, footer`);
       });
       await withPage(browser, viewport, "/new/cascade-silver", async (page) => {
-        await assertPdpLogoStaysInFooter(page, `${label} cascade-silver`);
-        console.log(`ok  mobile ${label} PDP cascade-silver: logo clear of Store at several scrolls`);
+        await assertPdpFloatLogoClear(page, `${label} cascade-silver`);
+        console.log(`ok  mobile ${label} PDP cascade-silver: float logo clear at top, Store, bar, footer`);
       });
     }
     await withPage(browser, MOBILE, "/new", async (page) => {
@@ -2441,10 +2441,13 @@ async function runBrowser() {
         /white-mobile/.test(report.src),
         `mobile PDP should serve the bright raster, got ${report.src}`,
       );
-      const logo = await page.$eval(".site-float-logo", (node) => getComputedStyle(node).display);
-      const footerLogo = await page.$eval(".site-footer-logo", (node) => getComputedStyle(node).position);
-      assert.equal(logo, "none", "mobile PDP must not float the logo");
-      assert.equal(footerLogo, "static");
+      const logo = await page.$eval(".site-float-logo", (node) => {
+        const style = getComputedStyle(node);
+        return { display: style.display, position: style.position, opacity: Number(style.opacity) };
+      });
+      assert.notEqual(logo.display, "none", "mobile PDP keeps the float logo visible");
+      assert.equal(logo.position, "fixed");
+      assert.ok(logo.opacity > 0.5, "mobile PDP float logo stays readable");
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 
