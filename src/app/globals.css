@@ -2434,30 +2434,15 @@ select::-ms-expand {
   }
 
   .site-shell:has(.home-hero) .site-float-logo,
-  .site-shell:has(.new-page) .site-float-logo {
+  .site-shell:has(.new-page) .site-float-logo,
+  .site-shell:has(.pdp) .site-float-logo {
     bottom: calc(92px + env(safe-area-inset-bottom, 0px));
   }
 
-  .site-shell:has(.pdp) .site-float-logo {
+  /* Variant B1 keeps the mark in the bottom center, like home. The header
+     slot stays empty so the hamburger bar is unchanged. */
+  .site-shell:has(.pdp) .site-pdp-logo {
     display: none !important;
-  }
-
-  /* Mobile PDPs: opaque header covers the logo plus 12px of white below it,
-     so scrolled content passes underneath and never meets the mark.
-     6px above the 43px logo + 12px below = 61px, plus the safe area. */
-  .site-shell:has(.pdp) {
-    --pdp-header-offset: calc(61px + env(safe-area-inset-top, 0px));
-  }
-
-  .site-shell:has(.pdp) .site-menubar {
-    box-sizing: border-box;
-    align-items: flex-end;
-    height: var(--pdp-header-offset);
-    padding: calc(env(safe-area-inset-top, 0px) + 6px) var(--site-gutter) 12px;
-  }
-
-  .site-shell:has(.pdp) .site-menu {
-    padding-top: var(--pdp-header-offset);
   }
 }
 
@@ -4500,6 +4485,21 @@ button.site-menubar-toggle,
   text-overflow: ellipsis;
 }
 
+.pdp-buybar-price {
+  display: none;
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.pdp-float-plate {
+  display: none;
+}
+
 .pdp-buybar-store {
   position: relative;
   display: inline-flex;
@@ -4533,6 +4533,39 @@ html.has-pdp-buybar .site-column {
 @media (max-width: 767.98px) {
   .pdp-buybar-swatches {
     display: none !important;
+  }
+
+  /* B1: name, price, and Store sit in a fixed bar just above the bottom-center
+     logo. A white plate fills that whole band so scrolling type never meets
+     the mark or the bar. 92px under the logo matches the home placement. */
+  html.has-pdp-buybar {
+    --pdp-b1-logo-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+    --pdp-b1-chrome: calc(var(--pdp-b1-logo-bottom) + 43px + 16px + 56px);
+    --pdp-buybar-space: calc(var(--pdp-b1-chrome) + 16px);
+  }
+
+  html.has-pdp-buybar .pdp-buybar {
+    bottom: calc(var(--pdp-b1-logo-bottom) + 43px + 16px);
+    height: 56px;
+    min-height: 56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  html.has-pdp-buybar .pdp-buybar-price {
+    display: block;
+  }
+
+  .site-shell:has(.pdp) .pdp-float-plate {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 34;
+    width: 100%;
+    height: var(--pdp-b1-chrome);
+    pointer-events: none;
   }
 }
 

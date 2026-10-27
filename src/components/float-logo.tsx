@@ -20,7 +20,7 @@ function isChromeOpen() {
 
 /**
  * Viewport-fixed mark (pre-PR 90 / 7d587bf). Stays visible over the footer
- * edge on home and /new. Mobile PDPs hide it; the mark lives in the header.
+ * edge on home and /new. Mobile PDPs use the same bottom-center placement.
  */
 export function FloatLogo() {
   const logoRef = useRef<HTMLAnchorElement>(null);

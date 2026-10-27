@@ -26,6 +26,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </main>
         <SiteFooter />
       </div>
+      <div className="pdp-float-plate" aria-hidden="true">
+        <CanvasWhitePlate />
+      </div>
       <FloatLogo />
       <div className="site-splash" role="presentation" aria-hidden>
         <CanvasWhitePlate />

@@ -19,8 +19,9 @@ export function PdpBuyBar({
 }) {
   const [on, setOn] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [mobile, setMobile] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
-  const label = product.price ? `Store · ${product.price}` : "Store";
+  const label = "Store";
 
   useEffect(() => {
     setMounted(true);
@@ -33,9 +34,21 @@ export function PdpBuyBar({
   }, []);
 
   useEffect(() => {
+    const query = window.matchMedia("(max-width: 767.98px)");
+    const sync = () => setMobile(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
     const store = document.querySelector("[data-pdp-store]");
     const footer = document.querySelector(".site-footer");
     if (!(store instanceof Element)) return;
+    if (mobile) {
+      setOn(true);
+      return;
+    }
     let storeAway = false;
     let footerInView = false;
     const sync = () => setOn(storeAway && !footerInView);
@@ -60,7 +73,7 @@ export function PdpBuyBar({
       storeObserver.disconnect();
       footerObserver.disconnect();
     };
-  }, [product.id]);
+  }, [product.id, mobile]);
 
   if (!mounted) return null;
 
@@ -76,6 +89,11 @@ export function PdpBuyBar({
         <p className="pdp-buybar-name" style={forceInkStyle}>
           {product.name}
         </p>
+        {product.price ? (
+          <p className="pdp-buybar-price" style={forceInkStyle}>
+            {product.price}
+          </p>
+        ) : null}
         <div className="pdp-buybar-actions">
           {showSwatches ? <PdpSwatches product={product} family={family} className="pdp-buybar-swatches" /> : null}
           <a href={STORE_URL} target="_blank" rel="noopener noreferrer" className="pdp-buybar-store" data-pdp-buybar-store="true">
