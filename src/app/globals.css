@@ -2441,6 +2441,24 @@ select::-ms-expand {
   .site-shell:has(.pdp) .site-float-logo {
     display: none !important;
   }
+
+  /* Mobile PDPs: opaque header covers the logo plus 12px of white below it,
+     so scrolled content passes underneath and never meets the mark.
+     6px above the 43px logo + 12px below = 61px, plus the safe area. */
+  .site-shell:has(.pdp) {
+    --pdp-header-offset: calc(61px + env(safe-area-inset-top, 0px));
+  }
+
+  .site-shell:has(.pdp) .site-menubar {
+    box-sizing: border-box;
+    align-items: flex-end;
+    height: var(--pdp-header-offset);
+    padding: calc(env(safe-area-inset-top, 0px) + 6px) var(--site-gutter) 12px;
+  }
+
+  .site-shell:has(.pdp) .site-menu {
+    padding-top: var(--pdp-header-offset);
+  }
 }
 
 .site-pdp-logo {
