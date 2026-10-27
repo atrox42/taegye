@@ -322,12 +322,20 @@ async function runBrowser() {
       const head = await page.evaluate(() => ({
         viewport: document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "",
         manifest: document.querySelector('link[rel="manifest"]')?.getAttribute("href") || "",
+        capable: document.querySelector('meta[name="apple-mobile-web-app-capable"]')?.getAttribute("content") || "",
+        mobileCapable: document.querySelector('meta[name="mobile-web-app-capable"]')?.getAttribute("content") || "",
+        appleIcon: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute("href") || "",
+        favicon: document.querySelector('link[rel="icon"]')?.getAttribute("href") || "",
         theme: [...document.querySelectorAll('meta[name="theme-color"]')].map((node) =>
           (node.getAttribute("content") || "").toLowerCase(),
         ),
       }));
       assert.match(head.viewport, /viewport-fit=cover/, `viewport ${head.viewport}`);
-      assert.match(head.manifest, /manifest\.webmanifest/, `manifest ${head.manifest}`);
+      assert.equal(head.manifest, "", `manifest should not be linked, got ${head.manifest}`);
+      assert.equal(head.capable, "", `apple-mobile-web-app-capable should be absent, got ${head.capable}`);
+      assert.equal(head.mobileCapable, "", `mobile-web-app-capable should be absent, got ${head.mobileCapable}`);
+      assert.match(head.appleIcon, /apple-icon\.png/, `apple-touch-icon ${head.appleIcon}`);
+      assert.ok(head.favicon.length > 0, "favicon should stay linked");
       assert.ok(
         head.theme.some((color) => color === "#ffffff"),
         `theme-color ${head.theme}`,
