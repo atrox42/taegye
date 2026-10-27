@@ -681,6 +681,7 @@ async function runBrowser() {
         };
         const contentSelectors = [
           ".pdp img",
+          ".pdp-crumb",
           ".pdp-name",
           ".pdp-title-color",
           ".pdp-price",
@@ -713,8 +714,49 @@ async function runBrowser() {
           if (lr.top < mr.top - 1 || lr.bottom > mr.bottom + 1) {
             problems.push(`logo outside header ${lr.top.toFixed(1)}-${lr.bottom.toFixed(1)} bar ${mr.top.toFixed(1)}-${mr.bottom.toFixed(1)}`);
           }
+          const padBelow = mr.bottom - lr.bottom;
+          if (padBelow < 11 || padBelow > 14) {
+            problems.push(`white pad below logo ${padBelow.toFixed(1)}`);
+          }
+          const header = document.querySelector(".site-header");
+          const hr = header.getBoundingClientRect();
+          if (hr.left > 1 || hr.width < window.innerWidth - 2 || hr.bottom < mr.bottom - 1) {
+            problems.push(`header box l=${hr.left.toFixed(1)} w=${hr.width.toFixed(1)} b=${hr.bottom.toFixed(1)}`);
+          }
+          const plate = menu.querySelector("canvas.canvas-white-fill");
+          if (
+            !plate ||
+            plate.clientWidth < menu.clientWidth - 1 ||
+            plate.clientHeight < menu.clientHeight - 1
+          ) {
+            problems.push(
+              `white plate ${plate ? `${plate.clientWidth}×${plate.clientHeight}` : "missing"} vs bar ${menu.clientWidth}×${menu.clientHeight}`,
+            );
+          }
+          const probes = [
+            [8, lr.bottom + 6],
+            [lr.left + lr.width / 2, lr.bottom + 6],
+            [window.innerWidth / 2, lr.bottom + 6],
+            [window.innerWidth - 8, lr.bottom + 6],
+          ];
+          for (const [x, y] of probes) {
+            const hit = document.elementFromPoint(x, y);
+            if (!hit || !hit.closest(".site-header")) {
+              problems.push(`band shows through at ${Math.round(x)},${Math.round(y)}`);
+            }
+          }
           if (name && Math.abs(lr.left - name.getBoundingClientRect().left) > 2) {
             problems.push(`logo left ${lr.left.toFixed(1)} vs content ${name.getBoundingClientRect().left.toFixed(1)}`);
+          }
+          if (sampleName === "top") {
+            let contentTop = Infinity;
+            for (const node of document.querySelectorAll(".pdp img, .pdp-crumb, .pdp-name")) {
+              const r = node.getBoundingClientRect();
+              if (r.width < 2 || r.height < 2) continue;
+              contentTop = Math.min(contentTop, r.top);
+            }
+            const gap = contentTop - lr.bottom;
+            if (!(gap >= 16)) problems.push(`logo→content at top ${Number.isFinite(gap) ? gap.toFixed(1) : "missing"}`);
           }
           for (const sel of contentSelectors) {
             for (const node of document.querySelectorAll(sel)) {
@@ -738,6 +780,7 @@ async function runBrowser() {
         };
         const rows = [
           await sample("top", 0),
+          await sample("crumb", docTop(".pdp-crumb") - 40),
           await sample("mid", docTop(".pdp-swatches") - 80),
           await sample("features", docTop(".pdp-features-title") - 80),
           await sample("accordions", docTop(".pdp-spec-toggle") - 80),
