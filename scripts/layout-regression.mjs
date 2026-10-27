@@ -2365,10 +2365,17 @@ async function runBrowser() {
       assert.equal(report.photoWrapped, false, `${label}: photo must not be inside an <a>`);
       assert.equal(report.storeAbs, STORE_HREF, `${label}: Store href ${report.storeAbs}`);
       assert.equal(report.overlaps, false, `${label}: Store overlay on photo ${JSON.stringify(report)}`);
+      if (label.startsWith("mobile")) {
         assert.ok(
-        report.storeBox && report.storeBox.w > 160 && report.storeBox.h >= 40,
-        `${label}: Store should be a full-width button, got ${JSON.stringify(report.storeBox)}`,
-      );
+          report.storeBox && report.storeBox.w >= 100 && report.storeBox.w <= 160 && report.storeBox.h >= 40 && report.storeBox.x <= 20,
+          `${label}: Store should be a short left button, got ${JSON.stringify(report.storeBox)}`,
+        );
+      } else {
+        assert.ok(
+          report.storeBox && report.storeBox.w > 160 && report.storeBox.h >= 40,
+          `${label}: Store should be a full-width button, got ${JSON.stringify(report.storeBox)}`,
+        );
+      }
       for (const point of report.hits) {
         assert.ok(
           !point.href || !/smartstore/i.test(point.href),
