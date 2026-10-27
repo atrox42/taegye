@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { CanvasWhitePlate } from "@/components/canvas-white-plate";
@@ -19,6 +19,7 @@ export function PdpBuyBar({
 }) {
   const [on, setOn] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
   const label = product.price ? `Store · ${product.price}` : "Store";
 
   useEffect(() => {
@@ -32,22 +33,44 @@ export function PdpBuyBar({
   }, []);
 
   useEffect(() => {
-    const target = document.querySelector("[data-pdp-store]");
-    if (!(target instanceof Element)) return;
-    const observer = new IntersectionObserver(
+    const store = document.querySelector("[data-pdp-store]");
+    const footer = document.querySelector(".site-footer");
+    if (!(store instanceof Element)) return;
+    let storeAway = false;
+    let footerInView = false;
+    const sync = () => setOn(storeAway && !footerInView);
+    const storeObserver = new IntersectionObserver(
       ([entry]) => {
-        setOn(!entry || entry.intersectionRatio < 0.6);
+        storeAway = !entry || entry.intersectionRatio < 0.6;
+        sync();
       },
       { threshold: [0, 0.6, 1] },
     );
-    observer.observe(target);
-    return () => observer.disconnect();
+    storeObserver.observe(store);
+    const barHeight = Math.ceil(barRef.current?.getBoundingClientRect().height || 56);
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => {
+        footerInView = Boolean(entry?.isIntersecting);
+        sync();
+      },
+      { threshold: 0, rootMargin: `0px 0px -${barHeight}px 0px` },
+    );
+    if (footer instanceof Element) footerObserver.observe(footer);
+    return () => {
+      storeObserver.disconnect();
+      footerObserver.disconnect();
+    };
   }, [product.id]);
 
   if (!mounted) return null;
 
   return createPortal(
-    <div className={on ? "pdp-buybar is-on" : "pdp-buybar"} data-pdp-buybar={on ? "on" : "off"} aria-hidden={!on}>
+    <div
+      ref={barRef}
+      className={on ? "pdp-buybar is-on" : "pdp-buybar"}
+      data-pdp-buybar={on ? "on" : "off"}
+      aria-hidden={!on}
+    >
       <CanvasWhitePlate />
       <div className="pdp-buybar-inner">
         <p className="pdp-buybar-name" style={forceInkStyle}>

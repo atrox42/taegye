@@ -44,6 +44,8 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", sizes: "any" },
       { url: "/icon.png", type: "image/png", sizes: "32x32" },
       { url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
     apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
   },
@@ -74,7 +76,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <meta name="supported-color-schemes" content="light" />
         <meta name="theme-color" content="#FFFFFF" />
         <meta name="format-detection" content="telephone=no, email=no, address=no" />
-        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="preload" href="/logo-taegye.png" as="image" />
         <link rel="preload" href="/ink-111.jpg" as="image" />
         <link rel="preload" href="/dim-black.png" as="image" />
