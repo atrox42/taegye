@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 import { CanvasLogo } from "@/components/canvas-logo";
+import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { SITE_NAME } from "@/lib/site";
 
 function isChromeOpen() {
@@ -20,7 +21,8 @@ function isChromeOpen() {
 
 /**
  * Viewport-fixed mark (pre-PR 90 / 7d587bf). Stays visible over the footer
- * edge on home and /new. Mobile PDPs hide it; the mark lives in the header.
+ * edge on home and /new. Mobile PDPs use the same bottom-center placement,
+ * with a small white pad so type passing behind the mark stays off the ink.
  */
 export function FloatLogo() {
   const logoRef = useRef<HTMLAnchorElement>(null);
@@ -41,6 +43,9 @@ export function FloatLogo() {
 
   return (
     <Link ref={logoRef} href="/" className="site-float-logo" aria-label={`${SITE_NAME} home`}>
+      <span className="site-float-logo-pad" aria-hidden="true">
+        <CanvasWhitePlate />
+      </span>
       <CanvasLogo
         src="/logo-taegye.png"
         alt=""

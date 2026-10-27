@@ -663,11 +663,11 @@ async function runBrowser() {
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         document.querySelector(".pdp-spec-toggle")?.click();
         await sleep(60);
-        const logo = document.querySelector(".site-pdp-logo");
+        const headerLogo = document.querySelector(".site-pdp-logo");
         const float = document.querySelector(".site-float-logo");
+        const pad = document.querySelector(".site-float-logo-pad");
         const bar = document.querySelector("[data-pdp-buybar]");
-        const menu = document.querySelector(".site-menubar");
-        const name = document.querySelector(".pdp-name");
+        const store = document.querySelector("[data-pdp-store]");
         const max = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
         const docTop = (sel) => {
           const node = document.querySelector(sel);
@@ -679,103 +679,41 @@ async function runBrowser() {
           const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
           return w > 0.5 && h > 0.5 ? w * h : 0;
         };
-        const contentSelectors = [
-          ".pdp img",
-          ".pdp-crumb",
-          ".pdp-name",
-          ".pdp-title-color",
-          ".pdp-price",
-          ".pdp-swatches",
-          ".pdp-swatch",
-          "[data-pdp-store]",
-          ".pdp-features-title",
-          ".pdp-features-line",
-          ".pdp-features-num",
-          ".pdp-spec-toggle",
-          ".pdp-spec-body",
-          ".pdp-acc-row",
-          ".site-footer-copy-line",
-          ".site-footer-nav",
-          ".site-footer-link",
-        ];
         const sample = async (sampleName, y) => {
           window.scrollTo(0, Math.max(0, Math.min(max(), y)));
           await sleep(80);
-          const lr = logo.getBoundingClientRect();
-          const mr = menu.getBoundingClientRect();
-          const style = getComputedStyle(logo);
+          const lr = float.getBoundingClientRect();
           const floatStyle = getComputedStyle(float);
+          const headerStyle = headerLogo ? getComputedStyle(headerLogo) : null;
+          const padStyle = pad ? getComputedStyle(pad) : null;
+          const pr = pad ? pad.getBoundingClientRect() : null;
+          const sr = store ? store.getBoundingClientRect() : null;
           const barOn = bar?.getAttribute("data-pdp-buybar") === "on";
           const problems = [];
-          if (floatStyle.display !== "none") problems.push("float logo still shown");
-          if (style.display === "none" || Number(style.opacity) <= 0.5 || lr.width < 60 || lr.height < 40) {
-            problems.push(`header logo ${style.display} ${lr.width.toFixed(1)}×${lr.height.toFixed(1)}`);
+          if (headerStyle?.display !== "none") problems.push("header logo still shown");
+          if (floatStyle.display === "none" || Number(floatStyle.opacity) <= 0.5 || lr.width < 60 || lr.height < 40) {
+            problems.push(`float logo ${floatStyle.display} ${lr.width.toFixed(1)}×${lr.height.toFixed(1)}`);
           }
-          if (lr.top < mr.top - 1 || lr.bottom > mr.bottom + 1) {
-            problems.push(`logo outside header ${lr.top.toFixed(1)}-${lr.bottom.toFixed(1)} bar ${mr.top.toFixed(1)}-${mr.bottom.toFixed(1)}`);
+          const centerOff = lr.left + lr.width / 2 - window.innerWidth / 2;
+          if (Math.abs(centerOff) > 2) problems.push(`logo off center ${centerOff.toFixed(1)}`);
+          const fromBottom = window.innerHeight - lr.bottom;
+          if (Math.abs(fromBottom - 92) > 1.5) problems.push(`logo from bottom ${fromBottom.toFixed(1)}`);
+          if (!padStyle || padStyle.display === "none" || !pr || pr.width < 80 || pr.height < 56) {
+            problems.push(`logo pad ${padStyle?.display} ${pr ? `${pr.width.toFixed(0)}×${pr.height.toFixed(0)}` : "missing"}`);
           }
-          const padBelow = mr.bottom - lr.bottom;
-          if (padBelow < 11 || padBelow > 14) {
-            problems.push(`white pad below logo ${padBelow.toFixed(1)}`);
-          }
-          const header = document.querySelector(".site-header");
-          const hr = header.getBoundingClientRect();
-          if (hr.left > 1 || hr.width < window.innerWidth - 2 || hr.bottom < mr.bottom - 1) {
-            problems.push(`header box l=${hr.left.toFixed(1)} w=${hr.width.toFixed(1)} b=${hr.bottom.toFixed(1)}`);
-          }
-          const plate = menu.querySelector("canvas.canvas-white-fill");
-          if (
-            !plate ||
-            plate.clientWidth < menu.clientWidth - 1 ||
-            plate.clientHeight < menu.clientHeight - 1
-          ) {
-            problems.push(
-              `white plate ${plate ? `${plate.clientWidth}×${plate.clientHeight}` : "missing"} vs bar ${menu.clientWidth}×${menu.clientHeight}`,
-            );
-          }
-          const probes = [
-            [8, lr.bottom + 6],
-            [lr.left + lr.width / 2, lr.bottom + 6],
-            [window.innerWidth / 2, lr.bottom + 6],
-            [window.innerWidth - 8, lr.bottom + 6],
-          ];
-          for (const [x, y] of probes) {
-            const hit = document.elementFromPoint(x, y);
-            if (!hit || !hit.closest(".site-header")) {
-              problems.push(`band shows through at ${Math.round(x)},${Math.round(y)}`);
+          if (!sr) problems.push("in-flow Store missing");
+          else if (sr.right > lr.left - 15) problems.push(`Store ends ${sr.right.toFixed(1)} logo ${lr.left.toFixed(1)}`);
+          else if (area(sr, lr) > 0) problems.push("Store overlaps logo");
+          if (sampleName === "footer") {
+            for (const sel of [".site-footer-copy-line", ".site-footer-nav", ".site-footer-link"]) {
+              for (const node of document.querySelectorAll(sel)) {
+                const r = node.getBoundingClientRect();
+                if (r.width < 2 || r.height < 2) continue;
+                if (pr && area(pr, r) > 0) problems.push(`logo covers ${sel}`);
+              }
             }
           }
-          if (name && Math.abs(lr.left - name.getBoundingClientRect().left) > 2) {
-            problems.push(`logo left ${lr.left.toFixed(1)} vs content ${name.getBoundingClientRect().left.toFixed(1)}`);
-          }
-          if (sampleName === "top") {
-            let contentTop = Infinity;
-            for (const node of document.querySelectorAll(".pdp img, .pdp-crumb, .pdp-name")) {
-              const r = node.getBoundingClientRect();
-              if (r.width < 2 || r.height < 2) continue;
-              contentTop = Math.min(contentTop, r.top);
-            }
-            const gap = contentTop - lr.bottom;
-            if (!(gap >= 16)) problems.push(`logo→content at top ${Number.isFinite(gap) ? gap.toFixed(1) : "missing"}`);
-          }
-          for (const sel of contentSelectors) {
-            for (const node of document.querySelectorAll(sel)) {
-              const r = node.getBoundingClientRect();
-              if (r.width < 2 || r.height < 2) continue;
-              const belowHeader = {
-                left: r.left,
-                right: r.right,
-                top: Math.max(r.top, mr.bottom),
-                bottom: r.bottom,
-              };
-              if (belowHeader.bottom <= belowHeader.top) continue;
-              if (area(lr, belowHeader) > 0) problems.push(`overlaps ${sel}`);
-            }
-          }
-          if (barOn && bar) {
-            const br = bar.getBoundingClientRect();
-            if (area(lr, br) > 0) problems.push("overlaps sticky bar");
-          }
+          if (barOn && bar && area(lr, bar.getBoundingClientRect()) > 0) problems.push("overlaps sticky bar");
           return { name: sampleName, y: Math.round(window.scrollY), bar: barOn, problems: [...new Set(problems)] };
         };
         const rows = [
@@ -2526,8 +2464,8 @@ async function runBrowser() {
       );
       const logo = await page.$eval(".site-float-logo", (node) => getComputedStyle(node).display);
       const headerLogo = await page.$eval(".site-pdp-logo", (node) => getComputedStyle(node).display);
-      assert.equal(logo, "none", "mobile PDP must not float the logo over content");
-      assert.notEqual(headerLogo, "none", "mobile PDP logo belongs in the header");
+      assert.equal(logo, "flex", "mobile PDP keeps the bottom-center logo");
+      assert.equal(headerLogo, "none", "mobile PDP logo is not in the header");
       console.log("ok  mobile PDP: no canvas band over the product; mobile raster in use");
     });
 

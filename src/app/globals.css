@@ -2434,30 +2434,17 @@ select::-ms-expand {
   }
 
   .site-shell:has(.home-hero) .site-float-logo,
-  .site-shell:has(.new-page) .site-float-logo {
+  .site-shell:has(.new-page) .site-float-logo,
+  .site-shell:has(.pdp) .site-float-logo {
     bottom: calc(92px + env(safe-area-inset-bottom, 0px));
   }
 
-  .site-shell:has(.pdp) .site-float-logo {
+  .site-shell:has(.pdp) .site-pdp-logo {
     display: none !important;
   }
 
-  /* Mobile PDPs: opaque header covers the logo plus 12px of white below it,
-     so scrolled content passes underneath and never meets the mark.
-     6px above the 43px logo + 12px below = 61px, plus the safe area. */
-  .site-shell:has(.pdp) {
-    --pdp-header-offset: calc(61px + env(safe-area-inset-top, 0px));
-  }
-
-  .site-shell:has(.pdp) .site-menubar {
-    box-sizing: border-box;
-    align-items: flex-end;
-    height: var(--pdp-header-offset);
-    padding: calc(env(safe-area-inset-top, 0px) + 6px) var(--site-gutter) 12px;
-  }
-
-  .site-shell:has(.pdp) .site-menu {
-    padding-top: var(--pdp-header-offset);
+  .site-shell:has(.pdp) .site-float-logo-pad {
+    display: block;
   }
 }
 
@@ -2482,7 +2469,20 @@ select::-ms-expand {
   pointer-events: none;
 }
 
+.site-float-logo-pad {
+  display: none;
+  position: absolute;
+  left: -8px;
+  top: -8px;
+  z-index: 0;
+  width: calc(67px + 16px);
+  height: calc(43px + 16px);
+  pointer-events: none;
+}
+
 .site-float-logo-mark {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 67px;
   height: 43px;
@@ -3858,6 +3858,13 @@ button.site-menubar-toggle,
   text-decoration: none;
 }
 
+@media (max-width: 767.98px) {
+  .pdp-atelier .pdp-buy a.pdp-store {
+    align-self: flex-start;
+    width: min(60%, calc(50vw - 33.5px - var(--site-gutter) - 16px));
+  }
+}
+
 .pdp-store-face {
   position: absolute;
   inset: 0;
@@ -4528,6 +4535,14 @@ html.has-pdp-buybar {
 
 html.has-pdp-buybar .site-column {
   padding-bottom: var(--pdp-buybar-space);
+}
+
+@media (max-width: 767.98px) {
+  html.has-pdp-buybar .site-column {
+    /* Clears the 43px mark, its 8px pad, and 16px of air above that pad.
+       Kept off --pdp-buybar-space so the purchase bar itself stays 56px. */
+    padding-bottom: calc(92px + 43px + 8px + 16px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 @media (max-width: 767.98px) {
