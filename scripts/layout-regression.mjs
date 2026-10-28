@@ -708,8 +708,16 @@ async function runBrowser() {
           const barOn = bar?.getAttribute("data-pdp-buybar") === "on";
           const problems = [];
           if (floatStyle.display !== "none") problems.push("float logo still shown");
-          if (style.display === "none" || Number(style.opacity) <= 0.5 || lr.width < 60 || lr.height < 40) {
+          if (style.display === "none" || Number(style.opacity) <= 0.5 || Math.abs(lr.width - 53) > 1.5 || Math.abs(lr.height - 34) > 1.5) {
             problems.push(`header logo ${style.display} ${lr.width.toFixed(1)}×${lr.height.toFixed(1)}`);
+          }
+          const toggle = document.querySelector(".site-menubar-toggle")?.getBoundingClientRect();
+          if (toggle) {
+            const logoMid = (lr.top + lr.bottom) / 2;
+            const iconMid = (toggle.top + toggle.bottom) / 2;
+            if (Math.abs(logoMid - iconMid) > 1) {
+              problems.push(`logo not centered on menu icon ${logoMid.toFixed(1)} vs ${iconMid.toFixed(1)}`);
+            }
           }
           if (lr.top < mr.top - 1 || lr.bottom > mr.bottom + 1) {
             problems.push(`logo outside header ${lr.top.toFixed(1)}-${lr.bottom.toFixed(1)} bar ${mr.top.toFixed(1)}-${mr.bottom.toFixed(1)}`);
@@ -989,22 +997,29 @@ async function runBrowser() {
         });
         return cards;
       });
-      assert.equal(report.length, 3, `mini-port cards ${report.length}`);
+      assert.equal(report.length, 4, `mini-port cards ${report.length}`);
       assert.deepEqual(
         report.map((card) => card.name),
-        ["One Port 141, ODD(Indigo Purple)", "One Port 141, VOID(Black)", "One Port 141, MIST(White)"],
+        [
+          "One Port 141, HOLLOW(Translucent)",
+          "One Port 141, ODD(Indigo Purple)",
+          "One Port 141, VOID(Black)",
+          "One Port 141, MIST(White)",
+        ],
       );
-      const hrefs = ["/new/mini-port-purple", "/new/mini-port-black", "/new/mini-port-white"];
+      const hrefs = ["/new/mini-port-hollow", "/new/mini-port-purple", "/new/mini-port-black", "/new/mini-port-white"];
+      const prices = ["KRW 76,000", "KRW 56,000", "KRW 56,000", "KRW 56,000"];
       report.forEach((card, index) => {
-        assert.equal(card.price, "KRW 56,000", `${card.name} price`);
+        assert.equal(card.price, prices[index], `${card.name} price`);
         assert.equal(card.tag, "A", `${card.name} must link to its PDP`);
         assert.equal(card.href, hrefs[index]);
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
       });
-      assert.equal(report[0].src, "/products/mini-port-purple.png?v=2");
-      assert.equal(report[1].src, "/products/mini-port-black.png?v=2");
-      assert.equal(report[2].src, "/products/mini-port-white.png?v=2");
+      assert.equal(report[0].src, "/products/mini-port-hollow.png");
+      assert.equal(report[1].src, "/products/mini-port-purple.png?v=2");
+      assert.equal(report[2].src, "/products/mini-port-black.png?v=2");
+      assert.equal(report[3].src, "/products/mini-port-white.png?v=2");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "mini-port tab keeps moss tile");
       console.log("ok  mobile /new?cat=mini-port: ODD, VOID, MIST, priced, linked");
@@ -1117,6 +1132,7 @@ async function runBrowser() {
     await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
       const cascade = await rasterCenter(page, "/products/cascade-silver.png");
       for (const [src, label] of [
+        ["/products/mini-port-hollow.png", "mini-hollow"],
         ["/products/mini-port-purple.png?v=2", "mini-purple"],
         ["/products/mini-port-black.png?v=2", "mini-black"],
         ["/products/mini-port-white.png?v=2", "mini-white"],
@@ -1137,6 +1153,7 @@ async function runBrowser() {
       "Wall 212, VOID(Black)",
       "Wall 212, BUG(Bamboo Green)",
       "Wall 212, MIST(White)",
+      "One Port 141, HOLLOW(Translucent)",
       "One Port 141, ODD(Indigo Purple)",
       "One Port 141, VOID(Black)",
       "One Port 141, MIST(White)",
@@ -1179,7 +1196,7 @@ async function runBrowser() {
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       const cards = await page.$$eval(".product-card", (nodes) => nodes.length);
       assert.equal(textures, 0, "All tab must not insert a moss tile");
-      assert.equal(cards, 16, `All product cards ${cards}`);
+      assert.equal(cards, 17, `All product cards ${cards}`);
       const mini = await page.evaluate(() =>
         [...document.querySelectorAll(".product-card")]
           .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("One Port"))
@@ -1195,6 +1212,7 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
+          ["One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png", true, false],
           ["One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
           ["One Port 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
           ["One Port 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
@@ -1261,6 +1279,7 @@ async function runBrowser() {
       ["drain-tower-20", "Drain Tower 20, VOID(Black)", "KRW 3,000", "/products/drain-tower-20.png?v=3"],
       ["drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000", "/products/drain-tower-40.png?v=3"],
       ["drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000", "/products/drain-tower-80.png"],
+      ["mini-port-hollow", "One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png"],
       ["mini-port-purple", "One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=2"],
       ["mini-port-black", "One Port 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=2"],
       ["mini-port-white", "One Port 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=2"],
@@ -1516,9 +1535,14 @@ async function runBrowser() {
         assert.ok(report.belowPrice, `${vp} cascade swatches below price`);
         assert.ok(report.aboveStore, `${vp} cascade swatches above Store`);
       });
-      await withPage(browser, viewport, "/new/mini-port-purple", async (page) => {
-        const count = await page.$$eval(".pdp-swatch", (nodes) => nodes.length);
-        assert.equal(count, 0, `${vp} mini-port must not show swatches`);
+      await withPage(browser, viewport, "/new/mini-port-hollow", async (page) => {
+        const report = await measureSwatches(page);
+        assert.equal(report.count, 4, `${vp} one-port swatch count`);
+        assert.deepEqual(report.titles, ["HOLLOW", "ODD", "VOID", "MIST"]);
+        assert.equal(report.display, wallKit.display, `${vp} one-port display`);
+        assert.equal(report.width, wallKit.width, `${vp} one-port width`);
+        assert.ok(report.belowPrice, `${vp} one-port swatches below price`);
+        assert.ok(report.aboveStore, `${vp} one-port swatches above Store`);
       });
       await withPage(browser, viewport, "/new/drain-tower-80", async (page) => {
         const count = await page.$$eval(".pdp-swatch", (nodes) => nodes.length);
@@ -1698,8 +1722,8 @@ async function runBrowser() {
           assert.deepEqual(
             sheet.relatedNames,
             path.endsWith("cascade-silver")
-              ? ["Wall 212, HOLLOW(Translucent)"]
-              : ["Cascade 600, HOLLOW(Translucent)"],
+              ? ["Wall 212, HOLLOW(Translucent)", "One Port 141, HOLLOW(Translucent)"]
+              : ["One Port 141, HOLLOW(Translucent)", "Cascade 600, HOLLOW(Translucent)"],
             `${vp} ${path} same-color related`,
           );
           assert.equal(sheet.cards, sheet.relatedNames.length, `${vp} ${path} related cards`);
@@ -2521,8 +2545,8 @@ async function runBrowser() {
       assert.equal(report.hitCanvas, false, `canvas at product center: ${report.hit}`);
       assert.equal(report.bands.length, 0, `white-band canvases: ${JSON.stringify(report.bands)}`);
       assert.ok(
-        /white-mobile/.test(report.src),
-        `mobile PDP should serve the bright raster, got ${report.src}`,
+        /wall212-mist\.png/.test(report.src),
+        `mobile PDP should serve the MIST raster, got ${report.src}`,
       );
       const logo = await page.$eval(".site-float-logo", (node) => getComputedStyle(node).display);
       const headerLogo = await page.$eval(".site-pdp-logo", (node) => getComputedStyle(node).display);
@@ -2604,7 +2628,7 @@ async function runBrowser() {
 
     await withPage(browser, DESKTOP, "/new/white", async (page) => {
       const src = await page.$eval(".pdp-reveal img, .pdp-hero-empty img", (img) => img.currentSrc);
-      assert.ok(/stand-white\.webp/.test(src), `desktop should keep original raster, got ${src}`);
+      assert.ok(/wall212-mist\.png/.test(src), `desktop should serve the MIST raster, got ${src}`);
       assert.ok(!/mobile/.test(src), `desktop must not use mobile raster, got ${src}`);
       const logo = await page.$eval(".site-float-logo", (node) => getComputedStyle(node).display);
       assert.equal(logo, "none");

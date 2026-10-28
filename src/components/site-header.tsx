@@ -81,8 +81,8 @@ export function SiteHeader() {
               <CanvasLogo
                 src="/logo-taegye.png"
                 alt=""
-                width={67}
-                height={43}
+                width={53}
+                height={34}
                 align="left"
                 className="site-pdp-logo-mark"
               />

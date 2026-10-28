@@ -2442,18 +2442,18 @@ select::-ms-expand {
     display: none !important;
   }
 
-  /* Mobile PDPs: opaque header covers the logo plus 12px of white below it,
-     so scrolled content passes underneath and never meets the mark.
-     6px above the 43px logo + 12px below = 61px, plus the safe area. */
+  /* Mobile PDPs: 34px mark (20% under the 43px mark), centered on the
+     40px menu icon. 6px above the icon + 9px under it leaves 12px of
+     white below the shorter logo. 55px plus the safe area. */
   .site-shell:has(.pdp) {
-    --pdp-header-offset: calc(61px + env(safe-area-inset-top, 0px));
+    --pdp-header-offset: calc(55px + env(safe-area-inset-top, 0px));
   }
 
   .site-shell:has(.pdp) .site-menubar {
     box-sizing: border-box;
-    align-items: flex-end;
+    align-items: center;
     height: var(--pdp-header-offset);
-    padding: calc(env(safe-area-inset-top, 0px) + 6px) var(--site-gutter) 12px;
+    padding: calc(env(safe-area-inset-top, 0px) + 6px) var(--site-gutter) 9px;
   }
 
   .site-shell:has(.pdp) .site-menu {
@@ -2467,8 +2467,8 @@ select::-ms-expand {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
-  width: 67px;
-  height: 43px;
+  width: 53px;
+  height: 34px;
   margin-right: auto;
   background-color: transparent !important;
   background-image: none !important;
@@ -2477,8 +2477,8 @@ select::-ms-expand {
 
 .site-pdp-logo-mark {
   display: block;
-  width: 67px;
-  height: 43px;
+  width: 53px;
+  height: 34px;
   pointer-events: none;
 }
 
@@ -4546,3 +4546,4 @@ html.has-pdp-buybar .site-column {
     transition: none;
   }
 }
+
