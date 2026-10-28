@@ -1891,7 +1891,7 @@ async function runBrowser() {
               sideBySide: slides.length > 1 && slides[1].left >= slides[0].right - 1,
             };
           });
-          assert.equal(mobileGallery.rail, "none", `${vp} rail hidden`);
+          assert.equal(mobileGallery.rail, "missing", `${vp} vertical scroll rail removed`);
           assert.match(mobileGallery.index, /^\d+ \/ \d+$/, `${vp} counter ${mobileGallery.index}`);
           assert.equal(mobileGallery.sideBySide, true, `${vp} gallery stays horizontal`);
         }

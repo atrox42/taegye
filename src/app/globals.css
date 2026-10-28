@@ -4424,7 +4424,7 @@ button.site-menubar-toggle,
   .pdp-related-card {
     flex-basis: calc((100% - 36px) / 4);
   }
-
+}
 
 .pdp-gallery .pdp-stage {
   aspect-ratio: 1;
