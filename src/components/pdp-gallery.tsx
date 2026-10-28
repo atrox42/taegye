@@ -89,7 +89,10 @@ export function PdpGallery({ slides }: PdpGalleryProps) {
     if (!state || !track || event.pointerId !== state.id) return;
     const dx = event.clientX - state.x;
     if (Math.abs(dx) > 6) state.moved = true;
-    if (state.moved) track.scrollLeft = state.left - dx;
+    if (state.moved) {
+      userMoved.current = true;
+      track.scrollLeft = state.left - dx;
+    }
   };
 
   const onPointerUp = (event: PointerEvent<HTMLDivElement>) => {
