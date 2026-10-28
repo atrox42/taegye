@@ -1073,18 +1073,32 @@ button {
   box-shadow: 0 0 0 1px #111111;
 }
 
-.pdp-swatch[href="/new/white"],
-.pdp-swatch[href="/new/one-port-white"],
-.pdp-swatch[title="White"],
-.pdp-swatch[title="MIST"],
-.home-new-in-dot.is-mist {
-  box-shadow: inset 0 0 0 1px #d0d0d0;
+/* Light discs (MIST / White) disappear on the page. A 1px ring sits above
+   the bitmap; the selected ring stays the same outer hairline as the others. */
+.pdp-swatch.is-light::after,
+.pdp-swatch[href="/new/white"]::after,
+.pdp-swatch[href="/new/mini-port-white"]::after,
+.pdp-swatch[href="/new/one-port-white"]::after,
+.pdp-swatch[title="White"]::after,
+.pdp-swatch[title="MIST"]::after,
+.home-new-in-dot.is-mist::after,
+.home-new-in-dot.is-light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 1px solid #d0d0d0;
+  border-radius: inherit;
+  pointer-events: none;
+  forced-color-adjust: none;
 }
 
+.pdp-swatch.is-current.is-light,
 .pdp-swatch.is-current[title="White"],
 .pdp-swatch.is-current[title="MIST"],
-.home-new-in-dot.is-current.is-mist {
-  box-shadow: 0 0 0 1px #111111, inset 0 0 0 1px #d0d0d0;
+.home-new-in-dot.is-current.is-mist,
+.home-new-in-dot.is-current.is-light {
+  box-shadow: 0 0 0 1px #111111;
 }
 
 .pdp-reveal {
