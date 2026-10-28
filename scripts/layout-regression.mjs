@@ -1130,7 +1130,6 @@ async function runBrowser() {
     });
 
     await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
-      const cascade = await rasterCenter(page, "/products/cascade-silver.png");
       for (const [src, label] of [
         ["/products/mini-port-hollow.png", "mini-hollow"],
         ["/products/mini-port-purple.png?v=2", "mini-purple"],
@@ -1142,9 +1141,27 @@ async function runBrowser() {
         assert.equal(box.h, 1254, `${label} height ${box.h}`);
         assert.ok(Math.abs(box.cx - 0.5) <= 0.06, `${label} cx ${box.cx}`);
         assert.ok(Math.abs(box.cy - 0.5) <= 0.06, `${label} cy ${box.cy}`);
-        assert.ok(Math.abs(box.bw - cascade.bw) <= 0.08, `${label} object width ${box.bw} vs cascade ${cascade.bw}`);
+        assert.ok(Math.abs(box.bw - 0.7) <= 0.04, `${label} object width ${box.bw}`);
       }
       console.log("ok  mini-port rasters: 1254 square, centered, ~70% object width");
+    });
+
+    await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
+      for (const [src, label] of [
+        ["/products/cascade-silver.png", "cascade-hollow"],
+        ["/products/cascade-black.png", "cascade-void"],
+        ["/products/cascade-purple.png", "cascade-purple"],
+      ]) {
+        const box = await rasterCenter(page, src);
+        const longest = Math.max(box.bw, box.bh);
+        assert.equal(box.w, 1254, `${label} width ${box.w}`);
+        assert.equal(box.h, 1254, `${label} height ${box.h}`);
+        assert.ok(Math.abs(box.cx - 0.5) <= 0.04, `${label} cx ${box.cx}`);
+        assert.ok(Math.abs(box.cy - 0.5) <= 0.04, `${label} cy ${box.cy}`);
+        assert.ok(Math.abs(longest - 0.7) <= 0.03, `${label} longest side ${longest}`);
+        assert.ok(box.bw <= 0.62, `${label} side margin ${box.bw}`);
+      }
+      console.log("ok  cascade rasters: 1254 square, longest side ~70%");
     });
 
     const ALL_DEFAULT_NAMES = [
