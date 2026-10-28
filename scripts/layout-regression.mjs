@@ -1857,29 +1857,29 @@ async function runBrowser() {
         assert.equal(count, 2, `${vp} wall gallery keeps both photos`);
         assert.equal(await page.$$eval("[data-pdp-diagram]", (nodes) => nodes.length), 0, `${vp} wall gallery has no drawing`);
         if (desktop) {
-          await page.waitForSelector(".pdp-scroll-rail.is-on", { timeout: 8000 });
-          const rail = await page.evaluate(() => {
-            const rail = document.querySelector(".pdp-scroll-rail");
-            const thumb = rail?.querySelector(".pdp-scroll-rail-thumb");
-            const nav = document.querySelector(".site-nav a");
+          const gallery = await page.evaluate(() => {
             const index = document.querySelector(".pdp-gallery-index");
             const slides = [...document.querySelectorAll(".pdp-gallery-slide")].map((node) => node.getBoundingClientRect());
-            const rr = rail.getBoundingClientRect();
-            const nr = nav.getBoundingClientRect();
-            const tr = thumb.getBoundingClientRect();
+            const buy = document.querySelector(".pdp-buy")?.getBoundingClientRect();
+            const media = document.querySelector(".pdp-media")?.getBoundingClientRect();
             return {
-              index: index ? getComputedStyle(index).display : "missing",
-              railLeft: rr.left,
-              navLeft: nr.left,
-              railH: rr.height,
-              thumbH: tr.height,
-              stacked: slides.length > 1 && slides[1].top >= slides[0].bottom - 1,
+              index: (index?.textContent || "").trim(),
+              indexDisplay: index ? getComputedStyle(index).display : "missing",
+              rail: document.querySelector(".pdp-scroll-rail") ? getComputedStyle(document.querySelector(".pdp-scroll-rail")).display : "missing",
+              meter: Boolean(document.querySelector(".pdp-gallery-meter")),
+              horizontal: slides.length > 1 && slides[1].left >= slides[0].right - 1,
+              stacked: slides.length > 1 && slides[1].top >= slides[0].bottom - 1 && slides[1].left < slides[0].right - 1,
+              buyLeft: buy?.left ?? 0,
+              mediaRight: media?.right ?? 0,
             };
           });
-          assert.equal(rail.index, "none", `${vp} counter hidden`);
-          assert.ok(Math.abs(rail.railLeft - rail.navLeft) <= 1, `${vp} rail left ${rail.railLeft} vs nav ${rail.navLeft}`);
-          assert.ok(rail.railH > 40 && rail.thumbH < rail.railH, `${vp} rail ${rail.railH} thumb ${rail.thumbH}`);
-          assert.equal(rail.stacked, true, `${vp} gallery stacks vertically`);
+          assert.equal(gallery.indexDisplay, "block", `${vp} counter shown`);
+          assert.match(gallery.index, /^1 \/ \d+$/, `${vp} counter ${gallery.index}`);
+          assert.equal(gallery.rail, "missing", `${vp} vertical scroll rail removed`);
+          assert.equal(gallery.meter, true, `${vp} image position meter`);
+          assert.equal(gallery.horizontal, true, `${vp} gallery is horizontal`);
+          assert.equal(gallery.stacked, false, `${vp} gallery does not stack`);
+          assert.ok(gallery.buyLeft >= gallery.mediaRight - 2, `${vp} info column stays to the right of the image`);
         } else {
           const mobileGallery = await page.evaluate(() => {
             const rail = document.querySelector(".pdp-scroll-rail");
@@ -1891,7 +1891,7 @@ async function runBrowser() {
               sideBySide: slides.length > 1 && slides[1].left >= slides[0].right - 1,
             };
           });
-          assert.equal(mobileGallery.rail, "none", `${vp} rail hidden`);
+          assert.equal(mobileGallery.rail, "missing", `${vp} vertical scroll rail removed`);
           assert.match(mobileGallery.index, /^\d+ \/ \d+$/, `${vp} counter ${mobileGallery.index}`);
           assert.equal(mobileGallery.sideBySide, true, `${vp} gallery stays horizontal`);
         }
