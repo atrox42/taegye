@@ -1734,6 +1734,7 @@ async function runBrowser() {
               photos: document.querySelectorAll(".pdp-gallery-slide img").length,
               related: document.querySelector("#pdp-related-title")?.textContent?.trim() || "",
               arrows: document.querySelectorAll(".pdp-related-arrow").length,
+              arrowDisabled: [...document.querySelectorAll(".pdp-related-arrow")].map((node) => node.disabled),
               cards: document.querySelectorAll(".pdp-related-card").length,
               relatedNames: [...document.querySelectorAll(".pdp-related-name")].map((node) => node.textContent.trim()),
               currentInRelated: [...document.querySelectorAll(".pdp-related-name")].some((node) =>
@@ -1748,6 +1749,7 @@ async function runBrowser() {
           assert.equal(sheet.photos > 0, true, `${vp} ${path} gallery keeps product photos`);
           assert.equal(sheet.related, "Recommended for you", `${vp} ${path} related title`);
           assert.equal(sheet.arrows, 2, `${vp} ${path} related arrows`);
+          assert.deepEqual(sheet.arrowDisabled, [true, true], `${vp} ${path} related arrows stay visible but disabled`);
           assert.deepEqual(
             sheet.relatedNames,
             path.endsWith("cascade-silver")

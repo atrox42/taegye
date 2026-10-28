@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ProductPhoto } from "@/components/product-photo";
 import { forceInkStyle } from "@/lib/force-white";
@@ -10,6 +10,29 @@ import { relatedProducts, type NewProduct } from "@/lib/site";
 export function PdpRelated({ product }: { product: NewProduct }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const items = relatedProducts(product);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const measure = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const overflow = max > 2;
+      setCanPrev(overflow && track.scrollLeft > 2);
+      setCanNext(overflow && track.scrollLeft < max - 2);
+    };
+    measure();
+    track.addEventListener("scroll", measure, { passive: true });
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    window.addEventListener("resize", measure);
+    return () => {
+      track.removeEventListener("scroll", measure);
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [items.length]);
 
   if (items.length === 0) return null;
 
@@ -30,10 +53,22 @@ export function PdpRelated({ product }: { product: NewProduct }) {
           Recommended for you
         </h2>
         <div className="pdp-related-nav">
-          <button type="button" className="pdp-related-arrow" aria-label="Previous products" onClick={() => scrollByCard(-1)}>
+          <button
+            type="button"
+            className="pdp-related-arrow"
+            aria-label="Previous products"
+            disabled={!canPrev}
+            onClick={() => scrollByCard(-1)}
+          >
             ‹
           </button>
-          <button type="button" className="pdp-related-arrow" aria-label="Next products" onClick={() => scrollByCard(1)}>
+          <button
+            type="button"
+            className="pdp-related-arrow"
+            aria-label="Next products"
+            disabled={!canNext}
+            onClick={() => scrollByCard(1)}
+          >
             ›
           </button>
         </div>
