@@ -16,7 +16,8 @@ export function PdpSwatches({
       {family.map((item) => {
         const label = productColorLabel(item);
         const current = item.id === product.id;
-        const className = `pdp-swatch${current ? " is-current" : ""}`;
+        const light = label === "MIST" || label === "White";
+        const className = `pdp-swatch${current ? " is-current" : ""}${light ? " is-light" : ""}`;
         if (current) {
           return (
             <span key={item.id} role="listitem" className={className} aria-current="true" title={label}>

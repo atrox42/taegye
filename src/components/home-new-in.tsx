@@ -104,7 +104,7 @@ export function HomeNewIn() {
                       <span
                         key={swatch.id}
                         role="listitem"
-                        className={`home-new-in-dot${current ? " is-current" : ""}${label === "MIST" ? " is-mist" : ""}`}
+                        className={`home-new-in-dot${current ? " is-current" : ""}${label === "MIST" || label === "White" ? " is-mist is-light" : ""}`}
                         title={label}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element -- raster swatch skips Force Dark invert */}
