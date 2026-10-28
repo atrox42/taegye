@@ -206,6 +206,7 @@ export const DRAIN_TOWER_PRICE_20 = "KRW 3,000";
 export const DRAIN_TOWER_PRICE_40 = "KRW 5,000";
 export const DRAIN_TOWER_PRICE_80 = "KRW 9,000";
 export const MINI_PORT_PRICE = "KRW 56,000";
+export const MINI_PORT_HOLLOW_PRICE = "KRW 76,000";
 export const CASCADE_PRICE_PURPLE = "KRW 197,000";
 export const CASCADE_PRICE_SILVER = "KRW 236,000";
 
@@ -453,8 +454,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: STAND_PRICE_COLOR,
-    emptySrc: "/products/stand-black.webp",
-    mossSrc: "/products/stand-black-moss.webp",
+    emptySrc: "/products/wall212-void.png",
+    mossSrc: "/products/wall212-void-planted.png",
     emptyAlt: `TAEGYE Wall 212, ${finishLabel("VOID")}`,
     mossAlt: `TAEGYE Wall 212, ${finishLabel("VOID")} with moss`,
   },
@@ -467,8 +468,8 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: STAND_PRICE_COLOR,
-    emptySrc: "/products/stand-green.webp",
-    mossSrc: "/products/stand-green-moss.webp",
+    emptySrc: "/products/wall212-bug.png",
+    mossSrc: "/products/wall212-bug-planted.png",
     emptyAlt: `TAEGYE Wall 212, ${finishLabel("BUG")}`,
     mossAlt: `TAEGYE Wall 212, ${finishLabel("BUG")} with moss`,
   },
@@ -481,12 +482,22 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: STAND_PRICE_COLOR,
-    emptySrc: "/products/stand-white.webp",
-    mossSrc: "/products/stand-white-moss.webp",
-    emptySrcMobile: "/products/stand-white-mobile.webp",
-    mossSrcMobile: "/products/stand-white-moss-mobile.webp",
+    emptySrc: "/products/wall212-mist.png",
+    mossSrc: "/products/wall212-mist-planted.png",
     emptyAlt: `TAEGYE Wall 212, ${finishLabel("MIST")}`,
     mossAlt: `TAEGYE Wall 212, ${finishLabel("MIST")} with moss`,
+  },
+  {
+    id: "mini-port-hollow",
+    category: "mini-port",
+    name: `One Port 141, ${finishLabel("HOLLOW")}`,
+    nameKr: `원 포트 141, ${finishLabel("HOLLOW")}`,
+    finish: "HOLLOW finish",
+    dimensions: "",
+    planting: "",
+    price: MINI_PORT_HOLLOW_PRICE,
+    emptySrc: "/products/mini-port-hollow.png",
+    emptyAlt: `TAEGYE One Port 141, ${finishLabel("HOLLOW")}`,
   },
   {
     id: "mini-port-purple",

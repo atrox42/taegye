@@ -56,7 +56,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const notes = productSpecSectionBody(product, "temperature");
   const family = productsInFamily(product);
   const showSwatches =
-    product.category === "wall-kit" || product.category === "one-port" || product.category === "cascade";
+    product.category === "wall-kit" ||
+    product.category === "mini-port" ||
+    product.category === "one-port" ||
+    product.category === "cascade";
   const mossSrc = product.mossSrc;
   const emptyHero = (
     <ProductHero
