@@ -4269,6 +4269,12 @@ button.site-menubar-toggle,
   cursor: pointer;
 }
 
+.pdp-related-arrow:disabled {
+  color: #c8c8c8 !important;
+  -webkit-text-fill-color: #c8c8c8 !important;
+  cursor: default;
+}
+
 .pdp-related-track {
   display: flex;
   gap: 12px;
