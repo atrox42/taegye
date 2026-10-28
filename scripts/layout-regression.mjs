@@ -1422,6 +1422,35 @@ async function runBrowser() {
               assert.equal(swatch.currentClass, false, `${id} ${item.title} class`);
             }
           }
+        } else if (id.startsWith("mini-port-")) {
+          const expected = [
+            { id: "mini-port-hollow", title: "HOLLOW" },
+            { id: "mini-port-purple", title: "ODD" },
+            { id: "mini-port-black", title: "VOID" },
+            { id: "mini-port-white", title: "MIST" },
+          ];
+          assert.equal(report.swatches.length, expected.length, `${id} swatch count`);
+          assert.deepEqual(
+            report.swatches.map((swatch) => swatch.title),
+            expected.map((item) => item.title),
+            `${id} swatch order`,
+          );
+          for (let i = 0; i < expected.length; i++) {
+            const swatch = report.swatches[i];
+            const item = expected[i];
+            assert.equal(swatch.src, `/swatches/${item.id}.png`, `${id} ${item.title} src`);
+            if (item.id === id) {
+              assert.equal(swatch.tag, "span", `${id} current tag`);
+              assert.equal(swatch.href, null, `${id} current href`);
+              assert.equal(swatch.current, true, `${id} current aria`);
+              assert.equal(swatch.currentClass, true, `${id} current class`);
+            } else {
+              assert.equal(swatch.tag, "a", `${id} ${item.title} tag`);
+              assert.equal(swatch.href, `/new/${item.id}`, `${id} ${item.title} href`);
+              assert.equal(swatch.current, false, `${id} ${item.title} aria`);
+              assert.equal(swatch.currentClass, false, `${id} ${item.title} class`);
+            }
+          }
         } else {
           assert.equal(report.swatches.length, 0, `${id} must not invent swatches`);
         }
