@@ -70,7 +70,9 @@ export function PdpAccordion({
         className={open ? "pdp-spec-body" : "pdp-spec-body is-collapsed"}
         data-pdp-spec-body={sectionKey}
       >
-        <div className="pdp-spec-body-inner">{children}</div>
+        <div className="pdp-spec-body-inner">
+          <div className="pdp-spec-body-pad">{children}</div>
+        </div>
       </div>
     </section>
   );
