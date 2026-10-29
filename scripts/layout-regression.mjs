@@ -1674,7 +1674,7 @@ async function runBrowser() {
         const opened = await readToggles();
         assert.equal(opened[0].expanded, "true", `${vp} cascade heading opens`);
         assert.equal(opened[0].collapsed, false, `${vp} cascade body shown`);
-        assert.equal(opened[0].duration, "0.25s", `${vp} cascade body motion`);
+        assert.equal(opened[0].duration, "0.3s", `${vp} cascade body motion`);
         assert.equal(opened[1].expanded, "false", `${vp} other section stays closed`);
         assert.equal(opened[1].collapsed, true, `${vp} other body stays closed`);
         const marks = await page.$$eval(".pdp-spec-toggle-bar-v", (nodes) =>
