@@ -1016,10 +1016,10 @@ async function runBrowser() {
         assert.equal(card.still, true);
         assert.equal(card.moss, false, `${card.name} must not have a hover image`);
       });
-      assert.equal(report[0].src, "/products/mini-port-hollow.png");
-      assert.equal(report[1].src, "/products/mini-port-purple.png?v=2");
-      assert.equal(report[2].src, "/products/mini-port-black.png?v=2");
-      assert.equal(report[3].src, "/products/mini-port-white.png?v=2");
+      assert.equal(report[0].src, "/products/mini-port-hollow.png?v=3");
+      assert.equal(report[1].src, "/products/mini-port-purple.png?v=3");
+      assert.equal(report[2].src, "/products/mini-port-black.png?v=3");
+      assert.equal(report[3].src, "/products/mini-port-white.png?v=3");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "mini-port tab keeps moss tile");
       console.log("ok  mobile /new?cat=mini-port: ODD, VOID, MIST, priced, linked");
@@ -1061,9 +1061,9 @@ async function runBrowser() {
         report.map((card) => card.price),
         ["KRW 9,000", "KRW 5,000", "KRW 3,000"],
       );
-      assert.equal(report[0].src, "/products/drain-tower-80.png");
-      assert.equal(report[1].src, "/products/drain-tower-40.png?v=3");
-      assert.equal(report[2].src, "/products/drain-tower-20.png?v=3");
+      assert.equal(report[0].src, "/products/drain-tower-80.png?v=4");
+      assert.equal(report[1].src, "/products/drain-tower-40.png?v=4");
+      assert.equal(report[2].src, "/products/drain-tower-20.png?v=4");
       const boxes = report.map((card) => `${card.imgW}x${card.imgH}`);
       assert.ok(
         report.every((card) => card.imgW > 0 && card.imgW === report[0].imgW && card.imgH === report[0].imgH),
@@ -1116,8 +1116,8 @@ async function runBrowser() {
 
     await withPage(browser, MOBILE, "/new?cat=drain-tower&moss=0", async (page) => {
       const rasters = [
-        ["/products/drain-tower-40.png?v=3", "drain-40"],
-        ["/products/drain-tower-20.png?v=3", "drain-20"],
+        ["/products/drain-tower-40.png?v=4", "drain-40"],
+        ["/products/drain-tower-20.png?v=4", "drain-20"],
       ];
       for (const [src, label] of rasters) {
         const box = await rasterCenter(page, src);
@@ -1131,19 +1131,19 @@ async function runBrowser() {
 
     await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
       for (const [src, label] of [
-        ["/products/mini-port-hollow.png", "mini-hollow"],
-        ["/products/mini-port-purple.png?v=2", "mini-purple"],
-        ["/products/mini-port-black.png?v=2", "mini-black"],
-        ["/products/mini-port-white.png?v=2", "mini-white"],
+        ["/products/mini-port-hollow.png?v=3", "mini-hollow"],
+        ["/products/mini-port-purple.png?v=3", "mini-purple"],
+        ["/products/mini-port-black.png?v=3", "mini-black"],
+        ["/products/mini-port-white.png?v=3", "mini-white"],
       ]) {
         const box = await rasterCenter(page, src);
         assert.equal(box.w, 1254, `${label} width ${box.w}`);
         assert.equal(box.h, 1254, `${label} height ${box.h}`);
         assert.ok(Math.abs(box.cx - 0.5) <= 0.06, `${label} cx ${box.cx}`);
         assert.ok(Math.abs(box.cy - 0.5) <= 0.06, `${label} cy ${box.cy}`);
-        assert.ok(Math.abs(box.bw - 0.7) <= 0.04, `${label} object width ${box.bw}`);
+        assert.ok(Math.abs(box.bw - 0.63) <= 0.04, `${label} object width ${box.bw}`);
       }
-      console.log("ok  mini-port rasters: 1254 square, centered, ~70% object width");
+      console.log("ok  mini-port rasters: 1254 square, centered, ~63% object width");
     });
 
     await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
@@ -1229,10 +1229,10 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
-          ["One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png", true, false],
-          ["One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=2", true, false],
-          ["One Port 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=2", true, false],
-          ["One Port 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=2", true, false],
+          ["One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png?v=3", true, false],
+          ["One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=3", true, false],
+          ["One Port 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=3", true, false],
+          ["One Port 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=3", true, false],
         ],
       );
       console.log("ok  mobile /new All: Wall 212 → One Port → Starship → Cascade → Drain Tower, no moss tile");
@@ -1293,13 +1293,13 @@ async function runBrowser() {
     const listed = [
       ["cascade-silver", "Cascade 600, HOLLOW(Translucent)", "KRW 236,000", "/products/cascade-silver.png"],
       ["cascade-black", "Cascade 600, VOID(Black)", "KRW 197,000", "/products/cascade-black.png"],
-      ["drain-tower-20", "Drain Tower 20, VOID(Black)", "KRW 3,000", "/products/drain-tower-20.png?v=3"],
-      ["drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000", "/products/drain-tower-40.png?v=3"],
-      ["drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000", "/products/drain-tower-80.png"],
-      ["mini-port-hollow", "One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png"],
-      ["mini-port-purple", "One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=2"],
-      ["mini-port-black", "One Port 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=2"],
-      ["mini-port-white", "One Port 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=2"],
+      ["drain-tower-20", "Drain Tower 20, VOID(Black)", "KRW 3,000", "/products/drain-tower-20.png?v=4"],
+      ["drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000", "/products/drain-tower-40.png?v=4"],
+      ["drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000", "/products/drain-tower-80.png?v=4"],
+      ["mini-port-hollow", "One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png?v=3"],
+      ["mini-port-purple", "One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=3"],
+      ["mini-port-black", "One Port 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=3"],
+      ["mini-port-white", "One Port 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=3"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
