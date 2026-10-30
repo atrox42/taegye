@@ -496,7 +496,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: MINI_PORT_HOLLOW_PRICE,
-    emptySrc: "/products/mini-port-hollow.png",
+    emptySrc: "/products/mini-port-hollow.png?v=3",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("HOLLOW")}`,
   },
   {
@@ -508,7 +508,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-purple.png?v=2",
+    emptySrc: "/products/mini-port-purple.png?v=3",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("ODD")}`,
   },
   {
@@ -520,7 +520,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-black.png?v=2",
+    emptySrc: "/products/mini-port-black.png?v=3",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("VOID")}`,
   },
   {
@@ -532,7 +532,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "",
     planting: "",
     price: MINI_PORT_PRICE,
-    emptySrc: "/products/mini-port-white.png?v=2",
+    emptySrc: "/products/mini-port-white.png?v=3",
     emptyAlt: `TAEGYE One Port 141, ${finishLabel("MIST")}`,
   },
   {
@@ -612,7 +612,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "W 55 × D 55 × H 80 mm",
     planting: "",
     price: DRAIN_TOWER_PRICE_80,
-    emptySrc: "/products/drain-tower-80.png",
+    emptySrc: "/products/drain-tower-80.png?v=4",
     emptyAlt: `TAEGYE Drain Tower 80, ${finishLabel("VOID")}`,
   },
   {
@@ -624,7 +624,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "W 55 × D 55 × H 45 mm",
     planting: "",
     price: DRAIN_TOWER_PRICE_40,
-    emptySrc: "/products/drain-tower-40.png?v=3",
+    emptySrc: "/products/drain-tower-40.png?v=4",
     emptyAlt: `TAEGYE Drain Tower 40, ${finishLabel("VOID")}`,
   },
   {
@@ -636,7 +636,7 @@ export const NEW_PRODUCTS: NewProduct[] = [
     dimensions: "W 55 × D 55 × H 25 mm",
     planting: "",
     price: DRAIN_TOWER_PRICE_20,
-    emptySrc: "/products/drain-tower-20.png?v=3",
+    emptySrc: "/products/drain-tower-20.png?v=4",
     emptyAlt: `TAEGYE Drain Tower 20, ${finishLabel("VOID")}`,
   },
 ];
