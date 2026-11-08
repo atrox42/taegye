@@ -205,6 +205,18 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </div>
       ) : null}
       <PdpRelated product={product} />
+      <section className="pdp-copyright" aria-label="Copyright">
+        <p lang="ko">
+          태계(TAEGYE)가 운영하는 공식 홈페이지, 스마트스토어, 인스타그램 등에 올린 모든 디자인, 이미지,
+          상세페이지의 저작권은 태계에 있습니다. 태계의 허락 없이 표절, 무단 도용, 이미지 재편집을 하는 것은
+          금지하며, 이를 어기면 민·형사상 법적 조치를 진행합니다.
+        </p>
+        <p lang="en">
+          All designs, images, and product page content on TAEGYE&apos;s official website, online stores, and
+          Instagram are the property of TAEGYE. Copying, unauthorized use, or editing of any content without
+          TAEGYE&apos;s permission is prohibited and may result in civil and criminal legal action.
+        </p>
+      </section>
       <PdpBuyBar product={product} family={family} showSwatches={showSwatches} />
     </article>
   );

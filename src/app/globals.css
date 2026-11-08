@@ -4247,6 +4247,36 @@ button.site-menubar-toggle,
   overflow: hidden;
 }
 
+.pdp-copyright {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 4.5rem 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.pdp-copyright p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+  text-align: left;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  color: #999999 !important;
+  -webkit-text-fill-color: #999999 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+
+.pdp-copyright p + p {
+  margin-top: 0.85rem;
+}
+
 .pdp-related-head {
   display: flex;
   align-items: center;
@@ -4395,7 +4425,8 @@ button.site-menubar-toggle,
     max-width: 520px;
   }
 
-  .pdp-atelier > .pdp-related {
+  .pdp-atelier > .pdp-related,
+  .pdp-atelier > .pdp-copyright {
     grid-column: 2 / 4;
     width: 100%;
   }
