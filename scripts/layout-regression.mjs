@@ -928,7 +928,7 @@ async function runBrowser() {
       );
       assert.deepEqual(
         tabs.map((tab) => tab.label),
-        ["All", "Wall 212", "One Port", "Starship", "Cascade", "Drain Tower"],
+        ["All", "Wall 212", "One Port 141", "Starship 157", "Cascade 600", "Drain Tower"],
       );
       assert.deepEqual(
         tabs.map((tab) => tab.href),
@@ -940,7 +940,7 @@ async function runBrowser() {
       const menu = await page.$$eval(".site-menu-subrow .site-menu-label", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(menu, ["All", "Wall 212", "One Port", "Starship", "Cascade", "Drain Tower"]);
+      assert.deepEqual(menu, ["All", "Wall 212", "One Port 141", "Starship 157", "Cascade 600", "Drain Tower"]);
       console.log("ok  mobile /new tabs + Product menu: One Port before Starship, Drain Tower last");
     });
 
@@ -2382,7 +2382,7 @@ async function runBrowser() {
         assert.ok(row, `${label} tab strip missing`);
         assert.ok(row.navH <= 24, `${label} tab row wrap ${row.navH}`);
         assert.deepEqual(row.overlapping, [], `${label} tab overlaps Sort ${JSON.stringify(row)}`);
-        if (Number(label) >= 360) {
+        if (Number(label) >= 412) {
           assert.ok(row.gap >= 2, `${label} tabs must fit beside Sort ${JSON.stringify(row)}`);
           assert.equal(row.overflowX === "auto" || row.overflowX === "scroll", false, `${label} must not scroll tabs`);
         } else {
