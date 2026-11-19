@@ -1016,10 +1016,10 @@ async function runBrowser() {
         assert.equal(card.still, false);
         assert.equal(card.moss, true, `${card.name} hover image`);
       });
-      assert.equal(report[0].src, "/products/mini-port-hollow.png?v=4");
-      assert.equal(report[1].src, "/products/mini-port-purple.png?v=4");
-      assert.equal(report[2].src, "/products/mini-port-black.png?v=4");
-      assert.equal(report[3].src, "/products/mini-port-white.png?v=4");
+      assert.equal(report[0].src, "/products/mini-port-hollow.png?v=5");
+      assert.equal(report[1].src, "/products/mini-port-purple.png?v=5");
+      assert.equal(report[2].src, "/products/mini-port-black.png?v=5");
+      assert.equal(report[3].src, "/products/mini-port-white.png?v=5");
       const textures = await page.$$eval(".new-grid-item-texture", (nodes) => nodes.length);
       assert.equal(textures, 1, "mini-port tab keeps moss tile");
       console.log("ok  mobile /new?cat=mini-port: ODD, VOID, MIST, priced, linked");
@@ -1131,10 +1131,10 @@ async function runBrowser() {
 
     await withPage(browser, MOBILE, "/new?cat=mini-port&moss=0", async (page) => {
       for (const [src, label] of [
-        ["/products/mini-port-hollow.png?v=4", "mini-hollow"],
-        ["/products/mini-port-purple.png?v=4", "mini-purple"],
-        ["/products/mini-port-black.png?v=4", "mini-black"],
-        ["/products/mini-port-white.png?v=4", "mini-white"],
+        ["/products/mini-port-hollow.png?v=5", "mini-hollow"],
+        ["/products/mini-port-purple.png?v=5", "mini-purple"],
+        ["/products/mini-port-black.png?v=5", "mini-black"],
+        ["/products/mini-port-white.png?v=5", "mini-white"],
       ]) {
         const box = await rasterCenter(page, src);
         assert.equal(box.w, 1254, `${label} width ${box.w}`);
@@ -1229,10 +1229,10 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
-          ["One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png?v=4", false, true],
-          ["One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=4", false, true],
-          ["One Port 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=4", false, true],
-          ["One Port 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=4", false, true],
+          ["One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png?v=5", false, true],
+          ["One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=5", false, true],
+          ["One Port 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=5", false, true],
+          ["One Port 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=5", false, true],
         ],
       );
       console.log("ok  mobile /new All: Wall 212 → One Port → Starship → Cascade → Drain Tower, no moss tile");
@@ -1296,10 +1296,10 @@ async function runBrowser() {
       ["drain-tower-20", "Drain Tower 20, VOID(Black)", "KRW 3,000", "/products/drain-tower-20.png?v=4"],
       ["drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000", "/products/drain-tower-40.png?v=4"],
       ["drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000", "/products/drain-tower-80.png?v=4"],
-      ["mini-port-hollow", "One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png?v=4"],
-      ["mini-port-purple", "One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=4"],
-      ["mini-port-black", "One Port 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=4"],
-      ["mini-port-white", "One Port 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=4"],
+      ["mini-port-hollow", "One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png?v=5"],
+      ["mini-port-purple", "One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=5"],
+      ["mini-port-black", "One Port 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=5"],
+      ["mini-port-white", "One Port 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=5"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
@@ -1355,7 +1355,7 @@ async function runBrowser() {
           ? "Cascade는 물이 흐르는 폭포를 구현할 수 있도록 설계된 DIY 여과 시스템 구조물입니다. 내부 여과 공간과 물의 순환 구조를 기반으로 실제 물이 흐르는 폭포를 연출할 수 있으며, 사용자가 구조물 외부에 돌과 배양토 등 다양한 자연 소재를 직접 부착하여 원하는 형태로 제작할 수 있습니다. 이끼와 습한 환경을 선호하는 식물을 함께 식재할 수 있어 팔루다리움 등 다양한 생태 환경에 활용할 수 있습니다. 여과 기능과 자유로운 조형 작업을 결합하여 사용자만의 폭포 환경을 구성할 수 있는 제품입니다."
           : id.startsWith("drain-tower")
             ? "Drain Tower & Drain은 내부에 고이는 물을 효율적으로 배출하고, 바닥의 수분을 관리할 수 있도록 설계된 배수 보조 구조물입니다. 식물에 공급된 물이나 분무로 인해 바닥에 축적되는 잔여 수분을 필요에 따라 제거할 수 있으며, 과도한 수분 축적으로 인한 뿌리 손상과 배양토의 과습을 예방하는 데 도움을 줍니다. 바닥 구조와 사육장 크기에 따라 선택하여 설치할 수 있으며, 식물의 생육 환경을 보다 안정적으로 관리할 수 있도록 돕는 제품입니다."
-            : "Oneport는 하나의 식물 포트와 유리 커버로 구성된 단일 식물 전용 온실입니다. 유리 커버를 통해 내부 습도를 유지하여 높은 습도를 필요로 하는 열대식물과 정글식물이 성장하기에 적합한 환경을 제공합니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있는 소형 온실입니다.";
+            : "Oneport는 사각 트레이 안에 놓인 테이퍼진 사각 식물 포트입니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있습니다.";
         assert.equal(report.note, expectedNote, `${id} note`);
         const drainDimensions = {
           "drain-tower-80": "W 55 × D 55 × H 80 mm",
