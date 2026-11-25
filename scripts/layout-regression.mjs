@@ -928,7 +928,7 @@ async function runBrowser() {
       );
       assert.deepEqual(
         tabs.map((tab) => tab.label),
-        ["All", "Wall 212", "One Port 141", "Starship 157", "Cascade 600", "Drain Tower"],
+        ["All", "Wall 212", "Oneport 141", "Starship 157", "Cascade 600", "Drain Tower"],
       );
       assert.deepEqual(
         tabs.map((tab) => tab.href),
@@ -940,8 +940,8 @@ async function runBrowser() {
       const menu = await page.$$eval(".site-menu-subrow .site-menu-label", (nodes) =>
         nodes.map((node) => (node.textContent || "").trim()),
       );
-      assert.deepEqual(menu, ["All", "Wall 212", "One Port 141", "Starship 157", "Cascade 600", "Drain Tower"]);
-      console.log("ok  mobile /new tabs + Product menu: One Port before Starship, Drain Tower last");
+      assert.deepEqual(menu, ["All", "Wall 212", "Oneport 141", "Starship 157", "Cascade 600", "Drain Tower"]);
+      console.log("ok  mobile /new tabs + Product menu: Oneport before Starship, Drain Tower last");
     });
 
     await withPage(browser, MOBILE, "/new?cat=cascade&moss=0", async (page) => {
@@ -1001,10 +1001,10 @@ async function runBrowser() {
       assert.deepEqual(
         report.map((card) => card.name),
         [
-          "One Port 141, HOLLOW(Translucent)",
-          "One Port 141, ODD(Indigo Purple)",
-          "One Port 141, VOID(Black)",
-          "One Port 141, MIST(White)",
+          "Oneport 141, HOLLOW(Translucent)",
+          "Oneport 141, ODD(Indigo Purple)",
+          "Oneport 141, VOID(Black)",
+          "Oneport 141, MIST(White)",
         ],
       );
       const hrefs = ["/new/mini-port-hollow", "/new/mini-port-purple", "/new/mini-port-black", "/new/mini-port-white"];
@@ -1170,10 +1170,10 @@ async function runBrowser() {
       "Wall 212, VOID(Black)",
       "Wall 212, BUG(Bamboo Green)",
       "Wall 212, MIST(White)",
-      "One Port 141, HOLLOW(Translucent)",
-      "One Port 141, ODD(Indigo Purple)",
-      "One Port 141, VOID(Black)",
-      "One Port 141, MIST(White)",
+      "Oneport 141, HOLLOW(Translucent)",
+      "Oneport 141, ODD(Indigo Purple)",
+      "Oneport 141, VOID(Black)",
+      "Oneport 141, MIST(White)",
       "Starship 157, ODD(Indigo Purple)",
       "Starship 157, VOID(Black)",
       "Starship 157, MIST(White)",
@@ -1216,7 +1216,7 @@ async function runBrowser() {
       assert.equal(cards, 17, `All product cards ${cards}`);
       const mini = await page.evaluate(() =>
         [...document.querySelectorAll(".product-card")]
-          .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("One Port"))
+          .filter((card) => (card.querySelector(".product-caption p.site-type")?.textContent || "").startsWith("Oneport"))
           .map((card) => ({
             name: card.querySelector(".product-caption p.site-type")?.textContent?.trim() || "",
             price: card.querySelector(".product-price")?.textContent?.trim() || "",
@@ -1229,13 +1229,13 @@ async function runBrowser() {
       assert.deepEqual(
         mini.map((card) => [card.name, card.price, card.href, card.src, card.still, card.moss]),
         [
-          ["One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png?v=6", false, true],
-          ["One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=6", false, true],
-          ["One Port 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=6", false, true],
-          ["One Port 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=6", false, true],
+          ["Oneport 141, HOLLOW(Translucent)", "KRW 76,000", "/new/mini-port-hollow", "/products/mini-port-hollow.png?v=6", false, true],
+          ["Oneport 141, ODD(Indigo Purple)", "KRW 56,000", "/new/mini-port-purple", "/products/mini-port-purple.png?v=6", false, true],
+          ["Oneport 141, VOID(Black)", "KRW 56,000", "/new/mini-port-black", "/products/mini-port-black.png?v=6", false, true],
+          ["Oneport 141, MIST(White)", "KRW 56,000", "/new/mini-port-white", "/products/mini-port-white.png?v=6", false, true],
         ],
       );
-      console.log("ok  mobile /new All: Wall 212 → One Port → Starship → Cascade → Drain Tower, no moss tile");
+      console.log("ok  mobile /new All: Wall 212 → Oneport → Starship → Cascade → Drain Tower, no moss tile");
     });
 
     await withPage(browser, MOBILE_320, "/new?moss=0", async (page) => {
@@ -1296,10 +1296,10 @@ async function runBrowser() {
       ["drain-tower-20", "Drain Tower 20, VOID(Black)", "KRW 3,000", "/products/drain-tower-20.png?v=4"],
       ["drain-tower-40", "Drain Tower 40, VOID(Black)", "KRW 5,000", "/products/drain-tower-40.png?v=4"],
       ["drain-tower-80", "Drain Tower 80, VOID(Black)", "KRW 9,000", "/products/drain-tower-80.png?v=4"],
-      ["mini-port-hollow", "One Port 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png?v=6"],
-      ["mini-port-purple", "One Port 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=6"],
-      ["mini-port-black", "One Port 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=6"],
-      ["mini-port-white", "One Port 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=6"],
+      ["mini-port-hollow", "Oneport 141, HOLLOW(Translucent)", "KRW 76,000", "/products/mini-port-hollow.png?v=6"],
+      ["mini-port-purple", "Oneport 141, ODD(Indigo Purple)", "KRW 56,000", "/products/mini-port-purple.png?v=6"],
+      ["mini-port-black", "Oneport 141, VOID(Black)", "KRW 56,000", "/products/mini-port-black.png?v=6"],
+      ["mini-port-white", "Oneport 141, MIST(White)", "KRW 56,000", "/products/mini-port-white.png?v=6"],
     ];
     for (const [id, name, price, img] of listed) {
       await withPage(browser, MOBILE, `/new/${id}`, async (page) => {
@@ -1770,8 +1770,8 @@ async function runBrowser() {
           assert.deepEqual(
             sheet.relatedNames,
             path.endsWith("cascade-silver")
-              ? ["Wall 212, HOLLOW(Translucent)", "One Port 141, HOLLOW(Translucent)"]
-              : ["One Port 141, HOLLOW(Translucent)", "Cascade 600, HOLLOW(Translucent)"],
+              ? ["Wall 212, HOLLOW(Translucent)", "Oneport 141, HOLLOW(Translucent)"]
+              : ["Oneport 141, HOLLOW(Translucent)", "Cascade 600, HOLLOW(Translucent)"],
             `${vp} ${path} same-color related`,
           );
           assert.equal(sheet.cards, sheet.relatedNames.length, `${vp} ${path} related cards`);
@@ -2132,7 +2132,7 @@ async function runBrowser() {
       const byName = await sortNames();
       const named = [...byName].sort((a, b) => a.localeCompare(b));
       assert.deepEqual(byName, named, `Name sort ${byName}`);
-      assert.ok(byName.includes("One Port 141, ODD(Indigo Purple)") && byName.includes("One Port 141, VOID(Black)") && byName.includes("One Port 141, MIST(White)"));
+      assert.ok(byName.includes("Oneport 141, ODD(Indigo Purple)") && byName.includes("Oneport 141, VOID(Black)") && byName.includes("Oneport 141, MIST(White)"));
       await clickSort("Price: High to Low");
       const high = await sortNames();
       assert.equal(high[0], "Cascade 600, HOLLOW(Translucent)");
