@@ -1706,7 +1706,8 @@ async function runBrowser() {
             ["Description", "Details", "Delivery & Return"],
             `${vp} ${path} English headings`,
           );
-          assert.equal(colors.dim.color, "rgb(153, 153, 153)", `${vp} ${path} dimensions gray`);
+          assert.equal(colors.dim.color, "rgb(17, 17, 17)", `${vp} ${path} dimensions ink`);
+          assert.equal(colors.dim.text.includes("(sample)"), false, `${vp} ${path} dimensions sample`);
           for (const item of colors.labels) {
             assert.equal(item.color, "rgb(17, 17, 17)", `${vp} ${path} ${item.text} color`);
             assert.equal(/[가-힣]/.test(item.text), false, `${vp} ${path} Korean heading ${item.text}`);
@@ -1777,12 +1778,14 @@ async function runBrowser() {
           assert.equal(sheet.cards, sheet.relatedNames.length, `${vp} ${path} related cards`);
           assert.equal(sheet.currentInRelated, false, `${vp} ${path} related includes current`);
           assert.equal(sheet.leak, false, `${vp} ${path} overseas chrome leaked`);
-          assert.equal(sheet.madeIn.color, "rgb(153, 153, 153)", `${vp} ${path} sample made in`);
-          assert.ok(sheet.madeIn.text.includes("(sample)"), `${vp} ${path} made in sample`);
+          assert.equal(sheet.madeIn.text, "Korea", `${vp} ${path} made in`);
+          assert.equal(sheet.madeIn.color, "rgb(17, 17, 17)", `${vp} ${path} made in ink`);
+          assert.equal(sheet.madeIn.text.includes("(sample)"), false, `${vp} ${path} made in sample`);
           if (path.endsWith("cascade-silver")) {
             assert.equal(sheet.color.text, "HOLLOW(Translucent)", `${vp} ${path} color name`);
             assert.equal(sheet.color.color, "rgb(17, 17, 17)", `${vp} ${path} color ink`);
-            assert.ok(sheet.dimensions.text.includes("(sample)"), `${vp} ${path} sample dimensions`);
+            assert.equal(sheet.dimensions.text, "W 120 × D 150 × H 187 mm", `${vp} ${path} dimensions`);
+            assert.equal(sheet.dimensions.color, "rgb(17, 17, 17)", `${vp} ${path} dimensions ink`);
           }
           const type = await page.evaluate(() => {
             const box = (el) => {
