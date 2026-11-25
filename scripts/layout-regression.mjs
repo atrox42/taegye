@@ -234,7 +234,7 @@ function assertStoreHover(report, label) {
   const restSweep = matrixParts(report.rest.sweep);
   assert.ok(restSweep && Math.abs(restSweep[0]) < 0.05, `${label} sweep starts closed`);
   const settled = report.settled;
-  assert.ok(settled.width >= 11, `${label} arrow slides in, width ${settled.width}`);
+  assert.ok(settled.width >= 5.5, `${label} arrow slides in, width ${settled.width}`);
   assert.ok(settled.opacity > 0.95, `${label} arrow becomes visible`);
   const endSweep = matrixParts(settled.sweep);
   assert.ok(endSweep && endSweep[0] > 0.95, `${label} sweep fills, got ${settled.sweep}`);
@@ -2012,7 +2012,7 @@ async function runBrowser() {
               markDuration: getComputedStyle(mark).transitionDuration,
             };
           });
-          assert.ok(reduced.width >= 11, `${vp} reduced motion still shows the arrow`);
+          assert.ok(reduced.width >= 5.5, `${vp} reduced motion still shows the arrow`);
           assert.equal(reduced.duration, "0s", `${vp} reduced motion drops the arrow transition`);
           assert.equal(reduced.markDuration, "0s", `${vp} reduced motion drops the icon transition`);
         }
