@@ -3943,7 +3943,7 @@ button.site-menubar-toggle,
   display: block;
   flex: 0 0 auto;
   width: 0;
-  height: 10px;
+  height: 8.5px;
   margin-left: 0;
   overflow: hidden;
   opacity: 0;
@@ -3959,14 +3959,14 @@ button.site-menubar-toggle,
     margin-left 240ms ease-out,
     opacity 240ms ease-out,
     transform 240ms ease-out;
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'><path d='M0.5 4.35h7.1M5.6 1.4 10.6 5 5.6 8.6' fill='none' stroke='white' stroke-width='1.15' stroke-linecap='square' stroke-linejoin='miter'/></svg>");
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'><path d='M0.5 4.35h7.1M5.6 1.4 10.6 5 5.6 8.6' fill='none' stroke='white' stroke-width='1.15' stroke-linecap='square' stroke-linejoin='miter'/></svg>");
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 8.5'><path d='M1.25 1.2 4.7 4.25 1.25 7.3' fill='none' stroke='white' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 8.5'><path d='M1.25 1.2 4.7 4.25 1.25 7.3' fill='none' stroke='white' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: left center;
   mask-position: left center;
-  -webkit-mask-size: 12px 10px;
-  mask-size: 12px 10px;
+  -webkit-mask-size: 6px 8.5px;
+  mask-size: 6px 8.5px;
 }
 
 /* Coarse touch pointers are excluded so a tap cannot leave the hover state stuck.
@@ -3979,7 +3979,7 @@ button.site-menubar-toggle,
 
   a.pdp-store:hover .pdp-store-arrow,
   a.pdp-buybar-store:hover .pdp-store-arrow {
-    width: 12px;
+    width: 6px;
     margin-left: 8px;
     opacity: 1;
     transform: translateX(0);
