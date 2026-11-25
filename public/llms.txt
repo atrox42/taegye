@@ -25,7 +25,7 @@ Product copy
 Wall 212
 Wall은 바닥과 수직 벽면을 모두 식재 공간으로 활용할 수 있도록 설계된 DIY 테라리움 키트입니다. 3D 프린팅으로 제작된 월 구조물에 이끼와 식물을 식재하고, 바닥에는 배양토와 자연 소재를 배치하여 입체적인 자연환경을 구성할 수 있습니다. 사용자의 취향에 따라 식물과 돌, 유목 등의 소재를 자유롭게 조합할 수 있으며, 시간이 지남에 따라 식물이 구조물에 자리 잡고 성장하면서 자연스럽게 변화하는 테라리움을 완성할 수 있습니다.
 
-One Port 141
+Oneport 141
 Oneport는 사각 트레이 안에 놓인 테이퍼진 사각 식물 포트입니다. 하나의 식물을 독립적으로 관리할 수 있도록 설계되었으며, 식물의 형태와 성장 과정을 가까이에서 관찰할 수 있습니다.
 
 Starship 157
@@ -43,9 +43,9 @@ Products
 - Wall 212, VOID(Black) — KRW 86,000 — https://taegye.vercel.app/new/black
 - Wall 212, BUG(Bamboo Green) — KRW 86,000 — https://taegye.vercel.app/new/green
 - Wall 212, MIST(White) — KRW 86,000 — https://taegye.vercel.app/new/white
-- One Port 141, ODD(Indigo Purple) — KRW 56,000 — https://taegye.vercel.app/new/mini-port-purple
-- One Port 141, VOID(Black) — KRW 56,000 — https://taegye.vercel.app/new/mini-port-black
-- One Port 141, MIST(White) — KRW 56,000 — https://taegye.vercel.app/new/mini-port-white
+- Oneport 141, ODD(Indigo Purple) — KRW 56,000 — https://taegye.vercel.app/new/mini-port-purple
+- Oneport 141, VOID(Black) — KRW 56,000 — https://taegye.vercel.app/new/mini-port-black
+- Oneport 141, MIST(White) — KRW 56,000 — https://taegye.vercel.app/new/mini-port-white
 - Starship 157, ODD(Indigo Purple) — KRW 36,000 — https://taegye.vercel.app/new/one-port-purple
 - Starship 157, VOID(Black) — KRW 36,000 — https://taegye.vercel.app/new/one-port-black
 - Starship 157, MIST(White) — KRW 36,000 — https://taegye.vercel.app/new/one-port-white
