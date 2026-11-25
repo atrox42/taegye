@@ -157,4 +157,3 @@ export const NEW_DESCRIPTION = `TAEGYE products: ${NEW_PRODUCTS.map((product) =>
 export const CONTACT_DESCRIPTION = `Contact ${SITE_NAME} at ${CONTACT_EMAIL}.`;
 export const FAQ_DESCRIPTION = FAQ_ITEMS.map((item) => item.q.en).join(" ");
 export const LEGAL_DESCRIPTION = `Business information for ${SITE_NAME}.`;
-export const ARCHIVE_DESCRIPTION = `${SITE_NAME} archive.`;

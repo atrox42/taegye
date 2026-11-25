@@ -8,8 +8,20 @@ export const SITE_URL = "https://taegye.vercel.app";
 export const SITE_DESCRIPTION =
   "TAEGYE — modular moss terrarium. A quiet landscape, assembled by hand.";
 
-/** Naver Smart Store — update when the live store URL is confirmed. */
+/** Naver Smart Store home. Product pages use productStoreUrl when a listing exists. */
 export const STORE_URL = "https://smartstore.naver.com/taegye";
+
+const PRODUCT_STORE_URLS = {
+  "wall-kit": "https://smartstore.naver.com/taegye/products/13890828195",
+  "mini-port": "https://smartstore.naver.com/taegye/products/13889377772",
+  "one-port": "https://smartstore.naver.com/taegye/products/13890858168",
+  cascade: "https://smartstore.naver.com/taegye/products/13890859993",
+  "drain-tower": "https://smartstore.naver.com/taegye/products/13890862886",
+} as const;
+
+export function productStoreUrl(product: { category: string }) {
+  return PRODUCT_STORE_URLS[product.category as keyof typeof PRODUCT_STORE_URLS] ?? STORE_URL;
+}
 
 export const INSTAGRAM_URL = "https://www.instagram.com/taegye_/";
 
@@ -96,36 +108,49 @@ export const FOOTER_INSTAGRAM: FooterLinkItem = {
   external: true,
 };
 
-/** Desktop footer — one horizontal row. No Account, no Store, no Legals. */
+/** Desktop footer — one horizontal row. No Account, no Store. */
 export const FOOTER_LINKS: FooterLinkItem[] = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "Faq", href: "/faq" },
+  { label: "Legal", href: "/legal" },
   FOOTER_INSTAGRAM,
 ];
 
-/** Korean e-commerce legal line — placeholders until business details are confirmed. */
+/**
+ * Business details for /legal and the footer line.
+ * Leave a string empty to hide that row until a real value is known.
+ */
 export const LEGAL = {
-  company: "TAEGYE",
-  companyKr: "태계",
-  ceo: "—",
-  businessNumber: "000-00-00000",
-  mailOrderNumber: "2026-서울-0000",
+  tradeName: "태계(TaeGye)",
+  businessType: "개인사업자",
+  ceo: "김건희",
+  businessNumber: "",
+  mailOrderNumber: "",
   address: "Seoul, Republic of Korea",
   email: CONTACT_EMAIL,
-  phone: "—",
+  phone: "",
 } as const;
 
+export const LEGAL_ROWS = [
+  { label: "상호", value: LEGAL.tradeName },
+  { label: "사업자 구분", value: LEGAL.businessType },
+  { label: "대표", value: LEGAL.ceo },
+  { label: "사업자등록번호", value: LEGAL.businessNumber },
+  { label: "통신판매업신고", value: LEGAL.mailOrderNumber },
+  { label: "주소", value: LEGAL.address },
+  { label: "이메일", value: LEGAL.email },
+  { label: "전화", value: LEGAL.phone },
+] as const;
+
+export function visibleLegalRows() {
+  return LEGAL_ROWS.filter((row) => row.value.trim().length > 0);
+}
+
 export function legalLine() {
-  return [
-    `상호: ${LEGAL.company} (${LEGAL.companyKr})`,
-    `대표: ${LEGAL.ceo}`,
-    `사업자등록번호: ${LEGAL.businessNumber}`,
-    `통신판매업신고: ${LEGAL.mailOrderNumber}`,
-    `주소: ${LEGAL.address}`,
-    `이메일: ${LEGAL.email}`,
-    `전화: ${LEGAL.phone}`,
-  ].join("  ·  ");
+  return visibleLegalRows()
+    .map((row) => `${row.label}: ${row.value}`)
+    .join("  ·  ");
 }
 
 /** About page — EN then KR; two paragraphs each; one sentence per line. */
