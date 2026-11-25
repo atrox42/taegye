@@ -321,7 +321,19 @@ export function productSpecLines(text: string): ProductSpecLine[] {
     }));
 }
 
+const DIMENSIONS_BY_CATEGORY: Partial<Record<NewProductCategoryId, string>> = {
+  "wall-kit": "W 110 × D 110 × H 175 mm",
+  "mini-port": "W 110 × D 110 × H 175 mm",
+  "one-port": "W 105 × D 85 × H 147 mm",
+  cascade: "W 120 × D 150 × H 187 mm",
+};
+
+export const PDP_MADE_IN = "Korea";
+
 export function productSpecValue(product: NewProduct, key: "dimensions" | "planting") {
+  if (key === "dimensions") {
+    return product.dimensions.trim() || DIMENSIONS_BY_CATEGORY[product.category] || "";
+  }
   return product[key].trim();
 }
 
@@ -372,12 +384,6 @@ export function productFeatures(product: NewProduct) {
     text,
   }));
 }
-
-/** Placeholder specification values. Real measurements and color names stay unmarked. */
-export const PDP_SAMPLE_SPEC = {
-  dimensions: "W 120 × D 80 × H 160 mm (sample)",
-  madeIn: "Korea (sample)",
-} as const;
 
 /** Color token as written on the product, e.g. HOLLOW(Translucent). */
 export function productColorName(product: NewProduct) {

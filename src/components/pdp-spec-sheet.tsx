@@ -1,6 +1,6 @@
 import { forceInkStyle, forceMutedStyle } from "@/lib/force-white";
 import {
-  PDP_SAMPLE_SPEC,
+  PDP_MADE_IN,
   parseMeasuredDimensions,
   productColorName,
   productSpecValue,
@@ -13,11 +13,11 @@ function specModel(product: NewProduct) {
   const rows: { label: string; value: string; sample: boolean }[] = [
     {
       label: "Dimensions",
-      value: parsed ? measured : PDP_SAMPLE_SPEC.dimensions,
-      sample: !parsed,
+      value: parsed ? measured : "",
+      sample: false,
     },
     { label: "Color", value: productColorName(product), sample: false },
-    { label: "Made in", value: PDP_SAMPLE_SPEC.madeIn, sample: true },
+    { label: "Made in", value: PDP_MADE_IN, sample: false },
   ];
   return { rows };
 }
