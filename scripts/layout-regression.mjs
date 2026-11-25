@@ -1471,7 +1471,13 @@ async function runBrowser() {
         } else {
           assert.equal(report.swatches.length, 0, `${id} must not invent swatches`);
         }
-        assert.equal(report.store, "https://smartstore.naver.com/taegye", `${id} store`);
+        const storeByPrefix = [
+          ["drain-tower", "https://smartstore.naver.com/taegye/products/13890862886"],
+          ["mini-port", "https://smartstore.naver.com/taegye/products/13889377772"],
+          ["cascade", "https://smartstore.naver.com/taegye/products/13890859993"],
+        ];
+        const expectedStore = storeByPrefix.find(([prefix]) => id.startsWith(prefix))?.[1];
+        assert.equal(report.store, expectedStore, `${id} store`);
         assert.equal(report.img, img, `${id} image`);
         assert.ok(report.title.startsWith(name), `${id} title ${report.title}`);
         if (id.startsWith("drain-tower")) {
@@ -2500,7 +2506,10 @@ async function runBrowser() {
       }, STORE_HREF);
       assert.ok(!report.error, `${label}: ${report.error}`);
       assert.equal(report.photoWrapped, false, `${label}: photo must not be inside an <a>`);
-      assert.equal(report.storeAbs, STORE_HREF, `${label}: Store href ${report.storeAbs}`);
+      const expectedStore = label.includes("one-port")
+        ? "https://smartstore.naver.com/taegye/products/13890858168"
+        : "https://smartstore.naver.com/taegye/products/13890828195";
+      assert.equal(report.storeAbs, expectedStore, `${label}: Store href ${report.storeAbs}`);
       assert.equal(report.overlaps, false, `${label}: Store overlay on photo ${JSON.stringify(report)}`);
         assert.ok(
         report.storeBox && report.storeBox.w > 160 && report.storeBox.h >= 40,

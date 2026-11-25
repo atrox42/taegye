@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { CanvasWhitePlate } from "@/components/canvas-white-plate";
 import { PdpSwatches } from "@/components/pdp-swatches";
 import { forceInkStyle, forceWhiteClipStyle } from "@/lib/force-white";
-import { STORE_URL, type NewProduct } from "@/lib/site";
+import { productStoreUrl, type NewProduct } from "@/lib/site";
 
 export function PdpBuyBar({
   product,
@@ -78,7 +78,7 @@ export function PdpBuyBar({
         </p>
         <div className="pdp-buybar-actions">
           {showSwatches ? <PdpSwatches product={product} family={family} className="pdp-buybar-swatches" /> : null}
-          <a href={STORE_URL} target="_blank" rel="noopener noreferrer" className="pdp-buybar-store" data-pdp-buybar-store="true">
+          <a href={productStoreUrl(product)} target="_blank" rel="noopener noreferrer" className="pdp-buybar-store" data-pdp-buybar-store="true">
             <span className="pdp-store-face" aria-hidden="true" />
             <span className="pdp-buybar-store-label" style={forceWhiteClipStyle}>
               {label}

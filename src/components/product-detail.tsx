@@ -12,7 +12,7 @@ import { WhiteSurfaceFill } from "@/components/white-surface-fill";
 import { forceInkStyle, forceWhiteClipStyle, forceWhiteStyle } from "@/lib/force-white";
 import {
   PDP_INFO_SECTIONS,
-  STORE_URL,
+  productStoreUrl,
   productColorName,
   productFamilyLabel,
   productFeatures,
@@ -118,7 +118,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </div>
         ) : null}
         <a
-          href={STORE_URL}
+          href={productStoreUrl(product)}
           target="_blank"
           rel="noopener noreferrer"
           className="pdp-store no-underline hover:no-underline"
