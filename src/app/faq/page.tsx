@@ -8,7 +8,7 @@ import { FAQ_ITEMS } from "@/lib/site";
 import { forceWhiteStyle } from "@/lib/force-white";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Faq",
+  title: "FAQ",
   description: FAQ_DESCRIPTION,
   path: "/faq",
 });
@@ -18,7 +18,7 @@ export default function FaqPage() {
     <article className="site-page text-page site-gutter" style={forceWhiteStyle}>
       <JsonLd data={faqJsonLd()} />
       <WhiteSurfaceFill />
-      <h1 className="text-page-title site-type">Faq</h1>
+      <h1 className="text-page-title site-type">FAQ</h1>
       <div className="faq-body text-page-body">
         {FAQ_ITEMS.map((item) => (
           <section key={item.q.en} className="faq-item">

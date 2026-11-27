@@ -112,7 +112,7 @@ export const FOOTER_INSTAGRAM: FooterLinkItem = {
 export const FOOTER_LINKS: FooterLinkItem[] = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
-  { label: "Faq", href: "/faq" },
+  { label: "FAQ", href: "/faq" },
   { label: "Legal", href: "/legal" },
   FOOTER_INSTAGRAM,
 ];
@@ -333,6 +333,24 @@ export type ProductSpecLine = {
 export function productSpecSectionBody(product: NewProduct, key: ProductSpecSectionKey) {
   if (product.category !== "cascade") return "";
   return CASCADE_SPEC_TEXT[key];
+}
+
+const CARE_SECTION_CATEGORIES = new Set<NewProductCategoryId>([
+  "mini-port",
+  "one-port",
+  "cascade",
+  "drain-tower",
+]);
+
+/** Existing measurements and care copy only. Empty care means the repo has no care text. */
+export function productCareSection(product: NewProduct) {
+  if (!CARE_SECTION_CATEGORIES.has(product.category)) return null;
+  const measured = productSpecValue(product, "dimensions").trim();
+  const care = (["planting", "temperature"] as const)
+    .map((key) => productSpecSectionBody(product, key).trim())
+    .filter((text) => text.length > 0);
+  if (!measured && care.length === 0) return null;
+  return { measured, care };
 }
 
 export function productSpecLines(text: string): ProductSpecLine[] {

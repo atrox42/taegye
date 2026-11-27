@@ -16,6 +16,7 @@ import {
   productColorName,
   productFamilyLabel,
   productFeatures,
+  productCareSection,
   productNote,
   productSpecSectionBody,
   productsInFamily,
@@ -47,6 +48,36 @@ function ProductHero({
         <ProductPhoto src={src} mobileSrc={mobileSrc} alt={alt} fill priority={priority} />
       </div>
     </div>
+  );
+}
+
+function ProductCare({ product }: { product: NewProduct }) {
+  const section = productCareSection(product);
+  if (!section) return null;
+  return (
+    <section className="pdp-measure" aria-label="실측/관리" data-pdp-measure="true">
+      <h2 className="pdp-features-title" style={forceInkStyle}>
+        실측/관리
+      </h2>
+      {section.measured ? (
+        <p className="pdp-measure-line" lang="ko" style={forceInkStyle}>
+          <span className="pdp-measure-label">실측</span>
+          <span>{section.measured}</span>
+        </p>
+      ) : null}
+      {section.care.length > 0 ? (
+        <div className="pdp-measure-line" lang="ko" style={forceInkStyle}>
+          <span className="pdp-measure-label">관리</span>
+          <div>
+            {section.care.map((text) => (
+              <p key={text} className="pdp-measure-copy">
+                {text}
+              </p>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -143,6 +174,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             ))}
           </ol>
         </section>
+        <ProductCare product={product} />
         <div className="pdp-acc-list">
           {PDP_INFO_SECTIONS.map((section) => (
             <PdpAccordion key={section.key} sectionKey={section.key} label={section.label}>

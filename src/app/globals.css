@@ -1474,6 +1474,37 @@ button {
   line-height: 1;
 }
 
+/* Below 412 the full labels do not fit at 10px, so Drain Tower is clipped.
+   412px and up keep the 10px row. */
+@media (max-width: 411.98px) {
+  .new-subnav {
+    gap: 6px;
+  }
+
+  .new-subnav-tabs {
+    overflow: visible;
+    gap: 5px;
+  }
+
+  .new-subnav-item,
+  .new-sort-trigger,
+  .new-sort-option {
+    font-size: 9.25px;
+  }
+}
+
+@media (max-width: 359.98px) {
+  .new-subnav-tabs {
+    gap: 2px;
+  }
+
+  .new-subnav-item,
+  .new-sort-trigger,
+  .new-sort-option {
+    font-size: 8.5px;
+  }
+}
+
 .new-sort-trigger:not(.is-active),
 .new-sort-option:not(.is-active) {
   border-bottom: 1px solid transparent;
@@ -4012,6 +4043,34 @@ button.site-menubar-toggle,
   margin: 12px 0 0;
   padding: 0;
   list-style: none;
+}
+
+.pdp-measure {
+  margin: 28px 0 0;
+}
+
+.pdp-measure-line {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0;
+  word-break: keep-all;
+}
+
+.pdp-measure-label {
+  font-weight: 500;
+}
+
+.pdp-measure-copy {
+  margin: 0;
+}
+
+.pdp-measure-copy + .pdp-measure-copy {
+  margin-top: 8px;
 }
 
 .pdp-features-line {
