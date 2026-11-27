@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
       { source: "/new/drain-tower-160", destination: "/new/drain-tower-80", permanent: true },
       { source: "/new/drain-tower-230", destination: "/new/drain-tower-80", permanent: true },
       { source: "/new/cascade-purple", destination: "/new/cascade-silver", permanent: true },
+      { source: "/legal", destination: "/", permanent: true },
+      { source: "/legal/", destination: "/", permanent: true },
     ];
   },
 };

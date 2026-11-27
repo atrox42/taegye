@@ -113,12 +113,11 @@ export const FOOTER_LINKS: FooterLinkItem[] = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "FAQ", href: "/faq" },
-  { label: "Legal", href: "/legal" },
   FOOTER_INSTAGRAM,
 ];
 
 /**
- * Business details for /legal and the footer line.
+ * Business details for the footer disclosure.
  * Leave a string empty to hide that row until a real value is known.
  */
 export const LEGAL = {
