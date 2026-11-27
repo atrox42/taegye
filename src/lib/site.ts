@@ -129,7 +129,7 @@ export const LEGAL = {
   mailOrderNumber: "제2026-서울강서-2256호",
   address: "서울특별시 강서구 화곡로42나길 6-3, 403호(화곡동)",
   email: CONTACT_EMAIL,
-  phone: "",
+  phone: "010-9156-9139",
 } as const;
 
 export const LEGAL_ROWS = [
