@@ -551,7 +551,13 @@ button {
 }
 
 .faq-body .faq-item p.site-type-copy {
-  margin-top: 16px;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .faq-body .faq-item p.site-type-copy {
+    margin-top: 2rem;
+  }
 }
 
 .faq-body .faq-item h2[lang="ko"] {
@@ -2210,7 +2216,7 @@ select::-ms-expand {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin: 0 var(--site-gutter) 1.15rem;
+  margin: 0 var(--site-gutter) 1.5rem;
 }
 
 .home-new-in-title {
@@ -4044,9 +4050,15 @@ button.site-menubar-toggle,
 }
 
 .pdp-features-list {
-  margin: 12px 0 0;
+  margin: 1.5rem 0 0;
   padding: 0;
   list-style: none;
+}
+
+@media (min-width: 768px) {
+  .pdp-features-list {
+    margin-top: 2rem;
+  }
 }
 
 .pdp-measure {
@@ -4063,6 +4075,16 @@ button.site-menubar-toggle,
   line-height: 1.45;
   letter-spacing: 0;
   word-break: keep-all;
+}
+
+.pdp-measure > .pdp-features-title + .pdp-measure-line {
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .pdp-measure > .pdp-features-title + .pdp-measure-line {
+    margin-top: 2rem;
+  }
 }
 
 .pdp-measure-label {
@@ -4228,6 +4250,16 @@ button.site-menubar-toggle,
   padding: 0 0 16px;
 }
 
+.pdp-acc-row .pdp-spec-body-pad:not(:empty) {
+  padding-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .pdp-acc-row .pdp-spec-body-pad:not(:empty) {
+    padding-top: 2rem;
+  }
+}
+
 .pdp-acc-row .pdp-note,
 .pdp-acc-row .pdp-spec-line,
 .pdp-acc-row .pdp-spec-value,
@@ -4244,6 +4276,20 @@ button.site-menubar-toggle,
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
+}
+
+.pdp-acc-row .pdp-spec-body-pad > .pdp-spec-subhead:first-child {
+  margin-top: 0;
+}
+
+.pdp-acc-row .pdp-spec-subhead + * {
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .pdp-acc-row .pdp-spec-subhead + * {
+    margin-top: 1.5rem;
+  }
 }
 
 .pdp-acc-row .pdp-spec-value.is-empty {
@@ -4315,7 +4361,13 @@ button.site-menubar-toggle,
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 14px;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .pdp-related-head {
+    margin-bottom: 2rem;
+  }
 }
 
 .pdp-related-nav {
@@ -4399,7 +4451,13 @@ button.site-menubar-toggle,
 }
 
 .pdp-acc-row .pdp-specsheet-table {
-  margin-top: 4px;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .pdp-acc-row .pdp-specsheet-table {
+    margin-top: 1.5rem;
+  }
 }
 
 .pdp-acc-row .pdp-specsheet-table th,
