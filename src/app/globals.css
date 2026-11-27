@@ -1887,6 +1887,10 @@ button {
   background-clip: text !important;
 }
 
+.site-footer-copy-line:has(.site-footer-copy-details) {
+  white-space: normal;
+}
+
 .site-footer-copy-plus {
   display: inline;
   padding: 0;
