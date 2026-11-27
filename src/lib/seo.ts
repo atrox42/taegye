@@ -44,17 +44,25 @@ export function pageMetadata({
   description,
   path,
   image,
+  imageWidth,
+  imageHeight,
   type = "website",
 }: {
   title: string;
   description: string;
   path: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: "website" | "article";
 }): Metadata {
   const url = absoluteUrl(path);
   const ogImage = absoluteUrl(image ?? "/logo-taegye.png");
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+  const imageEntry =
+    imageWidth && imageHeight
+      ? [{ url: ogImage, width: imageWidth, height: imageHeight }]
+      : [{ url: ogImage }];
   return {
     title: { absolute: fullTitle },
     description,
@@ -65,7 +73,7 @@ export function pageMetadata({
       url,
       siteName: SITE_NAME,
       type,
-      images: [{ url: ogImage }],
+      images: imageEntry,
     },
     twitter: {
       card: "summary_large_image",

@@ -2327,7 +2327,7 @@ async function runBrowser() {
       await page.waitForSelector(".new-sort-menu");
       assert.ok(await page.$(".new-sort-menu"), "320 Sort dropdown missing");
       await page.click(".new-sort-trigger");
-      console.log("ok  mobile 320 /new: tabs scroll, Sort stays clear");
+      console.log("ok  mobile 320 /new: tabs visible, Sort stays clear");
     });
 
     await withPage(browser, MOBILE_360, "/new?moss=0", async (page) => {
@@ -2367,7 +2367,12 @@ async function runBrowser() {
           const s = sort.getBoundingClientRect();
           const items = [...tabs.querySelectorAll(".new-subnav-item")].map((node) => {
             const r = node.getBoundingClientRect();
-            return { label: (node.textContent || "").trim(), w: +r.width.toFixed(1) };
+            return {
+              label: (node.textContent || "").trim(),
+              w: +r.width.toFixed(1),
+              left: +r.left.toFixed(1),
+              right: +r.right.toFixed(1),
+            };
           });
           const overlapping = items.filter((item, i) => {
             const node = tabs.querySelectorAll(".new-subnav-item")[i];
@@ -2381,6 +2386,7 @@ async function runBrowser() {
             navH: +n.height.toFixed(1),
             tabsW: +t.width.toFixed(1),
             tabsScroll: +tabs.scrollWidth.toFixed(1),
+            sortLeft: +s.left.toFixed(1),
             sortW: +s.width.toFixed(1),
             gap: +(s.left - t.right).toFixed(1),
             overflowX: getComputedStyle(tabs).overflowX,
@@ -2396,7 +2402,8 @@ async function runBrowser() {
           assert.equal(row.overflowX === "auto" || row.overflowX === "scroll", false, `${label} must not scroll tabs`);
         } else {
           assert.ok(row.gap >= 4, `${label} visible tab/Sort gap ${JSON.stringify(row)}`);
-          assert.ok(row.tabsScroll > row.tabsW + 1, `${label} tabs must scroll ${JSON.stringify(row)}`);
+          const hidden = row.labels.filter((item) => item.right > row.sortLeft - 4 || item.left < 0);
+          assert.deepEqual(hidden, [], `${label} tab clipped ${JSON.stringify(row)}`);
         }
         console.log(`ok  tab strip ${label}: ${JSON.stringify(row)}`);
       });
