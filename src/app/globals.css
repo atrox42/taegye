@@ -580,7 +580,7 @@ button {
 }
 
 .text-page-body {
-  margin-top: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -595,7 +595,7 @@ button {
   }
 
   .text-page-body {
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
 }
 
