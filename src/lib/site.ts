@@ -25,7 +25,7 @@ export function productStoreUrl(product: { category: string }) {
 
 export const INSTAGRAM_URL = "https://www.instagram.com/taegye_/";
 
-export const CONTACT_EMAIL = "hello@taegye.kr";
+export const CONTACT_EMAIL = "taegye_@naver.com";
 
 export const NAV_ITEMS = [
   { label: "Home", href: "/" },
@@ -125,9 +125,9 @@ export const LEGAL = {
   tradeName: "태계(TaeGye)",
   businessType: "개인사업자",
   ceo: "김건희",
-  businessNumber: "",
-  mailOrderNumber: "",
-  address: "Seoul, Republic of Korea",
+  businessNumber: "691-26-02202",
+  mailOrderNumber: "제2026-서울강서-2256호",
+  address: "서울특별시 강서구 화곡로42나길 6-3, 403호(화곡동)",
   email: CONTACT_EMAIL,
   phone: "",
 } as const;
@@ -135,10 +135,10 @@ export const LEGAL = {
 export const LEGAL_ROWS = [
   { label: "상호", value: LEGAL.tradeName },
   { label: "사업자 구분", value: LEGAL.businessType },
-  { label: "대표", value: LEGAL.ceo },
+  { label: "대표자", value: LEGAL.ceo },
   { label: "사업자등록번호", value: LEGAL.businessNumber },
-  { label: "통신판매업신고", value: LEGAL.mailOrderNumber },
-  { label: "주소", value: LEGAL.address },
+  { label: "통신판매업 신고번호", value: LEGAL.mailOrderNumber },
+  { label: "사업장 주소", value: LEGAL.address },
   { label: "이메일", value: LEGAL.email },
   { label: "전화", value: LEGAL.phone },
 ] as const;
